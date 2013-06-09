@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM  "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Language file messages translations</comment>
+
+<entry key="Reading XML database connection: [%s]">Leyendo conexión a base de datos XML: [%s]</entry>
+<entry key="The [%s] attribute for connection number [%s] config cannot empty string">El atributo [%s] para la conexión número [%s] no puede ser una cadena vacia</entry>
+<entry key="The [%s] attribute value for connection [%s] config cannot empty string">El valor del atributo [%s] no puede ser una cadena vacia</entry>
+<entry key="The [%s] attribute value [%s] force to disable max retrys feacture">El atributo [%s] con el valor de [%s] obliga a desactivar la característica de máximos intentos</entry>
+<entry key="The [%s] attribute value [%s] is invalid using the default block time of [%s] minutes">El atributo [%s] con el valor de [%s] es inválido, se va usar el valor por defecto de [%s] minutos</entry>
+<entry key="The DB connection name: [%s] is configured for [%s] auth type, however the [%s] value is empty">La conexión de base de datos [%s] se encuentra configurada para el tipo de autenticación [%s] sin embargo el valor de [%s] es vacio</entry>
+<entry key="Connection database defined and added. Name: [%s], Driver: [%s], Engine: [%s], Engine_Version: [%s], IP: [%s], Address_Type: [%s], Port: [%s], Database: [%s], User: [%s], Password: [%s], DateFormat: [%s], TimeFormat: [%s], DateTimeFormat: [%s]">Conexión de base de datos definida y agregada. Name: [%s], Driver: [%s], Engine: [%s], Engine_Version: [%s], IP: [%s], Address_Type: [%s], Port: [%s], Database: [%s], User: [%s], Password: [%s], DateFormat: [%s], TimeFormat: [%s], DateTimeFormat: [%s]</entry>
+<entry key="The DB connection name: [%s] is used in previus DB connection config index: [%s], the name attribute must be unique">El nombre [%s] de la conexión de base de datos, ya es usada en una definición previa, la número [%s], el nombre debe ser único</entry>
+<entry key="DB connection config attributes is not valid">Los atributos para la conexión a la base de datos no son válidos</entry>
+<entry key="No valid database connections defined">No hay conexiones a base de datos válidas definidas</entry>
+<entry key="Count of database connections defined: [%s]">Cantidad de conexiones a bases de datos definidas: [%s]</entry>
+<entry key="Reading XML built in response format: [%s]">Leyendo formato de respuesta incorporado XML: [%s]</entry>
+
+<entry key="No datatabse drivers found in path [%s]">No hay controladores de base de datos en la ruta: [%s]</entry>
+<entry key="No responses formats drivers found in path [%s]">No hay controladores de formato de respuesta en la ruta:[%s]</entry>
+<entry key="No databases services found in path [%s]">No hay servicios de base de datos en la ruta: [%s]</entry>
+
+<entry key="Registered response format: [%s] min version: [%s] max version: [%s]">Formato de respuesta: [%s] versión mínima: [%s] versión máxima: [%s] registrado</entry>
+
+<entry key="Adding to end of list the built in responses formats">Agregando al final de la lista los formatos de respuestas incorporados</entry>
+<entry key="Added built in response format [%s] min version: [%s] max version: [%s]">Agregando el formato de respuesta incorporado [%s] versión mínima: [%s] versión máxima: [%s]</entry>
+
+<entry key="The default response format [$s] version [%s] not found">El formato de respuesta por defecto [%s] versión [%s] no fue encontrado</entry>
+<entry key="The default response format [$s] found, but the version [%s] not found, using the min version [%s] available">El formato de respuesta por defecto [%s] fue encontrado, pero la versión [%s] no fue encontrada, usando la vesión mínima disponible [%s]</entry>
+
+<entry key="Using default response format: [$s] min version: [%s]">Usando el como formato de respuesa por defecto: [%s] versión mínima: [%s]</entry>
+<entry key="Count of responses formats registered: [%s]">Cantidad de formatos de respuestas registrados: [%s]></entry>
+
+<entry key="The parameter name [%s] is not part of the input parameters of the service">El parámetro de nombre [%s] no es parte de los parámetros de entrada del servicio</entry>
+<entry key="The paramete name [%s] position [%s] has the value [%s] is invalid">El parámetro [%s] en la posición [%s] tiene el valor de [%s] es inválido</entry>
+<entry key="The parameter [%s] has the value [%s] is invalid">El parámetro [%s] tiene el valor de [%s] es inválido</entry>
+<entry key="The parameter [%s] is multivalued">El parámetro [%s] tiene múltiples valores</entry>
+<entry key="The following parameters %s are required for service and were not sent">Los siguientes parámetros %s son requeridos por el servicio y no fueron enviados</entry>
+<entry key="Service [%s] expected [%s] parameters however were sent [%s]">El servicio [%s] espera [%s] sin embargo se enviaron [%s]</entry>
+
+<entry key="[%s] from [%s] = [%s] not found">[%s] usando [%s] = [%s] no fue encontrado</entry>
+<entry key="Added [%s] [%s] = [%s] and [%s] = [%s]">Agregado [%s] [%s] = [%s] y [%s] = [%s]</entry>
+<entry key="Removed [%s] by [%s] = [%s]">Eliminado [%s] por [%s] = [%s]</entry>
+
+<entry key="The security token [%s] is incorrect. Possible attempted robbery in progress session">El token de seguridad [%s] es incorrecto. Posible intento de robo de sesión en progreso</entry>
+<entry key="You must log in before using the service [%s]">Debe iniciar sesión antes de usar el servicio [%s]</entry>
+<entry key="The service name [%s] not found">El servicio de nombre [%s] no fue encontrado</entry>
+<entry key="Fatal error, no response format found">Error fatal, ningún formato de respuesta encontrado</entry>
+
+<entry key="Registered service: [%s] description: [%s] version: [%s]">Servicio: [%s] regitrado descripción: [%s] versión: [%s]</entry>
+<entry key="Count of services registered: [%s]">Cantidad de servicios registrados: [%s]</entry>
+<entry key="Registered database engine: [%s] version: [%s]">Motor de base de datos: [%s] versión: [%s] registrado</entry>
+<entry key="Count of databases engines registered: [%s]">Cantidad de motores de base de datos registrados: [%s]</entry>
+<entry key="No databases engines found in path [%s]">No se encontraron motores de base de datos en la ruta [%s]</entry>
+<entry key="The service name [%s] return negative value [%s]">El servicio de nombre [%s] retorna un valor negativo [%s]</entry>
+<entry key="The service name is empty, request from ip address [%s], forwarded from [%s]">El nombre del servicio es vacío, petición realizada desde la dirección IP [%s], reenviado de [%s]</entry>
+<entry key=""></entry>
+<entry key=""></entry>
+<entry key=""></entry>
+<entry key=""></entry>
+
+</properties>

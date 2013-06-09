@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="ServicesDaemon"/>
+	<classpathentry kind="src" path="DBServicesManager"/>
+	<classpathentry kind="src" path="CommonJars"/>
+	<classpathentry kind="src" path="FirebiirdDBEngine"/>
+	<classpathentry kind="src" path="CryptPasswordSD"/>
+	<classpathentry kind="src" path="PreExecuteServiceTest"/>
+	<classpathentry kind="src" path="SystemEnumServices"/>
+	<classpathentry kind="src" path="SystemPing"/>
+	<classpathentry kind="src" path="SystemStartSession"/>
+	<classpathentry kind="src" path="SystemStartTransaction"/>
+	<classpathentry kind="src" path="SystemCommitTransaction"/>
+	<classpathentry kind="src" path="SystemRollbackTransaction"/>
+	<classpathentry kind="src" path="SystemEndTransaction"/>
+	<classpathentry kind="src" path="SystemEndSession"/>
+	<classpathentry kind="src" path="SystemExecuteSQL"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/home/sirlordt/Java/libs/Jetty/jetty-all-8.1.9.v20130131.jar"/>
+	<classpathentry kind="lib" path="/home/sirlordt/Java/libs/Jetty/javax.servlet-api-3.0.1.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
