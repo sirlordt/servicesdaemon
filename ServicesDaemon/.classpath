@@ -16,7 +16,7 @@
 	<classpathentry kind="src" path="SystemEndSession"/>
 	<classpathentry kind="src" path="SystemExecuteSQL"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/home/sirlordt/Java/libs/Jetty/jetty-all-8.1.9.v20130131.jar"/>
-	<classpathentry kind="lib" path="/home/sirlordt/Java/libs/Jetty/javax.servlet-api-3.0.1.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jetty-8"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Servlet-3"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
