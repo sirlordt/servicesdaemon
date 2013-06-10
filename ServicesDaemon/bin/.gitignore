@@ -4,3 +4,7 @@
 /SystemExecuteSQL
 /SystemRollbackTransaction
 /SystemStartTransaction
+/ServicesDaemon
+/SystemEnumServices
+/SystemPing
+/SystemStartSession

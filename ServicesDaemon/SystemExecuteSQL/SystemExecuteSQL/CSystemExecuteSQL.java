@@ -51,7 +51,7 @@ public class CSystemExecuteSQL extends CAbstractService {
         else
            s = s.substring( 0, s.indexOf(".class") );
 
-        s = s.substring( s.lastIndexOf(':') + 1 );
+        s = s.substring( s.indexOf(':') + 2 );
 
         return s.substring( 0, s.lastIndexOf( File.separatorChar ) + 1 );
 
