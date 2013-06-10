@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM  "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Language file messages translations</comment>
+
+<entry key="Lets see if the server responds correctly, for monitoring purposes">Permite saber si el servidor responde correctamente, con fines de monitorización</entry>
+<entry key="Whole number sent as a parameter and return increased by 1">Número entero enviado como parámetro y devuelto aumentado en 1</entry>
+<entry key="Response format name, example: XML-DATAPACKET, CSV, JSON">Nombre del formato de respuesta, ejemplo: XML-DATAPACKET, CSV, JSON</entry>
+<entry key="Response format version, example: 1.1">Versión del formato de respuesta, ejemplo: 1.1</entry>
+
+<entry key="Registered pre execute service name: [%s] version: [%s]">Servicio de pre ejecución registrado de nombre: [%s] versión: [%s]</entry>
+<entry key="Registered post execute service name: [%s] version: [%s]">Servicio de post ejecución registrado de nombre: [%s] versión: [%s]</entry>
+<entry key="Count of pre execute service registered: [%s]">Cantidad de servicios de pre ejecución registrados: [%s]</entry>
+<entry key="Count of post execute service registered: [%s]">Cantidad de servicios de post ejecución registrados: [%s]</entry>
+<entry key=""></entry>
+<entry key=""></entry>
+<entry key=""></entry>
+<entry key=""></entry>
+
+</properties>

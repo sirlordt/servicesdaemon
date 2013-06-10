@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM  "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Language file messages translations</comment>
+
+<entry key="Allow init transaction in database and get a transaction id">Permite iniciar una transacción en la base de datos y obtener un id de transacción</entry>
+<entry key="Response format name, example: XML-DATAPACKET, CSV, JSON">Nombre del formato de respuesta, ejemplo: XML-DATAPACKET, CSV, JSON</entry>
+<entry key="Response format version, example: 1.1">Versión del formato de respuesta, ejemplo: 1.1</entry>
+<entry key="Security token obtained with a start session service call">Token de seguridad obtenido con una llamada al servicio de inicio de sesión</entry>
+<entry key="Cannot locate in session the database connection config for the security token: [%s]">No puedo localizar en la sesión la configuración de conexión a la base de datos para el token de seguridad: [%s]</entry>
+<entry key="Failed to start transaction for security token: [%s], see the log file for more details">Error al iniciar la transacción para el token de seguridad: [%s], vea el archivo de registro para más detalles</entry>
+<entry key="The database engine name [%s] version [%s] not found">El motor de base de datos de nombre [%s] no fue econtrado</entry>
+<entry key="Failed to connect to database name: [%s]">Error al conectar a la base de datos de nombre: [%s]</entry>
+<entry key="Cannot execute the dummy query to database name: [%s]">No puedo ejecutar la consulta tonta a la base de datos de nombre: [%s]</entry>
+<entry key="Sucess start transaction in database name: [%s]">Transacción iniciada correctamente en la base de datos de nombre: [%s]</entry>
+
+<entry key="Database connection auto commit set to: [%s]">Auto aplicado para la conexión a la base de datos se cambio a: [%s]</entry>
+<entry key="Cannot change the database connection auto commit to: [%s]">No puedo cambiar el auto aplicado de la conexión a base de datos a: [%s]</entry>
+<entry key="Database connection established to next URL: [%s] and user: [%s]">Conexión a base de datos establecida al siguiente URL: [%s] y usuario: [%s]</entry>
+<entry key="Trying to connect with the next URL: [%s] and user: [%s]">Intentado establecer conexión con el siguiente URL: [%s] y usuario: [%s]</entry>
+<entry key="Database connection is invalid">La conexión a la base de datos es inválida</entry>
+
+<entry key=""></entry>
+<entry key=""></entry>
+<entry key=""></entry>
+<entry key=""></entry>
+<entry key=""></entry>
+<entry key=""></entry>
+<entry key=""></entry>
+<entry key=""></entry>
+
+</properties>

@@ -17,6 +17,6 @@
 	<classpathentry kind="src" path="SystemExecuteSQL"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jetty-8"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Servlet-3"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/servlet-3"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

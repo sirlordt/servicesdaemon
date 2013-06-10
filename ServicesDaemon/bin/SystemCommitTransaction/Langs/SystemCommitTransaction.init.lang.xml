@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM  "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Language file messages translations</comment>
+<entry key="Allow commit transaction in database from a transaction id">Permite aplicar una transacción en la base de datos de un id de transacción</entry>
+<entry key="Security token obtained with a start session service call">Token de seguridad obtenido con una llamada al servicio de inicio de sesión</entry>
+<entry key="Transaction id obtained with a start transaction service call">Id de transacción obtenido con la llamada al servicio de inicio de transacciones</entry>
+<entry key="Response format name, example: XML-DATAPACKET, CSV, JSON">Nombre del formato de respuesta, ejemplo: XML-DATAPACKET, CSV, JSON</entry>
+<entry key="Response format version, example: 1.1">Versión del formato de respuesta, ejemplo: 1.1</entry>
+
+<entry key="Database connection auto commit set to: [%s]">Auto aplicado para la conexión a la base de datos se cambio a: [%s]</entry>
+<entry key="Cannot change the database connection auto commit to: [%s]">No puedo cambiar el auto aplicado de la conexión a base de datos a: [%s]</entry>
+<entry key="Database transaction commited">Transacción de la base de datos aplicada</entry>
+<entry key="Cannot commit database transaction">No puedo aplicar la transacción en la base de datos</entry>
+<entry key="Database transaction rollback">Transacción en la base de datos revertida</entry>
+<entry key="Cannot rollback database transaction">No puedo revertir la transacción en la base de datos</entry>
+<entry key="Database connection closed">Conexión a base de datos cerrada</entry>
+<entry key="Cannot close database connection">No puedo cerrar la conexión a la base de datos</entry>
+<entry key="Database connection is invalid">La conexión a la base de datos es inválida</entry>
+
+<entry key="Success commit transaction for id: [%s]">Trasacción aplicada con éxito para el id: [%s]</entry>
+<entry key="The database connection semaphore not found for transaction id: [%s]">El semáforo para la conexión de base de datos no fue encontrado para el id de transacción: [%s]</entry>
+<entry key="Failed to commit transaction for id: [%s], see the log file for more details">Error al aplicar la transacción para el id: [%s]</entry>
+<entry key="The database engine name [%s] version [%s] not found">El motor de base de datos de nombre [%s] no fue econtrado</entry>
+<entry key="Cannot locate in session the database connection config for the security token: [%s]">No puedo localizar en la sesión la configuración de conexión a la base de datos para el token de seguridad: [%s]</entry>
+<entry key="No found database connection from transaction id: [%s]">No se encontró la conexión a la base de datos para trasacción id: [%s]</entry>
+<entry key=""></entry>
+<entry key=""></entry>
+<entry key=""></entry>
+<entry key=""></entry>
+
+</properties>
