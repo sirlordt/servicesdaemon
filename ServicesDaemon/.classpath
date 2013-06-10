@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="ServicesDaemon"/>
 	<classpathentry kind="src" path="DBServicesManager"/>
 	<classpathentry kind="src" path="CommonJars"/>
-	<classpathentry kind="src" path="FirebiirdDBEngine"/>
+	<classpathentry kind="src" path="FirebirdDBEngine"/>
 	<classpathentry kind="src" path="CryptPasswordSD"/>
 	<classpathentry kind="src" path="PreExecuteServiceTest"/>
 	<classpathentry kind="src" path="SystemEnumServices"/>
