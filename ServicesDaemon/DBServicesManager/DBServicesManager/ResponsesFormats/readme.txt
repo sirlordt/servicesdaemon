@@ -1,0 +1,1 @@
+El directorio está vacio pero aquí pueden colocarse todos .jar que implemente la clase CAbstractResponseFormat, para poder extender los reponses formats empotrados, el directorio debe existir 			
