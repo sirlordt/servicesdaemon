@@ -14,3 +14,9 @@
 /SystemStartSession
 /SystemStartTransaction
 /META-INF
+/AbstractServicesManager
+/DBServicesManager
+/ServicesDaemon
+/CommonClasses
+/ExtendedLogger
+/Utilities
