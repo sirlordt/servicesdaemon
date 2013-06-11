@@ -391,7 +391,7 @@ public class ServicesDaemon {
         else
            s = s.substring( 0, s.indexOf(".class") );
 
-        if ( s.indexOf( "jar:file:\\" )  == 0 ) { 
+        /*if ( s.indexOf( "jar:file:\\" )  == 0 ) { 
 
         	s = s.substring( 10 );
 
@@ -401,8 +401,17 @@ public class ServicesDaemon {
         	s = s.substring( 6 );
 
         }
+        else {*/
 
-        //s = s.substring( s.indexOf(':') + 2 );
+        s = s.substring( s.lastIndexOf(':') + 1 );
+
+        if ( s.indexOf( "\\" ) == 0 ) {
+
+        	s = s.substring( s.lastIndexOf('\\') + 1 );
+
+        }
+
+        //}
 
         return s.substring( 0, s.lastIndexOf( File.separatorChar ) + 1 );
 
@@ -412,7 +421,7 @@ public class ServicesDaemon {
 	    	    
 		DefaultConstantsServicesDaemon.strDefaultRunningPath = getJarFolder();
 
-		//System.out.println( DefaultConstantsServicesDaemon.strDefaultRunningPath );  
+		System.out.println( DefaultConstantsServicesDaemon.strDefaultRunningPath );  
 		
 		InitArgs = new ArrayList<String>( Arrays.asList( args ) );
 		
