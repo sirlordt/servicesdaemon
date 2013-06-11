@@ -144,8 +144,8 @@ public class CFirebirdDBEngine extends CAbstractDBEngine {
 			
 		}
 		
-		
 	}
+	
 	public boolean commit( Connection DBConnection, CExtendedLogger Logger, CLanguage Lang ) { 
 
 		try {
@@ -289,7 +289,6 @@ public class CFirebirdDBEngine extends CAbstractDBEngine {
 		return strResult;
 		
 	}*/
-
 	
 	@Override
     public CMemoryRowSet ExecuteCheckMethodSQL( Connection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, CExtendedLogger Logger, CLanguage Lang ) {

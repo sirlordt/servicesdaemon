@@ -4,11 +4,8 @@
 /AbstractServicesManager
 /CommonClasses
 /CryptPasswordSD
-/DBServicesManager
-/ExtendedLogger
 /FirebirdDBEngine
 /PreExecuteServiceTest
-/ServicesDaemon
 /SystemCommitTransaction
 /SystemEndSession
 /SystemEndTransaction
@@ -18,5 +15,7 @@
 /SystemRollbackTransaction
 /SystemStartSession
 /SystemStartTransaction
-/Utilities
+/DBServicesManager
+/MySQLDBEngine
 /META-INF
+/ServicesDaemon
