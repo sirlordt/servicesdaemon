@@ -391,27 +391,21 @@ public class ServicesDaemon {
         else
            s = s.substring( 0, s.indexOf(".class") );
 
-        /*if ( s.indexOf( "jar:file:\\" )  == 0 ) { 
+        if ( s.indexOf( "jar:file:\\" )  == 0 ) { //Windows style path SO inside jar file 
 
         	s = s.substring( 10 );
 
         }
-        else if ( s.indexOf( "file:\\" )  == 0 ) {
+        else if ( s.indexOf( "file:\\" )  == 0 ) { //Windows style path SO .class file
 
         	s = s.substring( 6 );
 
         }
-        else {*/
+        else { //Unix family ( Linux/BSD/Mac/Solaris ) style path SO
 
-        s = s.substring( s.lastIndexOf(':') + 1 );
-
-        if ( s.indexOf( "\\" ) == 0 ) {
-
-        	s = s.substring( s.lastIndexOf('\\') + 1 );
+            s = s.substring( s.lastIndexOf(':') + 1 );
 
         }
-
-        //}
 
         return s.substring( 0, s.lastIndexOf( File.separatorChar ) + 1 );
 
@@ -421,7 +415,7 @@ public class ServicesDaemon {
 	    	    
 		DefaultConstantsServicesDaemon.strDefaultRunningPath = getJarFolder();
 
-		System.out.println( DefaultConstantsServicesDaemon.strDefaultRunningPath );  
+		System.out.println( "Path: '" + DefaultConstantsServicesDaemon.strDefaultRunningPath + "'" );  
 		
 		InitArgs = new ArrayList<String>( Arrays.asList( args ) );
 		
