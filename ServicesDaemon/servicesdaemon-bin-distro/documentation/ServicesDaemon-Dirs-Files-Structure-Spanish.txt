@@ -1,0 +1,223 @@
+ServiceDaemon estructura de directorios y archivos
+
+Leyenda 
+   -> directorio
+   *  archivo
+   +  Nota 
+
+-> ServicesDaemon (Raíz del sistema)
+
+    * ServicesDaemon.jar      (Archivo principal del sistema ejecutable mendiante "java -jar ServicesDaemon.jar")
+    * ServicesDaemon.conf     (Archivo de configuración principal y para el uso del módulo principal ServicesDaemon) 
+    * ServicesDaemon.keystore (Archivo de almacena los certificados de ssl, solo se activa desde el archivo de configuración, creado con la herramienta de java keytool) 
+
+    -> Langs
+	
+	   * Common.init.lang.xml           (Frases comúnes cuando se configura para un idioma distinto del ingles, en caso de ser ingles no es necesario puede ser borrado)
+	   * ServicesDaemon.init.lang.xml   (Frases sólo para el uso del módulo ServicesDaemon para un idioma distinto del ingles, en caso de ser ingles no es necesario puede ser borrado) 
+	   
+    -> Libs
+	
+       * jetty-all-server-8.jar   (Jetty empotrado versión 8) 
+	   * javax-servlet-api-3.jar  (Servlet api especificación de java)
+	   * CommonLibs.jar           (Archivo con las clases comúnes del proyecto ServicesDaemon)
+   
+    -> Logs  (Los siguientes archivos y directorios bajo este directorio incluyendose el mismo se crean automáticamente no hay que crearlos)
+       
+	   -> Access 
+	   
+           * ServicesDaemon.accesss.2013_06_10 (Archivo de jetty para los acceso de http creado por jetty automáticamente algo similar al access.log del apache web server) 
+
+       -> System 		   
+	   
+           * MissingTranslations.log.0 (Archivo de registro del sistema se crea cuando se activa la opción Log_Missing_Translations en el archivo ServicesDaemon.conf y ayuda a encontrar oraciones sin traducir, aplicable a todos los módulos y submódulos del sistema)
+           * ServicesDaemon.log.0 (Archivo de registro del sistema se crea automáticamente y muestra el funcionamiento interno del ServicesDaemon para ubicar bug y problemas de configuración)
+           * ServicesDaemon.servlet.container.log.0 (Archivo de registro del sistema que crea el jetty para registro interno del propio jetty)		   
+   
+    -> Managers (Adentro estan todos los Managers, pueden impementarse otros manager, para accederlos se coloca https://127.0.0.1/DBServicesManager/ o https://127.0.0.1/ManagerName/)
+	
+       -> DBServicesManager
+	   
+	        * DBServicesManager.jar  (Administrador de servicios para base de datos)
+	        * DBServicesManager.conf (Archivo de configuración prinicipal para el uso del módulo principal DBServicesDaemon) 
+			
+			-> Logs (Los siguientes archivos y directorios bajo este directorio incluyendose el mismo se crean automáticamente no hay que crearlos)
+			
+			   * DBServicesManager.log.0 (Archivo de registro del sistema se crea automáticamente y muestra el funcionamiento interno del módulo DBServicesManager para ubicar bug y problemas de configuración)
+			
+			-> Langs
+			
+			   * DBServicesManager.init.lang.xml (Frases sólo para el uso del módulo ServicesDaemon para un idioma distinto del ingles, en caso de ser ingles no es necesario puede ser borrado) 
+			
+            -> DBDrivers (Autocargados por el DBServicesManager)
+			
+			   * jaybird-full-2.2.2.jar (Driver jdbc de firebird para java descargado de www.firebirdsql.org, aquí se deben colocar el resto de los drivers para otros SMBD como mysql, postgresql)
+
+		    -> DBEngines (Autocargados por el DBServicesManager)
+			
+               * FirebirdDBEngine.jar (Librería de firebird para abstracción del manejador de base de datos)			
+			   
+			   + Se planea soporte para PostgreSQL y para Mysql
+			   
+			-> ResponsesFormats (Autocargados por el DBServicesManager el XML-Datapacket es empotrado es decir se implementó internamente)
+
+               + El directorio está vacio pero aquí pueden colocarse todos .jar que implemente la clase CAbstractResponseFormat, para poder extender los reponses formats empotrados, el directorio debe existir 			
+			   
+			   + Falta por implementar el webrowset, json
+			   
+            -> DBServices (Servicios como tal cada uno de ellos puede o no repetir su estrutura de directorios, Langs, Logs, archivo .conf para el serivio partícular)
+			
+               -> System.Commit.Transaction
+
+                  * SystemCommitTransaction.jar (Servicio System.Start.Transaction)
+				  
+                  -> PreExecute (Servicio hook de pre-ejecución)
+
+			      -> PostExecute (Servicio hook de post-ejecución)
+
+			      -> Langs
+			
+			         * SystemCommitTransaction.init.lang.xml (Frases sólo para el uso del módulo SystemCommitTransaction para un idioma distinto del ingles, en caso de ser ingles no es necesario puede ser borrado) 
+			   
+ 				  -> Logs (Los siguientes archivos y directorios bajo este directorio incluyendose el mismo se crean automáticamente no hay que crearlos)
+				  
+				     * System.Commit.Transaction.log.0 (Archivo de registro del sistema se crea automáticamente y muestra el funcionamiento interno del módulo System.Commit.Transaction para ubicar bug y problemas de configuración)
+					 
+               -> System.End.Session
+			   
+                  * SystemEndSession.jar (Servicio System.End.Session)
+				  
+                  -> PreExecute (Servicio hook de pre-ejecución)
+
+			      -> PostExecute (Servicio hook de post-ejecución)
+
+			      -> Langs
+			
+			         * SystemEndSession.init.lang.xml (Frases sólo para el uso del módulo SystemEndSession para un idioma distinto del ingles, en caso de ser ingles no es necesario puede ser borrado) 
+				  
+ 				  -> Logs (Los siguientes archivos y directorios bajo este directorio incluyendose el mismo se crean automáticamente no hay que crearlos)
+				  
+				     * System.End.Session.log.0 (Archivo de registro del sistema se crea automáticamente y muestra el funcionamiento interno del módulo System.End.Session para ubicar bug y problemas de configuración)
+					 
+               -> System.End.Transaction
+			   
+                  * SystemEndTransaction.jar (Servicio System.End.Transaction)
+				  
+                  -> PreExecute (Servicio hook de pre-ejecución)
+
+			      -> PostExecute (Servicio hook de post-ejecución)
+
+			      -> Langs
+			
+			         * SystemEndTransaction.init.lang.xml (Frases sólo para el uso del módulo SystemEndTransaction para un idioma distinto del ingles, en caso de ser ingles no es necesario puede ser borrado) 
+				  
+ 				  -> Logs (Los siguientes archivos y directorios bajo este directorio incluyendose el mismo se crean automáticamente no hay que crearlos)
+				  
+				     * System.End.Transaction.log.0 (Archivo de registro del sistema se crea automáticamente y muestra el funcionamiento interno del módulo System.End.Transaction para ubicar bug y problemas de configuración)
+					 
+               -> System.Enum.Services
+			   
+                  * SystemEnumServices.jar (Servicio System.Enum.Services)	
+				  
+                  -> PreExecute (Servicio hook de pre-ejecución)
+
+			      -> PostExecute (Servicio hook de post-ejecución)
+
+			      -> Langs
+			
+			         * SystemEnumServices.init.lang.xml (Frases sólo para el uso del módulo SystemEnumServices para un idioma distinto del ingles, en caso de ser ingles no es necesario puede ser borrado) 
+				  
+ 				  -> Logs (Los siguientes archivos y directorios bajo este directorio incluyendose el mismo se crean automáticamente no hay que crearlos)
+				  
+				     * SystemEnumServices.log.0 (Archivo de registro del sistema se crea automáticamente y muestra el funcionamiento interno del módulo SystemEnumServices para ubicar bug y problemas de configuración)
+					 
+               -> System.Execute.SQL
+			   
+                  * SystemExecuteSQL.jar (Servicio System.Execute.SQL)
+				  
+				  * SystemExecuteSQL.conf (Archivo de configuración del servicio)
+				  
+                  -> PreExecute (Servicio hook de pre-ejecución)
+
+			      -> PostExecute (Servicio hook de post-ejecución)
+
+			      -> Langs
+			
+			         * SystemExecuteSQL.init.lang.xml (Frases sólo para el uso del módulo SystemExecuteSQL para un idioma distinto del ingles, en caso de ser ingles no es necesario puede ser borrado) 
+				  
+ 				  -> Logs (Los siguientes archivos y directorios bajo este directorio incluyendose el mismo se crean automáticamente no hay que crearlos)
+				  
+				     * SystemExecuteSQL.log.0 (Archivo de registro del sistema se crea automáticamente y muestra el funcionamiento interno del módulo SystemExecuteSQL para ubicar bug y problemas de configuración)
+					 
+               -> System.Ping
+			   
+                  * SystemPing.jar (Servicio System.Ping)
+
+                  -> PreExecute (Servicio hook de pre-ejecución)
+				   
+				    -> PreExecuteServiceTest
+
+                       * PreExecuteServiceTest.jar ( Servicio de prejecución implementa la clase CAbstractServicePreExecute )					
+
+			      -> PostExecute (Servicio hook de post-ejecución)
+
+                    + Contiene directorio con .jar que implementan la clase CAbstractServicePostExecute 				  
+				  
+			      -> Langs
+			
+			         * SystemPing.init.lang.xml (Frases sólo para el uso del módulo SystemPing para un idioma distinto del ingles, en caso de ser ingles no es necesario puede ser borrado) 
+				  
+ 				  -> Logs (Los siguientes archivos y directorios bajo este directorio incluyendose el mismo se crean automáticamente no hay que crearlos)
+				  
+				     * SystemPing.log.0 (Archivo de registro del sistema se crea automáticamente y muestra el funcionamiento interno del módulo SystemPing para ubicar bug y problemas de configuración)
+					 
+               -> System.Rollback.Transaction 
+			   
+                  * SystemRollbackTransaction.jar (Servicio System.Rollback.Transaction)
+				  
+                  -> PreExecute (Servicio hook de pre-ejecución)
+
+			      -> PostExecute (Servicio hook de post-ejecución)
+
+			      -> Langs
+			
+			         * SystemRollbackTransaction.init.lang.xml (Frases sólo para el uso del módulo SystemRollbackTransaction para un idioma distinto del ingles, en caso de ser ingles no es necesario puede ser borrado) 
+				  
+ 				  -> Logs (Los siguientes archivos y directorios bajo este directorio incluyendose el mismo se crean automáticamente no hay que crearlos)
+				  
+				     * SystemRollbackTransaction.log.0 (Archivo de registro del sistema se crea automáticamente y muestra el funcionamiento interno del módulo SystemRollbackTransaction para ubicar bug y problemas de configuración)
+					 
+               -> System.Start.Session
+			   
+                  * SystemStartSession.jar (Servicio System.Start.Session)
+
+                  * SystemStartSession.conf (Archivo de configuración del servicio) 
+				  
+                  -> PreExecute (Servicio hook de pre-ejecución)
+
+			      -> PostExecute (Servicio hook de post-ejecución)
+
+			      -> Langs
+                   
+                     * SystemStartSession.init.lang.xml (Frases sólo para el uso del módulo SystemStartSession para un idioma distinto del ingles, en caso de ser ingles no es necesario puede ser borrado) 				   
+
+                  -> Logs (Los siguientes archivos y directorios bajo este directorio incluyendose el mismo se crean automáticamente no hay que crearlos)
+				  
+				     * SystemStartSession.log.0 (Archivo de registro del sistema se crea automáticamente y muestra el funcionamiento interno del módulo SystemStartSession para ubicar bug y problemas de configuración)
+					 
+               -> System.Start.Transaction
+			   
+                  * SystemStartTransaction.jar (Servicio System.Start.Transaction)			   
+				  
+                  -> PreExecute (Servicio hook de pre-ejecución)
+
+			      -> PostExecute (Servicio hook de post-ejecución)
+
+			      -> Langs
+			
+			         * SystemStartTransaction.init.lang.xml (Frases sólo para el uso del módulo SystemStartTransaction para un idioma distinto del ingles, en caso de ser ingles no es necesario puede ser borrado) 
+
+ 				  -> Logs (Los siguientes archivos y directorios bajo este directorio incluyendose el mismo se crean automáticamente no hay que crearlos)
+				  
+				     * SystemStartTransaction.log.0 (Archivo de registro del sistema se crea automáticamente y muestra el funcionamiento interno del módulo SystemStartTransaction para ubicar bug y problemas de configuración)
+				  

@@ -1,14 +1,9 @@
 /AbstractDBEngine
 /AbstractResponseFormat
 /AbstractService
-/AbstractServicesManager
-/CommonClasses
 /CryptPasswordSD
-/DBServicesManager
-/ExtendedLogger
 /FirebirdDBEngine
 /PreExecuteServiceTest
-/ServicesDaemon
 /SystemCommitTransaction
 /SystemEndSession
 /SystemEndTransaction
@@ -18,5 +13,4 @@
 /SystemRollbackTransaction
 /SystemStartSession
 /SystemStartTransaction
-/Utilities
 /META-INF

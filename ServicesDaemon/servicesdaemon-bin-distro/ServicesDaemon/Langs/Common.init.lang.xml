@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM  "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Common language file messages translations</comment>
+
+<entry key="The config section [%s] not found">La sección [%s] de la configuración no fue encontrada</entry>
+<entry key="The [%s] attribute not found, using the default value [%s]">El atributo [%s] no fue encontrado, usando el valor por defecto [%s]</entry>
+<entry key="Loading config from file: [%s]">Cargando configuración del archivo: [%s]</entry>
+<entry key="XML node root of config file: [%s]">El nodo raíz del archivo de configuración es: [%s]</entry>
+<entry key="Reading XML node section: [%s]">Leyendo la sección del nodo XML: [%s]</entry>
+<entry key="Failed to load config from XML Node Section: [%s] ">Falló al cargar la configuración de la sección del nodo XML: [%s]</entry>
+<entry key="Only one section [Config] tag allowed in config file in the path [%s]">Solo una sección [Config] es permitida en el archivo de configuración de la ruta [%s]</entry>
+<entry key="The config file in the path [%s] not exists">El archivo de configuracion [%s] no existe</entry>
+<entry key="The config file in the path [%s] cannot read, please check the owner and permissions">La ruta del archivo de configuración [%s] no se puede leer, por favor verifique el dueño y los permisos</entry>
+<entry key="The config path [%s] not is file">La ruta de la configuración [%s] no es un archivo</entry>
+<entry key="Node attribute name: [%s]">Nombre del atributo del nodo: [%s]</entry>
+<entry key="Node attribute value: [%s]">Valor del atributo del nodo: [%s]</entry>
+<entry key="Runtime config value [%s] changed to: [%s]">El Valor [%s] de la configuración cambiado a: [%s]</entry>
+<entry key="Failed to change runtime config value [%s] to: [%s] keeping old value: [%s]">No se pudo cambiar el valor [%s] de la configuración a: [%s] se mantiene el anterior valor: [%s]</entry>
+<entry key="The dir path [%s] not is dir">La ruta [%s] no es un directorio</entry>
+<entry key="The dir in the path [%s] cannot read, please check the owner and permissions">El directorio en la ruta [%s] no se puede leer, por favor verifique el dueño y los permisos</entry>
+<entry key="The dir in the path [%s] not exists">El directorio en la ruta [%s] no existe</entry>
+<entry key="The file path [%s] not is dir">La ruta [%s] no es un archivo</entry>
+<entry key="The file in the path [%s] cannot read, please check the owner and permissions">El archivo en la ruta [%s] no se puede leer, por favor verifique el dueño y los permisos</entry>
+<entry key="The file in the path [%s] not exists">El archivo en la ruta [%s] no existe</entry>
+<entry key="The [%s] attribute value [%s] is not valid ip address">El atributo [%s] con el valor [%s] no es una dirección ip válida</entry>
+<entry key="The [%s] attribute value [%s] is out of range. Must be integer value in the next inclusive range, minimum [%s] and maximum [%s]">El número del puerto [%s] se encuentra fuera del rango. Debe ser un número entero en el siguiente rango inclusivo, mínimo [%s] y máximo [%s]</entry>
+<entry key="Failed to load config from XML node section: [%s]">Falló al cargar de la configuración de la sección del nodo XML: [%s]</entry>
+
+<entry key="Session">Sesión</entry>
+
+<entry key="The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node">El atributo [%s] no fue encontrado, para el nodo [%s] en la posición relativa [%s], ignorando el nodo</entry>
+<entry key="The [%s] attribute not found, for the node [%s] at relative index [%s]">El atributo [%s] no fue encontrado, para el nodo [%s] en la posición relativa [%s]</entry>
+<entry key="The [%s] attribute not found, for the section [%s] at relative index [%s], ignoring the section">El atributo [%s] no fue encontrado, para la sección [%s] en la posición relativa [%s], ignorando la sección</entry>
+<entry key="The [%s] attribute not found, for the section [%s], ignoring the section">El atributo [%s] no fue encontrado, para la sección [%s], ignorando la sección</entry>
+<entry key="The [%s] attribute cannot empty string, for the node [%s] at relative index [%s]">El atributo [%s] no puede ser una cadena vacia, para el nodo [%s] en la posición relativa [%s]</entry>
+<entry key="The [%s] attribute cannot empty string, for the node [%s] at relative index [%s], ignoring the node">El atributo [%s] no puede ser una cadena vacia, para el nodo [%s] en la posición relativa [%s], ignorando el nodo</entry>
+<entry key="The [%s] attribute cannot empty string, for the section [%s] at relative index [%s]">El atributo [%s] no puede ser una cadena vacia, para la sección [%s] en la posición relativa [%s]</entry>
+<entry key="The [%s] attribute cannot empty string, for the section [%s] at relative index [%s], ignoring the section">El atributo [%s] no puede ser una cadena vacia, para la sección [%s] en la posición relativa [%s], ignorando la sección</entry>
+<entry key="The [%s] attribute cannot empty string, for the section [%s], ignoring the section">El atributo [%s] no puede ser una cadena vacia, para la sección [%s], ignorando la sección</entry>
+<entry key="The [%s] attribute cannot empty string">El atributo [%s] no puede ser una cadena vacia</entry>
+<entry key="The [%s] attribute cannot empty string, using the default value [%s]">El atributo [%s] no puede ser una cadena vacia, usando el valor por defecto [%s]</entry>
+<entry key="The [%s] attribute value [%s] is invalid, using the default value [%s]">El atributo [%s] con el valor de [%s] es inválido, usando el valor por defecto [%s]</entry>
+<entry key="The [%s] attribute value [%s] is invalid, must be positive integer or zero, for the node [%s] at relative index [%s]">El atributo [%s] con el valor de [%s] es inválido, debe ser un entero positivo o cero, para el nodo [%s] en la posición relativa [%s]</entry>
+<entry key="The [%s] attribute value [%s] is invalid, must be positive integer or zero, for the node [%s] at relative index [%s], ignoring the node">El atributo [%s] con el valor de [%s] es inválido, debe ser un entero positivo o cero, para el nodo [%s] en la posición relativa [%s], ignorando el nodo</entry>
+<entry key="The [%s] attribute cannot empty string">El atributo [%s] no puede ser una cadena vacia</entry>
+<entry key="The [%s] attribute is empty string, for the node [%s] at relative index [%s]">El atributo [%s] es una cadena vacia, para el nodo [%s] en la posición relativa [%s]</entry>
+<entry key="The [%s] attribute value [%s] must be only one of the next values: [%s,%s]">El atributo [%s] con el valor de [%s] debe ser solo uno de los siguientes valores: [%s,%s]</entry>
+<entry key="The [%s] attribute value [%s] must be only one of the next values: [%s,%s,%s]">El atributo [%s] con el valor de [%s] debe ser solo uno de los siguientes valores: [%s,%s,%s]</entry>
+<entry key="The [%s] attribute value [%s] must be only one of the next values: %s, for the node [%s] at relative index [%s]">El atributo [%s] con el valor de [%s] debe ser solo uno de los siguientes valores: %s, para el nodo [%s] en la posición relativa [%s]</entry>
+<entry key="The [%s] attribute value [%s] must be only one of the next values: %s, for the node [%s] at relative index [%s], ignoring the node">El atributo [%s] con el valor de [%s] debe ser solo uno de los siguientes valores: %s, para el nodo [%s] en la posición relativa [%s], ignorando el nodo</entry>
+<entry key="The [%s] attribute value [%s] must be only one of the next values: [%s,%s], for the node [%s] at relative index [%s]">El atributo [%s] con el valor de [%s] debe ser solo uno de los siguientes valores: [%s,%s], para el nodo [%s] en la posición relativa [%s]</entry>
+<entry key="The [%s] node value cannot empty string, at relative index [%s], ignoring the node">El valor del nodo [%s] no puede ser una cadena vacía, en la posición relativa [%s]</entry>
+
+<entry key="Loading classes from path: [%s]">Cargando clases de la ruta: [%s]</entry>
+<entry key="Jar count files found: [%s]">Cantidad de archivos jar encontrados: [%s]</entry>
+<entry key="Added jar file from the path: [%s]">Archivo jar agregado de la ruta: [%s]</entry>
+
+<entry key="Running dir: [%s]">Corriendo desde el directorio: [%s]</entry>
+<entry key="Version: [%s]">Versión: [%s]</entry>
+<entry key="Config Ok">Configuración Correcta</entry>
+
+<entry key="Failed to load config file">No se pudo cargar la configuración</entry>
+<entry key="Service Name">Nombre del servicio</entry>
+
+<entry key="Added [%s] = [%s]">Agregado [%s] = [%s]</entry>
+<entry key="Added [%s] = [%s] and [%s] = [%s]">Agregado [%s] = [%s] y [%s] = [%s]</entry>
+<entry key="Added [%s] [%s] = [%s] and [%s] = [%s]">Agregado [%s] [%s] = [%s] y [%s] = [%s]</entry>
+<entry key="[%s] from [%s] = [%s] not found">[%s] de [%s] = [%s] no encontrado</entry>
+<entry key="Removed [%s] by [%s] = [%s]">Removido [%s] por [%s] = [%s]</entry>
+<entry key="[%s] = [%s] not found">[%s] = [%s] no encontrado</entry>
+<entry key="[%s] = [%s] removed">[%s] = [%s] removido</entry>
+
+<entry key="Count of pre execute service registered: [%s]">Cantidad de servicios de pre ejecución registrados: [%s]</entry>
+<entry key="Count of post execute service registered: [%s]">Cantidad de servicios de post ejecución registrados: [%s]</entry>
+<entry key="Unknown SQL data type [%s]">Tipo de dato SQL desconocido</entry>
+<entry key=""></entry>
+<entry key=""></entry>
+<entry key=""></entry>
+
+
+</properties>

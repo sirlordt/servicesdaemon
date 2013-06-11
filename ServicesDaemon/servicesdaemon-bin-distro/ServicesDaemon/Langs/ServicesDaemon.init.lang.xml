@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM  "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Language file messages translations</comment>
+
+<entry key="Reading XML network interface: [%s]">Leyendo interface de red XML: [%s]</entry>
+<entry key="Cannot use SSL beacuse no [%s] defined in config file section [%s]">No puedo usar SSL porque no se definió [%s] en el archivo de configuración sección [%s]</entry>
+<entry key="Network interface config attributes is not valid">Los atributos de la configutación de la interface de red no son válidos</entry>
+<entry key="Network interface defined and added. IP: [%s], Address_Type: [%s], Port: [%s], Use_SSL: [%s]">Interface de red definida y agregada. IP: [%s], Address_Type: [%s], Port: [%s], Use_SSL: [%s]</entry>
+<entry key="The port number: [%s] for the IP address: [%s] is used in previus network interface config with IP address: [%s], cannot use the port number again">El número de puerto: [%s] para la dirección IP: [%s] ya fue usado en una configuración de interface de red previa con la dirección IP: [%s], no se puede usar el número del puerto nuevamente</entry>
+<entry key="No valid network interface defined. Adding default">No hay interfaces de red válidas definidas. Agregando una por defecto</entry>
+<entry key="No network interface defined. Adding default">No hay interfaces de red definidas. Agregando una por defecto</entry>
+<entry key="Count of network interfaces defined: [%s]">Cantidad de interfaces de red definidas: [%s]</entry>
+
+<entry key="Reading XML access control rule: [%s]">Leyendo regla de control de acceso del nodo XML: [%s]</entry>
+<entry key="Access control rule defined and added. IP: [%s], ContextPath: [%s], Action: [%s]">Regla de control de acceso definida y agregada. IP: [%s], ContextPath: [%s], Acción: [%s]</entry>
+<entry key="The IP address [%s] is used in previus access control rule number: [%s], cannot use the IP address again">La direccón IP [%s] es usada en una definición de control de acceso previa la número [%s], no puedo usar la dirección IP nuevamente</entry>
+<entry key="Access control rule config attributes is not valid">Los atributos de la regla de control de acceso no son válidos</entry>
+<entry key="No valid access control rules defined">No se definieron reglas de control de acceso válidas</entry>
+<entry key="Count of access controls rules defined: [%s]">Cantidad de reglas de control de acceso definidas: [%s]</entry>
+
+<entry key="Creating the main server">Creando el servidor principal</entry>
+<entry key="Using default services manager for context path [%s]">Usando el administrador de servicios por defecto para el contexto [%s]</entry>
+<entry key="Daemon starting now">Iniciando el daemonio ahora</entry>
+
+<entry key="Default services manager">Administrador de servicios por defecto</entry>
+
+<entry key="Daemon ending now">Terminando el daemonio ahora</entry>
+</properties>
