@@ -45,18 +45,21 @@ public class CSystemEnumServices extends CAbstractService {
         else
            s = s.substring( 0, s.indexOf(".class") );
 
-        if ( s.indexOf( "jar:file:\\" )  == 0 ) { 
+        if ( s.indexOf( "jar:file:\\" )  == 0 ) { //Windows style path SO inside jar file 
 
         	s = s.substring( 10 );
 
         }
-        else if ( s.indexOf( "file:\\" )  == 0 ) {
+        else if ( s.indexOf( "file:\\" )  == 0 ) { //Windows style path SO .class file
 
         	s = s.substring( 6 );
 
         }
+        else { //Unix family ( Linux/BSD/Mac/Solaris ) style path SO
 
-        //s = s.substring( s.indexOf(':') + 2 );
+            s = s.substring( s.lastIndexOf(':') + 1 );
+
+        }
 
         return s.substring( 0, s.lastIndexOf( File.separatorChar ) + 1 );
 

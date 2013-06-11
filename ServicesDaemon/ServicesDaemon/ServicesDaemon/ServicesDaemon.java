@@ -415,7 +415,7 @@ public class ServicesDaemon {
 	    	    
 		DefaultConstantsServicesDaemon.strDefaultRunningPath = getJarFolder();
 
-		System.out.println( "Path: '" + DefaultConstantsServicesDaemon.strDefaultRunningPath + "'" );  
+		System.out.println( "Running path: \"" + DefaultConstantsServicesDaemon.strDefaultRunningPath + "\"" );  
 		
 		InitArgs = new ArrayList<String>( Arrays.asList( args ) );
 		
