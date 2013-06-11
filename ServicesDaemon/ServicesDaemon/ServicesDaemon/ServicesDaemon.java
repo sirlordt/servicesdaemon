@@ -370,7 +370,7 @@ public class ServicesDaemon {
     
     public final static String getJarFolder() {
 
-        String name = ServicesDaemon.class.getCanonicalName().replace( '.', '/' );
+		String name = ServicesDaemon.class.getCanonicalName().replace( '.', '/' );
 
         String s = ServicesDaemon.class.getClass().getResource( "/" + name + ".class" ).toString();
 
@@ -381,7 +381,18 @@ public class ServicesDaemon {
         else
            s = s.substring( 0, s.indexOf(".class") );
 
-        s = s.substring( s.indexOf(':') + 2 );
+        if ( s.indexOf( "jar:file:\\" )  == 0 ) { 
+
+        	s = s.substring( 10 );
+
+        }
+        else if ( s.indexOf( "file:\\" )  == 0 ) {
+
+        	s = s.substring( 6 );
+
+        }
+
+        //s = s.substring( s.indexOf(':') + 2 );
 
         return s.substring( 0, s.lastIndexOf( File.separatorChar ) + 1 );
 
@@ -391,6 +402,8 @@ public class ServicesDaemon {
 	    	    
 		DefaultConstantsServicesDaemon.strDefaultRunningPath = getJarFolder();
 
+		//System.out.println( DefaultConstantsServicesDaemon.strDefaultRunningPath );  
+		
 		InitArgs = new ArrayList<String>( Arrays.asList( args ) );
 		
 		CExtendedLogger ServicesDaemonLogger = CExtendedLogger.getLogger( DefaultConstantsServicesDaemon.strDefaultLoggerName );

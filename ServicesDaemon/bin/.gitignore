@@ -7,7 +7,6 @@
 /DBServicesManager
 /ExtendedLogger
 /FirebirdDBEngine
-/META-INF
 /PreExecuteServiceTest
 /ServicesDaemon
 /SystemCommitTransaction
@@ -20,3 +19,4 @@
 /SystemStartSession
 /SystemStartTransaction
 /Utilities
+/META-INF

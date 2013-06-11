@@ -35,7 +35,18 @@ public class CSystemEnumServices extends CAbstractService {
         else
            s = s.substring( 0, s.indexOf(".class") );
 
-        s = s.substring( s.indexOf(':') + 2 );
+        if ( s.indexOf( "jar:file:\\" )  == 0 ) { 
+
+        	s = s.substring( 10 );
+
+        }
+        else if ( s.indexOf( "file:\\" )  == 0 ) {
+
+        	s = s.substring( 6 );
+
+        }
+
+        //s = s.substring( s.indexOf(':') + 2 );
 
         return s.substring( 0, s.lastIndexOf( File.separatorChar ) + 1 );
 
