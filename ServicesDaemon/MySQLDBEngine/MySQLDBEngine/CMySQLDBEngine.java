@@ -53,7 +53,7 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
 		
 		try {
 			
-            String strDatabaseURL = "jdbc:mysql:" + ConfigDBConnection.strIP + "/" + ConfigDBConnection.intPort + ":" + ConfigDBConnection.strDatabase;
+            String strDatabaseURL = "jdbc:mysql://" + ConfigDBConnection.strIP + ":" + ConfigDBConnection.intPort + "/" + ConfigDBConnection.strDatabase;
 
             if ( Logger != null ) {
             	

@@ -374,9 +374,20 @@ public class CSystemStartSession extends CAbstractService {
 	    		
 	    		StartSessionRowSet.NormalizeRowCount();
 	    		
-	    		StartSessionRowSet.setAllData( ConstantsServicesTags._SecurityTokenID, Long.parseLong( strSecurityTokenID ) );
-	    		StartSessionRowSet.setAllData( ConstantsServicesTags._Code, Integer.parseInt( strCode ) );
-	    		StartSessionRowSet.setAllData( ConstantsServicesTags._Description, ServiceLang.Translate( "Success start session" ) );
+	    		if ( StartSessionRowSet.getRowCount() > 0 ) {
+	    		 
+	    			StartSessionRowSet.setAllData( ConstantsServicesTags._SecurityTokenID, Long.parseLong( strSecurityTokenID ) );
+	    		    StartSessionRowSet.setAllData( ConstantsServicesTags._Code, Integer.parseInt( strCode ) );
+	    		    StartSessionRowSet.setAllData( ConstantsServicesTags._Description, ServiceLang.Translate( "Success start session" ) );
+	    		    
+	    		}
+	    		else {
+	    			
+	    			StartSessionRowSet.addData( ConstantsServicesTags._SecurityTokenID, Long.parseLong( strSecurityTokenID ) );
+	    		    StartSessionRowSet.addData( ConstantsServicesTags._Code, Integer.parseInt( strCode ) );
+	    		    StartSessionRowSet.addData( ConstantsServicesTags._Description, ServiceLang.Translate( "Success start session" ) );
+	    			
+	    		}
 				
 				String strResponseBuffer = ResponseFormat.FormatMemoryRowSet( StartSessionRowSet, strResponseFormatVersion );
 				
