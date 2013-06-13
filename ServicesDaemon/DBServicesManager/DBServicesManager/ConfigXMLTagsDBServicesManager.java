@@ -40,8 +40,10 @@ public interface ConfigXMLTagsDBServicesManager {
 	public static final String _Auth_Type = "Auth_Type";
 	public static final String _Auth_Type_Engine = "engine";
 	public static final String _Auth_Type_Database = "database";
-	public static final String _User = "User";
-	public static final String _Password = "Password";
+	public static final String _SessionUser = "Session_User";
+	public static final String _SessionPassword = "Session_Password";
+	public static final String _TransactionUser = "Transaction_User";
+	public static final String _TransactionPassword = "Transaction_Password";
 	public static final String _Password_Crypted = "crypted";
 	public static final String _Password_Crypted_Sep = ":";
 	

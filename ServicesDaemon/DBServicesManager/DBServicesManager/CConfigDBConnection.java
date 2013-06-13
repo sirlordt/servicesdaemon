@@ -10,6 +10,8 @@
  ******************************************************************************/
 package DBServicesManager;
 
+import AbstractDBEngine.CDBEngineConfigConnection;
+
 public class CConfigDBConnection {
 
 	public String strName;
@@ -21,8 +23,10 @@ public class CConfigDBConnection {
 	public int intPort;
 	public String strDatabase;
 	public String strAuthType;
-	public String strUser;
-	public String strPassword;
+	public String strSessionUser;
+	public String strSessionPassword;
+	public String strTransactionUser;
+	public String strTransactionPassword;
 	public String strDateFormat;
 	public String strTimeFormat;
 	public String strDateTimeFormat;
@@ -39,8 +43,10 @@ public class CConfigDBConnection {
 		intPort = 45068;
 		strDatabase = "";
 		strAuthType = "database";
-		strUser = "";
-		strPassword = "";
+		strSessionUser = "";
+		strSessionPassword = "";
+		strTransactionUser = "";
+		strTransactionPassword = "";
 		strDateFormat = "";
 		strTimeFormat = "";
 		strDateTimeFormat = "";
@@ -59,12 +65,50 @@ public class CConfigDBConnection {
 		intPort = ConfigDBConnection.intPort;
 		strDatabase = ConfigDBConnection.strDatabase;
 		strAuthType = ConfigDBConnection.strAuthType;
-		strUser = ConfigDBConnection.strUser;
-		strPassword = ConfigDBConnection.strPassword;
+		strSessionUser = ConfigDBConnection.strSessionUser;
+		strSessionPassword = ConfigDBConnection.strSessionPassword;
+		strTransactionUser = ConfigDBConnection.strTransactionUser;
+		strTransactionPassword = ConfigDBConnection.strTransactionPassword;
 		strDateFormat = ConfigDBConnection.strDateFormat;
 		strTimeFormat = ConfigDBConnection.strTimeFormat;
 		strDateTimeFormat = ConfigDBConnection.strDateTimeFormat;
 
 	}
+
+	public CDBEngineConfigConnection getDBEngineConfigConnection( boolean bUseSessionUser ){
+		
+		CDBEngineConfigConnection DBEngineConfigConnection = new CDBEngineConfigConnection();
+		
+		DBEngineConfigConnection.strName = this.strName;
+		DBEngineConfigConnection.strDriver = this.strDriver;
+		DBEngineConfigConnection.strEngine = this.strEngine;
+		DBEngineConfigConnection.strEngineVersion = this.strEngineVersion;
+		DBEngineConfigConnection.strIP = this.strIP;
+		DBEngineConfigConnection.strAddressType = this.strAddressType;
+		DBEngineConfigConnection.intPort = this.intPort;
+		DBEngineConfigConnection.strDatabase = this.strDatabase;
+		DBEngineConfigConnection.strAuthType = this.strAuthType;
+		
+		if ( bUseSessionUser == true || this.strTransactionUser.isEmpty() == true ) {
+
+			DBEngineConfigConnection.strUser = this.strSessionUser;
+			DBEngineConfigConnection.strPassword = this.strSessionPassword;
+
+		}
+		else {
+
+			DBEngineConfigConnection.strUser = this.strTransactionUser;
+			DBEngineConfigConnection.strPassword = this.strTransactionPassword;
+
+		}
+		
+		DBEngineConfigConnection.strDateFormat = this.strDateFormat;
+		DBEngineConfigConnection.strTimeFormat = this.strTimeFormat;
+		DBEngineConfigConnection.strDateTimeFormat = this.strDateTimeFormat;
+		
+		
+		return DBEngineConfigConnection;
+		
+	} 
 	
 }

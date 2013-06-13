@@ -521,7 +521,7 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
         
         try {
 
-			String strAttributesOrder[] = { ConfigXMLTagsDBServicesManager._Name, ConfigXMLTagsDBServicesManager._Driver, ConfigXMLTagsDBServicesManager._Engine, ConfigXMLTagsDBServicesManager._Engine_Version, ConfigXMLTagsServicesDaemon._IP, ConfigXMLTagsServicesDaemon._Port, ConfigXMLTagsDBServicesManager._Database, ConfigXMLTagsDBServicesManager._Auth_Type, ConfigXMLTagsDBServicesManager._User, ConfigXMLTagsDBServicesManager._Password, ConfigXMLTagsDBServicesManager._Date_Format, ConfigXMLTagsDBServicesManager._Time_Format, ConfigXMLTagsDBServicesManager._Date_Time_Format };
+			String strAttributesOrder[] = { ConfigXMLTagsDBServicesManager._Name, ConfigXMLTagsDBServicesManager._Driver, ConfigXMLTagsDBServicesManager._Engine, ConfigXMLTagsDBServicesManager._Engine_Version, ConfigXMLTagsServicesDaemon._IP, ConfigXMLTagsServicesDaemon._Port, ConfigXMLTagsDBServicesManager._Database, ConfigXMLTagsDBServicesManager._Auth_Type, ConfigXMLTagsDBServicesManager._SessionUser, ConfigXMLTagsDBServicesManager._SessionPassword, ConfigXMLTagsDBServicesManager._Date_Format, ConfigXMLTagsDBServicesManager._Time_Format, ConfigXMLTagsDBServicesManager._Date_Time_Format };
 
 			NodeList ConfigConnectionsList = ConfigSectionNode.getChildNodes();
 	          
@@ -546,8 +546,10 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 						int intPort = -1;
 						String strDatabase = "";
 						String strAuthType = "";
-						String strUser = "";
-						String strPassword = "";
+						String strSessionUser = "";
+						String strSessionPassword = "";
+						String strTransactionUser = "";
+						String strTransactionPassword = "";
 						String strDateFormat = "";
 						String strTimeFormat = "";
 						String strDateTimeFormat = "";
@@ -704,33 +706,51 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 										}
 										
 									}
-									else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsDBServicesManager._User ) ) {
+									else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsDBServicesManager._SessionUser ) ) {
 
 										if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 											
-											strUser = NodeAttribute.getNodeValue();
+											strSessionUser = NodeAttribute.getNodeValue();
 										
 										}
 										else {
 											
-											Logger.LogError( "-1011", Lang.Translate( "The [%s] attribute value for connection [%s] config cannot empty string", ConfigXMLTagsDBServicesManager._User, strUser ) );
+											Logger.LogError( "-1011", Lang.Translate( "The [%s] attribute value for connection [%s] config cannot empty string", ConfigXMLTagsDBServicesManager._SessionUser, strSessionUser ) );
 											break; //Stop parse more attributes
 											
 										}
 										
 									}
-									else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsDBServicesManager._Password ) ) {
+									else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsDBServicesManager._SessionPassword ) ) {
 
 										if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 											
-											strPassword = NodeAttribute.getNodeValue();
+											strSessionPassword = NodeAttribute.getNodeValue();
 										
 										}
 										else {
 											
-											Logger.LogError( "-1012", Lang.Translate( "The [%s] attribute value for connection [%s] config cannot empty string", ConfigXMLTagsDBServicesManager._Password, strPassword ) );
+											Logger.LogError( "-1012", Lang.Translate( "The [%s] attribute value for connection [%s] config cannot empty string", ConfigXMLTagsDBServicesManager._SessionPassword, strSessionPassword ) );
 											break; //Stop parse more attributes
 											
+										}
+										
+									}
+									else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsDBServicesManager._TransactionUser ) ) {
+
+										if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
+											
+											strTransactionUser = NodeAttribute.getNodeValue();
+										
+										}
+										
+									}
+									else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsDBServicesManager._TransactionPassword ) ) {
+
+										if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
+											
+											strTransactionPassword = NodeAttribute.getNodeValue();
+										
 										}
 										
 									}
@@ -790,7 +810,7 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 					            
 					        }
 					        
-					        if ( strName.isEmpty() == false && strDriver.isEmpty() == false && strEngine.isEmpty() == false && strEngineVersion.isEmpty() == false && strIP.isEmpty() == false && intPort != -1 && strDatabase.isEmpty() == false && strAuthType.isEmpty() == false && strUser.isEmpty() == false && strPassword.isEmpty() == false && strDateFormat.isEmpty() == false && strTimeFormat.isEmpty() == false && strDateTimeFormat.isEmpty() == false ) {
+					        if ( strName.isEmpty() == false && strDriver.isEmpty() == false && strEngine.isEmpty() == false && strEngineVersion.isEmpty() == false && strIP.isEmpty() == false && intPort != -1 && strDatabase.isEmpty() == false && strAuthType.isEmpty() == false && strSessionUser.isEmpty() == false && strSessionPassword.isEmpty() == false && strDateFormat.isEmpty() == false && strTimeFormat.isEmpty() == false && strDateTimeFormat.isEmpty() == false ) {
 					        
 			                    intConnectionIndex += 1;
 					        	boolean bNameUsed = false;
@@ -845,15 +865,17 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 	                                	DBConnection.intPort = intPort;
 	                                	DBConnection.strDatabase = strDatabase;
 	                                	DBConnection.strAuthType = strAuthType;
-	                                	DBConnection.strUser = strUser;
-	                                	DBConnection.strPassword = strPassword;
+	                                	DBConnection.strSessionUser = strSessionUser;
+	                                	DBConnection.strSessionPassword = strSessionPassword;
+	                                	DBConnection.strTransactionUser = strTransactionUser;
+	                                	DBConnection.strTransactionPassword = strTransactionPassword;
 	                                	DBConnection.strDateFormat = strDateFormat;
 	                                	DBConnection.strTimeFormat = strTimeFormat;
 	                                	DBConnection.strDateTimeFormat = strDateTimeFormat;
 	
 	                                	this.ConfiguredDBConnections.add( DBConnection );
 	
-	                                	Logger.LogMessage( "1", Lang.Translate( "Connection database defined and added. Name: [%s], Driver: [%s], Engine: [%s], Engine_Version: [%s], IP: [%s], Address_Type: [%s], Port: [%s], Database: [%s], User: [%s], Password: [%s], DateFormat: [%s], TimeFormat: [%s], DateTimeFormat: [%s]", strName, strDriver, strEngine, strEngineVersion, strIP, strAddressType, Integer.toString( intPort ), strDatabase, strUser, strPassword, strDateFormat, strTimeFormat, strDateTimeFormat ) );
+	                                	Logger.LogMessage( "1", Lang.Translate( "Connection database defined and added. Name: [%s], Driver: [%s], Engine: [%s], Engine_Version: [%s], IP: [%s], Address_Type: [%s], Port: [%s], Database: [%s], SessionUser: [%s], SessionPassword: [%s], TransactionUser: [%s], TransactionPassword: [%s], DateFormat: [%s], TimeFormat: [%s], DateTimeFormat: [%s]", strName, strDriver, strEngine, strEngineVersion, strIP, strAddressType, Integer.toString( intPort ), strDatabase, strSessionUser, strSessionPassword, strTransactionUser, strTransactionPassword, strDateFormat, strTimeFormat, strDateTimeFormat ) );
 
                                 	}
                                 	else {

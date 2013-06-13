@@ -621,15 +621,20 @@ public class CSystemStartSession extends CAbstractService {
 										SimpleDateFormat TimeFormat = new SimpleDateFormat( LocalConfigDBConnection.strTimeFormat );
 										SimpleDateFormat DateTimeFormat = new SimpleDateFormat( LocalConfigDBConnection.strDateTimeFormat );
 
-										LocalConfigDBConnection.strUser = this.ReplaceMacrosNamesForValues( LocalConfigDBConnection.strUser, Request.getRemoteAddr(), Request.getHeader( "X-Forwarded-For" ), LocalConfigDBConnection.strDatabase, LocalConfigDBConnection.strName, DateFormat.format( SystemDateTime ), TimeFormat.format( SystemDateTime ), DateTimeFormat.format( SystemDateTime ) );
-										LocalConfigDBConnection.strPassword = this.ReplaceMacrosNamesForValues( LocalConfigDBConnection.strPassword, Request.getRemoteAddr(), Request.getHeader( "X-Forwarded-For" ), LocalConfigDBConnection.strDatabase, LocalConfigDBConnection.strName, DateFormat.format( SystemDateTime ), TimeFormat.format( SystemDateTime ), DateTimeFormat.format( SystemDateTime ) );
+										LocalConfigDBConnection.strSessionUser = this.ReplaceMacrosNamesForValues( LocalConfigDBConnection.strSessionUser, Request.getRemoteAddr(), Request.getHeader( "X-Forwarded-For" ), LocalConfigDBConnection.strDatabase, LocalConfigDBConnection.strName, DateFormat.format( SystemDateTime ), TimeFormat.format( SystemDateTime ), DateTimeFormat.format( SystemDateTime ) );
+										LocalConfigDBConnection.strSessionPassword = this.ReplaceMacrosNamesForValues( LocalConfigDBConnection.strSessionPassword, Request.getRemoteAddr(), Request.getHeader( "X-Forwarded-For" ), LocalConfigDBConnection.strDatabase, LocalConfigDBConnection.strName, DateFormat.format( SystemDateTime ), TimeFormat.format( SystemDateTime ), DateTimeFormat.format( SystemDateTime ) );
+										LocalConfigDBConnection.strTransactionUser = this.ReplaceMacrosNamesForValues( LocalConfigDBConnection.strTransactionUser, Request.getRemoteAddr(), Request.getHeader( "X-Forwarded-For" ), LocalConfigDBConnection.strDatabase, LocalConfigDBConnection.strName, DateFormat.format( SystemDateTime ), TimeFormat.format( SystemDateTime ), DateTimeFormat.format( SystemDateTime ) );
+										LocalConfigDBConnection.strTransactionPassword = this.ReplaceMacrosNamesForValues( LocalConfigDBConnection.strTransactionPassword, Request.getRemoteAddr(), Request.getHeader( "X-Forwarded-For" ), LocalConfigDBConnection.strDatabase, LocalConfigDBConnection.strName, DateFormat.format( SystemDateTime ), TimeFormat.format( SystemDateTime ), DateTimeFormat.format( SystemDateTime ) );
 										LocalConfigDBConnection.strSessionKey = this.ReplaceMacrosNamesForValues( LocalConfigDBConnection.strSessionKey, Request.getRemoteAddr(), Request.getHeader( "X-Forwarded-For" ), LocalConfigDBConnection.strDatabase, LocalConfigDBConnection.strName, DateFormat.format( SystemDateTime ), TimeFormat.format( SystemDateTime ), DateTimeFormat.format( SystemDateTime ) );
-										LocalConfigDBConnection.strUser = this.ReplaceInputParametersNamesForValues( LocalConfigDBConnection.strUser, Request );
-										LocalConfigDBConnection.strPassword = this.ReplaceInputParametersNamesForValues( LocalConfigDBConnection.strPassword, Request );
-										LocalConfigDBConnection.strPassword = this.UncryptString( LocalConfigDBConnection.strPassword, ServiceLogger, ServiceLang );
+										LocalConfigDBConnection.strSessionUser = this.ReplaceInputParametersNamesForValues( LocalConfigDBConnection.strSessionUser, Request );
+										LocalConfigDBConnection.strSessionPassword = this.ReplaceInputParametersNamesForValues( LocalConfigDBConnection.strSessionPassword, Request );
+										LocalConfigDBConnection.strSessionPassword = this.UncryptString( LocalConfigDBConnection.strSessionPassword, ServiceLogger, ServiceLang );
+										LocalConfigDBConnection.strTransactionUser = this.ReplaceInputParametersNamesForValues( LocalConfigDBConnection.strTransactionUser, Request );
+										LocalConfigDBConnection.strTransactionPassword = this.ReplaceInputParametersNamesForValues( LocalConfigDBConnection.strTransactionPassword, Request );
+										LocalConfigDBConnection.strTransactionPassword = this.UncryptString( LocalConfigDBConnection.strTransactionPassword, ServiceLogger, ServiceLang );
 										LocalConfigDBConnection.strSessionKey = this.ReplaceInputParametersNamesForValues( LocalConfigDBConnection.strSessionKey, Request );
 
-										Connection DBConnection = DBEngine.getDBConnection( LocalConfigDBConnection, ServiceLogger, ServiceLang );
+										Connection DBConnection = DBEngine.getDBConnection( LocalConfigDBConnection.getDBEngineConfigConnection( true ), ServiceLogger, ServiceLang );
 
 										if ( DBConnection != null ) {
 
@@ -646,19 +651,19 @@ public class CSystemStartSession extends CAbstractService {
 
 												if ( SystemStartSessionDBConnection.strSQLType.equals( ConfigXMLTagsSystemStartSession._SQLType_sql )  ) {
 
-													StartSessionResultSet = DBEngine.ExecuteCheckMethodSQL( DBConnection, Request, InputServiceParameters, this.getMacrosTypes(), this.getMacrosNames(), strMacrosValues, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, LocalConfigDBConnection.strDateTimeFormat, strSQL, ServiceLogger, ServiceLang );
+													StartSessionResultSet = DBEngine.InputServiceParameterQuerySQL( DBConnection, Request, InputServiceParameters, this.getMacrosTypes(), this.getMacrosNames(), strMacrosValues, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, LocalConfigDBConnection.strDateTimeFormat, strSQL, ServiceLogger, ServiceLang );
 
 												}
 												else if ( SystemStartSessionDBConnection.strSQLType.equals( ConfigXMLTagsSystemStartSession._SQLType_stored_procedure )  ) {
 
-													StartSessionResultSet = DBEngine.ExecuteCheckMethodStoredProcedure( DBConnection, Request, InputServiceParameters, this.getMacrosTypes(), this.getMacrosNames(), strMacrosValues, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, LocalConfigDBConnection.strDateTimeFormat, strSQL, ServiceLogger, ServiceLang );
+													StartSessionResultSet = DBEngine.InputServiceParameterStoredProcedure( DBConnection, Request, InputServiceParameters, this.getMacrosTypes(), this.getMacrosNames(), strMacrosValues, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, LocalConfigDBConnection.strDateTimeFormat, strSQL, ServiceLogger, ServiceLang );
 
 												}
 
 											}
 
 											DBEngine.commit( DBConnection, ServiceLogger, ServiceLang );
-											DBEngine.close( DBConnection, ServiceLogger, ServiceLang );
+											//DBEngine.close( DBConnection, ServiceLogger, ServiceLang );
 
 											if ( StartSessionResultSet != null ) {
 
@@ -788,6 +793,8 @@ public class CSystemStartSession extends CAbstractService {
 
 											}
 
+											DBEngine.close( DBConnection, ServiceLogger, ServiceLang );
+											
 											intResultCode = 1;
 
 										}

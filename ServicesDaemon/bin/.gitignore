@@ -1,3 +1,4 @@
+/MySQLDBEngine
 /AbstractDBEngine
 /AbstractResponseFormat
 /AbstractService
@@ -16,6 +17,3 @@
 /SystemStartSession
 /SystemStartTransaction
 /DBServicesManager
-/MySQLDBEngine
-/META-INF
-/ServicesDaemon

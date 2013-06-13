@@ -31,7 +31,6 @@ import CommonClasses.CNamedPreparedStatement;
 import CommonClasses.CResultSetResult;
 import CommonClasses.CServicesDaemonConfig;
 import CommonClasses.NamesSQLTypes;
-import DBServicesManager.CConfigDBConnection;
 import ExtendedLogger.CExtendedLogger;
 
 public abstract class CAbstractDBEngine {
@@ -595,15 +594,15 @@ public abstract class CAbstractDBEngine {
 	
 	}
 	
-    public abstract Connection getDBConnection( CConfigDBConnection ConfigDBConnection, CExtendedLogger Logger, CLanguage Lang );
+    public abstract Connection getDBConnection( CDBEngineConfigConnection ConfigDBConnection, CExtendedLogger Logger, CLanguage Lang );
 	public abstract boolean isValid( Connection DBConnection, CExtendedLogger Logger, CLanguage Lang );
     public abstract boolean setAutoCommit( Connection DBConnection, boolean bAutoCommit, CExtendedLogger Logger, CLanguage Lang );
 	public abstract boolean commit( Connection DBConnection, CExtendedLogger Logger, CLanguage Lang );
 	public abstract boolean rollback( Connection DBConnection, CExtendedLogger Logger, CLanguage Lang );
 	public abstract boolean close( Connection DBConnection, CExtendedLogger Logger, CLanguage Lang );
-    //public abstract String ReplaceSQLMacrosNamesToValues( int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL );
-    public abstract CMemoryRowSet ExecuteCheckMethodSQL( Connection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, CExtendedLogger Logger, CLanguage Lang );
-	public abstract CMemoryRowSet ExecuteCheckMethodStoredProcedure( Connection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, CExtendedLogger Logger, CLanguage Lang  );
+    public abstract CMemoryRowSet InputServiceParameterQuerySQL( Connection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, CExtendedLogger Logger, CLanguage Lang );
+    public abstract boolean InputServiceParameterModifySQL( Connection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, CExtendedLogger Logger, CLanguage Lang );
+	public abstract CMemoryRowSet InputServiceParameterStoredProcedure( Connection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, CExtendedLogger Logger, CLanguage Lang  );
 	public abstract ResultSet ExecuteDummyQuery( Connection DBConnection, String strOptionalDummyQuery, CExtendedLogger Logger, CLanguage Lang );
 	public abstract boolean CheckPlainSQLStatement( String strSQL, CExtendedLogger Logger, CLanguage Lang );
     public abstract Statement CreatePlainSQLStatment( Connection DBConnection, CExtendedLogger Logger, CLanguage Lang );

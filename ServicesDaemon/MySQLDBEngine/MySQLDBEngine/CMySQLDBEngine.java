@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import Utilities.Utilities;
 
 import AbstractDBEngine.CAbstractDBEngine;
+import AbstractDBEngine.CDBEngineConfigConnection;
 import AbstractService.CInputServiceParameter;
 import CommonClasses.CLanguage;
 import CommonClasses.CMemoryFieldData;
@@ -33,7 +34,6 @@ import CommonClasses.CNamedCallableStatement;
 import CommonClasses.CNamedPreparedStatement;
 import CommonClasses.CResultSetResult;
 import CommonClasses.ConfigXMLTagsServicesDaemon;
-import DBServicesManager.CConfigDBConnection;
 import ExtendedLogger.CExtendedLogger;
 
 public class CMySQLDBEngine extends CAbstractDBEngine {
@@ -47,7 +47,7 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
 	
 	
 	@Override
-	public Connection getDBConnection( CConfigDBConnection ConfigDBConnection, CExtendedLogger Logger, CLanguage Lang ) {
+	public Connection getDBConnection( CDBEngineConfigConnection ConfigDBConnection, CExtendedLogger Logger, CLanguage Lang ) {
 
 		Connection DBConnection = null;
 		
@@ -270,7 +270,7 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
 	}
 
 	@Override
-    public CMemoryRowSet ExecuteCheckMethodSQL( Connection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    public CMemoryRowSet InputServiceParameterQuerySQL( Connection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
 
 		CMemoryRowSet Result = null;
 		
@@ -664,7 +664,122 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
 	}
 
 	@Override
-	public CMemoryRowSet ExecuteCheckMethodStoredProcedure( Connection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, CExtendedLogger Logger, CLanguage Lang  ) {
+    public boolean InputServiceParameterModifySQL( Connection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
+		
+		boolean bResult = false;
+		
+		try {	
+			
+			HashMap<String,String> Delimiters = new HashMap<String,String>();
+			
+			Delimiters.put( ConfigXMLTagsServicesDaemon._StartMacroTag, ConfigXMLTagsServicesDaemon._EndMacroTag );
+			Delimiters.put( ConfigXMLTagsServicesDaemon._StartParamValue, ConfigXMLTagsServicesDaemon._EndParamValue );
+			
+			CNamedPreparedStatement NamedPreparedStatement = new CNamedPreparedStatement( DBConnection, strSQL, Delimiters );		
+
+			/*if ( Logger != null ) {
+				
+				String strTmpSQL = SQLStatement.getParsedStatement();
+
+				Logger.LogWarning( "-1", strTmpSQL );
+				
+			}*/
+			
+			HashMap<String,Integer> NamedParams = NamedPreparedStatement.getNamedParams();
+			
+			Iterator<Entry<String, Integer>> i = NamedParams.entrySet().iterator();
+			
+			boolean bSQLParsed = true;
+			
+			while ( i.hasNext() ) {
+			       
+				Entry<String,Integer> NamedParam = i.next();
+
+				CInputServiceParameter InputServiceParameterDef = this.getInputServiceParameterByName(InputServiceParameters, NamedParam.getKey() );
+
+				String strInputServiceParameterValue = Request.getParameter( NamedParam.getKey() );
+
+				int intMacroIndex = Utilities.getIndexByValue( strMacrosNames, ConfigXMLTagsServicesDaemon._StartMacroTag + NamedParam.getKey() + ConfigXMLTagsServicesDaemon._EndMacroTag );
+				
+				if ( InputServiceParameterDef != null && strInputServiceParameterValue != null ) {
+				
+					this.setFieldValueToNamedPreparedStatement( NamedPreparedStatement, InputServiceParameterDef.getParameterDataTypeID(), NamedParam.getKey(), strInputServiceParameterValue, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
+				
+                }
+				else if ( intMacroIndex >= 0 ) {
+					
+					if ( intMacroIndex < intMacrosTypes.length && intMacroIndex < strMacrosValues.length ) {
+				
+						this.setMacroValueToNamedPreparedStatement( NamedPreparedStatement, NamedParam.getKey(), intMacroIndex, intMacrosTypes, strMacrosNames, strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
+
+					}
+					else {
+						
+                		Logger.LogWarning( "-1", Lang.Translate( "The macro index [%s] is greater than macro values length [%s] and/or macro types length [%s]", Integer.toString( intMacroIndex ), Integer.toString( strMacrosValues.length ), Integer.toString( intMacrosTypes.length ) ) );        
+						
+					}
+					
+				}
+                
+				if ( InputServiceParameterDef == null && intMacroIndex == -1 ) {
+                	
+                    if ( Logger != null ) {
+                    	
+                		Logger.LogWarning( "-1", Lang.Translate( "Input parameter [%s] definitions not found", NamedParam.getKey() ) );        
+                		Logger.LogWarning( "-1", Lang.Translate( "Macro value [%s] not found", NamedParam.getKey() ) );        
+                    	
+                    }
+
+                    bSQLParsed = false;
+                	
+                }
+                
+				if ( strInputServiceParameterValue == null && intMacroIndex == -1 ) {
+                	
+                    if ( Logger != null ) {
+                    	
+                		Logger.LogWarning( "-1", Lang.Translate( "Input parameter [%s] value not found on request", NamedParam.getKey() ) );        
+                    	
+                    }
+
+                    bSQLParsed = false;
+                	
+                }
+				
+			}
+			
+			if ( bSQLParsed == true ) {
+				
+				NamedPreparedStatement.executeUpdate();
+				bResult = true;
+				
+			}
+			else {
+				
+                if ( Logger != null ) {
+                	
+            		Logger.LogError( "-1001", Lang.Translate( "Cannot parse the next SQL statement [%s]", strSQL ) );        
+                	
+                }
+				
+			}
+			
+			NamedPreparedStatement.close();
+			
+		}
+		catch ( Exception Ex ) {
+
+			if ( Logger != null )
+				Logger.LogException( "-1015", Ex.getMessage(), Ex ); 
+
+		}
+
+		return bResult;
+		
+	}
+	
+	@Override
+	public CMemoryRowSet InputServiceParameterStoredProcedure( Connection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, CExtendedLogger Logger, CLanguage Lang  ) {
 
 		CMemoryRowSet Result = null;
 		

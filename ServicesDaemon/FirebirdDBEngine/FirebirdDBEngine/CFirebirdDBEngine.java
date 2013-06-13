@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import Utilities.Utilities;
 
 import AbstractDBEngine.CAbstractDBEngine;
+import AbstractDBEngine.CDBEngineConfigConnection;
 import AbstractService.CInputServiceParameter;
 import CommonClasses.CLanguage;
 import CommonClasses.CMemoryFieldData;
@@ -35,7 +36,6 @@ import CommonClasses.CNamedCallableStatement;
 import CommonClasses.CResultSetResult;
 import CommonClasses.ConfigXMLTagsServicesDaemon;
 import CommonClasses.CNamedPreparedStatement;
-import DBServicesManager.CConfigDBConnection;
 import ExtendedLogger.CExtendedLogger;
 
 public class CFirebirdDBEngine extends CAbstractDBEngine {
@@ -48,7 +48,7 @@ public class CFirebirdDBEngine extends CAbstractDBEngine {
 	}
 	
 	@Override
-	public synchronized Connection getDBConnection( CConfigDBConnection ConfigDBConnection, CExtendedLogger Logger, CLanguage Lang ) {
+	public synchronized Connection getDBConnection( CDBEngineConfigConnection ConfigDBConnection, CExtendedLogger Logger, CLanguage Lang ) {
 
 		Connection DBConnection = null;
 		
@@ -263,35 +263,8 @@ public class CFirebirdDBEngine extends CAbstractDBEngine {
 		
 	}
 	
-	/*public String ReplaceSQLMacrosNamesToValues( int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL ) {
-
-		String strResult = strSQL;
-		
-		if ( intMacrosTypes.length == strMacrosNames.length && strMacrosNames.length == strMacrosValues.length ) {
-			
-			for ( int intMacroNameIndex = 0; intMacroNameIndex < strMacrosNames.length; intMacroNameIndex++ ) {
-
-				if ( intMacrosTypes[ intMacroNameIndex ] == Types.VARCHAR ||  intMacrosTypes[ intMacroNameIndex ] == Types.CHAR ) {
-					
-					strResult = strResult.replace( strMacrosNames[ intMacroNameIndex ], "'" + strMacrosValues[ intMacroNameIndex ] + "'" );
-					
-				}
-				else {
-					
-					strResult = strResult.replace( strMacrosNames[ intMacroNameIndex ], strMacrosValues[ intMacroNameIndex ] );
-					
-				}
-				
-			}
-			
-		}
-		
-		return strResult;
-		
-	}*/
-	
 	@Override
-    public CMemoryRowSet ExecuteCheckMethodSQL( Connection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    public CMemoryRowSet InputServiceParameterQuerySQL( Connection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
 
 		CMemoryRowSet Result = null;
 		
@@ -331,148 +304,6 @@ public class CFirebirdDBEngine extends CAbstractDBEngine {
 				if ( InputServiceParameterDef != null && strInputServiceParameterValue != null ) {
 				
 					this.setFieldValueToNamedPreparedStatement( NamedPreparedStatement, InputServiceParameterDef.getParameterDataTypeID(), NamedParam.getKey(), strInputServiceParameterValue, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
-
-					/*if ( strInputServiceParameterValue.toLowerCase().equals( NamesSQLTypes._NULL ) == false ) {
-						
-		    			switch ( InputServiceParameterDef.getParameterDataTypeID() ) {
-		    			
-							case Types.INTEGER: { NamedPreparedStatement.setInt( NamedParam.getKey(), Integer.parseInt( strInputServiceParameterValue ) ); break; }
-							case Types.BIGINT: { NamedPreparedStatement.setLong( NamedParam.getKey(), Long.parseLong( strInputServiceParameterValue ) ); break; }
-							case Types.SMALLINT: { NamedPreparedStatement.setShort( NamedParam.getKey(), Short.parseShort( strInputServiceParameterValue ) ); break; }
-							case Types.VARCHAR: 
-							case Types.CHAR: { NamedPreparedStatement.setString( NamedParam.getKey(), strInputServiceParameterValue ); break; }
-							case Types.BOOLEAN: { NamedPreparedStatement.setBoolean( NamedParam.getKey(), Boolean.parseBoolean( strInputServiceParameterValue ) ); break; }
-							case Types.BLOB: { 	
-								
-												java.sql.Blob BlobData = new SerialBlob( Base64.decode( strInputServiceParameterValue.getBytes() ) );
-											
-											    NamedPreparedStatement.setBlob( NamedParam.getKey(), BlobData );
-					                            
-											    break; 
-					
-											 }
-							case Types.DATE: {
-								               
-											    SimpleDateFormat DateFormat = new SimpleDateFormat( strDateFormat );
-												
-												java.util.Date Date = DateFormat.parse( strInputServiceParameterValue );
-												
-												java.sql.Date SQLDate = new java.sql.Date( Date.getTime() ); 
-												
-												NamedPreparedStatement.setDate( NamedParam.getKey(), SQLDate );
-								               
-												break; 
-								             
-							                 }
-							case Types.TIME: {  
-								
-												SimpleDateFormat TimeFormat = new SimpleDateFormat( strTimeFormat );
-												
-												java.util.Date Date = TimeFormat.parse( strInputServiceParameterValue );
-												
-												java.sql.Time SQLTime = new java.sql.Time( Date.getTime() ); 
-												
-												NamedPreparedStatement.setTime( NamedParam.getKey(), SQLTime );
-								               
-												break; 
-								               
-							                 }
-							case Types.TIMESTAMP: {  
-								
-													 SimpleDateFormat DateTimeFormat = new SimpleDateFormat( strDateTimeFormat );
-													
-													 java.util.Date Date = DateTimeFormat.parse( strInputServiceParameterValue );
-													
-													 java.sql.Timestamp SQLTimeStamp = new java.sql.Timestamp( Date.getTime() ); 
-													
-													 NamedPreparedStatement.setTimestamp( NamedParam.getKey(), SQLTimeStamp );
-	
-								                     break; 
-								                    
-							                      }
-							case Types.FLOAT: 
-							case Types.DECIMAL: { NamedPreparedStatement.setFloat( NamedParam.getKey(), Float.parseFloat( strInputServiceParameterValue ) ); break; }
-							case Types.DOUBLE: { NamedPreparedStatement.setDouble( NamedParam.getKey(), Double.parseDouble( strInputServiceParameterValue ) ); break; }
-	
-						}
-					
-					}
-					else {
-						
-						NamedPreparedStatement.setNull( NamedParam.getKey(), InputServiceParameterDef.getParameterDataTypeID() );
-						
-					}*/
-					
-					/*if ( InputServiceParameterDef.getParameterType().equals( NamesSQLTypes.strSQL_VARCHAR ) || InputServiceParameterDef.getParameterType().equals( NamesSQLTypes.strSQL_CHAR ) ) {
-						
-						NamedPreparedStatement.setString( NamedParam.getKey(), strInputServiceParameterValue );
-						
-					}
-					else if ( InputServiceParameterDef.getParameterType().equals( NamesSQLTypes.strSQL_INTEGER ) ) {
-						
-						NamedPreparedStatement.setInt( NamedParam.getKey(), Integer.parseInt( strInputServiceParameterValue ) );
-
-					}
-					else if ( InputServiceParameterDef.getParameterType().equals( NamesSQLTypes.strSQL_SMALLINT ) ) {
-						
-						NamedPreparedStatement.setShort( NamedParam.getKey(), Short.parseShort( strInputServiceParameterValue ) );
-
-					}
-					else if ( InputServiceParameterDef.getParameterType().equals( NamesSQLTypes.strSQL_BIGINT ) ) {
-						
-						NamedPreparedStatement.setLong( NamedParam.getKey(), Long.parseLong( strInputServiceParameterValue ) );
-
-					}
-					else if ( InputServiceParameterDef.getParameterType().equals( NamesSQLTypes.strSQL_DATE ) ) {
-						
-						SimpleDateFormat DateFormat = new SimpleDateFormat( strDateFormat );
-						
-						java.util.Date Date = DateFormat.parse( strInputServiceParameterValue );
-						
-						java.sql.Date SQLDate = new java.sql.Date( Date.getTime() ); 
-						
-						NamedPreparedStatement.setDate( NamedParam.getKey(), SQLDate );
-
-					}
-					else if ( InputServiceParameterDef.getParameterType().equals( NamesSQLTypes.strSQL_TIME ) ) {
-						
-						SimpleDateFormat DateFormat = new SimpleDateFormat( strTimeFormat );
-						
-						java.util.Date Date = DateFormat.parse( strInputServiceParameterValue );
-						
-						java.sql.Time SQLTime = new java.sql.Time( Date.getTime() ); 
-						
-						NamedPreparedStatement.setTime( NamedParam.getKey(), SQLTime );
-
-					}
-					else if ( InputServiceParameterDef.getParameterType().equals( NamesSQLTypes.strSQL_TIMESTAMP ) ) {
-						
-						SimpleDateFormat DateFormat = new SimpleDateFormat( strDateTimeFormat );
-						
-						java.util.Date Date = DateFormat.parse( strInputServiceParameterValue );
-						
-						java.sql.Timestamp SQLTimeStamp = new java.sql.Timestamp( Date.getTime() ); 
-						
-						NamedPreparedStatement.setTimestamp( NamedParam.getKey(), SQLTimeStamp );
-
-					}
-					else if ( InputServiceParameterDef.getParameterType().equals( NamesSQLTypes.strSQL_BLOB ) ) {
-						
-						java.sql.Blob BlobData = new SerialBlob( Base64.decode( strInputServiceParameterValue ) );
-						
-						NamedPreparedStatement.setBlob( NamedParam.getKey(), BlobData );
-
-					}
-					else if ( InputServiceParameterDef.getParameterType().equals( NamesSQLTypes.strSQL_FLOAT ) || InputServiceParameterDef.getParameterType().equals( NamesSQLTypes.strSQL_NUMERIC ) || InputServiceParameterDef.getParameterType().equals( NamesSQLTypes.strSQL_DECIMAL ) || InputServiceParameterDef.getParameterType().equals( NamesSQLTypes.strSQL_CURRENCY ) || InputServiceParameterDef.getParameterType().equals( NamesSQLTypes.strSQL_MONEY ) ) {
-						
-						NamedPreparedStatement.setFloat( NamedParam.getKey(), Float.parseFloat( strInputServiceParameterValue ) );
-
-					}
-					else if ( InputServiceParameterDef.getParameterType().equals( NamesSQLTypes.strSQL_BOOLEAN ) ) {
-						
-						NamedPreparedStatement.setBoolean( NamedParam.getKey(), Boolean.parseBoolean( strInputServiceParameterValue ) );
-
-					}*/
 				
                 }
 				else if ( intMacroIndex >= 0 ) {
@@ -480,144 +311,6 @@ public class CFirebirdDBEngine extends CAbstractDBEngine {
 					if ( intMacroIndex < intMacrosTypes.length && intMacroIndex < strMacrosValues.length ) {
 				
 						this.setMacroValueToNamedPreparedStatement( NamedPreparedStatement, NamedParam.getKey(), intMacroIndex, intMacrosTypes, strMacrosNames, strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
-						
-		    			/*switch ( intMacrosTypes[ intMacroIndex ] ) {
-		    			
-							case Types.INTEGER: { NamedPreparedStatement.setInt( NamedParam.getKey(), Integer.parseInt( strMacrosValues[ intMacroIndex ] ) ); break; }
-							case Types.BIGINT: { NamedPreparedStatement.setLong( NamedParam.getKey(), Long.parseLong( strMacrosValues[ intMacroIndex ] ) ); break; }
-							case Types.SMALLINT: { NamedPreparedStatement.setShort( NamedParam.getKey(), Short.parseShort( strMacrosValues[ intMacroIndex ] ) ); break; }
-							case Types.VARCHAR: 
-							case Types.CHAR: { NamedPreparedStatement.setString( NamedParam.getKey(), strMacrosValues[ intMacroIndex ] ); break; }
-							case Types.BOOLEAN: { NamedPreparedStatement.setBoolean( NamedParam.getKey(), Boolean.parseBoolean( strMacrosValues[ intMacroIndex ] ) ); break; }
-							case Types.BLOB: { 	
-								
-												java.sql.Blob BlobData = new SerialBlob( Base64.decode( strMacrosValues[ intMacroIndex ].getBytes() ) );
-											
-											    NamedPreparedStatement.setBlob( NamedParam.getKey(), BlobData );
-					                            
-											    break; 
-					
-											 }
-							case Types.DATE: {
-								               
-											    SimpleDateFormat DateFormat = new SimpleDateFormat( strDateFormat );
-												
-												java.util.Date Date = DateFormat.parse( strMacrosValues[ intMacroIndex ] );
-												
-												java.sql.Date SQLDate = new java.sql.Date( Date.getTime() ); 
-												
-												NamedPreparedStatement.setDate( NamedParam.getKey(), SQLDate );
-								               
-												break; 
-								             
-							                 }
-							case Types.TIME: {  
-								
-												SimpleDateFormat TimeFormat = new SimpleDateFormat( strTimeFormat );
-												
-												java.util.Date Date = TimeFormat.parse( strMacrosValues[ intMacroIndex ] );
-												
-												java.sql.Time SQLTime = new java.sql.Time( Date.getTime() ); 
-												
-												NamedPreparedStatement.setTime( NamedParam.getKey(), SQLTime );
-								               
-												break; 
-								               
-							                 }
-							case Types.TIMESTAMP: {  
-								
-													 SimpleDateFormat DateTimeFormat = new SimpleDateFormat( strDateTimeFormat );
-													
-													 java.util.Date Date = DateTimeFormat.parse( strMacrosValues[ intMacroIndex ] );
-													
-													 java.sql.Timestamp SQLTimeStamp = new java.sql.Timestamp( Date.getTime() ); 
-													
-													 NamedPreparedStatement.setTimestamp( NamedParam.getKey(), SQLTimeStamp );
-	
-								                     break; 
-								                    
-							                      }
-							case Types.FLOAT: 
-							case Types.DECIMAL: { NamedPreparedStatement.setFloat( NamedParam.getKey(), Float.parseFloat( strMacrosValues[ intMacroIndex ] ) ); break; }
-							case Types.DOUBLE: { NamedPreparedStatement.setDouble( NamedParam.getKey(), Double.parseDouble( strMacrosValues[ intMacroIndex ] ) ); break; }
-	
-						}*/
-
-		    			/*if ( strMacrosTypes[ intMacroIndex ].equals( NamesSQLTypes.strSQL_VARCHAR ) || strMacrosTypes[ intMacroIndex ].equals( NamesSQLTypes.strSQL_CHAR ) ) {
-							
-							NamedPreparedStatement.setString( NamedParam.getKey(), strMacrosValues[ intMacroIndex ] );
-							
-						}
-						else if ( strMacrosTypes[ intMacroIndex ].equals( NamesSQLTypes.strSQL_INTEGER ) ) {
-							
-							NamedPreparedStatement.setInt( NamedParam.getKey(), Integer.parseInt( strMacrosValues[ intMacroIndex ] ) );
-
-						}
-						else if ( strMacrosTypes[ intMacroIndex ].equals( NamesSQLTypes.strSQL_SMALLINT ) ) {
-							
-							NamedPreparedStatement.setShort( NamedParam.getKey(), Short.parseShort( strMacrosValues[ intMacroIndex ] ) );
-
-						}
-						else if ( strMacrosTypes[ intMacroIndex ].equals( NamesSQLTypes.strSQL_BIGINT ) ) {
-							
-							NamedPreparedStatement.setLong( NamedParam.getKey(), Long.parseLong( strMacrosValues[ intMacroIndex ] ) );
-
-						}
-						else if ( strMacrosTypes[ intMacroIndex ].equals( NamesSQLTypes.strSQL_DATE ) ) {
-							
-							SimpleDateFormat DateFormat = new SimpleDateFormat( strDateFormat );
-							
-							java.util.Date Date = DateFormat.parse( strMacrosValues[ intMacroIndex ] );
-							
-							java.sql.Date SQLDate = new java.sql.Date( Date.getTime() ); 
-							
-							NamedPreparedStatement.setDate( NamedParam.getKey(), SQLDate );
-
-						}
-						else if ( strMacrosTypes[ intMacroIndex ].equals( NamesSQLTypes.strSQL_TIME ) ) {
-							
-							SimpleDateFormat DateFormat = new SimpleDateFormat( strTimeFormat );
-							
-							java.util.Date Date = DateFormat.parse( strMacrosValues[ intMacroIndex ] );
-							
-							java.sql.Time SQLTime = new java.sql.Time( Date.getTime() ); 
-							
-							NamedPreparedStatement.setTime( NamedParam.getKey(), SQLTime );
-
-						}
-						else if ( strMacrosTypes[ intMacroIndex ].equals( NamesSQLTypes.strSQL_TIMESTAMP ) ) {
-							
-							SimpleDateFormat DateFormat = new SimpleDateFormat( strDateTimeFormat );
-							
-							java.util.Date Date = DateFormat.parse( strMacrosValues[ intMacroIndex ] );
-							
-							java.sql.Timestamp SQLTimeStamp = new java.sql.Timestamp( Date.getTime() ); 
-							
-							NamedPreparedStatement.setTimestamp( NamedParam.getKey(), SQLTimeStamp );
-
-						}
-						else if ( strMacrosTypes[ intMacroIndex ].equals( NamesSQLTypes.strSQL_BLOB ) ) {
-							
-							java.sql.Blob BlobData = new SerialBlob( Base64.decode( strMacrosValues[ intMacroIndex ] ) );
-							
-							NamedPreparedStatement.setBlob( NamedParam.getKey(), BlobData );
-
-						}
-						else if ( strMacrosTypes[ intMacroIndex ].equals( NamesSQLTypes.strSQL_FLOAT ) || strMacrosTypes[ intMacroIndex ].equals( NamesSQLTypes.strSQL_NUMERIC ) || strMacrosTypes[ intMacroIndex ].equals( NamesSQLTypes.strSQL_DECIMAL ) || strMacrosTypes[ intMacroIndex ].equals( NamesSQLTypes.strSQL_CURRENCY ) || strMacrosTypes[ intMacroIndex ].equals( NamesSQLTypes.strSQL_MONEY ) ) {
-							
-							NamedPreparedStatement.setFloat( NamedParam.getKey(), Float.parseFloat( strMacrosValues[ intMacroIndex ] ) );
-
-						}
-						else if ( strMacrosTypes[ intMacroIndex ].equals( NamesSQLTypes.strSQL_DOUBLE ) ) {
-							
-							NamedPreparedStatement.setDouble( NamedParam.getKey(), Double.parseDouble( strMacrosValues[ intMacroIndex ] ) );
-
-						}
-						else if ( strMacrosTypes[ intMacroIndex ].equals( NamesSQLTypes.strSQL_BOOLEAN ) ) {
-							
-							NamedPreparedStatement.setBoolean( NamedParam.getKey(), Boolean.parseBoolean( strMacrosValues[ intMacroIndex ] ) );
-
-						}*/
 
 					}
 					else {
@@ -685,7 +378,123 @@ public class CFirebirdDBEngine extends CAbstractDBEngine {
 	}
 
 	@Override
-	public CMemoryRowSet ExecuteCheckMethodStoredProcedure( Connection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, CExtendedLogger Logger, CLanguage Lang  ) {
+    public boolean InputServiceParameterModifySQL( Connection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
+		
+		boolean bResult = false;
+		
+		try {	
+			
+			HashMap<String,String> Delimiters = new HashMap<String,String>();
+			
+			Delimiters.put( ConfigXMLTagsServicesDaemon._StartMacroTag, ConfigXMLTagsServicesDaemon._EndMacroTag );
+			Delimiters.put( ConfigXMLTagsServicesDaemon._StartParamValue, ConfigXMLTagsServicesDaemon._EndParamValue );
+			
+			CNamedPreparedStatement NamedPreparedStatement = new CNamedPreparedStatement( DBConnection, strSQL, Delimiters );		
+
+			/*if ( Logger != null ) {
+				
+				String strTmpSQL = SQLStatement.getParsedStatement();
+
+				Logger.LogWarning( "-1", strTmpSQL );
+				
+			}*/
+			
+			HashMap<String,Integer> NamedParams = NamedPreparedStatement.getNamedParams();
+			
+			Iterator<Entry<String, Integer>> i = NamedParams.entrySet().iterator();
+			
+			boolean bSQLParsed = true;
+			
+			while ( i.hasNext() ) {
+			       
+				Entry<String,Integer> NamedParam = i.next();
+
+				CInputServiceParameter InputServiceParameterDef = this.getInputServiceParameterByName(InputServiceParameters, NamedParam.getKey() );
+
+				String strInputServiceParameterValue = Request.getParameter( NamedParam.getKey() );
+
+				int intMacroIndex = Utilities.getIndexByValue( strMacrosNames, ConfigXMLTagsServicesDaemon._StartMacroTag + NamedParam.getKey() + ConfigXMLTagsServicesDaemon._EndMacroTag );
+				
+				if ( InputServiceParameterDef != null && strInputServiceParameterValue != null ) {
+				
+					this.setFieldValueToNamedPreparedStatement( NamedPreparedStatement, InputServiceParameterDef.getParameterDataTypeID(), NamedParam.getKey(), strInputServiceParameterValue, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
+				
+                }
+				else if ( intMacroIndex >= 0 ) {
+					
+					if ( intMacroIndex < intMacrosTypes.length && intMacroIndex < strMacrosValues.length ) {
+				
+						this.setMacroValueToNamedPreparedStatement( NamedPreparedStatement, NamedParam.getKey(), intMacroIndex, intMacrosTypes, strMacrosNames, strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
+
+					}
+					else {
+						
+                		Logger.LogWarning( "-1", Lang.Translate( "The macro index [%s] is greater than macro values length [%s] and/or macro types length [%s]", Integer.toString( intMacroIndex ), Integer.toString( strMacrosValues.length ), Integer.toString( intMacrosTypes.length ) ) );        
+						
+					}
+					
+				}
+                
+				if ( InputServiceParameterDef == null && intMacroIndex == -1 ) {
+                	
+                    if ( Logger != null ) {
+                    	
+                		Logger.LogWarning( "-1", Lang.Translate( "Input parameter [%s] definitions not found", NamedParam.getKey() ) );        
+                		Logger.LogWarning( "-1", Lang.Translate( "Macro value [%s] not found", NamedParam.getKey() ) );        
+                    	
+                    }
+
+                    bSQLParsed = false;
+                	
+                }
+                
+				if ( strInputServiceParameterValue == null && intMacroIndex == -1 ) {
+                	
+                    if ( Logger != null ) {
+                    	
+                		Logger.LogWarning( "-1", Lang.Translate( "Input parameter [%s] value not found on request", NamedParam.getKey() ) );        
+                    	
+                    }
+
+                    bSQLParsed = false;
+                	
+                }
+				
+			}
+			
+			if ( bSQLParsed == true ) {
+				
+				NamedPreparedStatement.executeUpdate();
+				bResult = true;
+				
+			}
+			else {
+				
+                if ( Logger != null ) {
+                	
+            		Logger.LogError( "-1001", Lang.Translate( "Cannot parse the next SQL statement [%s]", strSQL ) );        
+                	
+                }
+				
+			}
+			
+			NamedPreparedStatement.close();
+			
+		}
+		catch ( Exception Ex ) {
+
+			if ( Logger != null )
+				Logger.LogException( "-1015", Ex.getMessage(), Ex ); 
+
+		}
+
+		return bResult;
+		
+	}
+
+	
+	@Override
+	public CMemoryRowSet InputServiceParameterStoredProcedure( Connection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, CExtendedLogger Logger, CLanguage Lang  ) {
 
 		CMemoryRowSet Result = null;
 		
@@ -725,77 +534,6 @@ public class CFirebirdDBEngine extends CAbstractDBEngine {
 				if ( InputServiceParameterDef != null && strInputServiceParameterValue != null ) {
 				
 					this.setFieldValueToNamedCallableStatement( NamedCallableStatement, InputServiceParameterDef.getParameterDataTypeID(), NamedParam.getKey(), strInputServiceParameterValue, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
-
-					/*if ( strInputServiceParameterValue.toLowerCase().equals( NamesSQLTypes._NULL ) == false ) {
-		    			
-						switch ( InputServiceParameterDef.getParameterDataTypeID() ) {
-		    			
-							case Types.INTEGER: { NamedCallableStatement.setInt( NamedParam.getKey(), Integer.parseInt( strInputServiceParameterValue ) ); break; }
-							case Types.BIGINT: { NamedCallableStatement.setLong( NamedParam.getKey(), Long.parseLong( strInputServiceParameterValue ) ); break; }
-							case Types.SMALLINT: { NamedCallableStatement.setShort( NamedParam.getKey(), Short.parseShort( strInputServiceParameterValue ) ); break; }
-							case Types.VARCHAR: 
-							case Types.CHAR: { NamedCallableStatement.setString( NamedParam.getKey(), strInputServiceParameterValue ); break; }
-							case Types.BOOLEAN: { NamedCallableStatement.setBoolean( NamedParam.getKey(), Boolean.parseBoolean( strInputServiceParameterValue ) ); break; }
-							case Types.BLOB: { 	
-								
-												java.sql.Blob BlobData = new SerialBlob( Base64.decode( strInputServiceParameterValue.getBytes() ) );
-											
-											    NamedCallableStatement.setBlob( NamedParam.getKey(), BlobData );
-					                            
-											    break; 
-					
-											 }
-							case Types.DATE: {
-								               
-											    SimpleDateFormat DateFormat = new SimpleDateFormat( strDateFormat );
-												
-												java.util.Date Date = DateFormat.parse( strInputServiceParameterValue );
-												
-												java.sql.Date SQLDate = new java.sql.Date( Date.getTime() ); 
-												
-												NamedCallableStatement.setDate( NamedParam.getKey(), SQLDate );
-								               
-												break; 
-								             
-							                 }
-							case Types.TIME: {  
-								
-												SimpleDateFormat DateFormat = new SimpleDateFormat( strTimeFormat );
-												
-												java.util.Date Date = DateFormat.parse( strInputServiceParameterValue );
-												
-												java.sql.Time SQLTime = new java.sql.Time( Date.getTime() ); 
-												
-												NamedCallableStatement.setTime( NamedParam.getKey(), SQLTime );
-								               
-												break; 
-								               
-							                 }
-							case Types.TIMESTAMP: {  
-								
-													 SimpleDateFormat DateFormat = new SimpleDateFormat( strDateTimeFormat );
-													
-													 java.util.Date Date = DateFormat.parse( strInputServiceParameterValue );
-													
-													 java.sql.Timestamp SQLTimeStamp = new java.sql.Timestamp( Date.getTime() ); 
-													
-													 NamedCallableStatement.setTimestamp( NamedParam.getKey(), SQLTimeStamp );
-	
-								                     break; 
-								                    
-							                      }
-							case Types.FLOAT: 
-							case Types.DECIMAL: { NamedCallableStatement.setFloat( NamedParam.getKey(), Float.parseFloat( strInputServiceParameterValue ) ); break; }
-							case Types.DOUBLE: { NamedCallableStatement.setDouble( NamedParam.getKey(), Double.parseDouble( strInputServiceParameterValue ) ); break; }
-	
-						}
-				
-					}
-					else {
-						
-						NamedCallableStatement.setNull( NamedParam.getKey(), InputServiceParameterDef.getParameterDataTypeID() );
-						
-					}*/
 	    			
                 }
 				else if ( intMacroIndex >= 0 ) {
@@ -803,144 +541,6 @@ public class CFirebirdDBEngine extends CAbstractDBEngine {
 					if ( intMacroIndex < intMacrosTypes.length && intMacroIndex < strMacrosValues.length ) {
 				
 						this.setMacroValueToNamedCallableStatement( NamedCallableStatement, NamedParam.getKey(), intMacroIndex, intMacrosTypes, strMacrosNames, strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
-
-						/*switch ( intMacrosTypes[ intMacroIndex ] ) {
-		    			
-							case Types.INTEGER: { NamedCallableStatement.setInt( NamedParam.getKey(), Integer.parseInt( strMacrosValues[ intMacroIndex ] ) ); break; }
-							case Types.BIGINT: { NamedCallableStatement.setLong( NamedParam.getKey(), Long.parseLong( strMacrosValues[ intMacroIndex ] ) ); break; }
-							case Types.SMALLINT: { NamedCallableStatement.setShort( NamedParam.getKey(), Short.parseShort( strMacrosValues[ intMacroIndex ] ) ); break; }
-							case Types.VARCHAR: 
-							case Types.CHAR: { NamedCallableStatement.setString( NamedParam.getKey(), strMacrosValues[ intMacroIndex ] ); break; }
-							case Types.BOOLEAN: { NamedCallableStatement.setBoolean( NamedParam.getKey(), Boolean.parseBoolean( strMacrosValues[ intMacroIndex ] ) ); break; }
-							case Types.BLOB: { 	
-								
-												java.sql.Blob BlobData = new SerialBlob( Base64.decode( strMacrosValues[ intMacroIndex ].getBytes() ) );
-											
-											    NamedCallableStatement.setBlob( NamedParam.getKey(), BlobData );
-					                            
-											    break; 
-					
-											 }
-							case Types.DATE: {
-								               
-											    SimpleDateFormat DateFormat = new SimpleDateFormat( strDateFormat );
-												
-												java.util.Date Date = DateFormat.parse( strMacrosValues[ intMacroIndex ] );
-												
-												java.sql.Date SQLDate = new java.sql.Date( Date.getTime() ); 
-												
-												NamedCallableStatement.setDate( NamedParam.getKey(), SQLDate );
-								               
-												break; 
-								             
-							                 }
-							case Types.TIME: {  
-								
-												SimpleDateFormat TimeFormat = new SimpleDateFormat( strTimeFormat );
-												
-												java.util.Date Date = TimeFormat.parse( strMacrosValues[ intMacroIndex ] );
-												
-												java.sql.Time SQLTime = new java.sql.Time( Date.getTime() ); 
-												
-												NamedCallableStatement.setTime( NamedParam.getKey(), SQLTime );
-								               
-												break; 
-								               
-							                 }
-							case Types.TIMESTAMP: {  
-								
-													 SimpleDateFormat DateTimeFormat = new SimpleDateFormat( strDateTimeFormat );
-													
-													 java.util.Date Date = DateTimeFormat.parse( strMacrosValues[ intMacroIndex ] );
-													
-													 java.sql.Timestamp SQLTimeStamp = new java.sql.Timestamp( Date.getTime() ); 
-													
-													 NamedCallableStatement.setTimestamp( NamedParam.getKey(), SQLTimeStamp );
-	
-								                     break; 
-								                    
-							                      }
-							case Types.FLOAT: 
-							case Types.DECIMAL: { NamedCallableStatement.setFloat( NamedParam.getKey(), Float.parseFloat( strMacrosValues[ intMacroIndex ] ) ); break; }
-							case Types.DOUBLE: { NamedCallableStatement.setDouble( NamedParam.getKey(), Double.parseDouble( strMacrosValues[ intMacroIndex ] ) ); break; }
-	
-						}*/
-
-		    			/*if ( strMacrosTypes[ intMacroIndex ].equals( NamesSQLTypes.strSQL_VARCHAR ) || strMacrosTypes[ intMacroIndex ].equals( NamesSQLTypes.strSQL_CHAR ) ) {
-							
-							NamedCallableStatement.setString( NamedParam.getKey(), strMacrosValues[ intMacroIndex ] );
-							
-						}
-						else if ( strMacrosTypes[ intMacroIndex ].equals( NamesSQLTypes.strSQL_INTEGER ) ) {
-							
-							NamedCallableStatement.setInt( NamedParam.getKey(), Integer.parseInt( strMacrosValues[ intMacroIndex ] ) );
-
-						}
-						else if ( strMacrosTypes[ intMacroIndex ].equals( NamesSQLTypes.strSQL_SMALLINT ) ) {
-							
-							NamedCallableStatement.setShort( NamedParam.getKey(), Short.parseShort( strMacrosValues[ intMacroIndex ] ) );
-
-						}
-						else if ( strMacrosTypes[ intMacroIndex ].equals( NamesSQLTypes.strSQL_BIGINT ) ) {
-							
-							NamedCallableStatement.setLong( NamedParam.getKey(), Long.parseLong( strMacrosValues[ intMacroIndex ] ) );
-
-						}
-						else if ( strMacrosTypes[ intMacroIndex ].equals( NamesSQLTypes.strSQL_DATE ) ) {
-							
-							SimpleDateFormat DateFormat = new SimpleDateFormat( strDateFormat );
-							
-							java.util.Date Date = DateFormat.parse( strMacrosValues[ intMacroIndex ] );
-							
-							java.sql.Date SQLDate = new java.sql.Date( Date.getTime() ); 
-							
-							NamedCallableStatement.setDate( NamedParam.getKey(), SQLDate );
-
-						}
-						else if ( strMacrosTypes[ intMacroIndex ].equals( NamesSQLTypes.strSQL_TIME ) ) {
-							
-							SimpleDateFormat DateFormat = new SimpleDateFormat( strTimeFormat );
-							
-							java.util.Date Date = DateFormat.parse( strMacrosValues[ intMacroIndex ] );
-							
-							java.sql.Time SQLTime = new java.sql.Time( Date.getTime() ); 
-							
-							NamedCallableStatement.setTime( NamedParam.getKey(), SQLTime );
-
-						}
-						else if ( strMacrosTypes[ intMacroIndex ].equals( NamesSQLTypes.strSQL_TIMESTAMP ) ) {
-							
-							SimpleDateFormat DateFormat = new SimpleDateFormat( strDateTimeFormat );
-							
-							java.util.Date Date = DateFormat.parse( strMacrosValues[ intMacroIndex ] );
-							
-							java.sql.Timestamp SQLTimeStamp = new java.sql.Timestamp( Date.getTime() ); 
-							
-							NamedCallableStatement.setTimestamp( NamedParam.getKey(), SQLTimeStamp );
-
-						}
-						else if ( strMacrosTypes[ intMacroIndex ].equals( NamesSQLTypes.strSQL_BLOB ) ) {
-							
-							java.sql.Blob BlobData = new SerialBlob( Base64.decode( strMacrosValues[ intMacroIndex ] ) );
-							
-							NamedCallableStatement.setBlob( NamedParam.getKey(), BlobData );
-
-						}
-						else if ( strMacrosTypes[ intMacroIndex ].equals( NamesSQLTypes.strSQL_FLOAT ) || strMacrosTypes[ intMacroIndex ].equals( NamesSQLTypes.strSQL_NUMERIC ) || strMacrosTypes[ intMacroIndex ].equals( NamesSQLTypes.strSQL_DECIMAL ) || strMacrosTypes[ intMacroIndex ].equals( NamesSQLTypes.strSQL_CURRENCY ) || strMacrosTypes[ intMacroIndex ].equals( NamesSQLTypes.strSQL_MONEY ) ) {
-							
-							NamedCallableStatement.setFloat( NamedParam.getKey(), Float.parseFloat( strMacrosValues[ intMacroIndex ] ) );
-
-						}
-						else if ( strMacrosTypes[ intMacroIndex ].equals( NamesSQLTypes.strSQL_DOUBLE ) ) {
-							
-							NamedCallableStatement.setDouble( NamedParam.getKey(), Double.parseDouble( strMacrosValues[ intMacroIndex ] ) );
-
-						}
-						else if ( strMacrosTypes[ intMacroIndex ].equals( NamesSQLTypes.strSQL_BOOLEAN ) ) {
-							
-							NamedCallableStatement.setBoolean( NamedParam.getKey(), Boolean.parseBoolean( strMacrosValues[ intMacroIndex ] ) );
-
-						}*/
 
 					}
 					else {

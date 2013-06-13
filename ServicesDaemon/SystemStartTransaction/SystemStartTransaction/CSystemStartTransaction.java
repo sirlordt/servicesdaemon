@@ -179,7 +179,7 @@ public class CSystemStartTransaction extends CAbstractService {
 
 							if ( DBEngine != null ) {
 
-								Connection DBConnection = DBEngine.getDBConnection( LocalConfigDBConnection, ServiceLogger, ServiceLang );
+								Connection DBConnection = DBEngine.getDBConnection( LocalConfigDBConnection.getDBEngineConfigConnection( false ), ServiceLogger, ServiceLang );
 
 								if ( DBConnection != null ) {
 

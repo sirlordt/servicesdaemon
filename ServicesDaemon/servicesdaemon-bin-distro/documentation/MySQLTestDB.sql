@@ -2,7 +2,9 @@ create database MySQLTestDB;
 
 use MySQLTestDB;
 
-CREATE TABLE tblUsers( iduser INT NOT NULL AUTO_INCREMENT, idgroup INT NOT NULL, disabled SMALLINT NOT NULL, username VARCHAR(50) NOT NULL, passwd VARCHAR(50) NOT NULL, firstname VARCHAR(50), lastname VARCHAR(50), access_date DATE, access_time TIME, PRIMARY KEY (iduser) );
+CREATE TABLE tblUsersDB( iduser INT NOT NULL AUTO_INCREMENT, idgroup INT NOT NULL, disabled SMALLINT NOT NULL, username VARCHAR(50) NOT NULL, passwd VARCHAR(50) NOT NULL, firstname VARCHAR(50), lastname VARCHAR(50), access_date DATE, access_time TIME, PRIMARY KEY (iduser) );
+
+CREATE TABLE tblUsersEng( iduser INT NOT NULL AUTO_INCREMENT, idgroup INT NOT NULL, disabled SMALLINT NOT NULL, username VARCHAR(50) NOT NULL, firstname VARCHAR(50), lastname VARCHAR(50), access_date DATE, access_time TIME, PRIMARY KEY (iduser) );
 
 CREATE TABLE tblGroups( idgroup INT NOT NULL AUTO_INCREMENT, description VARCHAR(50) NOT NULL, PRIMARY KEY (idgroup) );
 
@@ -12,8 +14,11 @@ CREATE TABLE tblBlobData( id INT, blobdata blob, PRIMARY KEY (id) );
 
 insert into tblGroups( idgroup, description ) values( null, 'Regular user group' );
 
-insert into tblUsers( iduser, idgroup, disabled, username, passwd, firstname, lastname, access_date, access_time ) values( null, 1, 0, 'test1', '123qwerty', 'System user firstname', 'System user lastname', null, null );
-insert into tblUsers( iduser, idgroup, disabled, username, passwd, firstname, lastname, access_date, access_time ) values( null, 1, 0, 'test2', '12345678', null, null, null, null );
+insert into tblUsersDB( iduser, idgroup, disabled, username, passwd, firstname, lastname, access_date, access_time ) values( null, 1, 0, 'test1', '123qwerty', 'System user firstname', 'System user lastname', null, null );
+insert into tblUsersDB( iduser, idgroup, disabled, username, passwd, firstname, lastname, access_date, access_time ) values( null, 1, 0, 'test2', '12345678', null, null, null, null );
+
+insert into tblUsersEng( iduser, idgroup, disabled, username, firstname, lastname, access_date, access_time ) values( null, 1, 0, 'sysdba', 'Default system user for Firebird', 'System user lastname', null, null );
+insert into tblUsersEng( iduser, idgroup, disabled, username, firstname, lastname, access_date, access_time ) values( null, 1, 0, 'root', 'Default system user for MySQL', null, null, null );
 
 insert into tblGenericData( id, data1, data2 ) Values( 1, 'DataA1', 'DataA2' );
 insert into tblGenericData( id, data1, data2 ) Values( 2, 'DataB1', 'DataB2' );
