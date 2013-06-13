@@ -16,6 +16,7 @@
 	<classpathentry kind="src" path="SystemEndSession"/>
 	<classpathentry kind="src" path="SystemExecuteSQL"/>
 	<classpathentry kind="src" path="MySQLDBEngine"/>
+	<classpathentry kind="src" path="PGSQLDBEngine"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jetty-8"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/servlet-3"/>

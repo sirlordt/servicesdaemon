@@ -17,3 +17,6 @@
 /SystemStartSession
 /SystemStartTransaction
 /DBServicesManager
+/META-INF
+/ServicesDaemon
+/PGSQLDBEngine

@@ -521,7 +521,7 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
         
         try {
 
-			String strAttributesOrder[] = { ConfigXMLTagsDBServicesManager._Name, ConfigXMLTagsDBServicesManager._Driver, ConfigXMLTagsDBServicesManager._Engine, ConfigXMLTagsDBServicesManager._Engine_Version, ConfigXMLTagsServicesDaemon._IP, ConfigXMLTagsServicesDaemon._Port, ConfigXMLTagsDBServicesManager._Database, ConfigXMLTagsDBServicesManager._Auth_Type, ConfigXMLTagsDBServicesManager._SessionUser, ConfigXMLTagsDBServicesManager._SessionPassword, ConfigXMLTagsDBServicesManager._Date_Format, ConfigXMLTagsDBServicesManager._Time_Format, ConfigXMLTagsDBServicesManager._Date_Time_Format };
+			String strAttributesOrder[] = { ConfigXMLTagsDBServicesManager._Name, ConfigXMLTagsDBServicesManager._Driver, ConfigXMLTagsDBServicesManager._Engine, ConfigXMLTagsDBServicesManager._Engine_Version, ConfigXMLTagsServicesDaemon._IP, ConfigXMLTagsServicesDaemon._Port, ConfigXMLTagsDBServicesManager._Database, ConfigXMLTagsDBServicesManager._Auth_Type, ConfigXMLTagsDBServicesManager._SessionUser, ConfigXMLTagsDBServicesManager._SessionPassword, ConfigXMLTagsDBServicesManager._TransactionUser, ConfigXMLTagsDBServicesManager._TransactionPassword, ConfigXMLTagsDBServicesManager._Date_Format, ConfigXMLTagsDBServicesManager._Time_Format, ConfigXMLTagsDBServicesManager._Date_Time_Format };
 
 			NodeList ConfigConnectionsList = ConfigSectionNode.getChildNodes();
 	          

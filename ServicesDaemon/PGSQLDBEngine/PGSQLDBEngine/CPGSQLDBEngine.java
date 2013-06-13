@@ -8,7 +8,7 @@
  * Contributors:
  *     SirLordT <sirlordt@gmail.com> - initial API and implementation
  ******************************************************************************/
-package MySQLDBEngine;
+package PGSQLDBEngine;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -36,12 +36,12 @@ import CommonClasses.CResultSetResult;
 import CommonClasses.ConfigXMLTagsServicesDaemon;
 import ExtendedLogger.CExtendedLogger;
 
-public class CMySQLDBEngine extends CAbstractDBEngine {
+public class CPGSQLDBEngine extends CAbstractDBEngine {
 
-	public CMySQLDBEngine() {
+	public CPGSQLDBEngine() {
 		
-		strName = "mysql";
-		strVersion = "5.1";
+		strName = "pgsql";
+		strVersion = "9.1";
 		
 	}
 	
@@ -53,7 +53,7 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
 		
 		try {
 			
-            String strDatabaseURL = "jdbc:mysql://" + ConfigDBConnection.strIP + ":" + ConfigDBConnection.intPort + "/" + ConfigDBConnection.strDatabase;
+            String strDatabaseURL = "jdbc:postgresql://" + ConfigDBConnection.strIP + ":" + ConfigDBConnection.intPort + "/" + ConfigDBConnection.strDatabase;
 
             if ( Logger != null ) {
             	

@@ -744,7 +744,6 @@ public class CSystemStartSession extends CAbstractService {
 
 											}
 
-											DBEngine.commit( DBConnection, ServiceLogger, ServiceLang );
 											//DBEngine.close( DBConnection, ServiceLogger, ServiceLang );
 
 											if ( StartSessionResultSet != null ) {
@@ -889,6 +888,7 @@ public class CSystemStartSession extends CAbstractService {
 
 											}
 
+											DBEngine.commit( DBConnection, ServiceLogger, ServiceLang );
 											DBEngine.close( DBConnection, ServiceLogger, ServiceLang );
 											
 											intResultCode = 1;
