@@ -756,6 +756,94 @@ public class CSystemStartSessionConfig extends CAbstractConfigLoader {
 		
 	}
 	
+	public boolean LoadConfigSectionExecuteSQL( int intTypeSection, int intConfigSectionIndex, Node ConfigSectionNode, CSystemStartSessionDBConnection SystemStartSessionDBConnection, CLanguage Lang, CExtendedLogger Logger ) {
+
+		boolean bResult = true;
+		
+		try {
+
+			if ( ConfigSectionNode.getTextContent().trim().isEmpty() == false ) {
+
+				if ( intTypeSection == ConfigXMLTagsSystemStartSession._Section_Success ) { //Sucess
+
+					SystemStartSessionDBConnection.AfterCheckSQLSuccess.add( ConfigSectionNode.getTextContent().trim() );
+
+					Logger.LogMessage( "1", Lang.Translate( "Added after check SQL success [%s]", ConfigSectionNode.getTextContent().trim() ) );
+
+				}
+				else if ( intTypeSection == ConfigXMLTagsSystemStartSession._Section_Failed ) { //Failed
+
+					SystemStartSessionDBConnection.AfterCheckSQLFailed.add( ConfigSectionNode.getTextContent().trim() );
+
+					Logger.LogMessage( "1", Lang.Translate( "Added after check SQL failed [%s]", ConfigSectionNode.getTextContent().trim() ) );
+
+				}
+				else if ( intTypeSection == ConfigXMLTagsSystemStartSession._Section_Disabled ) { //Disabled
+
+					SystemStartSessionDBConnection.AfterCheckSQLDisabled.add( ConfigSectionNode.getTextContent().trim() );
+
+					Logger.LogMessage( "1", Lang.Translate( "Added after check SQL disabled [%s]", ConfigSectionNode.getTextContent().trim() ) );
+
+				}
+				else if ( intTypeSection == ConfigXMLTagsSystemStartSession._Section_NotFound ) { //Not Found
+
+					SystemStartSessionDBConnection.AfterCheckSQLNotFound.add( ConfigSectionNode.getTextContent().trim() );
+
+					Logger.LogMessage( "1", Lang.Translate( "Added after check SQL not found [%s]", ConfigSectionNode.getTextContent().trim() ) );
+
+				}
+				else if ( intTypeSection == ConfigXMLTagsSystemStartSession._Section_Any ) { //Any
+
+					SystemStartSessionDBConnection.AfterCheckSQLAny.add( ConfigSectionNode.getTextContent().trim() );
+
+					Logger.LogMessage( "1", Lang.Translate( "Added after check SQL [%s] for any", ConfigSectionNode.getTextContent().trim() ) );
+
+				}
+
+			}
+			else {
+				
+				Logger.LogWarning( "-1", Lang.Translate( "The [%s] node value cannot empty string, at relative index [%s], ignoring the node", ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+				
+			}
+		
+		}
+		catch ( Exception Ex ) {
+
+			bResult = false;
+
+			Logger.LogException( "-1015", Ex.getMessage(), Ex );
+
+		}
+		
+		return bResult;
+		
+	}
+
+	public boolean LoadConfigSectionAfterCheckSQL( int intTypeSecction, int intConfigSectionIndex, Node ConfigSectionNode, CSystemStartSessionDBConnection SystemStartSessionDBConnection, CLanguage Lang, CExtendedLogger Logger ) {
+
+		boolean bResult = true;
+		
+		NodeList ConfigSectionList = ConfigSectionNode.getChildNodes();
+		
+        for ( int intLocalConfigSecitonIndex = 0; intLocalConfigSecitonIndex < ConfigSectionList.getLength(); intLocalConfigSecitonIndex++ ) {
+            
+        	Node ConfigSectionAfterCheckSQL = ConfigSectionList.item( intLocalConfigSecitonIndex );
+
+    		Logger.LogMessage( "1", Lang.Translate( "Reading XML node section: [%s]", ConfigSectionAfterCheckSQL.getNodeName() ) );        
+
+    		if ( ConfigSectionAfterCheckSQL.getNodeName().equals( ConfigXMLTagsSystemStartSession._ExecuteSQL ) == true ) {
+        	
+    			LoadConfigSectionExecuteSQL( intTypeSecction, intLocalConfigSecitonIndex, ConfigSectionAfterCheckSQL, SystemStartSessionDBConnection, Lang, Logger );
+        		
+        	}
+             
+        }
+		
+		return bResult;
+		
+	}
+	
 	public boolean LoadConfigSectionAddField( int intTypeSection, int intConfigSectionIndex, Node ConfigSectionNode, CSystemStartSessionDBConnection SystemStartSessionDBConnection, CLanguage Lang, CExtendedLogger Logger ) {
 
 		boolean bResult = true;
@@ -848,7 +936,7 @@ public class CSystemStartSessionConfig extends CAbstractConfigLoader {
 		return bResult;
 		
 	}
-	
+
 	public boolean LoadConfigSectionAddFieldsToResponse( int intTypeSecction, int intConfigSectionIndex, Node ConfigSectionNode, CSystemStartSessionDBConnection SystemStartSessionDBConnection, CLanguage Lang, CExtendedLogger Logger ) {
 
 		boolean bResult = true;
@@ -916,11 +1004,76 @@ public class CSystemStartSessionConfig extends CAbstractConfigLoader {
         		}
         		
         	}
+    		else if ( ConfigSectionDBConnection.getNodeName().equals( ConfigXMLTagsSystemStartSession._AfterCheckSQLSuccess ) == true ) {
+
+    			if ( LoadConfigSectionAfterCheckSQL( ConfigXMLTagsSystemStartSession._Section_Success, intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
+    				
+    			    Logger.LogError( "-1003", Lang.Translate( "Failed to load config from XML node section: [%s]", ConfigSectionDBConnection.getNodeName() ) );        
+
+    			    bResult = false;
+    			    
+    			    break;
+    				
+    			}
+    			
+    		}
+    		else if ( ConfigSectionDBConnection.getNodeName().equals( ConfigXMLTagsSystemStartSession._AfterCheckSQLFailed ) == true ) {
+
+    			if ( LoadConfigSectionAfterCheckSQL( ConfigXMLTagsSystemStartSession._Section_Failed, intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
+    				
+    			    Logger.LogError( "-1004", Lang.Translate( "Failed to load config from XML node section: [%s]", ConfigSectionDBConnection.getNodeName() ) );        
+
+    			    bResult = false;
+    			    
+    			    break;
+    				
+    			}
+    			
+    		}
+    		else if ( ConfigSectionDBConnection.getNodeName().equals( ConfigXMLTagsSystemStartSession._AfterCheckSQLDisabled ) == true ) {
+
+    			if ( LoadConfigSectionAfterCheckSQL( ConfigXMLTagsSystemStartSession._Section_Disabled, intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
+    				
+    			    Logger.LogError( "-1005", Lang.Translate( "Failed to load config from XML node section: [%s]", ConfigSectionDBConnection.getNodeName() ) );        
+
+    			    bResult = false;
+    			    
+    			    break;
+    				
+    			}
+    			
+    		}
+    		else if ( ConfigSectionDBConnection.getNodeName().equals( ConfigXMLTagsSystemStartSession._AfterCheckSQLNotFound ) == true ) {
+
+    			if ( LoadConfigSectionAfterCheckSQL( ConfigXMLTagsSystemStartSession._Section_NotFound, intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
+    				
+    			    Logger.LogError( "-1006", Lang.Translate( "Failed to load config from XML node section: [%s]", ConfigSectionDBConnection.getNodeName() ) );        
+
+    			    bResult = false;
+    			    
+    			    break;
+    				
+    			}
+
+    		}
+    		else if ( ConfigSectionDBConnection.getNodeName().equals( ConfigXMLTagsSystemStartSession._AfterCheckSQLAny ) == true ) {
+
+    			if ( LoadConfigSectionAfterCheckSQL( ConfigXMLTagsSystemStartSession._Section_Any, intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
+    				
+    			    Logger.LogError( "-1007", Lang.Translate( "Failed to load config from XML node section: [%s]", ConfigSectionDBConnection.getNodeName() ) );        
+
+    			    bResult = false;
+    			    
+    			    break;
+    				
+    			}
+    			
+    		}
     		else if ( ConfigSectionDBConnection.getNodeName().equals( ConfigXMLTagsSystemStartSession._AddFieldsToResponseSuccess ) == true ) {
         		
     			if ( LoadConfigSectionAddFieldsToResponse( ConfigXMLTagsSystemStartSession._Section_Success, intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
     				
-    			    Logger.LogError( "-1003", Lang.Translate( "Failed to load config from XML node section: [%s]", ConfigSectionDBConnection.getNodeName() ) );        
+    			    Logger.LogError( "-1008", Lang.Translate( "Failed to load config from XML node section: [%s]", ConfigSectionDBConnection.getNodeName() ) );        
 
     			    bResult = false;
     			    
@@ -933,7 +1086,7 @@ public class CSystemStartSessionConfig extends CAbstractConfigLoader {
         		
     			if ( LoadConfigSectionAddFieldsToResponse( ConfigXMLTagsSystemStartSession._Section_Failed, intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
     				
-    			    Logger.LogError( "-1004", Lang.Translate( "Failed to load config from XML node section: [%s]", ConfigSectionDBConnection.getNodeName() ) );        
+    			    Logger.LogError( "-1009", Lang.Translate( "Failed to load config from XML node section: [%s]", ConfigSectionDBConnection.getNodeName() ) );        
 
     			    bResult = false;
     			    
@@ -946,7 +1099,7 @@ public class CSystemStartSessionConfig extends CAbstractConfigLoader {
         		
     			if ( LoadConfigSectionAddFieldsToResponse( ConfigXMLTagsSystemStartSession._Section_Disabled, intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
     				
-    			    Logger.LogError( "-1005", Lang.Translate( "Failed to load config from XML node section: [%s]", ConfigSectionDBConnection.getNodeName() ) );        
+    			    Logger.LogError( "-1010", Lang.Translate( "Failed to load config from XML node section: [%s]", ConfigSectionDBConnection.getNodeName() ) );        
 
     			    bResult = false;
     			    
@@ -959,7 +1112,7 @@ public class CSystemStartSessionConfig extends CAbstractConfigLoader {
         		
     			if ( LoadConfigSectionAddFieldsToResponse( ConfigXMLTagsSystemStartSession._Section_NotFound, intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
     				
-    			    Logger.LogError( "-1006", Lang.Translate( "Failed to load config from XML node section: [%s]", ConfigSectionDBConnection.getNodeName() ) );        
+    			    Logger.LogError( "-1011", Lang.Translate( "Failed to load config from XML node section: [%s]", ConfigSectionDBConnection.getNodeName() ) );        
 
     			    bResult = false;
     			    
@@ -972,7 +1125,7 @@ public class CSystemStartSessionConfig extends CAbstractConfigLoader {
         		
     			if ( LoadConfigSectionAddFieldsToResponse( ConfigXMLTagsSystemStartSession._Section_Any, intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
     				
-    			    Logger.LogError( "-1007", Lang.Translate( "Failed to load config from XML node section: [%s]", ConfigSectionDBConnection.getNodeName() ) );        
+    			    Logger.LogError( "-1012", Lang.Translate( "Failed to load config from XML node section: [%s]", ConfigSectionDBConnection.getNodeName() ) );        
 
     			    bResult = false;
     			    
@@ -993,7 +1146,7 @@ public class CSystemStartSessionConfig extends CAbstractConfigLoader {
         }
         else {
         	
-		    Logger.LogWarning( "-1008", Lang.Translate( "Failed to add the DBConnection, for the section [%s] at relative index [%s], ignoring the section", ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );        
+		    Logger.LogWarning( "-1013", Lang.Translate( "Failed to add the DBConnection, for the section [%s] at relative index [%s], ignoring the section", ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );        
         	
         }
         

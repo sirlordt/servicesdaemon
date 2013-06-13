@@ -16,6 +16,11 @@
 <entry key="Failed to add the DBConnection, for the section [%s] at relative index [%s], ignoring the section">Falló al agregar la DBCOnnection, para la sección [%s] en la posición relativa [%s], ignorando la sección</entry>
 <entry key="The list of DBConections is empty">La lista de DBConnections no contiene ningún elemento</entry>
 <entry key="DBConections count registered: [%s]">Cantidad de DBConnetions registradas: [%s]</entry>
+<entry key="Added after check SQL success [%s]">Agregado SQL [%s] para un chequeo exitoso</entry>
+<entry key="Added after check SQL failed [%s]">Agregado SQL [%s] para un chequeo fallido</entry>
+<entry key="Added after check SQL disabled [%s]">Agregado SQL [%s] para un chequeo deshabilitado</entry>
+<entry key="Added after check SQL not found [%s]">Agregado SQL [%s] para un chequeo no encontrado</entry>
+<entry key="Added after check SQL [%s] for any">Agregado SQL [%s] para un chequeo cualquiera</entry>
 <entry key="Added field [%s] for response success">Campo [%s] agregado para la respuesta satisfactoria</entry>
 <entry key="Added field [%s] for response failed">Campo [%s] agregado para la respuesta fallida</entry>
 <entry key="Added field [%s] for response disabled">Campo [%s] agregado para la respuesta deshabilitada</entry>

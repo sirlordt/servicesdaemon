@@ -31,6 +31,12 @@ public class CSystemStartSessionDBConnection {
 	String strFieldValueDisabled;
 	String strFieldValueNotFound;
 	
+	ArrayList<String> AfterCheckSQLSuccess;
+	ArrayList<String> AfterCheckSQLFailed;
+	ArrayList<String> AfterCheckSQLDisabled;
+	ArrayList<String> AfterCheckSQLNotFound;
+	ArrayList<String> AfterCheckSQLAny;
+	
 	ArrayList<String> AddFieldToResponseSuccess;
 	ArrayList<String> AddFieldToResponseFailed;
 	ArrayList<String> AddFieldToResponseDisabled;
@@ -51,6 +57,12 @@ public class CSystemStartSessionDBConnection {
 		strFieldValueFailed = "";
 		strFieldValueDisabled = "";
 		strFieldValueNotFound = "";
+		
+		AfterCheckSQLSuccess = new ArrayList<String>();
+		AfterCheckSQLFailed = new ArrayList<String>();
+		AfterCheckSQLDisabled = new ArrayList<String>();
+		AfterCheckSQLNotFound = new ArrayList<String>();;
+		AfterCheckSQLAny = new ArrayList<String>();;
 		
 		AddFieldToResponseSuccess = new ArrayList<String>();
 		AddFieldToResponseFailed = new ArrayList<String>();

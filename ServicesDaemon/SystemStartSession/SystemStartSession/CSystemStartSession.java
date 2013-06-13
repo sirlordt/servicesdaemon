@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import Utilities.Utilities;
 
 import AbstractDBEngine.CAbstractDBEngine;
+import AbstractDBEngine.CAbstractDBEngine.SQLStatementType;
 import AbstractResponseFormat.CAbstractResponseFormat;
 import AbstractService.CAbstractService;
 import AbstractService.CInputServiceParameter;
@@ -569,6 +570,87 @@ public class CSystemStartSession extends CAbstractService {
 		
 	}
 	
+	void AfterCheckSQL( int intAfterCheckSQL, CAbstractDBEngine DBEngine, CSystemStartSessionDBConnection SystemStartSessionDBConnection, Connection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+		
+		try {
+
+			ArrayList<String> strAfterCheckSQL = null;
+
+			if ( intAfterCheckSQL == 1 ) { //Success
+
+				strAfterCheckSQL = SystemStartSessionDBConnection.AfterCheckSQLSuccess;
+
+			}
+			else if ( intAfterCheckSQL == 2 ) { //Failed
+
+				strAfterCheckSQL = SystemStartSessionDBConnection.AfterCheckSQLFailed;
+
+			}
+			else if ( intAfterCheckSQL == 3 ) { //Disabled
+
+				strAfterCheckSQL = SystemStartSessionDBConnection.AfterCheckSQLDisabled;
+
+			}
+			else if ( intAfterCheckSQL == 4 ) { //Not Found
+
+				strAfterCheckSQL = SystemStartSessionDBConnection.AfterCheckSQLNotFound;
+
+			}
+			
+			strAfterCheckSQL.addAll( SystemStartSessionDBConnection.AfterCheckSQLAny );
+
+			if ( strAfterCheckSQL != null ) {
+
+				for ( int intIndexSQL =0; intIndexSQL < strAfterCheckSQL.size(); intIndexSQL++ ) {
+
+					String strSQL = SystemStartSessionDBConnection.AfterCheckSQLSuccess.get( intIndexSQL );
+
+					SQLStatementType SQLType = DBEngine.getSQLStatementType( strSQL, ServiceLogger, ServiceLang );
+
+					try {
+
+						if ( SQLType == SQLStatementType.Call ) {
+
+							DBEngine.InputServiceParameterStoredProcedure( DBConnection, Request, InputServiceParameters, this.getMacrosTypes(), this.getMacrosNames(), strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, strSQL, ServiceLogger, ServiceLang );
+
+						}
+						else if ( DBEngine.isModifySQLStatement( SQLType ) ) {
+
+							DBEngine.InputServiceParameterModifySQL( DBConnection, Request, InputServiceParameters, this.getMacrosTypes(), this.getMacrosNames(), strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, strSQL, ServiceLogger, ServiceLang );
+
+						}
+						else {
+
+							ServiceLogger.LogWarning( "-1", ServiceLang.Translate( "Only modify SQL ( Call, Insert, Update, Delete ) allowed here [%s]", strSQL ) );        
+
+						}
+
+					}
+					catch ( Exception Ex ) {
+
+						if ( ServiceLogger != null )
+							ServiceLogger.LogException( "-1016", Ex.getMessage(), Ex ); 
+						else if ( OwnerLogger != null )
+							OwnerLogger.LogException( "-1016", Ex.getMessage(), Ex );
+
+					}
+
+				}
+
+			}
+
+		}
+		catch ( Exception Ex ) {
+
+			if ( ServiceLogger != null )
+				ServiceLogger.LogException( "-1015", Ex.getMessage(), Ex ); 
+			else if ( OwnerLogger != null )
+				OwnerLogger.LogException( "-1015", Ex.getMessage(), Ex );
+
+		}
+		
+	}
+	
 	@Override
 	public int ExecuteService( int intEntryCode, HttpServletRequest Request, HttpServletResponse Response, String strSecurityTokenID, HashMap<String,CAbstractService> RegisteredServices, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion ) {
 
@@ -640,14 +722,14 @@ public class CSystemStartSession extends CAbstractService {
 
 											DBEngine.setAutoCommit( DBConnection, false, ServiceLogger, ServiceLang );
 
+											String strForwardedIP = Request.getHeader( "X-Forwarded-For" );
+
+											if ( strForwardedIP == null )
+												strForwardedIP = "";
+
+											String strMacrosValues[] = { Request.getRemoteAddr(), strForwardedIP, LocalConfigDBConnection.strDatabase, LocalConfigDBConnection.strName, DateFormat.format( SystemDateTime ), TimeFormat.format( SystemDateTime ), DateTimeFormat.format( SystemDateTime ) }; 
+
 											if ( strSQL.isEmpty() == false ) { //database
-
-												String strForwardedIP = Request.getHeader( "X-Forwarded-For" );
-
-												if ( strForwardedIP == null )
-													strForwardedIP = "";
-
-												String strMacrosValues[] = { Request.getRemoteAddr(), strForwardedIP, LocalConfigDBConnection.strDatabase, LocalConfigDBConnection.strName, DateFormat.format( SystemDateTime ), TimeFormat.format( SystemDateTime ), DateTimeFormat.format( SystemDateTime ) }; 
 
 												if ( SystemStartSessionDBConnection.strSQLType.equals( ConfigXMLTagsSystemStartSession._SQLType_sql )  ) {
 
@@ -669,6 +751,8 @@ public class CSystemStartSession extends CAbstractService {
 
 												if ( ConfigDBConnection.strAuthType.equals( ConfigXMLTagsDBServicesManager._Auth_Type_Engine ) ) {
 
+													AfterCheckSQL( 1, DBEngine, SystemStartSessionDBConnection, DBConnection, Request, InputServiceParameters, this.getMacrosTypes(), this.getMacrosNames(), strMacrosValues, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, LocalConfigDBConnection.strDateTimeFormat, ServiceLogger, ServiceLang );
+
 													SucessStartSession( StartSessionResultSet, LocalConfigDBConnection, "1", SystemStartSessionDBConnection.AddFieldToResponseSuccess, SystemStartSessionDBConnection.AddFieldToResponseAny, Request, Response, ResponseFormat, strResponseFormatVersion );
 
 												}
@@ -685,20 +769,28 @@ public class CSystemStartSession extends CAbstractService {
 
 															if ( Field.checkFieldValue( 0, SystemStartSessionDBConnection.strFieldValueSuccess, intSQLType, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, LocalConfigDBConnection.strDateTimeFormat, ServiceLogger, ServiceLang ) ) {
 
+																AfterCheckSQL( 1, DBEngine, SystemStartSessionDBConnection, DBConnection, Request, InputServiceParameters, this.getMacrosTypes(), this.getMacrosNames(), strMacrosValues, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, LocalConfigDBConnection.strDateTimeFormat, ServiceLogger, ServiceLang );
+
 																SucessStartSession( StartSessionResultSet, LocalConfigDBConnection, SystemStartSessionDBConnection.strFieldValueSuccess, SystemStartSessionDBConnection.AddFieldToResponseSuccess, SystemStartSessionDBConnection.AddFieldToResponseAny, Request, Response, ResponseFormat, strResponseFormatVersion );
 
 															}
 															else if ( Field.checkFieldValue( 0, SystemStartSessionDBConnection.strFieldValueFailed, intSQLType, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, LocalConfigDBConnection.strDateTimeFormat, ServiceLogger, ServiceLang ) ) {
+
+																AfterCheckSQL( 2, DBEngine, SystemStartSessionDBConnection, DBConnection, Request, InputServiceParameters, this.getMacrosTypes(), this.getMacrosNames(), strMacrosValues, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, LocalConfigDBConnection.strDateTimeFormat, ServiceLogger, ServiceLang );
 
 																FailedStartSession( StartSessionResultSet, SystemStartSessionDBConnection.strFieldValueFailed, SystemStartSessionDBConnection.AddFieldToResponseFailed, SystemStartSessionDBConnection.AddFieldToResponseAny, Request, Response, ResponseFormat, strResponseFormatVersion );
 
 															}
 															else if ( Field.checkFieldValue( 0, SystemStartSessionDBConnection.strFieldValueDisabled, intSQLType, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, LocalConfigDBConnection.strDateTimeFormat, ServiceLogger, ServiceLang ) ) {
 
+																AfterCheckSQL( 3, DBEngine, SystemStartSessionDBConnection, DBConnection, Request, InputServiceParameters, this.getMacrosTypes(), this.getMacrosNames(), strMacrosValues, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, LocalConfigDBConnection.strDateTimeFormat, ServiceLogger, ServiceLang );
+
 																DisabledStartSession( StartSessionResultSet, SystemStartSessionDBConnection.strFieldValueDisabled, SystemStartSessionDBConnection.AddFieldToResponseDisabled, SystemStartSessionDBConnection.AddFieldToResponseAny, Request, Response, ResponseFormat, strResponseFormatVersion );
 
 															}
 															else if ( Field.checkFieldValue( 0, SystemStartSessionDBConnection.strFieldValueNotFound, intSQLType, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, LocalConfigDBConnection.strDateTimeFormat, ServiceLogger, ServiceLang ) ) {
+
+																AfterCheckSQL( 4, DBEngine, SystemStartSessionDBConnection, DBConnection, Request, InputServiceParameters, this.getMacrosTypes(), this.getMacrosNames(), strMacrosValues, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, LocalConfigDBConnection.strDateTimeFormat, ServiceLogger, ServiceLang );
 
 																NotFoundStartSession( StartSessionResultSet, SystemStartSessionDBConnection.strFieldValueNotFound, SystemStartSessionDBConnection.AddFieldToResponseNotFound, SystemStartSessionDBConnection.AddFieldToResponseAny, Request, Response, ResponseFormat, strResponseFormatVersion );
 
@@ -741,6 +833,8 @@ public class CSystemStartSession extends CAbstractService {
 													}
 													else if ( StartSessionResultSet.getRowCount() > 0 ) { //Only one row is necessary for valid check
 
+														AfterCheckSQL( 1, DBEngine, SystemStartSessionDBConnection, DBConnection, Request, InputServiceParameters, this.getMacrosTypes(), this.getMacrosNames(), strMacrosValues, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, LocalConfigDBConnection.strDateTimeFormat, ServiceLogger, ServiceLang );
+
 														//Type == if_exists
 														SucessStartSession( StartSessionResultSet, LocalConfigDBConnection, "1", SystemStartSessionDBConnection.AddFieldToResponseSuccess, SystemStartSessionDBConnection.AddFieldToResponseAny, Request, Response, ResponseFormat, strResponseFormatVersion );
 
@@ -777,6 +871,8 @@ public class CSystemStartSession extends CAbstractService {
 												}
 
 												if ( ConfigDBConnection.strAuthType.equals( ConfigXMLTagsDBServicesManager._Auth_Type_Engine ) ) {
+
+													AfterCheckSQL( 1, DBEngine, SystemStartSessionDBConnection, DBConnection, Request, InputServiceParameters, this.getMacrosTypes(), this.getMacrosNames(), strMacrosValues, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, LocalConfigDBConnection.strDateTimeFormat, ServiceLogger, ServiceLang );
 
 													SucessStartSession( null, LocalConfigDBConnection, "1", SystemStartSessionDBConnection.AddFieldToResponseSuccess, SystemStartSessionDBConnection.AddFieldToResponseAny, Request, Response, ResponseFormat, strResponseFormatVersion );
 

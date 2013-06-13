@@ -96,7 +96,7 @@ public abstract class CAbstractDBEngine {
     	
     }
 
-    public enum SQLStatementType { Unknown, Select, Insert, Update, Delete };
+    public enum SQLStatementType { Unknown, Call, Select, Insert, Update, Delete };
     
     protected String strName;
     protected String strVersion;
@@ -151,7 +151,12 @@ public abstract class CAbstractDBEngine {
 
 				strSQL = strSQL.toLowerCase();
 				
-				if ( strSQL.indexOf( ConstantsAbstractDBEngine._SELECT ) == 0 ) {
+				if ( strSQL.indexOf( ConstantsAbstractDBEngine._CALL ) == 0 ) {
+
+					Result = SQLStatementType.Call;
+					
+				}
+				else if ( strSQL.indexOf( ConstantsAbstractDBEngine._SELECT ) == 0 ) {
 
 					Result = SQLStatementType.Select;
 					
@@ -186,6 +191,12 @@ public abstract class CAbstractDBEngine {
 		
 	}
     
+	public boolean isModifySQLStatement( SQLStatementType SQLType ) {
+		
+		return SQLType == SQLStatementType.Insert || SQLType == SQLStatementType.Update || SQLType == SQLStatementType.Delete;
+		
+	} 
+	
 	public boolean setMacroValueToNamedPreparedStatement( CNamedPreparedStatement NamedPreparedStatement, String strFieldName, int intMacroIndex, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		boolean bResult =  false;

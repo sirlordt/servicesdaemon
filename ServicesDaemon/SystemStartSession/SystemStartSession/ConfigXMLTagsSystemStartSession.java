@@ -42,6 +42,13 @@ public interface ConfigXMLTagsSystemStartSession {
 	public static final String _Field_Value_Disabled = "Field_Value_Disabled";
 	public static final String _Field_Value_NotFound = "Field_Value_NotFound";
 	
+	public static final String _AfterCheckSQLSuccess = "AfterCheckSQLSuccess";
+	public static final String _AfterCheckSQLFailed = "AfterCheckSQLFailed";
+	public static final String _AfterCheckSQLDisabled = "AfterCheckSQLDisabled";
+	public static final String _AfterCheckSQLNotFound = "AfterCheckSQLNotFound";
+	public static final String _AfterCheckSQLAny = "AfterCheckSQLAny";
+	public static final String _ExecuteSQL = "ExecuteSQL";
+	
 	public static final String _AddFieldsToResponseSuccess = "AddFieldsToResponseSuccess";
 	public static final String _AddFieldsToResponseFailed = "AddFieldsToResponseFailed";
 	public static final String _AddFieldsToResponseDisabled = "AddFieldsToResponseDisabled";
