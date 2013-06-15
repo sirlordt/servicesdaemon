@@ -1,12 +1,16 @@
-/MySQLDBEngine
 /AbstractDBEngine
 /AbstractResponseFormat
 /AbstractService
 /AbstractServicesManager
 /CommonClasses
 /CryptPasswordSD
+/DBServicesManager
+/ExtendedLogger
 /FirebirdDBEngine
+/MySQLDBEngine
+/PGSQLDBEngine
 /PreExecuteServiceTest
+/ServicesDaemon
 /SystemCommitTransaction
 /SystemEndSession
 /SystemEndTransaction
@@ -16,7 +20,4 @@
 /SystemRollbackTransaction
 /SystemStartSession
 /SystemStartTransaction
-/DBServicesManager
-/META-INF
-/ServicesDaemon
-/PGSQLDBEngine
+/Utilities
