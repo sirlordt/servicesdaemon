@@ -40,5 +40,7 @@ public interface JavaXMLWebRowSetTags {
 	public final static int _XMLStructParamSetNameLength       = 75;
 	public final static String _XMLStructParamName             = "ParamName";
 	public final static int _XMLStructParamNameLength          = 75;
+	public final static String _XMLStructParamDescription      = "ParamDescription";
+	public final static int _XMLStructParamDescriptionLength   = 255;
 	
 }

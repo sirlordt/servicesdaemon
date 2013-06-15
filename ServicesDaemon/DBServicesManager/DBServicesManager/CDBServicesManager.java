@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import AbstractDBEngine.CAbstractDBEngine;
 import AbstractResponseFormat.CAbstractResponseFormat;
+import AbstractResponseFormat.CJavaXMLWebRowSetResponseFormat;
 import AbstractResponseFormat.CXMLDataPacketResponseFormat;
 import AbstractService.CAbstractService;
 import AbstractService.ConstantsServicesTags;
@@ -203,6 +204,15 @@ public class CDBServicesManager extends CAbstractServicesManager {
 			
 			}
 
+			CJavaXMLWebRowSetResponseFormat JavaXMLWebRowSetResponseFormat = new CJavaXMLWebRowSetResponseFormat();
+			
+			if ( JavaXMLWebRowSetResponseFormat.InitResponseFormat( ServicesDaemonConfig, DBServicesManagerConfig ) == true ) {
+				   
+				CAbstractResponseFormat.ResigterResponseFormat( JavaXMLWebRowSetResponseFormat );
+				DBServicesManagerConfig.Logger.LogMessage( "1", DBServicesManagerConfig.Lang.Translate( "Added built in response format [%s] min version: [%s] max version: [%s]", JavaXMLWebRowSetResponseFormat.getName(), JavaXMLWebRowSetResponseFormat.getMinVersion(), JavaXMLWebRowSetResponseFormat.getMaxVersion() ) );        
+			
+			}
+			
 			CAbstractResponseFormat DefaultResponseFormat = CAbstractResponseFormat.getResponseFomat( DBServicesManagerConfig.strDefaultResponseFormat, DBServicesManagerConfig.strDefaultResponseFormatVersion );
 
 			if ( DefaultResponseFormat == null ) {

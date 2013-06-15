@@ -27,10 +27,10 @@ public interface ConstantsServicesTags {
 	public final static String _RequestServiceName                   = "ServiceName";
 	public final static String _RequestServiceNameType               = "VarChar";
 	public final static String _RequestServiceNameLength             = "255";
-	public final static String _RequestResponseFormat                = "ResponseFormatSD";
+	public final static String _RequestResponseFormat                = "ResponseFormat";
 	public final static String _RequestResponseFormatType            = "VarChar";
 	public final static String _RequestResponseFormatLength          = "75";
-	public final static String _RequestResponseFormatVersion         = "ResponseFormatVersionSD";
+	public final static String _RequestResponseFormatVersion         = "ResponseFormatVersion";
 	public final static String _RequestResponseFormatVersionType     = "VarChar";
 	public final static String _RequestResponseFormatVersionLength   = "15";
 

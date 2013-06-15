@@ -152,9 +152,9 @@ public abstract class CAbstractResponseFormat {
     public abstract String EnumerateServices( HashMap<String,CAbstractService> RegisteredServices, String strVersion );
     public abstract String FormatResultSet( ResultSet ResultSet, String strVersion );
     public abstract String FormatResultsSets( ArrayList<ResultSet> ResultsSest, String strVersion );
-    public abstract String FormatResultsSets( ArrayList<CResultSetResult> ResultsSest, String strVersion, int intDummyParam );
-    public abstract String FormatMemoryRowSet( CMemoryRowSet MemoryRowtSet, String strVersion );
-    public abstract String FormatMemoryRowSets( ArrayList<CMemoryRowSet> MemoryRowtSets, String strVersion );
+    public abstract String FormatResultsSets( ArrayList<CResultSetResult> ResultsSetsList, String strVersion, int intDummyParam );
+    public abstract String FormatMemoryRowSet( CMemoryRowSet MemoryRowSet, String strVersion );
+    public abstract String FormatMemoryRowSets( ArrayList<CMemoryRowSet> MemoryRowSets, String strVersion );
     public abstract String FormatSimpleMessage( String strSecurityToken, String strTransactionID, int intCode, String strDescription, boolean bAttachToError, String strVersion );
 
 }

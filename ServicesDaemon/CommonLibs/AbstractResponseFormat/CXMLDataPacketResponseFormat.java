@@ -204,7 +204,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
             if ( XML_FieldsSection.getLength() > 0 ) {
 
-               if ( strSecurityToken != null && strSecurityToken.trim().equals("") == false ) {
+               if ( strSecurityToken != null && strSecurityToken.trim().isEmpty() == false ) {
 
                   Element XML_FieldSecurityToken = XMLDocument.createElement( XMLDataPacketTags._Field );
                   XML_FieldSecurityToken.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XMLStructSecurityToken );
@@ -214,7 +214,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
                }
 
-               if ( strTransactionID != null && strTransactionID.trim().equals("") == false ) {
+               if ( strTransactionID != null && strTransactionID.trim().isEmpty() == false ) {
 
                   Element XML_FieldSecurityToken = XMLDocument.createElement( XMLDataPacketTags._Field );
                   XML_FieldSecurityToken.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XMLStructTransactionID );
@@ -1223,9 +1223,9 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
               XML_FieldInputParameters.appendChild( XML_FieldParameterSubType );
 
               Element XML_FieldParameterDescription = XMLDocument.createElement( XMLDataPacketTags._Field );
-              XML_FieldParameterDescription.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XMLStructDescription );
+              XML_FieldParameterDescription.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XMLStructParamDescription );
               XML_FieldParameterDescription.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeString );
-              XML_FieldParameterDescription.setAttribute( XMLDataPacketTags._FieldTypeStringWidth, XMLDataPacketTags._XMLStructDescriptionLength );
+              XML_FieldParameterDescription.setAttribute( XMLDataPacketTags._FieldTypeStringWidth, XMLDataPacketTags._XMLStructParamDescriptionLength );
 
               XML_FieldInputParameters.appendChild( XML_FieldParameterDescription );
 
@@ -1425,21 +1425,21 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     }
     
     @Override
-    public String FormatMemoryRowSets( ArrayList<CMemoryRowSet> MemoryRowtSets, String strVersion ) {
+    public String FormatMemoryRowSets( ArrayList<CMemoryRowSet> MemoryRowSets, String strVersion ) {
     	
     	String strResult = "";
 
         try {
 
-        	if ( MemoryRowtSets.size() > 0 ) {
+        	if ( MemoryRowSets.size() > 0 ) {
         	
 		        Document XMLDocument = this.BuildBasicResponseXMLStruct( strVersion );
 		
-		        CMemoryRowSet FirstMemoryRowSet = MemoryRowtSets.get( 0 );
+		        CMemoryRowSet FirstMemoryRowSet = MemoryRowSets.get( 0 );
 
         		XMLDocument = BuildXMLMetaData( XMLDocument, FirstMemoryRowSet );
 		
-		        for ( CMemoryRowSet MemoryRowSetToAdd: MemoryRowtSets ) {   
+		        for ( CMemoryRowSet MemoryRowSetToAdd: MemoryRowSets ) {   
         		
 		        	XMLDocument = AddXMLToRowDataSection( XMLDocument, MemoryRowSetToAdd );
 		        
