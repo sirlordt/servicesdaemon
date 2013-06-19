@@ -19,6 +19,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import javax.sql.RowSetMetaData;
 import javax.sql.rowset.CachedRowSet;
@@ -1312,6 +1313,35 @@ public class CMemoryRowSet {
 				
 				Field.addNulls( intRowCount - Field.Data.size() );
 				
+			}
+			
+		}
+		
+	}
+	
+	public void NormalizeRowCount( LinkedHashMap<String,Object> DefaultFieldValues ) {
+		
+		int intRowCount = 0;
+		
+		intRowCount = this.getRowCount();
+		
+		for ( CMemoryFieldData Field: FieldsData ) {
+
+			if ( Field.Data.size() < intRowCount ) {
+
+				Object DefaultFieldValue = DefaultFieldValues.get( Field.strName );
+
+				if ( DefaultFieldValue == null ) {
+
+					Field.addNulls( intRowCount - Field.Data.size() );
+
+				}
+				else {
+
+					Field.addData( DefaultFieldValue, intRowCount - Field.Data.size() );
+
+				}
+
 			}
 			
 		}

@@ -1,0 +1,90 @@
+Usando un cliente http para el "Manager" DBServicesManager, archivo DBServicesManager.jar dentro de la carpeta Managers.
+
+Las llamadas pueden ser de tipos HTTP/POST y/o HTTP/GET, según configuración del archivo ServicesDaemon.conf. 
+
+Para especificar el formato y versión de respuesta se debe usar los siguiente paramétros:
+
+ResponseFormat=XML-DATAPACKET
+ResponseFormatVersion=1.1
+
+Los anteriores parámetros son opcionales y pueden ser enviados o no, según la configuración del archivo DBServicesManager.conf,
+dentro de la carpetas Managers/DBServicesManager, las respuesta por defecto es tomada de los paramétros del archivo de 
+configuración, eso evita tener que enviarlos con cada llamada a los servicios, que son los siguientes:
+
+Default_Response_Format="XML-DataPacket" 
+Default_Response_Format_Version="1.1" 
+
+Usando los valores anteriores en el archivo DBServicesManager.conf el DBServicesManager siempre que no se envien los paramétros 
+será en XML-DataPacket en versión "1.1", sin embargo los otros formatos de respuesta disponibles todavía podrán ser usados, 
+solo hay que especificarlos en la llamada al servicio, para que el DBServicesManager retorne la información en el formato
+especificado por la llamada.
+
+Posibles formatos de respuesta (Valores para el parámetro ResponseFormat), sólo nombres exactos, siendo las mayúsculas y 
+minúsculas MUY importantes.
+
+JAVA-XML-WEBROWSET:
+
+Ejemplo:
+
+ResponseFormat=JAVA-XML-WEBROWSET
+ResponseFormatVersion=1.0
+
+Posible versiones para el formatos son:
+
+1.0
+
+XML-DATAPACKET:
+
+Ejemplo:
+ResponseFormat=XML-DATAPACKET
+ResponseFormatVersion=1.1
+
+Posible versiones para el formatos son:
+
+1.0
+1.1 (Cambios menores en el nodo xml errors que permite alojar varios sub nodos de tipo error, a final del documento xml)
+
+JSON: (Planeado)
+
+Ejemplo:
+ResponseFormat=JSON
+ResponseFormatVersion=1.0
+
+Posible versiones para el formatos son:
+
+1.0
+
+CSV: (Planeado)
+
+Ejemplo:
+ResponseFormat=CSV
+ResponseFormatVersion=1.0
+
+Posible versiones para el formatos son:
+
+1.0
+
+Ejemplo de una llamada un servicio de nombre System.Enum.Services que no requiere autenticación, 
+con formato de respuesta JAVA-XML-WEBROWSET y versión 1.0
+
+ServiceName=System.Enum.Services
+ResponseFormat=JAVA-XML-WEBROWSET
+ResponseFormatVersion=1.0
+
+Con este servicio y dependiendo del formato de respuesta se enumeran todos los servicios registrados 
+en la carpeta DBServices dentro de la carpeta DBServicesManager.
+
+Otra manera de llamarlo sería de la siguiente manera
+
+ServiceName=System.Enum.Services
+
+Ahora y como el archivo DBServicesManager.conf tiene valores por defecto los siguiente valores: 
+
+Default_Response_Format="XML-DataPacket" 
+Default_Response_Format_Version="1.1" 
+
+El DBServicesManager responderá con el formato XML-DataPacket versión 1.1 por defecto.
+
+Puede cambiarlos en el archivo configuración por cualquier otro, incluso los que usted mismo implemente de la interface
+CAbstractResponseFormat para poder ser usados y colocados los archivos .jar dentro de la carpeta ResponseFormats que está 
+ubicada en la carpeta DBServicesManagers.  

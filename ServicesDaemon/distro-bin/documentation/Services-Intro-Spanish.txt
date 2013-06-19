@@ -1,0 +1,56 @@
+¿Que es el ServicesDaemon?
+
+Es una implementación en java de un servlet, usando Jetty empotrado, implementado en java
+usando una arqutectura de módulos auto cargables, organizado en una jerarquia de directorios,
+repetitiva para Managers y Services dependientes de cada Managers.
+
+¿Cual es la función del ServicesDaemon?
+
+La función del services daemon es la de integración de datos, una pasarela que usa para transportar
+información mediante el archi conocido http.
+
+Adicionalmente puede ser visto como una herramienta ETL o Middleware, en la que un cliente con capacidad
+de acceder a recursos mediante el protocolo http, opcionalmente y según la configuración se puede usar https.
+
+¿Cual es la arquitectura del ServicesDaemon?
+ 
+La arquitectura del Services es basicamente módular 
+
+    ServicesDaemon \
+                   -> Managers \
+                                -> Services
+                               /       \
+                              /         \ 
+                      DBEngine          ResponseFormat  
+
+Usando la arquitectura mostrada permite desarrollar nuevos manager extendiendo la clase CAbstractServicesManager
+a su vez es posible implementar servicios especificos para su manager implementando la interfaz CAbstractService,
+eso le permite escalar prácticamente de manera indefinida.
+ 
+La función del ServicesDaemon es la de coordinar a travez del jetty las peticiones HTTP/HTTPS los clientes, además
+de la loǵica del servlet container propiamente.
+ 
+La función del Manager es la de coordinar la lógica del contexto que implementan, por ejemplo el DBServicesManager,
+tiene un contexto de /DBServices para acceder a los servicios que gerencia este manager es con la siguente url 
+http://127.0.0.1/DBServices/     
+ 
+Se podría implmentar N cantidad de Managers (Gerentes) cada uno con contextos distintos y acceder a los servicios de los
+mismos usando su conexto en la URL.
+
+Por ejemplo imaginese que quiere implementar el manager JavaObjects y su contexto es /JavaObjects el url para accederlo
+con la siguiente url http://127.0.0.1/JavaObjects.
+
+La función del Services es la de implementar un servicio específico que depende directamente de su manager a nivel lógico, 
+con ayuda de ResponseFormat y DBEngine, en está clase se concentra toda la lógica real del sistema, o de los servicios.  
+
+Cada servicios es invocado por su nombre el cual debe ser único para su manager, por ejemplo solo debe existir una
+implementación del servicio System.Enum.Services en el contexto /DBServices, otro servicio con el mismo nombre
+será simplemente ignorado al momento des ser cargado y registrado por su Manager, claro nada de esto impide que usted
+user el nombre System.Enum.ServicesA ó System.Enum.ServicesA por ejemplo para tener otros dos servicios que hacen algo 
+similar pero de distinta forma o lógica, pero para este proposito recomiendo usar los paramétros de llamada al servicio.
+
+Continuando con la idea anterior puede existir un System.Enum.Services en el manager /DBServices y otro de igual nombre
+pero con manager distinto como por ejemplo el /JavaObjects, aunque ambos realizen una tarea igual, para el caso del 
+System.Enum.Services enumeran.
+
+  

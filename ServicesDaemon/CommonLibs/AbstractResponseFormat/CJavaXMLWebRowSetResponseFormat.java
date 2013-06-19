@@ -2,19 +2,17 @@ package AbstractResponseFormat;
 
 import java.io.StringWriter;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 import javax.sql.RowSetMetaData;
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetMetaDataImpl;
 import javax.sql.rowset.WebRowSet;
-
-import org.w3c.dom.Document;
 
 import com.sun.rowset.CachedRowSetImpl;
 import com.sun.rowset.WebRowSetImpl;
@@ -390,29 +388,36 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 
         	if ( ResultsSetsList.size() > 0 ) {
 
-        		ResultSet ResultSetMetaData = CResultSetResult.getFirstResultSetNotNull( ResultsSetsList );
+        		ResultSet ResultSet = CResultSetResult.getFirstResultSetNotNull( ResultsSetsList );
+
+        		CMemoryRowSet MemoryRowSet = new CMemoryRowSet( false );
         		
-    			//Document XMLDocument = this.BuildBasicResponseXMLStruct( strVersion );
-
-        		if ( ResultSetMetaData != null ) {
-		        
-        			ResultSetMetaData DataSetMetaData = ResultSetMetaData.getMetaData();
-
-        			ArrayList<String> arrIncludedFields = new ArrayList<String>();
-        			ArrayList<String> arrExcludedFields = new ArrayList<String>();
-
-        			//XMLDocument = BuildXMLMetaData( XMLDocument, DataSetMetaData, arrIncludedFields, arrExcludedFields );
-
+        		if ( ResultSet != null ) {
+        			
+        			MemoryRowSet.cloneOnlyMetaData( ResultSet, null );
+        			MemoryRowSet.addField( JavaXMLWebRowSetTags._XMLStructSQLOperationCode, Types.INTEGER, NamesSQLTypes._INTEGER, 0, JavaXMLWebRowSetTags._XMLStructSQLOperationCode );
+        			MemoryRowSet.addField( JavaXMLWebRowSetTags._XMLStructSQLOperationDescription, Types.VARCHAR, NamesSQLTypes._VARCHAR, JavaXMLWebRowSetTags._XMLStructSQLOperationDescriptionLength, JavaXMLWebRowSetTags._XMLStructSQLOperationDescription );
+        			
+        			LinkedHashMap<String,Object> DefaultFieldValues = new LinkedHashMap<String,Object>();
+        			
         			for ( CResultSetResult ResultSetResultToAdd: ResultsSetsList ) {    
 
         				if ( ResultSetResultToAdd.Result != null && ResultSetResultToAdd.intCode >= 0 ) {   
         				
-        					//XMLDocument = AddXMLToRowDataSection( XMLDocument, ResultSetResultToAdd.Result, arrIncludedFields, arrExcludedFields );
+        					DefaultFieldValues.clear();
+        					
+                			DefaultFieldValues.put( JavaXMLWebRowSetTags._XMLStructSQLOperationCode, ResultSetResultToAdd.intCode );
+                			DefaultFieldValues.put( JavaXMLWebRowSetTags._XMLStructSQLOperationDescription, ResultSetResultToAdd.strDescription );
+
+                			MemoryRowSet.addRowData( ResultSet );
+        					MemoryRowSet.NormalizeRowCount( DefaultFieldValues ); //add null to code and description field values
 
         				}
         				else {
-        					              
-        					//XMLDocument = AddXMLToErrorSection( XMLDocument, ResultSetResultToAdd.intCode, ResultSetResultToAdd.strDescription, strVersion );
+        					
+            				MemoryRowSet.addData( JavaXMLWebRowSetTags._XMLStructSQLOperationCode, ResultSetResultToAdd.intCode );
+            				MemoryRowSet.addData( JavaXMLWebRowSetTags._XMLStructSQLOperationDescription, ResultSetResultToAdd.strDescription );
+        					MemoryRowSet.NormalizeRowCount(); //add null to another fields values
         					
         				}
 
@@ -421,14 +426,29 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
         		}
         		else {
         			
+        			MemoryRowSet.addField( JavaXMLWebRowSetTags._XMLStructSQLOperationCode, Types.INTEGER, NamesSQLTypes._INTEGER, 0, JavaXMLWebRowSetTags._XMLStructSQLOperationCode );
+        			MemoryRowSet.addField( JavaXMLWebRowSetTags._XMLStructSQLOperationDescription, Types.VARCHAR, NamesSQLTypes._VARCHAR, JavaXMLWebRowSetTags._XMLStructSQLOperationDescriptionLength, JavaXMLWebRowSetTags._XMLStructSQLOperationDescription );
+        			
         			for ( CResultSetResult ResultSetResultToAdd: ResultsSetsList ) {    
 
-        				//XMLDocument = AddXMLSimpleMessage( XMLDocument, ResultSetResultToAdd.intCode, ResultSetResultToAdd.strDescription, strVersion, true );
+        				MemoryRowSet.addData( JavaXMLWebRowSetTags._XMLStructSQLOperationCode, ResultSetResultToAdd.intCode );
+        				MemoryRowSet.addData( JavaXMLWebRowSetTags._XMLStructSQLOperationDescription, ResultSetResultToAdd.strDescription );
         			
         			}
+        			
         		}
 		        
-	            //strResult = this.ConvertXMLDocumentToString( XMLDocument, this.getCharacterEncoding() );
+        		CachedRowSet CachedRowset = MemoryRowSet.createCachedRowSet();
+        		
+				WebRowSet wrs = new WebRowSetImpl();
+
+				StringWriter sw = new StringWriter();
+
+				wrs.writeXml( CachedRowset, sw );
+
+				strResult = sw.toString();
+
+				wrs.close();
 
         	}
 	            

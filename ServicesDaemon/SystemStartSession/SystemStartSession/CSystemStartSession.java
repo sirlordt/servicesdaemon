@@ -369,8 +369,8 @@ public class CSystemStartSession extends CAbstractService {
 	    		
 	    		StartSessionRowSet.removeFieldsByName( SystemFields );
 	    		
-	    		StartSessionRowSet.addField( ConstantsServicesTags._SecurityTokenID, ConstantsServicesTags._SecurityTokenIDTypeID, ConstantsServicesTags._SecurityTokenIDType, 0, "" );
-	    		StartSessionRowSet.addField( ConstantsServicesTags._Code, ConstantsServicesTags._CodeTypeID, ConstantsServicesTags._CodeType, 0, "" );
+	    		StartSessionRowSet.addField( ConstantsServicesTags._SecurityTokenID, ConstantsServicesTags._SecurityTokenIDTypeID, ConstantsServicesTags._SecurityTokenIDType, 0, ConstantsServicesTags._SecurityTokenID );
+	    		StartSessionRowSet.addField( ConstantsServicesTags._Code, ConstantsServicesTags._CodeTypeID, ConstantsServicesTags._CodeType, 0, ConstantsServicesTags._Code );
 	    		StartSessionRowSet.addField( ConstantsServicesTags._Description, ConstantsServicesTags._DescriptionTypeID, ConstantsServicesTags._DescriptionType, ConstantsServicesTags._DescriptionLength, ConstantsServicesTags._Description );
 	    		
 	    		StartSessionRowSet.NormalizeRowCount();

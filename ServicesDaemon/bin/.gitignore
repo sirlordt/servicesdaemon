@@ -7,10 +7,10 @@
 /DBServicesManager
 /ExtendedLogger
 /FirebirdDBEngine
+/META-INF
 /MySQLDBEngine
 /PGSQLDBEngine
 /PreExecuteServiceTest
-/ServicesDaemon
 /SystemCommitTransaction
 /SystemEndSession
 /SystemEndTransaction
@@ -21,3 +21,4 @@
 /SystemStartSession
 /SystemStartTransaction
 /Utilities
+/ServicesDaemon

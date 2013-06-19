@@ -244,6 +244,16 @@ public class CMemoryFieldData {
 		
 	}
 	
+	public void addData( Object Data, int intCountRows ) {
+		
+		for ( int intRows = 0; intRows < intCountRows; intRows++ ) {  
+
+			this.Data.add( Data );
+			
+		}
+		
+	}
+	
 	public void addData( String strData, String strDateFormat, String strTimeFormat, String strDateTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		try {
