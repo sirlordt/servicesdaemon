@@ -29,9 +29,15 @@ public abstract class DefaultConstantsDBServicesManager {
 	public static final String strDefaultResponseFormat = ConfigXMLTagsDBServicesManager._ResponseFormat_XML_DATAPACKET;
 	public static final String strDefaultResponseFormatVersion = "1.1";
 	
-	public static final String strDefaultChaset = "UTF-8";
-	public static final String strDefaultContentType = "text/xml";
+	public static final String strDefaultChasetXML = "UTF-8";
+	public static final String strDefaultContentTypeXML = "text/xml";
 
+	public static final String strDefaultChasetJSON = "UTF-8";
+	public static final String strDefaultContentTypeJSON = "text/json";
+	
+	public static final String strDefaultChasetCSV = "UTF-8";
+	public static final String strDefaultContentTypeCSV = "text/plain";
+	
 	public static final String strDefaultVersionAny = "any";
 	
 }

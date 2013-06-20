@@ -20,6 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import AbstractDBEngine.CAbstractDBEngine;
 import AbstractResponseFormat.CAbstractResponseFormat;
+import AbstractResponseFormat.CCSVResponseFormat;
+import AbstractResponseFormat.CJSONResponseFormat;
 import AbstractResponseFormat.CJavaXMLWebRowSetResponseFormat;
 import AbstractResponseFormat.CXMLDataPacketResponseFormat;
 import AbstractService.CAbstractService;
@@ -210,6 +212,24 @@ public class CDBServicesManager extends CAbstractServicesManager {
 				   
 				CAbstractResponseFormat.ResigterResponseFormat( JavaXMLWebRowSetResponseFormat );
 				DBServicesManagerConfig.Logger.LogMessage( "1", DBServicesManagerConfig.Lang.Translate( "Added built in response format [%s] min version: [%s] max version: [%s]", JavaXMLWebRowSetResponseFormat.getName(), JavaXMLWebRowSetResponseFormat.getMinVersion(), JavaXMLWebRowSetResponseFormat.getMaxVersion() ) );        
+			
+			}
+			
+			CJSONResponseFormat JSONResponseFormat = new CJSONResponseFormat(); //JSON
+			
+			if ( JSONResponseFormat.InitResponseFormat( ServicesDaemonConfig, DBServicesManagerConfig ) == true ) {
+				   
+				CAbstractResponseFormat.ResigterResponseFormat( JSONResponseFormat );
+				DBServicesManagerConfig.Logger.LogMessage( "1", DBServicesManagerConfig.Lang.Translate( "Added built in response format [%s] min version: [%s] max version: [%s]", JSONResponseFormat.getName(), JSONResponseFormat.getMinVersion(), JSONResponseFormat.getMaxVersion() ) );        
+			
+			}
+			
+			CCSVResponseFormat CSVResponseFormat = new CCSVResponseFormat(); //CSV
+			
+			if ( CSVResponseFormat.InitResponseFormat( ServicesDaemonConfig, DBServicesManagerConfig ) == true ) {
+				   
+				CAbstractResponseFormat.ResigterResponseFormat( CSVResponseFormat );
+				DBServicesManagerConfig.Logger.LogMessage( "1", DBServicesManagerConfig.Lang.Translate( "Added built in response format [%s] min version: [%s] max version: [%s]", CSVResponseFormat.getName(), CSVResponseFormat.getMinVersion(), CSVResponseFormat.getMaxVersion() ) );        
 			
 			}
 			

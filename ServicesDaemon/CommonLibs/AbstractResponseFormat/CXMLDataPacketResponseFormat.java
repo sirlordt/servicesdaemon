@@ -164,8 +164,8 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
                ErrorsSection.setAttribute( XMLDataPacketTags._ErrorCount, "0" );
 
                Element Error = XMLDocument.createElement( XMLDataPacketTags._Error );
-               Error.setAttribute( XMLDataPacketTags._XMLStructCode , "0" );
-               Error.setAttribute( XMLDataPacketTags._XMLStructDescription , "" );
+               Error.setAttribute( XMLDataPacketTags._XML_StructCode , "0" );
+               Error.setAttribute( XMLDataPacketTags._XML_StructDescription , "" );
                
                ErrorsSection.appendChild( Error );
                
@@ -175,8 +175,8 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
             else {
 
                Element ErrorSection = XMLDocument.createElement( XMLDataPacketTags._Error );
-               ErrorSection.setAttribute( XMLDataPacketTags._XMLStructCode , "0" );
-               ErrorSection.setAttribute( XMLDataPacketTags._XMLStructDescription , "" );
+               ErrorSection.setAttribute( XMLDataPacketTags._XML_StructCode , "0" );
+               ErrorSection.setAttribute( XMLDataPacketTags._XML_StructDescription , "" );
                DataPacketSection.appendChild( ErrorSection );
 
             }
@@ -207,7 +207,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
                if ( strSecurityToken != null && strSecurityToken.trim().isEmpty() == false ) {
 
                   Element XML_FieldSecurityToken = XMLDocument.createElement( XMLDataPacketTags._Field );
-                  XML_FieldSecurityToken.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XMLStructSecurityToken );
+                  XML_FieldSecurityToken.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XML_StructSecurityToken );
                   XML_FieldSecurityToken.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeBigInt );
 
                   XML_FieldsSection.item( 0 ).appendChild( XML_FieldSecurityToken );
@@ -217,7 +217,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
                if ( strTransactionID != null && strTransactionID.trim().isEmpty() == false ) {
 
                   Element XML_FieldSecurityToken = XMLDocument.createElement( XMLDataPacketTags._Field );
-                  XML_FieldSecurityToken.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XMLStructTransactionID );
+                  XML_FieldSecurityToken.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XML_StructTransactionID );
                   XML_FieldSecurityToken.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeBigInt );
 
                   XML_FieldsSection.item( 0 ).appendChild( XML_FieldSecurityToken );
@@ -225,15 +225,15 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
                }
 
                Element XML_FieldCode = XMLDocument.createElement( XMLDataPacketTags._Field );
-               XML_FieldCode.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XMLStructCode );
+               XML_FieldCode.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XML_StructCode );
                XML_FieldCode.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeInteger );
 
                XML_FieldsSection.item( 0 ).appendChild( XML_FieldCode );
 
                Element XML_FieldDescription = XMLDocument.createElement( XMLDataPacketTags._Field );
-               XML_FieldDescription.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XMLStructDescription );
+               XML_FieldDescription.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XML_StructDescription );
                XML_FieldDescription.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeString );
-               XML_FieldDescription.setAttribute( XMLDataPacketTags._FieldTypeStringWidth, XMLDataPacketTags._XMLStructDescriptionLength );
+               XML_FieldDescription.setAttribute( XMLDataPacketTags._FieldTypeStringWidth, XMLDataPacketTags._XML_StructDescriptionLength );
 
                XML_FieldsSection.item( 0 ).appendChild( XML_FieldDescription );
 
@@ -256,18 +256,18 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
                if ( strTransactionID != null && strTransactionID.trim().equals("") == false ) {
 
-                  XML_ROW.setAttribute( XMLDataPacketTags._XMLStructTransactionID, strTransactionID );
+                  XML_ROW.setAttribute( XMLDataPacketTags._XML_StructTransactionID, strTransactionID );
 
                }
 
                if ( strSecurityToken != null && strSecurityToken.trim().equals("") == false ) {
 
-                  XML_ROW.setAttribute( XMLDataPacketTags._XMLStructSecurityToken, strSecurityToken );
+                  XML_ROW.setAttribute( XMLDataPacketTags._XML_StructSecurityToken, strSecurityToken );
                  
                }
 
-               XML_ROW.setAttribute( XMLDataPacketTags._XMLStructCode, Integer.toString( intCode ) );
-               XML_ROW.setAttribute( XMLDataPacketTags._XMLStructDescription, strDescription );
+               XML_ROW.setAttribute( XMLDataPacketTags._XML_StructCode, Integer.toString( intCode ) );
+               XML_ROW.setAttribute( XMLDataPacketTags._XML_StructDescription, strDescription );
 
                XML_RowDataSection.item( 0 ).appendChild( XML_ROW );
 
@@ -284,18 +284,18 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
                if ( XML_ErrorSection.getLength() > 0 ) {
 
-                  ((Element) XML_ErrorSection.item( 0 )).setAttribute( XMLDataPacketTags._XMLStructCode , Integer.toString( intCode ) );
-                  ((Element) XML_ErrorSection.item( 0 )).setAttribute( XMLDataPacketTags._XMLStructDescription , strDescription );
+                  ((Element) XML_ErrorSection.item( 0 )).setAttribute( XMLDataPacketTags._XML_StructCode , Integer.toString( intCode ) );
+                  ((Element) XML_ErrorSection.item( 0 )).setAttribute( XMLDataPacketTags._XML_StructDescription , strDescription );
 
                   if ( strTransactionID != null && strTransactionID.trim().equals( "" ) == false ) {
 
-                     ((Element) XML_ErrorSection.item( 0 )).setAttribute( XMLDataPacketTags._XMLStructTransactionID, strTransactionID );
+                     ((Element) XML_ErrorSection.item( 0 )).setAttribute( XMLDataPacketTags._XML_StructTransactionID, strTransactionID );
 
                   }
 
                   if ( strSecurityToken != null && strSecurityToken.trim().equals( "" ) == false ) {
 
-                     ((Element) XML_ErrorSection.item( 0 )).setAttribute( XMLDataPacketTags._XMLStructSecurityToken, strSecurityToken );
+                     ((Element) XML_ErrorSection.item( 0 )).setAttribute( XMLDataPacketTags._XML_StructSecurityToken, strSecurityToken );
 
                   }
 
@@ -332,8 +332,8 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
         	( (Element) XML_ErrorsSection.item( 0 ) ).setAttribute( XMLDataPacketTags._ErrorCount, Integer.toString( intCountError ) );
 
             Element Error = XMLDocument.createElement( XMLDataPacketTags._Error );
-            Error.setAttribute( XMLDataPacketTags._XMLStructCode , Integer.toString( intCode ) );
-            Error.setAttribute( XMLDataPacketTags._XMLStructDescription , strDescription );
+            Error.setAttribute( XMLDataPacketTags._XML_StructCode , Integer.toString( intCode ) );
+            Error.setAttribute( XMLDataPacketTags._XML_StructDescription , strDescription );
             
             ( (Element) XML_ErrorsSection.item( 0 ) ).appendChild( Error );
         	
@@ -347,8 +347,8 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
             if ( XML_DataPacketSection != null && XML_DataPacketSection.getLength() > 0 ) {
             	
                 Element Error = XMLDocument.createElement( XMLDataPacketTags._Error );
-                Error.setAttribute( XMLDataPacketTags._XMLStructCode , Integer.toString( intCode ) );
-                Error.setAttribute( XMLDataPacketTags._XMLStructDescription , strDescription );
+                Error.setAttribute( XMLDataPacketTags._XML_StructCode , Integer.toString( intCode ) );
+                Error.setAttribute( XMLDataPacketTags._XML_StructDescription , strDescription );
                 
                 ( (Element) XML_DataPacketSection.item( 0 ) ).appendChild( Error );
             	
@@ -369,8 +369,8 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
            Element XML_ROW = XMLDocument.createElement( XMLDataPacketTags._Row );
 
-           XML_ROW.setAttribute( XMLDataPacketTags._XMLStructCode, Integer.toString( intCode ) );
-           XML_ROW.setAttribute( XMLDataPacketTags._XMLStructDescription, strDescription );
+           XML_ROW.setAttribute( XMLDataPacketTags._XML_StructCode, Integer.toString( intCode ) );
+           XML_ROW.setAttribute( XMLDataPacketTags._XML_StructDescription, strDescription );
 
            XML_RowDataSection.item( 0 ).appendChild( XML_ROW );
            
@@ -1073,19 +1073,19 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
             	Element XMLNode_Row = XMLDocument.createElement( XMLDataPacketTags._Row );
 
             	if ( Service.getAuthRequired() == true )  
-            		XMLNode_Row.setAttribute( XMLDataPacketTags._XMLStructAuthRequired , "Yes" );
+            		XMLNode_Row.setAttribute( XMLDataPacketTags._XML_StructAuthRequired , "Yes" );
             	else
-            		XMLNode_Row.setAttribute( XMLDataPacketTags._XMLStructAuthRequired , "No" );
+            		XMLNode_Row.setAttribute( XMLDataPacketTags._XML_StructAuthRequired , "No" );
 
-            	XMLNode_Row.setAttribute( XMLDataPacketTags._XMLStructServiceName , Service.getServiceName() );
+            	XMLNode_Row.setAttribute( XMLDataPacketTags._XML_StructServiceName , Service.getServiceName() );
 
-            	XMLNode_Row.setAttribute( XMLDataPacketTags._XMLStructAccessType , strServiceType );
+            	XMLNode_Row.setAttribute( XMLDataPacketTags._XML_StructAccessType , strServiceType );
 
-            	XMLNode_Row.setAttribute( XMLDataPacketTags._XMLStructDescription , Service.getServiceDescription() );
+            	XMLNode_Row.setAttribute( XMLDataPacketTags._XML_StructDescription , Service.getServiceDescription() );
 
-            	XMLNode_Row.setAttribute( XMLDataPacketTags._XMLStructAuthor , Service.getServiceAuthor() );
+            	XMLNode_Row.setAttribute( XMLDataPacketTags._XML_StructAuthor , Service.getServiceAuthor() );
 
-            	XMLNode_Row.setAttribute( XMLDataPacketTags._XMLStructAuthorContact , Service.getServiceAuthorContact() );
+            	XMLNode_Row.setAttribute( XMLDataPacketTags._XML_StructAuthorContact , Service.getServiceAuthorContact() );
 
             	XMLNode_RowDataSection.appendChild( XMLNode_Row );
 
@@ -1097,7 +1097,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
             	if ( strKey.toLowerCase().equals( ConstantsServicesTags._Default ) == false ) {
             		
-            		XMLNode_InputParameters.setAttribute(  XMLDataPacketTags._XMLStructParamSetName, strKey ); 
+            		XMLNode_InputParameters.setAttribute(  XMLDataPacketTags._XML_StructParamSetName, strKey ); 
             	
             	}
             	
@@ -1105,17 +1105,17 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
             		Element XMLNode_Row_InputParameter = XMLDocument.createElement( XMLDataPacketTags._Row );
 
-            		XMLNode_Row_InputParameter.setAttribute( XMLDataPacketTags._XMLStructParamName , InputServiceParameter.getParameterName() );
+            		XMLNode_Row_InputParameter.setAttribute( XMLDataPacketTags._XML_StructParamName , InputServiceParameter.getParameterName() );
 
-            		XMLNode_Row_InputParameter.setAttribute( XMLDataPacketTags._XMLStructRequired , InputServiceParameter.getParameterRequired()?"Yes":"No" );
+            		XMLNode_Row_InputParameter.setAttribute( XMLDataPacketTags._XML_StructRequired , InputServiceParameter.getParameterRequired()?"Yes":"No" );
 
-            		XMLNode_Row_InputParameter.setAttribute( XMLDataPacketTags._XMLStructType , InputServiceParameter.getParameterDataType() );
+            		XMLNode_Row_InputParameter.setAttribute( XMLDataPacketTags._XML_StructType , InputServiceParameter.getParameterDataType() );
 
-            		XMLNode_Row_InputParameter.setAttribute( XMLDataPacketTags._XMLStructTypeWidth , InputServiceParameter.getParameterDataTypeWidth() );
+            		XMLNode_Row_InputParameter.setAttribute( XMLDataPacketTags._XML_StructTypeWidth , InputServiceParameter.getParameterDataTypeWidth() );
 
             		//XMLNode_Row_InputParameter.setAttribute( XMLDataPacketTags._XMLStructSubType, InputServiceParameter.getParameterScope() );
 
-            		XMLNode_Row_InputParameter.setAttribute( XMLDataPacketTags._XMLStructDescription , InputServiceParameter.getParameterDescription() );
+            		XMLNode_Row_InputParameter.setAttribute( XMLDataPacketTags._XML_StructDescription , InputServiceParameter.getParameterDescription() );
 
             		XMLNode_InputParameters.appendChild( XMLNode_Row_InputParameter );
 
@@ -1141,44 +1141,44 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
         if ( XML_FieldsSection.getLength() > 0 ) {
 
            Element XML_FieldAuthRequired = XMLDocument.createElement( XMLDataPacketTags._Field );
-           XML_FieldAuthRequired.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XMLStructAuthRequired );
+           XML_FieldAuthRequired.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XML_StructAuthRequired );
            XML_FieldAuthRequired.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeString );
-           XML_FieldAuthRequired.setAttribute( XMLDataPacketTags._FieldTypeStringWidth, XMLDataPacketTags._XMLStructAuthRequiredLength );
+           XML_FieldAuthRequired.setAttribute( XMLDataPacketTags._FieldTypeStringWidth, XMLDataPacketTags._XML_StructAuthRequiredLength );
 
            XML_FieldsSection.item( 0 ).appendChild( XML_FieldAuthRequired );
            
            Element XML_FieldName = XMLDocument.createElement( XMLDataPacketTags._Field );
-           XML_FieldName.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XMLStructServiceName );
+           XML_FieldName.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XML_StructServiceName );
            XML_FieldName.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeString );
-           XML_FieldName.setAttribute( XMLDataPacketTags._FieldTypeStringWidth, XMLDataPacketTags._XMLStructServiceNameLength );
+           XML_FieldName.setAttribute( XMLDataPacketTags._FieldTypeStringWidth, XMLDataPacketTags._XML_StructServiceNameLength );
 
            XML_FieldsSection.item( 0 ).appendChild( XML_FieldName );
 
            Element XML_FieldType = XMLDocument.createElement( XMLDataPacketTags._Field );
-           XML_FieldType.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XMLStructAccessType );
+           XML_FieldType.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XML_StructAccessType );
            XML_FieldType.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeString );
-           XML_FieldType.setAttribute( XMLDataPacketTags._FieldTypeStringWidth, XMLDataPacketTags._XMLStructAccessTypeLength );
+           XML_FieldType.setAttribute( XMLDataPacketTags._FieldTypeStringWidth, XMLDataPacketTags._XML_StructAccessTypeLength );
 
            XML_FieldsSection.item( 0 ).appendChild( XML_FieldType );
 
            Element XML_FieldDescription = XMLDocument.createElement( XMLDataPacketTags._Field );
-           XML_FieldDescription.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XMLStructDescription );
+           XML_FieldDescription.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XML_StructDescription );
            XML_FieldDescription.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeString );
-           XML_FieldDescription.setAttribute( XMLDataPacketTags._FieldTypeStringWidth, XMLDataPacketTags._XMLStructDescriptionLength );
+           XML_FieldDescription.setAttribute( XMLDataPacketTags._FieldTypeStringWidth, XMLDataPacketTags._XML_StructDescriptionLength );
 
            XML_FieldsSection.item( 0 ).appendChild( XML_FieldDescription );
 
            Element XML_FieldAutor = XMLDocument.createElement( XMLDataPacketTags._Field );
-           XML_FieldAutor.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XMLStructAuthor );
+           XML_FieldAutor.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XML_StructAuthor );
            XML_FieldAutor.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeString );
-           XML_FieldAutor.setAttribute( XMLDataPacketTags._FieldTypeStringWidth, XMLDataPacketTags._XMLStructAuthorLength );
+           XML_FieldAutor.setAttribute( XMLDataPacketTags._FieldTypeStringWidth, XMLDataPacketTags._XML_StructAuthorLength );
 
            XML_FieldsSection.item( 0 ).appendChild( XML_FieldAutor );
 
            Element XML_FieldAutorContact = XMLDocument.createElement( XMLDataPacketTags._Field );
-           XML_FieldAutorContact.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XMLStructAuthorContact );
+           XML_FieldAutorContact.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XML_StructAuthorContact );
            XML_FieldAutorContact.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeString );
-           XML_FieldAutorContact.setAttribute( XMLDataPacketTags._FieldTypeStringWidth, XMLDataPacketTags._XMLStructAuthorContactLength );
+           XML_FieldAutorContact.setAttribute( XMLDataPacketTags._FieldTypeStringWidth, XMLDataPacketTags._XML_StructAuthorContactLength );
 
            XML_FieldsSection.item( 0 ).appendChild( XML_FieldAutorContact );
 
@@ -1189,43 +1189,43 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
            XML_FieldsSection.item( 0 ).appendChild( XML_FieldInputParameters );
 
               Element XML_FieldParameterName = XMLDocument.createElement( XMLDataPacketTags._Field );
-              XML_FieldParameterName.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XMLStructParamName );
+              XML_FieldParameterName.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XML_StructParamName );
               XML_FieldParameterName.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeString );
-              XML_FieldParameterName.setAttribute( XMLDataPacketTags._FieldTypeStringWidth, XMLDataPacketTags._XMLStructParamNameLength );
+              XML_FieldParameterName.setAttribute( XMLDataPacketTags._FieldTypeStringWidth, XMLDataPacketTags._XML_StructParamNameLength );
 
               XML_FieldInputParameters.appendChild( XML_FieldParameterName );
 
               Element XML_FieldParameterRequired = XMLDocument.createElement( XMLDataPacketTags._Field );
-              XML_FieldParameterRequired.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XMLStructRequired );
+              XML_FieldParameterRequired.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XML_StructRequired );
               XML_FieldParameterRequired.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeString );
-              XML_FieldParameterRequired.setAttribute( XMLDataPacketTags._FieldTypeStringWidth, XMLDataPacketTags._XMLStructRequiredLength );
+              XML_FieldParameterRequired.setAttribute( XMLDataPacketTags._FieldTypeStringWidth, XMLDataPacketTags._XML_StructRequiredLength );
 
               XML_FieldInputParameters.appendChild( XML_FieldParameterRequired );
 
               Element XML_FieldParameterType = XMLDocument.createElement( XMLDataPacketTags._Field );
-              XML_FieldParameterType.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XMLStructType );
+              XML_FieldParameterType.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XML_StructType );
               XML_FieldParameterType.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeString );
-              XML_FieldParameterType.setAttribute( XMLDataPacketTags._FieldTypeStringWidth, XMLDataPacketTags._XMLStructTypeLength );
+              XML_FieldParameterType.setAttribute( XMLDataPacketTags._FieldTypeStringWidth, XMLDataPacketTags._XML_StructTypeLength );
 
               XML_FieldInputParameters.appendChild( XML_FieldParameterType );
 
               Element XML_FieldParameterTypeWidth = XMLDocument.createElement( XMLDataPacketTags._Field );
-              XML_FieldParameterTypeWidth.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XMLStructTypeWidth );
+              XML_FieldParameterTypeWidth.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XML_StructTypeWidth );
               XML_FieldParameterTypeWidth.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeShortInteger );
 
               XML_FieldInputParameters.appendChild( XML_FieldParameterTypeWidth );
 
               Element XML_FieldParameterSubType = XMLDocument.createElement( XMLDataPacketTags._Field );
-              XML_FieldParameterSubType.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XMLStructSubType );
+              XML_FieldParameterSubType.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XML_StructSubType );
               XML_FieldParameterSubType.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeString );
-              XML_FieldParameterType.setAttribute( XMLDataPacketTags._FieldTypeStringWidth, XMLDataPacketTags._XMLStructSubTypeLength );
+              XML_FieldParameterType.setAttribute( XMLDataPacketTags._FieldTypeStringWidth, XMLDataPacketTags._XML_StructSubTypeLength );
 
               XML_FieldInputParameters.appendChild( XML_FieldParameterSubType );
 
               Element XML_FieldParameterDescription = XMLDocument.createElement( XMLDataPacketTags._Field );
-              XML_FieldParameterDescription.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XMLStructParamDescription );
+              XML_FieldParameterDescription.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XML_StructParamDescription );
               XML_FieldParameterDescription.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeString );
-              XML_FieldParameterDescription.setAttribute( XMLDataPacketTags._FieldTypeStringWidth, XMLDataPacketTags._XMLStructParamDescriptionLength );
+              XML_FieldParameterDescription.setAttribute( XMLDataPacketTags._FieldTypeStringWidth, XMLDataPacketTags._XML_StructParamDescriptionLength );
 
               XML_FieldInputParameters.appendChild( XML_FieldParameterDescription );
 

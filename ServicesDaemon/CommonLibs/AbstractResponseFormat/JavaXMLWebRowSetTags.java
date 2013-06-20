@@ -14,38 +14,37 @@ public interface JavaXMLWebRowSetTags {
 
 	public static final String _ResponseFormat_JAVA_XML_WEBROWSET   = "JAVA-XML-WEBROWSET";
 
-	public final static String _XMLStructSecurityToken              = "SecurityToken";
-	public final static String _XMLStructTransactionID              = "TransactionID";
-	public final static String _XMLStructCode                       = "Code";
-	public final static String _XMLStructDescription                = "Description";
-	public final static int _XMLStructDescriptionLength             = 255;
-	public final static String _XMLStructAuthor                     = "Author";
-	public final static int _XMLStructAuthorLength                  = 255;
-	public final static String _XMLStructAuthorContact              = "AuthorContact";
-	public final static int _XMLStructAuthorContactLength           = 255;
-	public final static String _XMLStructAuthRequired               = "AuthRequired";
-	public final static int _XMLStructAuthRequiredLength            = 3;
-	public final static String _XMLStructServiceName                = "ServiceName";
-	public final static int _XMLStructServiceNameLength             = 75;
-	public final static String _XMLStructAccessType                 = "AcessType";
-	public final static int _XMLStructAccessTypeLength              = 10;
-	public final static String _XMLStructType                       = "Type";
-	public final static int _XMLStructTypeLength                    = 50;
-	public final static String _XMLStructTypeWidth                  = "Width";
-	public final static String _XMLStructSubType                    = "Subtype";
-	public final static int _XMLStructSubTypeLength                 = 35;
-	public final static String _XMLStructRequired                   = "Required";
-	public final static int _XMLStructRequiredLength                = 3;
-	public final static String _XMLStructParamSetName               = "ParamSetName";
-	public final static int _XMLStructParamSetNameLength            = 75;
-	public final static String _XMLStructParamName                  = "ParamName";
-	public final static int _XMLStructParamNameLength               = 75;
-	public final static String _XMLStructParamDescription           = "ParamDescription";
-	public final static int _XMLStructParamDescriptionLength        = 255;
+	public final static String _XML_StructSecurityToken              = "SecurityToken";
+	public final static String _XML_StructTransactionID              = "TransactionID";
+	public final static String _XML_StructCode                       = "Code";
+	public final static String _XML_StructDescription                = "Description";
+	public final static int _XML_StructDescriptionLength             = 255;
+	public final static String _XML_StructAuthor                     = "Author";
+	public final static int _XML_StructAuthorLength                  = 255;
+	public final static String _XML_StructAuthorContact              = "AuthorContact";
+	public final static int _XML_StructAuthorContactLength           = 255;
+	public final static String _XML_StructAuthRequired               = "AuthRequired";
+	public final static int _XML_StructAuthRequiredLength            = 3;
+	public final static String _XML_StructServiceName                = "ServiceName";
+	public final static int _XML_StructServiceNameLength             = 75;
+	public final static String _XML_StructAccessType                 = "AcessType";
+	public final static int _XML_StructAccessTypeLength              = 10;
+	public final static String _XML_StructType                       = "Type";
+	public final static int _XML_StructTypeLength                    = 50;
+	public final static String _XML_StructTypeWidth                  = "Width";
+	public final static String _XML_StructSubType                    = "Subtype";
+	public final static int _XML_StructSubTypeLength                 = 35;
+	public final static String _XML_StructRequired                   = "Required";
+	public final static int _XML_StructRequiredLength                = 3;
+	public final static String _XML_StructParamSetName               = "ParamSetName";
+	public final static int _XML_StructParamSetNameLength            = 75;
+	public final static String _XML_StructParamName                  = "ParamName";
+	public final static int _XML_StructParamNameLength               = 75;
+	public final static String _XML_StructParamDescription           = "ParamDescription";
+	public final static int _XML_StructParamDescriptionLength        = 255;
 	
-	public final static String _XMLStructSQLOperationCode           = "SQLOperationCode";
-	public final static String _XMLStructSQLOperationDescription    = "SQLOperationDescription";
-	public final static int _XMLStructSQLOperationDescriptionLength = 255;
-	
+	public final static String _XML_StructSQLOperationCode           = "SQLOperationCode";
+	public final static String _XML_StructSQLOperationDescription    = "SQLOperationDescription";
+	public final static int _XML_StructSQLOperationDescriptionLength = 255;
 	
 }

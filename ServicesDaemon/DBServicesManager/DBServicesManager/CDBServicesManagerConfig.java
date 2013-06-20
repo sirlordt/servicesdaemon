@@ -47,6 +47,12 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 	public String strJavaXML_WebRowSet_ContentType;
 	public String strJavaXML_WebRowSet_CharSet;
 	
+	public String strJSON_ContentType;
+	public String strJSON_CharSet;
+	
+	public String strCSV_ContentType;
+	public String strCSV_CharSet;
+	
 	public List<CConfigDBConnection> ConfiguredDBConnections;
 
 	static {
@@ -83,11 +89,17 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 
 		strResponseRequestMethod = ConfigXMLTagsServicesDaemon._Request_Method_ANY;
 		
-		strXML_DataPacket_CharSet = DefaultConstantsDBServicesManager.strDefaultChaset;
-		strXML_DataPacket_ContentType = DefaultConstantsDBServicesManager.strDefaultContentType;
+		strXML_DataPacket_CharSet = DefaultConstantsDBServicesManager.strDefaultChasetXML;
+		strXML_DataPacket_ContentType = DefaultConstantsDBServicesManager.strDefaultContentTypeXML;
 		
-		strJavaXML_WebRowSet_CharSet = DefaultConstantsDBServicesManager.strDefaultChaset;
-		strJavaXML_WebRowSet_ContentType = DefaultConstantsDBServicesManager.strDefaultContentType;
+		strJavaXML_WebRowSet_CharSet = DefaultConstantsDBServicesManager.strDefaultChasetXML;
+		strJavaXML_WebRowSet_ContentType = DefaultConstantsDBServicesManager.strDefaultContentTypeXML;
+
+		strJSON_ContentType = DefaultConstantsDBServicesManager.strDefaultChasetJSON;
+		strJSON_CharSet = DefaultConstantsDBServicesManager.strDefaultContentTypeJSON;
+		
+		strCSV_ContentType = DefaultConstantsDBServicesManager.strDefaultChasetCSV;
+		strCSV_CharSet = DefaultConstantsDBServicesManager.strDefaultContentTypeCSV;
 
 		ConfiguredDBConnections = new ArrayList<CConfigDBConnection>();
 		
@@ -453,7 +465,7 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 											}
 											else {
 
-												Logger.LogError( "-1003", Lang.Translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConfigXMLTagsDBServicesManager._Char_Set, DefaultConstantsDBServicesManager.strDefaultChaset ) );
+												Logger.LogError( "-1003", Lang.Translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConfigXMLTagsDBServicesManager._Char_Set, DefaultConstantsDBServicesManager.strDefaultChasetXML ) );
 												break; //stop the parse another attributes
 
 											}
@@ -469,7 +481,7 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 											}
 											else {
 
-												Logger.LogError( "-1004", Lang.Translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConfigXMLTagsDBServicesManager._Content_Type, DefaultConstantsDBServicesManager.strDefaultContentType ) );
+												Logger.LogError( "-1004", Lang.Translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConfigXMLTagsDBServicesManager._Content_Type, DefaultConstantsDBServicesManager.strDefaultContentTypeXML ) );
 												break; //stop the parse another attributes
 
 											}
@@ -484,12 +496,12 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 											if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
 
 												this.strJavaXML_WebRowSet_CharSet = NodeAttribute.getNodeValue().toUpperCase();
-												Logger.LogMessage( "1", Lang.Translate( "Runtime config value [%s] changed to: [%s]", "strJavaXML_WebRowSet_CharSet", this.strXML_DataPacket_CharSet ) );
+												Logger.LogMessage( "1", Lang.Translate( "Runtime config value [%s] changed to: [%s]", "strJavaXML_WebRowSet_CharSet", this.strJavaXML_WebRowSet_CharSet ) );
 
 											}
 											else {
 
-												Logger.LogError( "-1005", Lang.Translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConfigXMLTagsDBServicesManager._Char_Set, DefaultConstantsDBServicesManager.strDefaultChaset ) );
+												Logger.LogError( "-1005", Lang.Translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConfigXMLTagsDBServicesManager._Char_Set, DefaultConstantsDBServicesManager.strDefaultChasetXML ) );
 												break; //stop the parse another attributes
 
 											}
@@ -505,7 +517,7 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 											}
 											else {
 
-												Logger.LogError( "-1006", Lang.Translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConfigXMLTagsDBServicesManager._Content_Type, DefaultConstantsDBServicesManager.strDefaultContentType ) );
+												Logger.LogError( "-1006", Lang.Translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConfigXMLTagsDBServicesManager._Content_Type, DefaultConstantsDBServicesManager.strDefaultContentTypeXML ) );
 												break; //stop the parse another attributes
 
 											}
@@ -515,10 +527,74 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 									}
 									else if ( strBuitinResponseName.equals( ConfigXMLTagsDBServicesManager._ResponseFormat_JSON ) ) {
 
+										if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsDBServicesManager._Char_Set ) ) {
+
+											if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
+
+												this.strJSON_CharSet = NodeAttribute.getNodeValue().toUpperCase();
+												Logger.LogMessage( "1", Lang.Translate( "Runtime config value [%s] changed to: [%s]", "strJavaXML_WebRowSet_CharSet", this.strJSON_CharSet ) );
+
+											}
+											else {
+
+												Logger.LogError( "-1007", Lang.Translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConfigXMLTagsDBServicesManager._Char_Set, DefaultConstantsDBServicesManager.strDefaultChasetXML ) );
+												break; //stop the parse another attributes
+
+											}
+
+										}
+										else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsDBServicesManager._Content_Type ) ) {
+
+											if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
+
+												this.strJSON_ContentType = NodeAttribute.getNodeValue();
+												Logger.LogMessage( "1", Lang.Translate( "Runtime config value [%s] changed to: [%s]", "strJavaXML_WebRowSet_ContentType", this.strJSON_ContentType ) );
+
+											}
+											else {
+
+												Logger.LogError( "-1008", Lang.Translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConfigXMLTagsDBServicesManager._Content_Type, DefaultConstantsDBServicesManager.strDefaultContentTypeXML ) );
+												break; //stop the parse another attributes
+
+											}
+
+										}
 
 									}
 									else if ( strBuitinResponseName.equals( ConfigXMLTagsDBServicesManager._ResponseFormat_CSV ) ) {
 
+										if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsDBServicesManager._Char_Set ) ) {
+
+											if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
+
+												this.strCSV_CharSet = NodeAttribute.getNodeValue().toUpperCase();
+												Logger.LogMessage( "1", Lang.Translate( "Runtime config value [%s] changed to: [%s]", "strJavaXML_WebRowSet_CharSet", this.strCSV_CharSet ) );
+
+											}
+											else {
+
+												Logger.LogError( "-1009", Lang.Translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConfigXMLTagsDBServicesManager._Char_Set, DefaultConstantsDBServicesManager.strDefaultChasetXML ) );
+												break; //stop the parse another attributes
+
+											}
+
+										}
+										else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsDBServicesManager._Content_Type ) ) {
+
+											if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
+
+												this.strCSV_ContentType = NodeAttribute.getNodeValue();
+												Logger.LogMessage( "1", Lang.Translate( "Runtime config value [%s] changed to: [%s]", "strJavaXML_WebRowSet_ContentType", this.strCSV_ContentType ) );
+
+											}
+											else {
+
+												Logger.LogError( "-1010", Lang.Translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConfigXMLTagsDBServicesManager._Content_Type, DefaultConstantsDBServicesManager.strDefaultContentTypeXML ) );
+												break; //stop the parse another attributes
+
+											}
+
+										}
 
 									}
 
@@ -1023,6 +1099,14 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 			return this.strJavaXML_WebRowSet_CharSet;  
 		else if ( strConfigKey.equals( "strJavaXML_WebRowSet_ContentType" ) )
 			return this.strJavaXML_WebRowSet_ContentType;  
+		else if ( strConfigKey.equals( "strJSON_CharSet" ) )
+			return this.strJSON_CharSet;  
+		else if ( strConfigKey.equals( "strJSON_ContentType" ) )
+			return this.strJSON_ContentType;  
+		else if ( strConfigKey.equals( "strCSV_CharSet" ) )
+			return this.strCSV_CharSet;  
+		else if ( strConfigKey.equals( "strCSV_ContentType" ) )
+			return this.strCSV_ContentType;  
 		else	
     	   return "";
 		

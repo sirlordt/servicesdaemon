@@ -145,82 +145,82 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 				RowSetMetaData RowsetMetaData = new RowSetMetaDataImpl();
 				RowsetMetaData.setColumnCount( 13 );
 
-				RowsetMetaData.setColumnName( 1, JavaXMLWebRowSetTags._XMLStructAuthRequired );
-				RowsetMetaData.setColumnLabel( 1, JavaXMLWebRowSetTags._XMLStructAuthRequired );
+				RowsetMetaData.setColumnName( 1, JavaXMLWebRowSetTags._XML_StructAuthRequired );
+				RowsetMetaData.setColumnLabel( 1, JavaXMLWebRowSetTags._XML_StructAuthRequired );
 				RowsetMetaData.setColumnType( 1, Types.VARCHAR );
 				RowsetMetaData.setColumnTypeName( 1, NamesSQLTypes._VARCHAR );
-				RowsetMetaData.setColumnDisplaySize( 1, JavaXMLWebRowSetTags._XMLStructAuthorLength );
+				RowsetMetaData.setColumnDisplaySize( 1, JavaXMLWebRowSetTags._XML_StructAuthorLength );
 
-				RowsetMetaData.setColumnName( 2, JavaXMLWebRowSetTags._XMLStructServiceName );
-				RowsetMetaData.setColumnLabel( 2, JavaXMLWebRowSetTags._XMLStructServiceName );
+				RowsetMetaData.setColumnName( 2, JavaXMLWebRowSetTags._XML_StructServiceName );
+				RowsetMetaData.setColumnLabel( 2, JavaXMLWebRowSetTags._XML_StructServiceName );
 				RowsetMetaData.setColumnType( 2, Types.VARCHAR );
 				RowsetMetaData.setColumnTypeName( 2, NamesSQLTypes._VARCHAR );
-				RowsetMetaData.setColumnDisplaySize( 2, JavaXMLWebRowSetTags._XMLStructServiceNameLength );
+				RowsetMetaData.setColumnDisplaySize( 2, JavaXMLWebRowSetTags._XML_StructServiceNameLength );
 
-				RowsetMetaData.setColumnName( 3, JavaXMLWebRowSetTags._XMLStructAccessType );
-				RowsetMetaData.setColumnLabel( 3, JavaXMLWebRowSetTags._XMLStructAccessType );
+				RowsetMetaData.setColumnName( 3, JavaXMLWebRowSetTags._XML_StructAccessType );
+				RowsetMetaData.setColumnLabel( 3, JavaXMLWebRowSetTags._XML_StructAccessType );
 				RowsetMetaData.setColumnType( 3, Types.VARCHAR );
 				RowsetMetaData.setColumnTypeName( 3, NamesSQLTypes._VARCHAR );
-				RowsetMetaData.setColumnDisplaySize( 3, JavaXMLWebRowSetTags._XMLStructAccessTypeLength );
+				RowsetMetaData.setColumnDisplaySize( 3, JavaXMLWebRowSetTags._XML_StructAccessTypeLength );
 
-				RowsetMetaData.setColumnName( 4, JavaXMLWebRowSetTags._XMLStructDescription );
-				RowsetMetaData.setColumnLabel( 4, JavaXMLWebRowSetTags._XMLStructDescription );
+				RowsetMetaData.setColumnName( 4, JavaXMLWebRowSetTags._XML_StructDescription );
+				RowsetMetaData.setColumnLabel( 4, JavaXMLWebRowSetTags._XML_StructDescription );
 				RowsetMetaData.setColumnType( 4, Types.VARCHAR );
 				RowsetMetaData.setColumnTypeName( 4, NamesSQLTypes._VARCHAR );
-				RowsetMetaData.setColumnDisplaySize( 4, JavaXMLWebRowSetTags._XMLStructDescriptionLength );
+				RowsetMetaData.setColumnDisplaySize( 4, JavaXMLWebRowSetTags._XML_StructDescriptionLength );
 
-				RowsetMetaData.setColumnName( 5, JavaXMLWebRowSetTags._XMLStructAuthor );
-				RowsetMetaData.setColumnLabel( 5, JavaXMLWebRowSetTags._XMLStructAuthor );
+				RowsetMetaData.setColumnName( 5, JavaXMLWebRowSetTags._XML_StructAuthor );
+				RowsetMetaData.setColumnLabel( 5, JavaXMLWebRowSetTags._XML_StructAuthor );
 				RowsetMetaData.setColumnType( 5, Types.VARCHAR );
 				RowsetMetaData.setColumnTypeName( 5, NamesSQLTypes._VARCHAR );
-				RowsetMetaData.setColumnDisplaySize( 5, JavaXMLWebRowSetTags._XMLStructAuthorLength );
+				RowsetMetaData.setColumnDisplaySize( 5, JavaXMLWebRowSetTags._XML_StructAuthorLength );
 
-				RowsetMetaData.setColumnName( 6, JavaXMLWebRowSetTags._XMLStructAuthorContact );
-				RowsetMetaData.setColumnLabel( 6, JavaXMLWebRowSetTags._XMLStructAuthorContact );
+				RowsetMetaData.setColumnName( 6, JavaXMLWebRowSetTags._XML_StructAuthorContact );
+				RowsetMetaData.setColumnLabel( 6, JavaXMLWebRowSetTags._XML_StructAuthorContact );
 				RowsetMetaData.setColumnType( 6, Types.VARCHAR );
 				RowsetMetaData.setColumnTypeName( 6, NamesSQLTypes._VARCHAR );
-				RowsetMetaData.setColumnDisplaySize( 6, JavaXMLWebRowSetTags._XMLStructAuthorContactLength );
+				RowsetMetaData.setColumnDisplaySize( 6, JavaXMLWebRowSetTags._XML_StructAuthorContactLength );
 
-				RowsetMetaData.setColumnName( 7, JavaXMLWebRowSetTags._XMLStructParamSetName );
-				RowsetMetaData.setColumnLabel( 7, JavaXMLWebRowSetTags._XMLStructParamSetName );
+				RowsetMetaData.setColumnName( 7, JavaXMLWebRowSetTags._XML_StructParamSetName );
+				RowsetMetaData.setColumnLabel( 7, JavaXMLWebRowSetTags._XML_StructParamSetName );
 				RowsetMetaData.setColumnType( 7, Types.VARCHAR );
 				RowsetMetaData.setColumnTypeName( 7, NamesSQLTypes._VARCHAR );
-				RowsetMetaData.setColumnDisplaySize( 7, JavaXMLWebRowSetTags._XMLStructParamSetNameLength );
+				RowsetMetaData.setColumnDisplaySize( 7, JavaXMLWebRowSetTags._XML_StructParamSetNameLength );
 
-				RowsetMetaData.setColumnName( 8, JavaXMLWebRowSetTags._XMLStructParamName );
-				RowsetMetaData.setColumnLabel( 8, JavaXMLWebRowSetTags._XMLStructParamName );
+				RowsetMetaData.setColumnName( 8, JavaXMLWebRowSetTags._XML_StructParamName );
+				RowsetMetaData.setColumnLabel( 8, JavaXMLWebRowSetTags._XML_StructParamName );
 				RowsetMetaData.setColumnType( 8, Types.VARCHAR );
 				RowsetMetaData.setColumnTypeName( 8, NamesSQLTypes._VARCHAR );
-				RowsetMetaData.setColumnDisplaySize( 7, JavaXMLWebRowSetTags._XMLStructParamNameLength );
+				RowsetMetaData.setColumnDisplaySize( 7, JavaXMLWebRowSetTags._XML_StructParamNameLength );
 
-				RowsetMetaData.setColumnName( 9, JavaXMLWebRowSetTags._XMLStructRequired );
-				RowsetMetaData.setColumnLabel( 9, JavaXMLWebRowSetTags._XMLStructRequired );
+				RowsetMetaData.setColumnName( 9, JavaXMLWebRowSetTags._XML_StructRequired );
+				RowsetMetaData.setColumnLabel( 9, JavaXMLWebRowSetTags._XML_StructRequired );
 				RowsetMetaData.setColumnType( 9, Types.VARCHAR );
 				RowsetMetaData.setColumnTypeName( 9, NamesSQLTypes._VARCHAR );
-				RowsetMetaData.setColumnDisplaySize( 9, JavaXMLWebRowSetTags._XMLStructRequiredLength );
+				RowsetMetaData.setColumnDisplaySize( 9, JavaXMLWebRowSetTags._XML_StructRequiredLength );
 
-				RowsetMetaData.setColumnName( 10, JavaXMLWebRowSetTags._XMLStructType );
-				RowsetMetaData.setColumnLabel( 10, JavaXMLWebRowSetTags._XMLStructType );
+				RowsetMetaData.setColumnName( 10, JavaXMLWebRowSetTags._XML_StructType );
+				RowsetMetaData.setColumnLabel( 10, JavaXMLWebRowSetTags._XML_StructType );
 				RowsetMetaData.setColumnType( 10, Types.VARCHAR );
 				RowsetMetaData.setColumnTypeName( 10, NamesSQLTypes._VARCHAR );
-				RowsetMetaData.setColumnDisplaySize( 10, JavaXMLWebRowSetTags._XMLStructTypeLength );
+				RowsetMetaData.setColumnDisplaySize( 10, JavaXMLWebRowSetTags._XML_StructTypeLength );
 
-				RowsetMetaData.setColumnName( 11, JavaXMLWebRowSetTags._XMLStructTypeWidth );
-				RowsetMetaData.setColumnLabel( 11, JavaXMLWebRowSetTags._XMLStructTypeWidth );
+				RowsetMetaData.setColumnName( 11, JavaXMLWebRowSetTags._XML_StructTypeWidth );
+				RowsetMetaData.setColumnLabel( 11, JavaXMLWebRowSetTags._XML_StructTypeWidth );
 				RowsetMetaData.setColumnType( 11, Types.SMALLINT );
 				RowsetMetaData.setColumnTypeName( 11, NamesSQLTypes._SMALLINT );
 
-				RowsetMetaData.setColumnName( 12, JavaXMLWebRowSetTags._XMLStructSubType );
-				RowsetMetaData.setColumnLabel( 12, JavaXMLWebRowSetTags._XMLStructSubType );
+				RowsetMetaData.setColumnName( 12, JavaXMLWebRowSetTags._XML_StructSubType );
+				RowsetMetaData.setColumnLabel( 12, JavaXMLWebRowSetTags._XML_StructSubType );
 				RowsetMetaData.setColumnType( 12, Types.VARCHAR );
 				RowsetMetaData.setColumnTypeName( 12, NamesSQLTypes._VARCHAR );
-				RowsetMetaData.setColumnDisplaySize( 12, JavaXMLWebRowSetTags._XMLStructSubTypeLength );
+				RowsetMetaData.setColumnDisplaySize( 12, JavaXMLWebRowSetTags._XML_StructSubTypeLength );
 
-				RowsetMetaData.setColumnName( 13, JavaXMLWebRowSetTags._XMLStructParamDescription );
-				RowsetMetaData.setColumnLabel( 13, JavaXMLWebRowSetTags._XMLStructParamDescription );
+				RowsetMetaData.setColumnName( 13, JavaXMLWebRowSetTags._XML_StructParamDescription );
+				RowsetMetaData.setColumnLabel( 13, JavaXMLWebRowSetTags._XML_StructParamDescription );
 				RowsetMetaData.setColumnType( 13, Types.VARCHAR );
 				RowsetMetaData.setColumnTypeName( 13, NamesSQLTypes._VARCHAR );
-				RowsetMetaData.setColumnDisplaySize( 13, JavaXMLWebRowSetTags._XMLStructParamDescriptionLength );
+				RowsetMetaData.setColumnDisplaySize( 13, JavaXMLWebRowSetTags._XML_StructParamDescriptionLength );
 
 				CachedRowSet CachedRowset = new CachedRowSetImpl();
 				CachedRowset.setMetaData( RowsetMetaData );				
@@ -395,8 +395,8 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
         		if ( ResultSet != null ) {
         			
         			MemoryRowSet.cloneOnlyMetaData( ResultSet, null );
-        			MemoryRowSet.addField( JavaXMLWebRowSetTags._XMLStructSQLOperationCode, Types.INTEGER, NamesSQLTypes._INTEGER, 0, JavaXMLWebRowSetTags._XMLStructSQLOperationCode );
-        			MemoryRowSet.addField( JavaXMLWebRowSetTags._XMLStructSQLOperationDescription, Types.VARCHAR, NamesSQLTypes._VARCHAR, JavaXMLWebRowSetTags._XMLStructSQLOperationDescriptionLength, JavaXMLWebRowSetTags._XMLStructSQLOperationDescription );
+        			MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructSQLOperationCode, Types.INTEGER, NamesSQLTypes._INTEGER, 0, JavaXMLWebRowSetTags._XML_StructSQLOperationCode );
+        			MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructSQLOperationDescription, Types.VARCHAR, NamesSQLTypes._VARCHAR, JavaXMLWebRowSetTags._XML_StructSQLOperationDescriptionLength, JavaXMLWebRowSetTags._XML_StructSQLOperationDescription );
         			
         			LinkedHashMap<String,Object> DefaultFieldValues = new LinkedHashMap<String,Object>();
         			
@@ -406,8 +406,8 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
         				
         					DefaultFieldValues.clear();
         					
-                			DefaultFieldValues.put( JavaXMLWebRowSetTags._XMLStructSQLOperationCode, ResultSetResultToAdd.intCode );
-                			DefaultFieldValues.put( JavaXMLWebRowSetTags._XMLStructSQLOperationDescription, ResultSetResultToAdd.strDescription );
+                			DefaultFieldValues.put( JavaXMLWebRowSetTags._XML_StructSQLOperationCode, ResultSetResultToAdd.intCode );
+                			DefaultFieldValues.put( JavaXMLWebRowSetTags._XML_StructSQLOperationDescription, ResultSetResultToAdd.strDescription );
 
                 			MemoryRowSet.addRowData( ResultSet );
         					MemoryRowSet.NormalizeRowCount( DefaultFieldValues ); //add null to code and description field values
@@ -415,8 +415,8 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
         				}
         				else {
         					
-            				MemoryRowSet.addData( JavaXMLWebRowSetTags._XMLStructSQLOperationCode, ResultSetResultToAdd.intCode );
-            				MemoryRowSet.addData( JavaXMLWebRowSetTags._XMLStructSQLOperationDescription, ResultSetResultToAdd.strDescription );
+            				MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructSQLOperationCode, ResultSetResultToAdd.intCode );
+            				MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructSQLOperationDescription, ResultSetResultToAdd.strDescription );
         					MemoryRowSet.NormalizeRowCount(); //add null to another fields values
         					
         				}
@@ -426,13 +426,13 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
         		}
         		else {
         			
-        			MemoryRowSet.addField( JavaXMLWebRowSetTags._XMLStructSQLOperationCode, Types.INTEGER, NamesSQLTypes._INTEGER, 0, JavaXMLWebRowSetTags._XMLStructSQLOperationCode );
-        			MemoryRowSet.addField( JavaXMLWebRowSetTags._XMLStructSQLOperationDescription, Types.VARCHAR, NamesSQLTypes._VARCHAR, JavaXMLWebRowSetTags._XMLStructSQLOperationDescriptionLength, JavaXMLWebRowSetTags._XMLStructSQLOperationDescription );
+        			MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructSQLOperationCode, Types.INTEGER, NamesSQLTypes._INTEGER, 0, JavaXMLWebRowSetTags._XML_StructSQLOperationCode );
+        			MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructSQLOperationDescription, Types.VARCHAR, NamesSQLTypes._VARCHAR, JavaXMLWebRowSetTags._XML_StructSQLOperationDescriptionLength, JavaXMLWebRowSetTags._XML_StructSQLOperationDescription );
         			
         			for ( CResultSetResult ResultSetResultToAdd: ResultsSetsList ) {    
 
-        				MemoryRowSet.addData( JavaXMLWebRowSetTags._XMLStructSQLOperationCode, ResultSetResultToAdd.intCode );
-        				MemoryRowSet.addData( JavaXMLWebRowSetTags._XMLStructSQLOperationDescription, ResultSetResultToAdd.strDescription );
+        				MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructSQLOperationCode, ResultSetResultToAdd.intCode );
+        				MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructSQLOperationDescription, ResultSetResultToAdd.strDescription );
         			
         			}
         			
@@ -600,8 +600,8 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 				
 				if ( strSecurityToken != null && strSecurityToken.trim().isEmpty() == false ) {
 					
-					RowsetMetaData.setColumnName( intFieldIndex, JavaXMLWebRowSetTags._XMLStructSecurityToken );
-					RowsetMetaData.setColumnLabel( intFieldIndex, JavaXMLWebRowSetTags._XMLStructSecurityToken );
+					RowsetMetaData.setColumnName( intFieldIndex, JavaXMLWebRowSetTags._XML_StructSecurityToken );
+					RowsetMetaData.setColumnLabel( intFieldIndex, JavaXMLWebRowSetTags._XML_StructSecurityToken );
 					RowsetMetaData.setColumnType( intFieldIndex, Types.BIGINT );
 					RowsetMetaData.setColumnTypeName( intFieldIndex, NamesSQLTypes._BIGINT );
 					intFieldIndex += 1;
@@ -610,25 +610,25 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 				
 				if ( strTransactionID != null && strTransactionID.trim().isEmpty() == false ) {
 					
-					RowsetMetaData.setColumnName( intFieldIndex, JavaXMLWebRowSetTags._XMLStructTransactionID );
-					RowsetMetaData.setColumnLabel( intFieldIndex, JavaXMLWebRowSetTags._XMLStructTransactionID );
+					RowsetMetaData.setColumnName( intFieldIndex, JavaXMLWebRowSetTags._XML_StructTransactionID );
+					RowsetMetaData.setColumnLabel( intFieldIndex, JavaXMLWebRowSetTags._XML_StructTransactionID );
 					RowsetMetaData.setColumnType( intFieldIndex, Types.BIGINT );
 					RowsetMetaData.setColumnTypeName( intFieldIndex, NamesSQLTypes._BIGINT );
 					intFieldIndex += 1;
 					
 				}
 				
-				RowsetMetaData.setColumnName( intFieldIndex, JavaXMLWebRowSetTags._XMLStructCode );
-				RowsetMetaData.setColumnLabel( intFieldIndex, JavaXMLWebRowSetTags._XMLStructCode );
+				RowsetMetaData.setColumnName( intFieldIndex, JavaXMLWebRowSetTags._XML_StructCode );
+				RowsetMetaData.setColumnLabel( intFieldIndex, JavaXMLWebRowSetTags._XML_StructCode );
 				RowsetMetaData.setColumnType( intFieldIndex, Types.INTEGER );
 				RowsetMetaData.setColumnTypeName( intFieldIndex, NamesSQLTypes._INTEGER );
 				intFieldIndex += 1;
 
-				RowsetMetaData.setColumnName( intFieldIndex, JavaXMLWebRowSetTags._XMLStructDescription );
-				RowsetMetaData.setColumnLabel( intFieldIndex, JavaXMLWebRowSetTags._XMLStructDescription );
+				RowsetMetaData.setColumnName( intFieldIndex, JavaXMLWebRowSetTags._XML_StructDescription );
+				RowsetMetaData.setColumnLabel( intFieldIndex, JavaXMLWebRowSetTags._XML_StructDescription );
 				RowsetMetaData.setColumnType( intFieldIndex, Types.VARCHAR );
 				RowsetMetaData.setColumnTypeName( intFieldIndex, NamesSQLTypes._VARCHAR );
-				RowsetMetaData.setColumnDisplaySize( intFieldIndex, JavaXMLWebRowSetTags._XMLStructDescriptionLength );
+				RowsetMetaData.setColumnDisplaySize( intFieldIndex, JavaXMLWebRowSetTags._XML_StructDescriptionLength );
 				//intFieldIndex += 1;
 	
 				CachedRowSet CachedRowset = new CachedRowSetImpl();
