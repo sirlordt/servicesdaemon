@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DATAPACKET dpversion="1.1">
+  <METADATA>
+    <FIELDS>
+      <FIELD attrname="IDVALID" fieldtype="i4"/>
+      <FIELD attrname="IDUSER" fieldtype="i4"/>
+      <FIELD attrname="IDGROUP" fieldtype="i4"/>
+      <FIELD attrname="LASTACCESSDATE" fieldtype="date"/>
+      <FIELD attrname="LASTACCESSTIME" fieldtype="time"/>
+      <FIELD attrname="SecurityTokenID" fieldtype="i8"/>
+      <FIELD attrname="Code" fieldtype="i4"/>
+      <FIELD attrname="Description" fieldtype="string" width="255"/>
+    </FIELDS>
+    <PARAMS rowcount="1"/>
+  </METADATA>
+  <ROWDATA>
+    <ROW Code="1" Description="Inicio de sesión exitoso" IDGROUP="1" IDUSER="1" IDVALID="1" LASTACCESSDATE="20130019" LASTACCESSTIME="101547" SecurityTokenID="2516928058540951569"/>
+  </ROWDATA>
+  <ERRORS errorcount="0">
+    <ERROR Code="0" Description=""/>
+  </ERRORS>
+</DATAPACKET>
