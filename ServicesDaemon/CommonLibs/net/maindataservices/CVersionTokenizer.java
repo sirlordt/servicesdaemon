@@ -8,7 +8,7 @@
  * Contributors:
  *     SirLordT <sirlordt@gmail.com> - initial API and implementation
  ******************************************************************************/
-package Utilities;
+package net.maindataservices;
 
 //VersionTokenizer.java
 public class CVersionTokenizer {

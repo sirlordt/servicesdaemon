@@ -14,6 +14,10 @@ public abstract class DefaultConstantsDBServicesManager {
 
 	public static String strDefaultRunningPath = "";
 
+	public static final String strDefaultGlobalDateTimeFormat = "dd/mm/yyyy HH:mm:ss";
+	public static final String strDefaultGlobalDateFormat = "dd/mm/yyyy";
+	public static final String strDefaultGlobalTimeFormat = "HH:mm:ss";
+
 	public static final String strDefaultMainFile = "DBServicesManager";
 	public static final String strDefaultConfFile = strDefaultMainFile + ".conf";
 	public static final String strDefaultMainFileLog = strDefaultMainFile + ".log";

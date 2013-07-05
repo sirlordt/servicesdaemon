@@ -10,26 +10,34 @@
  ******************************************************************************/
 package AbstractDBEngine;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.rowset.serial.SerialBlob;
 
-import Utilities.Base64;
-import Utilities.Utilities;
+import net.maindataservices.Base64;
+import net.maindataservices.Utilities;
+
 
 import AbstractService.CInputServiceParameter;
 import CommonClasses.CLanguage;
+import CommonClasses.CMemoryFieldData;
 import CommonClasses.CMemoryRowSet;
 import CommonClasses.CNamedCallableStatement;
 import CommonClasses.CNamedPreparedStatement;
 import CommonClasses.CResultSetResult;
 import CommonClasses.CServicesDaemonConfig;
+import CommonClasses.ConfigXMLTagsServicesDaemon;
 import CommonClasses.NamesSQLTypes;
 import ExtendedLogger.CExtendedLogger;
 
@@ -96,7 +104,7 @@ public abstract class CAbstractDBEngine {
     	
     }
 
-    public enum SQLStatementType { Unknown, Call, Select, Insert, Update, Delete };
+    public enum SQLStatementType { Unknown, Call, Select, Insert, Update, Delete, DDL };
     
     protected String strName;
     protected String strVersion;
@@ -171,9 +179,14 @@ public abstract class CAbstractDBEngine {
 					Result = SQLStatementType.Update;
 					
 				}
-				else if ( strSQL.indexOf( ConstantsAbstractDBEngine._DELETE ) == 0 ) {
+				else if ( strSQL.indexOf( ConstantsAbstractDBEngine._DELETE ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._TRUNCATE ) == 0 ) {
 					
 					Result = SQLStatementType.Delete;
+					
+				}
+				else if ( strSQL.indexOf( ConstantsAbstractDBEngine._CREATE ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._ALTER ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._MODIFY ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._DROP ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._SHOW ) == 0 ) {
+					
+					Result = SQLStatementType.DDL;
 					
 				}
 				
@@ -606,30 +619,551 @@ public abstract class CAbstractDBEngine {
 	}
 	
     public abstract Connection getDBConnection( CDBEngineConfigConnection ConfigDBConnection, CExtendedLogger Logger, CLanguage Lang );
-	public abstract boolean isValid( Connection DBConnection, CExtendedLogger Logger, CLanguage Lang );
-    public abstract boolean setAutoCommit( Connection DBConnection, boolean bAutoCommit, CExtendedLogger Logger, CLanguage Lang );
-	public abstract boolean commit( Connection DBConnection, CExtendedLogger Logger, CLanguage Lang );
-	public abstract boolean rollback( Connection DBConnection, CExtendedLogger Logger, CLanguage Lang );
-	public abstract boolean close( Connection DBConnection, CExtendedLogger Logger, CLanguage Lang );
-    public abstract CMemoryRowSet InputServiceParameterQuerySQL( Connection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, CExtendedLogger Logger, CLanguage Lang );
-    public abstract boolean InputServiceParameterModifySQL( Connection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, CExtendedLogger Logger, CLanguage Lang );
-	public abstract CMemoryRowSet InputServiceParameterStoredProcedure( Connection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, CExtendedLogger Logger, CLanguage Lang  );
-	public abstract ResultSet ExecuteDummyQuery( Connection DBConnection, String strOptionalDummyQuery, CExtendedLogger Logger, CLanguage Lang );
-	public abstract boolean CheckPlainSQLStatement( String strSQL, CExtendedLogger Logger, CLanguage Lang );
-    public abstract Statement CreatePlainSQLStatment( Connection DBConnection, CExtendedLogger Logger, CLanguage Lang );
+	
+	public boolean isValid( Connection DBConnection, CExtendedLogger Logger, CLanguage Lang ) {
+		
+		boolean bValid = false;
+		
+		try {   
+		    
+			bValid = DBConnection.isValid( 5 );
+			
+			if ( bValid == false && Logger != null && Lang != null ) 
+				Logger.LogMessage( "1", Lang.Translate( "Database connection is invalid" ) );        
+			
+		}
+		catch ( Exception Ex ) {
+		
+			if ( Logger != null )
+				Logger.LogException( "-1015", Ex.getMessage(), Ex ); 
+
+		}
+		
+		return bValid;
+		
+	}
+	
+	public boolean setAutoCommit( Connection DBConnection, boolean bAutoCommit, CExtendedLogger Logger, CLanguage Lang ) {
+		
+		try {   
+		
+			if ( this.isValid( DBConnection, Logger, Lang ) ) {
+
+				DBConnection.setAutoCommit( bAutoCommit );
+
+				if ( Logger != null && Lang != null ) {
+
+					Logger.LogMessage( "1", Lang.Translate( "Database connection auto commit set to: [%s]", Boolean.toString( bAutoCommit ) ) );        
+
+				}
+
+	            return true;
+				
+			}
+			else {
+				
+	            return false;
+				
+			}
+            
+		}	
+		catch ( Exception Ex ) {
+
+			if ( Logger != null  && Lang != null ) {
+        		
+				Logger.LogWarning( "-1", Lang.Translate( "Cannot change the database connection auto commit to: [%s]", Boolean.toString( bAutoCommit ) ) );        
+				Logger.LogException( "-1015", Ex.getMessage(), Ex );
+				
+			}	
+
+			return false;
+			
+		}
+		
+	}
+	
+	public boolean commit( Connection DBConnection, CExtendedLogger Logger, CLanguage Lang ) { 
+
+		try {
+
+			if ( this.isValid( DBConnection, Logger, Lang ) ) {
+
+				DBConnection.commit();
+
+				if ( Logger != null && Lang != null ) {
+
+					Logger.LogMessage( "1", Lang.Translate( "Database transaction commited"  ) );        
+
+				}
+
+				return true;
+
+			}
+			else {
+				
+				return false;
+				
+			}
+
+		}	
+		catch ( Exception Ex ) {
+
+			if ( Logger != null && Lang != null ) {
+        		
+				Logger.LogWarning( "-1", Lang.Translate( "Cannot commit database transaction" ) );        
+				Logger.LogException( "-1015", Ex.getMessage(), Ex );
+				
+			}	
+
+			return false;
+
+		}
+		
+	}
+	
+	public boolean rollback( Connection DBConnection, CExtendedLogger Logger, CLanguage Lang ) {
+		
+		try {
+
+			if ( this.isValid( DBConnection, Logger, Lang ) ) {
+
+				DBConnection.rollback();
+
+				if ( Logger != null && Lang != null ) {
+
+					Logger.LogMessage( "1", Lang.Translate( "Database transaction rollback"  ) );        
+
+				}
+
+				return true;
+				
+			}
+			else {
+				
+				return false;
+				
+			}
+
+		}	
+		catch ( Exception Ex ) {
+
+			if ( Logger != null && Lang != null ) {
+        		
+				Logger.LogWarning( "-1", Lang.Translate( "Cannot rollback database transaction" ) );        
+				Logger.LogException( "-1015", Ex.getMessage(), Ex );
+				
+			}	
+
+			return false;
+
+		}
+		
+	}
+	
+	public boolean close( Connection DBConnection, CExtendedLogger Logger, CLanguage Lang ) {
+		
+		try {
+
+			if ( this.isValid( DBConnection, Logger, Lang ) ) {
+
+				DBConnection.close();
+
+				if ( Logger != null && Lang != null ) {
+
+					Logger.LogMessage( "1", Lang.Translate( "Database connection closed"  ) );        
+
+				}
+
+				return true;
+
+			}
+			else {
+
+				return false;
+
+			}
+
+		}	
+		catch ( Exception Ex ) {
+
+			if ( Logger != null && Lang != null ) {
+        		
+				Logger.LogWarning( "-1", Lang.Translate( "Cannot close database connection" ) );        
+				Logger.LogException( "-1015", Ex.getMessage(), Ex );
+				
+			}	
+
+			return false;
+
+		}
+		
+	}
+
+    public CMemoryRowSet ExecuteQuerySQLByInputServiceParameters( Connection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
+
+		CMemoryRowSet Result = null;
+		
+		try {	
+			
+			HashMap<String,String> Delimiters = new HashMap<String,String>();
+			
+			Delimiters.put( ConfigXMLTagsServicesDaemon._StartMacroTag, ConfigXMLTagsServicesDaemon._EndMacroTag );
+			Delimiters.put( ConfigXMLTagsServicesDaemon._StartParamValue, ConfigXMLTagsServicesDaemon._EndParamValue );
+			
+			CNamedPreparedStatement NamedPreparedStatement = new CNamedPreparedStatement( DBConnection, strSQL, Delimiters );		
+
+			HashMap<String,Integer> NamedParams = NamedPreparedStatement.getNamedParams();
+			
+			Iterator<Entry<String, Integer>> i = NamedParams.entrySet().iterator();
+			
+			boolean bSQLParsed = true;
+			
+			while ( i.hasNext() ) {
+			       
+				Entry<String,Integer> NamedParam = i.next();
+
+				CInputServiceParameter InputServiceParameterDef = this.getInputServiceParameterByName(InputServiceParameters, NamedParam.getKey() );
+
+				String strInputServiceParameterValue = Request.getParameter( NamedParam.getKey() );
+
+				int intMacroIndex = Utilities.getIndexByValue( strMacrosNames, ConfigXMLTagsServicesDaemon._StartMacroTag + NamedParam.getKey() + ConfigXMLTagsServicesDaemon._EndMacroTag );
+				
+				if ( InputServiceParameterDef != null && strInputServiceParameterValue != null ) {
+				
+					this.setFieldValueToNamedPreparedStatement( NamedPreparedStatement, InputServiceParameterDef.getParameterDataTypeID(), NamedParam.getKey(), strInputServiceParameterValue, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
+				
+                }
+				else if ( intMacroIndex >= 0 ) {
+					
+					if ( intMacroIndex < intMacrosTypes.length && intMacroIndex < strMacrosValues.length ) {
+				
+						this.setMacroValueToNamedPreparedStatement( NamedPreparedStatement, NamedParam.getKey(), intMacroIndex, intMacrosTypes, strMacrosNames, strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
+
+					}
+					else {
+						
+                		Logger.LogWarning( "-1", Lang.Translate( "The macro index [%s] is greater than macro values length [%s] and/or macro types length [%s]", Integer.toString( intMacroIndex ), Integer.toString( strMacrosValues.length ), Integer.toString( intMacrosTypes.length ) ) );        
+						
+					}
+					
+				}
+                
+				if ( InputServiceParameterDef == null && intMacroIndex == -1 ) {
+                	
+                    if ( Logger != null ) {
+                    	
+                		Logger.LogWarning( "-1", Lang.Translate( "Input parameter [%s] definitions not found", NamedParam.getKey() ) );        
+                		Logger.LogWarning( "-1", Lang.Translate( "Macro value [%s] not found", NamedParam.getKey() ) );        
+                    	
+                    }
+
+                    bSQLParsed = false;
+                	
+                }
+                
+				if ( strInputServiceParameterValue == null && intMacroIndex == -1 ) {
+                	
+                    if ( Logger != null ) {
+                    	
+                		Logger.LogWarning( "-1", Lang.Translate( "Input parameter [%s] value not found on request", NamedParam.getKey() ) );        
+                    	
+                    }
+
+                    bSQLParsed = false;
+                	
+                }
+				
+			}
+			
+			if ( bSQLParsed == true ) {
+				
+				Result = new CMemoryRowSet( false, NamedPreparedStatement.executeQuery() );
+				
+			}
+			else {
+				
+                if ( Logger != null ) {
+                	
+            		Logger.LogError( "-1001", Lang.Translate( "Cannot parse the next SQL statement [%s]", strSQL ) );        
+                	
+                }
+				
+			}
+			
+			NamedPreparedStatement.close();
+			
+		}
+		catch ( Exception Ex ) {
+
+			if ( Logger != null )
+				Logger.LogException( "-1015", Ex.getMessage(), Ex ); 
+
+		}
+
+		return Result;
+		
+	}
+
+    public boolean ExecuteModifySQLByInputServiceParameters( Connection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
+		
+		boolean bResult = false;
+		
+		try {	
+			
+			HashMap<String,String> Delimiters = new HashMap<String,String>();
+			
+			Delimiters.put( ConfigXMLTagsServicesDaemon._StartMacroTag, ConfigXMLTagsServicesDaemon._EndMacroTag );
+			Delimiters.put( ConfigXMLTagsServicesDaemon._StartParamValue, ConfigXMLTagsServicesDaemon._EndParamValue );
+			
+			CNamedPreparedStatement NamedPreparedStatement = new CNamedPreparedStatement( DBConnection, strSQL, Delimiters );		
+
+			HashMap<String,Integer> NamedParams = NamedPreparedStatement.getNamedParams();
+			
+			Iterator<Entry<String, Integer>> i = NamedParams.entrySet().iterator();
+			
+			boolean bSQLParsed = true;
+			
+			while ( i.hasNext() ) {
+			       
+				Entry<String,Integer> NamedParam = i.next();
+
+				CInputServiceParameter InputServiceParameterDef = this.getInputServiceParameterByName(InputServiceParameters, NamedParam.getKey() );
+
+				String strInputServiceParameterValue = Request.getParameter( NamedParam.getKey() );
+
+				int intMacroIndex = Utilities.getIndexByValue( strMacrosNames, ConfigXMLTagsServicesDaemon._StartMacroTag + NamedParam.getKey() + ConfigXMLTagsServicesDaemon._EndMacroTag );
+				
+				if ( InputServiceParameterDef != null && strInputServiceParameterValue != null ) {
+				
+					this.setFieldValueToNamedPreparedStatement( NamedPreparedStatement, InputServiceParameterDef.getParameterDataTypeID(), NamedParam.getKey(), strInputServiceParameterValue, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
+				
+                }
+				else if ( intMacroIndex >= 0 ) {
+					
+					if ( intMacroIndex < intMacrosTypes.length && intMacroIndex < strMacrosValues.length ) {
+				
+						this.setMacroValueToNamedPreparedStatement( NamedPreparedStatement, NamedParam.getKey(), intMacroIndex, intMacrosTypes, strMacrosNames, strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
+
+					}
+					else {
+						
+                		Logger.LogWarning( "-1", Lang.Translate( "The macro index [%s] is greater than macro values length [%s] and/or macro types length [%s]", Integer.toString( intMacroIndex ), Integer.toString( strMacrosValues.length ), Integer.toString( intMacrosTypes.length ) ) );        
+						
+					}
+					
+				}
+                
+				if ( InputServiceParameterDef == null && intMacroIndex == -1 ) {
+                	
+                    if ( Logger != null ) {
+                    	
+                		Logger.LogWarning( "-1", Lang.Translate( "Input parameter [%s] definitions not found", NamedParam.getKey() ) );        
+                		Logger.LogWarning( "-1", Lang.Translate( "Macro value [%s] not found", NamedParam.getKey() ) );        
+                    	
+                    }
+
+                    bSQLParsed = false;
+                	
+                }
+                
+				if ( strInputServiceParameterValue == null && intMacroIndex == -1 ) {
+                	
+                    if ( Logger != null ) {
+                    	
+                		Logger.LogWarning( "-1", Lang.Translate( "Input parameter [%s] value not found on request", NamedParam.getKey() ) );        
+                    	
+                    }
+
+                    bSQLParsed = false;
+                	
+                }
+				
+			}
+			
+			if ( bSQLParsed == true ) {
+				
+				NamedPreparedStatement.executeUpdate();
+				bResult = true;
+				
+			}
+			else {
+				
+                if ( Logger != null ) {
+                	
+            		Logger.LogError( "-1001", Lang.Translate( "Cannot parse the next SQL statement [%s]", strSQL ) );        
+                	
+                }
+				
+			}
+			
+			NamedPreparedStatement.close();
+			
+		}
+		catch ( Exception Ex ) {
+
+			if ( Logger != null )
+				Logger.LogException( "-1015", Ex.getMessage(), Ex ); 
+
+		}
+
+		return bResult;
+		
+	}
+	
+	public CMemoryRowSet ExecuteCallableStatementByInputServiceParameters( Connection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, CExtendedLogger Logger, CLanguage Lang  ) {
+
+		CMemoryRowSet Result = null;
+		
+		try {	
+			
+			HashMap<String,String> Delimiters = new HashMap<String,String>();
+			
+			Delimiters.put( ConfigXMLTagsServicesDaemon._StartMacroTag, ConfigXMLTagsServicesDaemon._EndMacroTag );
+			Delimiters.put( ConfigXMLTagsServicesDaemon._StartParamValue, ConfigXMLTagsServicesDaemon._EndParamValue );
+			
+			CNamedCallableStatement NamedCallableStatement = new CNamedCallableStatement( DBConnection, strSQL, Delimiters );		
+
+			HashMap<String,Integer> NamedParams = NamedCallableStatement.getNamedParams();
+			
+			Iterator<Entry<String, Integer>> i = NamedParams.entrySet().iterator();
+			
+			boolean bSQLParsed = true;
+			
+			while ( i.hasNext() ) {
+			       
+				Entry<String,Integer> NamedParam = i.next();
+
+				CInputServiceParameter InputServiceParameterDef = this.getInputServiceParameterByName(InputServiceParameters, NamedParam.getKey() );
+
+				String strInputServiceParameterValue = Request.getParameter( NamedParam.getKey() );
+
+				int intMacroIndex = Utilities.getIndexByValue( strMacrosNames, ConfigXMLTagsServicesDaemon._StartMacroTag + NamedParam.getKey() + ConfigXMLTagsServicesDaemon._EndMacroTag );
+				
+				if ( InputServiceParameterDef != null && strInputServiceParameterValue != null ) {
+				
+					this.setFieldValueToNamedCallableStatement( NamedCallableStatement, InputServiceParameterDef.getParameterDataTypeID(), NamedParam.getKey(), strInputServiceParameterValue, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
+	    			
+                }
+				else if ( intMacroIndex >= 0 ) {
+					
+					if ( intMacroIndex < intMacrosTypes.length && intMacroIndex < strMacrosValues.length ) {
+				
+						this.setMacroValueToNamedCallableStatement( NamedCallableStatement, NamedParam.getKey(), intMacroIndex, intMacrosTypes, strMacrosNames, strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
+
+					}
+					else {
+						
+                		Logger.LogWarning( "-1", Lang.Translate( "The macro index [%s] is greater than macro values length [%s] and/or macro types length [%s]", Integer.toString( intMacroIndex ), Integer.toString( strMacrosValues.length ), Integer.toString( intMacrosTypes.length ) ) );        
+						
+					}
+					
+				}
+                
+				if ( InputServiceParameterDef == null && intMacroIndex == -1 ) {
+                	
+                    if ( Logger != null ) {
+                    	
+                		Logger.LogWarning( "-1", Lang.Translate( "Input parameter [%s] definitions not found", NamedParam.getKey() ) );        
+                		Logger.LogWarning( "-1", Lang.Translate( "Macro value [%s] not found", NamedParam.getKey() ) );        
+                    	
+                    }
+
+                    bSQLParsed = false;
+                	
+                }
+                
+				if ( strInputServiceParameterValue == null && intMacroIndex == -1 ) {
+                	
+                    if ( Logger != null ) {
+                    	
+                		Logger.LogWarning( "-1", Lang.Translate( "Input parameter [%s] value not found on request", NamedParam.getKey() ) );        
+                    	
+                    }
+
+                    bSQLParsed = false;
+                	
+                }
+				
+			}
+			
+			if ( bSQLParsed == true ) {
+				
+				Result = new CMemoryRowSet( false, NamedCallableStatement.executeQuery() );
+				
+			}
+			else {
+				
+                if ( Logger != null ) {
+                	
+            		Logger.LogError( "-1001", Lang.Translate( "Cannot parse the next SQL statement [%s]", strSQL ) );        
+                	
+                }
+				
+			}
+			
+			NamedCallableStatement.close();
+			
+		}
+		catch ( Exception Ex ) {
+
+			if ( Logger != null )
+				Logger.LogException( "-1015", Ex.getMessage(), Ex ); 
+
+		}
+
+		return Result;
+		
+	}
+	
+	public abstract ResultSet ExecuteDummySQL( Connection DBConnection, String strOptionalDummySQL, CExtendedLogger Logger, CLanguage Lang );
+
+	public boolean CheckPlainSQLStatement( String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
+		
+		try {
+		
+			if ( strSQL.indexOf( ConfigXMLTagsServicesDaemon._StartParamValue ) == -1 )
+				return true;
+			
+		}
+		catch ( Exception Ex ) {
+			
+			if ( Logger != null )
+				Logger.LogException( "-1015", Ex.getMessage(), Ex );
+			
+		}
+
+		return false;
+		
+	}
     
-    public ResultSet ExecutePlainQueryStatement( Statement SQLStatement, String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    public CResultSetResult ExecutePlainQuerySQL( Connection DBConnection, String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
     	
-    	ResultSet Result = null;
+    	CResultSetResult Result = new CResultSetResult( -1, -1, "" ); 
     	
     	try {
     	
-    		Result = SQLStatement.executeQuery( strSQL );
+    		Statement SQLStatement = DBConnection.createStatement();
+    		
+    		ResultSet ResultQuery = SQLStatement.executeQuery( strSQL );
+    		
+    		Result.intCode = 1;
+    		Result.Result = ResultQuery;
+
+    		if ( Lang != null )   
+    			Result.strDescription = Lang.Translate( "Sucess to execute the plain query SQL statement [%s]", strSQL );
+    		else
+    			Result.strDescription = String.format( "Sucess to execute the plain query SQL statement [%s]", strSQL );
+    			  
     	
     	}
     	catch ( Exception Ex ) {
     		
-			if ( Logger != null )
+    		if ( Lang != null )   
+    		    Result.strDescription = Lang.Translate( "Error to execute the plain query SQL statement [%s]", strSQL );
+    		else
+    		    Result.strDescription = String.format( "Error to execute the plain query SQL statement [%s]", strSQL ) ;
+
+    		if ( Logger != null )
 				Logger.LogException( "-1015", Ex.getMessage(), Ex );
     		
     	}
@@ -638,29 +1172,668 @@ public abstract class CAbstractDBEngine {
     	
     }
     
-    public int ExecutePlainModifyStatement( Statement SQLStatement, String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
-
-    	int intResult = -1;
+    public CResultSetResult ExecutePlainCommonSQL( Connection DBConnection, String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+    	CResultSetResult Result = new CResultSetResult( -1, -1, "" ); 
     	
     	try {
-        	
-    		intResult = SQLStatement.executeUpdate( strSQL );
     	
+    		Statement SQLStatement = DBConnection.createStatement();
+
+    		Result.lngAffectedRows = SQLStatement.executeUpdate( strSQL );
+    		Result.intCode = 1;
+
+    		if ( Lang != null )   
+    			Result.strDescription = Lang.Translate( "Sucess to execute the plain SQL statement [%s]", strSQL );
+    		else
+    			Result.strDescription = String.format( "Sucess to execute the plain SQL statement [%s]", strSQL );
+    	
+    		SQLStatement.close();
+    		
     	}
     	catch ( Exception Ex ) {
     		
-			if ( Logger != null )
+    		if ( Lang != null )   
+    		    Result.strDescription = Lang.Translate( "Error to execute the plain SQL statement [%s]", strSQL );
+    		else
+    		    Result.strDescription = String.format( "Error to execute the plain SQL statement [%s]", strSQL ) ;
+
+    		if ( Logger != null )
 				Logger.LogException( "-1015", Ex.getMessage(), Ex );
     		
     	}
     	
-    	return intResult;
+    	return Result;
     	
     }
     
-    public abstract ArrayList<CResultSetResult> ExecuteComplexQueySQL( Connection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang );
-    public abstract void CloseQueyStatement( ArrayList<CResultSetResult> QueryResults, CExtendedLogger Logger, CLanguage Lang );
+    public CResultSetResult ExecutePlainInsertSQL( Connection DBConnection, String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
 
-    public abstract ArrayList<Long> ExecuteComplexModifySQL( Connection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang );
+    	//Warning: Reimplement for MySQL and another RDBMS with "autoincrement" column table type, see jdbc getGeneratedKeys() for more details
+
+    	return ExecutePlainCommonSQL( DBConnection, strSQL, Logger, Lang );    	
+    	
+    }
+    
+    public CResultSetResult ExecutePlainUpdateSQL( Connection DBConnection, String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
+
+    	return ExecutePlainCommonSQL( DBConnection, strSQL, Logger, Lang );    	
+    	
+    }
+    
+    public CResultSetResult ExecutePlainDeleteSQL( Connection DBConnection, String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
+
+    	return ExecutePlainCommonSQL( DBConnection, strSQL, Logger, Lang );    	
+    	
+    }
+    
+    public CResultSetResult ExecutePlainDDLSQL( Connection DBConnection, String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
+
+    	return ExecutePlainCommonSQL( DBConnection, strSQL, Logger, Lang );    	
+    	
+    }
+    
+    public CResultSetResult ExecutePlainCallableStatement( Connection DBConnection, String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+    	CResultSetResult Result = new CResultSetResult( -1, -1, "" ); 
+    	
+    	try {
+    	
+    		CallableStatement CallStatement = DBConnection.prepareCall( strSQL );
+
+    		ResultSet ResultQuery = CallStatement.executeQuery( strSQL );
+    		
+    		Result.intCode = 1;
+    		Result.Result = ResultQuery;
+
+    		if ( Lang != null )   
+    			Result.strDescription = Lang.Translate( "Sucess to execute the SQL statement [%s]", strSQL );
+    		else
+    			Result.strDescription = String.format( "Sucess to execute the SQL statement [%s]", strSQL );
+    	
+    	}
+    	catch ( Exception Ex ) {
+    		
+    		if ( Lang != null )   
+    		    Result.strDescription = Lang.Translate( "Error to execute the next SQL statement [%s]", strSQL );
+    		else
+    		    Result.strDescription = String.format( "Error to execute the next SQL statement [%s]", strSQL ) ;
+
+    		if ( Logger != null )
+				Logger.LogException( "-1015", Ex.getMessage(), Ex );
+    		
+    	}
+    	
+    	return Result;
+    	
+    }
+
+    public ArrayList<CResultSetResult> ExecuteComplexQueySQL( Connection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+    	ArrayList<CResultSetResult> Result = new ArrayList<CResultSetResult>();
+
+    	try {
+    	
+    		HashMap<String,String> Delimiters = new HashMap<String,String>();
+
+    		Delimiters.put( ConfigXMLTagsServicesDaemon._StartMacroTag, ConfigXMLTagsServicesDaemon._EndMacroTag );
+    		Delimiters.put( ConfigXMLTagsServicesDaemon._StartParamValue, ConfigXMLTagsServicesDaemon._EndParamValue );
+
+    		CNamedPreparedStatement MainNamedPreparedStatement = new CNamedPreparedStatement( DBConnection, strSQL, Delimiters );		
+    	
+			LinkedHashMap<String,Integer> NamedParams = MainNamedPreparedStatement.getNamedParams();
+			
+			Iterator<Entry<String, Integer>> i = NamedParams.entrySet().iterator();
+			
+			CMemoryRowSet MemoryRowSet = new CMemoryRowSet( false );
+			
+			int intMaxCalls = 0;
+			
+			while ( i.hasNext() ) {
+			       
+				Entry<String,Integer> NamedParam = i.next();
+				
+				String strInputServiceParameterValue = Request.getParameter( NamedParam.getKey() );
+
+				int intMacroIndex = Utilities.getIndexByValue( strMacrosNames, ConfigXMLTagsServicesDaemon._StartMacroTag + NamedParam.getKey() + ConfigXMLTagsServicesDaemon._EndMacroTag );
+
+				if ( intMacroIndex >= 0 ) {
+					
+					if ( intMacroIndex < intMacrosTypes.length && intMacroIndex < strMacrosValues.length ) {
+						
+						this.setMacroValueToNamedPreparedStatement( MainNamedPreparedStatement, NamedParam.getKey(), intMacroIndex, intMacrosTypes, strMacrosNames, strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
+
+					}
+					
+				}
+				else if ( strInputServiceParameterValue.isEmpty() == false ) {
+					
+					CMemoryFieldData MemoryField = new CMemoryFieldData( strInputServiceParameterValue, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
+					
+					if ( MemoryField.strName.isEmpty() == false && MemoryField.Data.size() > 0 && MemoryField.intSQLType >= 0 ) {
+
+						if ( MemoryField.Data.size() > intMaxCalls )
+							intMaxCalls = MemoryField.Data.size();
+						
+						MemoryField.strName = NamedParam.getKey();
+						MemoryField.strLabel = NamedParam.getKey();
+						
+						MemoryRowSet.addLinkedField( MemoryField );
+						
+					}
+					
+				}
+				
+			}
+			
+			for ( int intIndexCall = 0; intIndexCall < intMaxCalls; intIndexCall++ ) {
+				
+				i = NamedParams.entrySet().iterator();
+
+				String strParsedStatement = new String( MainNamedPreparedStatement.getParsedStatement() );
+				
+				int intCount = Utilities.countSubString( strParsedStatement, "?" );
+				
+				strParsedStatement = strParsedStatement.replace( "?", "%s" );
+				
+				try {
+
+					ArrayList<String> strRow = MemoryRowSet.RowToString( intIndexCall, true, strDateFormat, strTimeFormat, strDateTimeFormat, true, Logger, Lang );				
+
+					if ( intCount > strRow.size() ) {
+						
+						for ( int I = 0; I < intCount - strRow.size(); I++ ) {
+							
+							strRow.add( "unkown" );
+							
+						}
+						
+					}
+
+					strParsedStatement = String.format( strParsedStatement, strRow.toArray() );
+
+				}
+				catch ( Exception Ex ) {
+					
+					if ( Logger != null ) {
+						
+						Logger.LogException( "-1017", Ex.getMessage(), Ex );
+					
+					}	
+					
+				}
+
+				try {
+					
+					CNamedPreparedStatement NamedPreparedStatement = new CNamedPreparedStatement( DBConnection, MainNamedPreparedStatement.getNamedParams(), MainNamedPreparedStatement.getParsedStatement() );
+
+					while ( i.hasNext() ) {
+
+						Entry<String,Integer> NamedParam = i.next();
+
+						MemoryRowSet.setFieldDataToPreparedStatement( NamedPreparedStatement, NamedParam.getKey(), NamedParam.getKey(), intIndexCall, true, Logger, Lang );
+
+					}
+
+					if ( bLogParsedSQL == true ) {
+						
+						Logger.LogInfo( "2", Lang.Translate( "Executing the next SQL statement [%s] index call [%s]", strParsedStatement, Integer.toString( intIndexCall ) )  );
+						
+					}
+					
+					ResultSet QueryResult = NamedPreparedStatement.executeQuery();
+				
+					if ( QueryResult != null ) {
+						
+						Result.add( new CResultSetResult( -1, 1, Lang.Translate( "Sucess to execute the SQL statement" ), NamedPreparedStatement, QueryResult ) );
+						
+					}
+					
+				}
+				catch ( Exception Ex ) {
+					
+					if ( Logger != null ) {
+					
+						Result.add( new CResultSetResult( -1, -1, Lang.Translate( "Error to execute the SQL statement, see the log file for more details" ) ) );
+
+						Logger.LogError( "-1001", Lang.Translate( "Error to execute the next SQL statement [%s] index call [%s]", strParsedStatement, Integer.toString( intIndexCall ) )  );
+						
+						Logger.LogException( "-1016", Ex.getMessage(), Ex );
+					
+					}	
+				
+				}
+				
+			}
+
+			MainNamedPreparedStatement.close();
+
+    	}
+    	catch ( Exception Ex ) {
+    		
+			if ( Logger != null )
+				Logger.LogException( "-1015", Ex.getMessage(), Ex ); 
+    		
+    	}
+		
+    	return Result;
+    	
+    }
+    
+    public ArrayList<CResultSetResult> ExecuteCommonComplexSQL( Connection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
+ 
+    	ArrayList<CResultSetResult> Result = new ArrayList<CResultSetResult>();
+
+    	try {
+    	
+    		HashMap<String,String> Delimiters = new HashMap<String,String>();
+
+    		Delimiters.put( ConfigXMLTagsServicesDaemon._StartMacroTag, ConfigXMLTagsServicesDaemon._EndMacroTag );
+    		Delimiters.put( ConfigXMLTagsServicesDaemon._StartParamValue, ConfigXMLTagsServicesDaemon._EndParamValue );
+
+    		CNamedPreparedStatement MainNamedPreparedStatement = new CNamedPreparedStatement( DBConnection, strSQL, Delimiters );		
+    	
+			LinkedHashMap<String,Integer> NamedParams = MainNamedPreparedStatement.getNamedParams();
+			
+			Iterator<Entry<String, Integer>> i = NamedParams.entrySet().iterator();
+			
+			CMemoryRowSet MemoryRowSet = new CMemoryRowSet( false );
+			
+			int intMaxCalls = 0;
+			
+			while ( i.hasNext() ) {
+			       
+				Entry<String,Integer> NamedParam = i.next();
+				
+				String strInputServiceParameterValue = Request.getParameter( NamedParam.getKey() );
+
+				int intMacroIndex = Utilities.getIndexByValue( strMacrosNames, ConfigXMLTagsServicesDaemon._StartMacroTag + NamedParam.getKey() + ConfigXMLTagsServicesDaemon._EndMacroTag );
+
+				if ( intMacroIndex >= 0 ) {
+					
+					if ( intMacroIndex < intMacrosTypes.length && intMacroIndex < strMacrosValues.length ) {
+						
+						this.setMacroValueToNamedPreparedStatement( MainNamedPreparedStatement, NamedParam.getKey(), intMacroIndex, intMacrosTypes, strMacrosNames, strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
+
+					}
+					
+				}
+				else if ( strInputServiceParameterValue.isEmpty() == false ) {
+					
+					CMemoryFieldData MemoryField = new CMemoryFieldData( strInputServiceParameterValue, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
+					
+					if ( MemoryField.strName.isEmpty() == false && MemoryField.Data.size() > 0 && MemoryField.intSQLType >= 0 ) {
+
+						if ( MemoryField.Data.size() > intMaxCalls )
+							intMaxCalls = MemoryField.Data.size();
+						
+						MemoryField.strName = NamedParam.getKey();
+						MemoryField.strLabel = NamedParam.getKey();
+						
+						MemoryRowSet.addLinkedField( MemoryField );
+						
+					}
+					
+				}
+				
+			}
+			
+			for ( int intIndexCall = 0; intIndexCall < intMaxCalls; intIndexCall++ ) {
+				
+				i = NamedParams.entrySet().iterator();
+
+				String strParsedStatement = new String( MainNamedPreparedStatement.getParsedStatement() );
+				
+				int intCount = Utilities.countSubString( strParsedStatement, "?" );
+				
+				strParsedStatement = strParsedStatement.replace( "?", "%s" );
+				
+				try {
+
+					ArrayList<String> strRow = MemoryRowSet.RowToString( intIndexCall, true, strDateFormat, strTimeFormat, strDateTimeFormat, true, Logger, Lang );				
+
+					if ( intCount > strRow.size() ) {
+						
+						for ( int I = 0; I < intCount - strRow.size(); I++ ) {
+							
+							strRow.add( "unkown" );
+							
+						}
+						
+					}
+
+					strParsedStatement = String.format( strParsedStatement, strRow.toArray() );
+
+				}
+				catch ( Exception Ex ) {
+					
+					if ( Logger != null ) {
+						
+						Logger.LogException( "-1017", Ex.getMessage(), Ex );
+					
+					}	
+					
+				}
+
+				try {
+					
+					CNamedPreparedStatement NamedPreparedStatement = new CNamedPreparedStatement( DBConnection, MainNamedPreparedStatement.getNamedParams(), MainNamedPreparedStatement.getParsedStatement() );
+
+					while ( i.hasNext() ) {
+
+						Entry<String,Integer> NamedParam = i.next();
+
+						MemoryRowSet.setFieldDataToPreparedStatement( NamedPreparedStatement, NamedParam.getKey(), NamedParam.getKey(), intIndexCall, true, Logger, Lang );
+
+					}
+
+					if ( bLogParsedSQL == true ) {
+						
+						Logger.LogInfo( "2", Lang.Translate( "Executing the next SQL statement [%s] index call [%s]", strParsedStatement, Integer.toString( intIndexCall ) )  );
+						
+					}
+					
+					int intAffectedRows = NamedPreparedStatement.executeUpdate();
+				
+					Result.add( new CResultSetResult( intAffectedRows, 1, Lang.Translate( "Sucess to execute the SQL statement" ) ) );
+						
+					NamedPreparedStatement.close(); //Close immediately to prevent resource leak in database driver
+					
+				}
+				catch ( Exception Ex ) {
+					
+					if ( Logger != null ) {
+					
+						Result.add( new CResultSetResult( -1, -1, Lang.Translate( "Error to execute the SQL statement, see the log file for more details" ) ) );
+
+						Logger.LogError( "-1001", Lang.Translate( "Error to execute the next SQL statement [%s] index call [%s]", strParsedStatement, Integer.toString( intIndexCall ) )  );
+						
+						Logger.LogException( "-1016", Ex.getMessage(), Ex );
+					
+					}	
+				
+				}
+				
+			}
+
+			MainNamedPreparedStatement.close();
+
+    	}
+    	catch ( Exception Ex ) {
+    		
+			if ( Logger != null )
+				Logger.LogException( "-1015", Ex.getMessage(), Ex ); 
+    		
+    	}
+		
+    	return Result;
+    	
+    }
+
+    public ArrayList<CResultSetResult> ExecuteComplexInsertSQL( Connection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+    	//Warning: Reimplement for MySQL and another RDBMS with "autoincrement" column table type, see jdbc getGeneratedKeys() for more details
+
+    	return ExecuteCommonComplexSQL( DBConnection, Request, intMacrosTypes, strMacrosNames, strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, strSQL, bLogParsedSQL, Logger, Lang );
+    	
+    } 
+
+    public ArrayList<CResultSetResult> ExecuteComplexUpdateSQL( Connection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+    	return ExecuteCommonComplexSQL( DBConnection, Request, intMacrosTypes, strMacrosNames, strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, strSQL, bLogParsedSQL, Logger, Lang );
+    	
+    }
+    
+    public ArrayList<CResultSetResult> ExecuteComplexDeleteSQL( Connection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+    	return ExecuteCommonComplexSQL( DBConnection, Request, intMacrosTypes, strMacrosNames, strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, strSQL, bLogParsedSQL, Logger, Lang );
+    	
+    }
+    
+    public ArrayList<CResultSetResult> ExecuteComplexDDL( Connection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+    	return ExecuteCommonComplexSQL( DBConnection, Request, intMacrosTypes, strMacrosNames, strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, strSQL, bLogParsedSQL, Logger, Lang );
+    	
+    }
+    
+    public ArrayList<CResultSetResult> ExecuteComplexCallableStatement( Connection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+    	ArrayList<CResultSetResult> Result = new ArrayList<CResultSetResult>();
+
+    	try {
+    	
+    		HashMap<String,String> Delimiters = new HashMap<String,String>();
+
+    		Delimiters.put( ConfigXMLTagsServicesDaemon._StartMacroTag, ConfigXMLTagsServicesDaemon._EndMacroTag );
+    		Delimiters.put( ConfigXMLTagsServicesDaemon._StartParamValue, ConfigXMLTagsServicesDaemon._EndParamValue );
+
+    		CNamedCallableStatement MainNamedCallableStatement = new CNamedCallableStatement( DBConnection, strSQL, Delimiters );		
+    	
+			LinkedHashMap<String,Integer> NamedParams = MainNamedCallableStatement.getNamedParams();
+			
+			Iterator<Entry<String, Integer>> i = NamedParams.entrySet().iterator();
+			
+			CMemoryRowSet MemoryRowSet = new CMemoryRowSet( false );
+			
+			int intMaxCalls = 0;
+			
+			while ( i.hasNext() ) {
+			       
+				Entry<String,Integer> NamedParam = i.next();
+				
+				String strInputServiceParameterValue = Request.getParameter( NamedParam.getKey() );
+
+				int intMacroIndex = Utilities.getIndexByValue( strMacrosNames, ConfigXMLTagsServicesDaemon._StartMacroTag + NamedParam.getKey() + ConfigXMLTagsServicesDaemon._EndMacroTag );
+
+				if ( intMacroIndex >= 0 ) {
+					
+					if ( intMacroIndex < intMacrosTypes.length && intMacroIndex < strMacrosValues.length ) {
+						
+						this.setMacroValueToNamedCallableStatement( MainNamedCallableStatement, NamedParam.getKey(), intMacroIndex, intMacrosTypes, strMacrosNames, strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
+
+					}
+					
+				}
+				else if ( strInputServiceParameterValue.isEmpty() == false ) {
+					
+					CMemoryFieldData MemoryField = new CMemoryFieldData( strInputServiceParameterValue, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
+					
+					if ( MemoryField.strName.isEmpty() == false && MemoryField.Data.size() > 0 && MemoryField.intSQLType >= 0 ) {
+
+						if ( MemoryField.Data.size() > intMaxCalls )
+							intMaxCalls = MemoryField.Data.size();
+						
+						MemoryField.strName = NamedParam.getKey();
+						MemoryField.strLabel = NamedParam.getKey();
+						
+						MemoryRowSet.addLinkedField( MemoryField );
+						
+					}
+					
+				}
+				
+			}
+			
+			for ( int intIndexCall = 0; intIndexCall < intMaxCalls; intIndexCall++ ) {
+				
+				i = NamedParams.entrySet().iterator();
+
+				String strParsedStatement = new String( MainNamedCallableStatement.getParsedStatement() );
+				
+				int intCount = Utilities.countSubString( strParsedStatement, "?" );
+				
+				strParsedStatement = strParsedStatement.replace( "?", "%s" );
+				
+				try {
+
+					ArrayList<String> strRow = MemoryRowSet.RowToString( intIndexCall, true, strDateFormat, strTimeFormat, strDateTimeFormat, true, Logger, Lang );				
+
+					if ( intCount > strRow.size() ) {
+						
+						for ( int I = 0; I < intCount - strRow.size(); I++ ) {
+							
+							strRow.add( "unkown" );
+							
+						}
+						
+					}
+
+					strParsedStatement = String.format( strParsedStatement, strRow.toArray() );
+
+				}
+				catch ( Exception Ex ) {
+					
+					if ( Logger != null ) {
+						
+						Logger.LogException( "-1017", Ex.getMessage(), Ex );
+					
+					}	
+					
+				}
+
+				CNamedCallableStatement NamedCallableStatement = new CNamedCallableStatement( DBConnection, MainNamedCallableStatement.getNamedParams(), MainNamedCallableStatement.getParsedStatement() );
+				
+				while ( i.hasNext() ) {
+				       
+					Entry<String,Integer> NamedParam = i.next();
+
+					MemoryRowSet.setFieldDataToCallableStatement( NamedCallableStatement, NamedParam.getKey(), NamedParam.getKey(), intIndexCall, true, Logger, Lang );
+				
+				}
+
+				try {
+				
+					if ( bLogParsedSQL == true ) {
+						
+						Logger.LogInfo( "2", Lang.Translate( "Executing the next SQL statement [%s] index call [%s]", strParsedStatement, Integer.toString( intIndexCall ) )  );
+						
+					}
+					
+					ResultSet QueryResult = NamedCallableStatement.executeQuery();
+				
+					if ( QueryResult != null ) {
+						
+						Result.add( new CResultSetResult( -1, 1, Lang.Translate( "Sucess to execute the SQL statement" ), NamedCallableStatement, QueryResult ) );
+						
+					}
+					
+				}
+				catch ( Exception Ex ) {
+					
+					if ( Logger != null ) {
+					
+						Result.add( new CResultSetResult( -1, -1, Lang.Translate( "Error to execute the SQL statement, see the log file for more details" ) ) );
+
+						Logger.LogError( "-1001", Lang.Translate( "Error to execute the next SQL statement [%s] index call [%s]", strParsedStatement, Integer.toString( intIndexCall ) )  );
+						
+						Logger.LogException( "-1016", Ex.getMessage(), Ex );
+					
+					}	
+				
+				}
+				
+			}
+
+			MainNamedCallableStatement.close();
+
+    	}
+    	catch ( Exception Ex ) {
+    		
+			if ( Logger != null )
+				Logger.LogException( "-1015", Ex.getMessage(), Ex ); 
+    		
+    	}
+		
+    	return Result;
+    	
+    }
+
+    public void CloseResultSetResultStatement( ArrayList<CResultSetResult> ResultSetResults, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+    	if ( ResultSetResults != null ) {
+
+    		for ( CResultSetResult ResultSetResult: ResultSetResults ) {
+
+    			try {
+
+    				if ( ResultSetResult.NamedPreparedStatement != null ) {   
+
+    					ResultSetResult.NamedPreparedStatement.close();
+
+    					ResultSetResult.NamedPreparedStatement = null;
+
+    				}
+    				
+    				if ( ResultSetResult.NamedCallableStatement != null ) {
+    					
+    					ResultSetResult.NamedCallableStatement.close();
+
+    					ResultSetResult.NamedCallableStatement = null;
+    					
+    				}
+    				
+    				if ( ResultSetResult.SQLStatement != null ) {
+    					
+    					ResultSetResult.SQLStatement.close();
+
+    					ResultSetResult.SQLStatement = null;
+    					
+    				}
+    				
+    				ResultSetResult.Result = null;
+
+    			}
+    			catch ( Exception Ex ) {
+
+    				if ( Logger != null )
+    					Logger.LogException( "-1015", Ex.getMessage(), Ex ); 
+
+    			}
+
+    		}
+
+    	}
+    	
+    }
+    
+    public void CloseResultSetResultStatement( CResultSetResult ResultSetResult, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+		try {
+
+			if ( ResultSetResult.NamedPreparedStatement != null ) {   
+
+				ResultSetResult.NamedPreparedStatement.close();
+
+				ResultSetResult.NamedPreparedStatement = null;
+
+			}
+
+			if ( ResultSetResult.NamedCallableStatement != null ) {
+				
+				ResultSetResult.NamedCallableStatement.close();
+
+				ResultSetResult.NamedCallableStatement = null;
+				
+			}
+			
+			if ( ResultSetResult.SQLStatement != null ) {
+				
+				ResultSetResult.SQLStatement.close();
+
+				ResultSetResult.SQLStatement = null;
+				
+			}
+			
+			ResultSetResult.Result = null;
+			
+		}
+		catch ( Exception Ex ) {
+
+			if ( Logger != null )
+				Logger.LogException( "-1015", Ex.getMessage(), Ex ); 
+
+		}
+    	
+    }
     
 }

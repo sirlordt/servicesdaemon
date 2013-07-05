@@ -32,7 +32,7 @@ public interface XMLDataPacketTags {
 	//DATAPACKET body attrib tags
 	public final static String _AttrName                       = "attrname";
 	public final static String _FieldType                      = "fieldtype";
-	public final static String _FieldTypeSubType               = "SUBTYPE";
+	public final static String _FieldSubType                   = "SUBTYPE";
 	public final static String _FieldTypeShortInteger          = "i2";
 	public final static String _FieldTypeInteger               = "i4";
 	public final static String _FieldTypeBigInt                = "i8";
@@ -52,6 +52,7 @@ public interface XMLDataPacketTags {
 
 	public final static String _XML_StructSecurityToken          = "SecurityToken";
 	public final static String _XML_StructTransactionID          = "TransactionID";
+	public final static String _XML_StructAffectedRows           = "AffectedRows";
 	public final static String _XML_StructCode                   = "Code";
 	public final static String _XML_StructDescription            = "Description";
 	public final static String _XML_StructDescriptionLength      = "255";

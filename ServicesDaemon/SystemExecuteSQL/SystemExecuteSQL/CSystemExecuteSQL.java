@@ -12,8 +12,6 @@ package SystemExecuteSQL;
 
 import java.io.File;
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,7 +33,6 @@ import CommonClasses.CAbstractConfigLoader;
 import CommonClasses.CClassPathLoader;
 import CommonClasses.CDBConnectionsManager;
 import CommonClasses.CExpresionsFilters;
-import CommonClasses.CMemoryRowSet;
 import CommonClasses.CResultSetResult;
 import CommonClasses.CServicePostExecuteResult;
 import CommonClasses.CServicesDaemonConfig;
@@ -141,7 +138,7 @@ public class CSystemExecuteSQL extends CAbstractService {
 
 				ServiceInputParameters.add( InputParameter );
 
-				InputParameter = new CInputServiceParameter( ConstantsSystemExecuteSQL._RequestSQL, true, ConstantsSystemExecuteSQL._RequestSQLType, ConstantsSystemExecuteSQL._RequestSQLLength, TParameterScope.IN, ServiceLang.Translate( "SQL statement" ) );
+				InputParameter = new CInputServiceParameter( ConstantsSystemExecuteSQL._Request_SQL, true, ConstantsSystemExecuteSQL._Request_SQL_Type, ConstantsSystemExecuteSQL._Request_SQL_Length, TParameterScope.IN, ServiceLang.Translate( "SQL statement" ) );
 
 				ServiceInputParameters.add( InputParameter );
 
@@ -195,26 +192,24 @@ public class CSystemExecuteSQL extends CAbstractService {
 		
 	}
 	
-	public boolean ExecutePlainSQL( Connection DBConnection, CAbstractDBEngine DBEngine, String strSQL, HttpServletResponse Response, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion, String strTransactionID ) {
+	public boolean ExecutePlainSQL( CConfigDBConnection ConfigDBConnection, Connection DBConnection, CAbstractDBEngine DBEngine, String strSQL, HttpServletResponse Response, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion, String strTransactionID ) {
 		
 		boolean bResult = false;
 		
 		try {
 		
-			Statement PlainSQLStatement = DBEngine.CreatePlainSQLStatment( DBConnection, ServiceLogger, ServiceLang ); 
-
 			SQLStatementType SQLType = DBEngine.getSQLStatementType( strSQL, ServiceLogger, ServiceLang );
 
 			if ( SQLType == SQLStatementType.Select ) { //Select
 
-				ResultSet RowSet = DBEngine.ExecutePlainQueryStatement( PlainSQLStatement, strSQL, ServiceLogger, ServiceLang ); //SQLStatement.executeQuery( strSQL );
+				CResultSetResult ResultSetResult = DBEngine.ExecutePlainQuerySQL( DBConnection, strSQL, ServiceLogger, ServiceLang ); //SQLStatement.executeQuery( strSQL );
 
-				if ( RowSet != null ) {
+				if ( ResultSetResult != null ) {
 
 					Response.setContentType( ResponseFormat.getContentType() );
 					Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-					String strResponseBuffer = ResponseFormat.FormatResultSet( RowSet, strResponseFormatVersion );
+					String strResponseBuffer = ResponseFormat.FormatResultSet( ResultSetResult, strResponseFormatVersion, ConfigDBConnection!=null?ConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_DateTime_Format ), ConfigDBConnection!=null?ConfigDBConnection.strDateFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Date_Format ), ConfigDBConnection!=null?ConfigDBConnection.strTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 					Response.getWriter().print( strResponseBuffer );
 
 					bResult = true;
@@ -231,19 +226,30 @@ public class CSystemExecuteSQL extends CAbstractService {
 					Response.setContentType( ResponseFormat.getContentType() );
 					Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-					String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1008, ServiceLang.Translate( "Failed to execute SQL statement for transaction id: [%s], see the log file for more details", strTransactionID ), true, strResponseFormatVersion );
+					String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1008, ServiceLang.Translate( "Failed to execute SQL statement for transaction id: [%s], see the log file for more details", strTransactionID ), true, strResponseFormatVersion, ConfigDBConnection!=null?ConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_DateTime_Format ), ConfigDBConnection!=null?ConfigDBConnection.strDateFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Date_Format ), ConfigDBConnection!=null?ConfigDBConnection.strTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 					Response.getWriter().print( strResponseBuffer );
 
 				}
 
 			}
-			else if ( SQLType == SQLStatementType.Insert || SQLType == SQLStatementType.Update || SQLType == SQLStatementType.Delete ) { //Insert
+			else { 
 
-				int intAffectedRows = DBEngine.ExecutePlainModifyStatement( PlainSQLStatement, strSQL, ServiceLogger, ServiceLang ); //SQLStatement.executeUpdate( strSQL );
+				CResultSetResult ResultSetResult = null;
+				
+				if ( SQLType == SQLStatementType.Insert )
+					ResultSetResult = DBEngine.ExecutePlainInsertSQL( DBConnection, strSQL, ServiceLogger, ServiceLang );
+				else if ( SQLType == SQLStatementType.Update )
+					ResultSetResult = DBEngine.ExecutePlainUpdateSQL( DBConnection, strSQL, ServiceLogger, ServiceLang );
+				else if ( SQLType == SQLStatementType.Delete )
+					ResultSetResult = DBEngine.ExecutePlainDeleteSQL( DBConnection, strSQL, ServiceLogger, ServiceLang );
+				else if ( SQLType == SQLStatementType.Call )
+					ResultSetResult = DBEngine.ExecutePlainCallableStatement( DBConnection, strSQL, ServiceLogger, ServiceLang );
+				else if ( SQLType == SQLStatementType.DDL )
+					ResultSetResult = DBEngine.ExecutePlainDDLSQL( DBConnection, strSQL, ServiceLogger, ServiceLang );
 
-				if ( intAffectedRows >= 0 ) {
+				if ( ResultSetResult != null ) {
 
-					CMemoryRowSet RowSet = new CMemoryRowSet( false );
+					/*CMemoryRowSet RowSet = new CMemoryRowSet( false );
 
 					RowSet.addField( ConstantsServicesTags._Code, ConstantsServicesTags._CodeTypeID, ConstantsServicesTags._CodeType, 0, "" );
 					RowSet.addField( ConstantsServicesTags._Description, ConstantsServicesTags._DescriptionTypeID, ConstantsServicesTags._DescriptionType, ConstantsServicesTags._DescriptionLength, ConstantsServicesTags._Description );
@@ -251,12 +257,14 @@ public class CSystemExecuteSQL extends CAbstractService {
 
 					RowSet.setAllData( ConstantsServicesTags._Code, "1" );
 					RowSet.setAllData( ConstantsServicesTags._Description, ServiceLang.Translate( "Success execute the SQL statement" ) );
-					RowSet.setAllData( ConstantsSystemExecuteSQL._ResponseAffectedRows, Integer.toString( intAffectedRows ) );
+					RowSet.setAllData( ConstantsSystemExecuteSQL._ResponseAffectedRows, Integer.toString( intAffectedRows ) );*/
 
-					String strResponseBuffer = ResponseFormat.FormatMemoryRowSet( RowSet, strResponseFormatVersion );
+					String strResponseBuffer = ResponseFormat.FormatResultSet( ResultSetResult, strResponseFormatVersion, ConfigDBConnection!=null?ConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_DateTime_Format ), ConfigDBConnection!=null?ConfigDBConnection.strDateFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Date_Format ), ConfigDBConnection!=null?ConfigDBConnection.strTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 
 					Response.getWriter().print( strResponseBuffer );
 
+					DBEngine.CloseResultSetResultStatement(ResultSetResult, ServiceLogger, ServiceLang );
+					
 					bResult = true;
 					
 				}
@@ -271,7 +279,7 @@ public class CSystemExecuteSQL extends CAbstractService {
 					Response.setContentType( ResponseFormat.getContentType() );
 					Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-					String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1007, ServiceLang.Translate( "Failed to execute SQL statement for transaction id: [%s], see the log file for more details", strTransactionID ), true, strResponseFormatVersion );
+					String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1007, ServiceLang.Translate( "Failed to execute SQL statement for transaction id: [%s], see the log file for more details", strTransactionID ), true, strResponseFormatVersion, ConfigDBConnection!=null?ConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_DateTime_Format ), ConfigDBConnection!=null?ConfigDBConnection.strDateFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Date_Format ), ConfigDBConnection!=null?ConfigDBConnection.strTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 					Response.getWriter().print( strResponseBuffer );
 
 				}
@@ -324,7 +332,7 @@ public class CSystemExecuteSQL extends CAbstractService {
 					Response.setContentType( ResponseFormat.getContentType() );
 					Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-					String strResponseBuffer = ResponseFormat.FormatResultsSets( ResultsSets, strResponseFormatVersion, 1 );
+					String strResponseBuffer = ResponseFormat.FormatResultsSets( ResultsSets, strResponseFormatVersion, ConfigDBConnection!=null?ConfigDBConnection.strTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Time_Format ), ConfigDBConnection!=null?ConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_DateTime_Format ), ConfigDBConnection!=null?ConfigDBConnection.strDateFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Date_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang, 1 );
 					Response.getWriter().print( strResponseBuffer );
 
 					bResult = true;
@@ -341,24 +349,35 @@ public class CSystemExecuteSQL extends CAbstractService {
 					Response.setContentType( ResponseFormat.getContentType() );
 					Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-					String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1010, ServiceLang.Translate( "Failed to execute SQL statement for transaction id: [%s], see the log file for more details", strTransactionID ), true, strResponseFormatVersion );
+					String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1010, ServiceLang.Translate( "Failed to execute SQL statement for transaction id: [%s], see the log file for more details", strTransactionID ), true, strResponseFormatVersion, ConfigDBConnection!=null?ConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_DateTime_Format ), ConfigDBConnection!=null?ConfigDBConnection.strDateFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Date_Format ), ConfigDBConnection!=null?ConfigDBConnection.strTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 					Response.getWriter().print( strResponseBuffer );
 					
 				}
 				
-				DBEngine.CloseQueyStatement( ResultsSets, ServiceLogger, ServiceLang );
+				DBEngine.CloseResultSetResultStatement( ResultsSets, ServiceLogger, ServiceLang );
 				
 			}
-			else if ( SQLType == SQLStatementType.Insert || SQLType == SQLStatementType.Update || SQLType == SQLStatementType.Delete ) { //Insert
+			else if ( SQLType != SQLStatementType.Unknown ) {
 
-				ArrayList<Long> AffectedRows = DBEngine.ExecuteComplexModifySQL( DBConnection, Request, getMacrosTypes(), getMacrosNames(), getMacrosNames(), ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strSQL, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
+				ArrayList<CResultSetResult> ResultSetsResults = null;
 				
-				if ( AffectedRows != null && AffectedRows.size() > 0 ) {
+				if ( SQLType == SQLStatementType.Insert )
+					ResultSetsResults = DBEngine.ExecuteComplexInsertSQL( DBConnection, Request, getMacrosTypes(), getMacrosNames(), getMacrosNames(), ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strSQL, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
+				else if ( SQLType == SQLStatementType.Update )
+					ResultSetsResults = DBEngine.ExecuteComplexUpdateSQL( DBConnection, Request, getMacrosTypes(), getMacrosNames(), getMacrosNames(), ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strSQL, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
+				else if ( SQLType == SQLStatementType.Delete )
+					ResultSetsResults = DBEngine.ExecuteComplexDeleteSQL( DBConnection, Request, getMacrosTypes(), getMacrosNames(), getMacrosNames(), ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strSQL, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
+				else if ( SQLType == SQLStatementType.Call )
+					ResultSetsResults = DBEngine.ExecuteComplexCallableStatement( DBConnection, Request, getMacrosTypes(), getMacrosNames(), getMacrosNames(), ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strSQL, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
+				else if ( SQLType == SQLStatementType.DDL )
+					ResultSetsResults = DBEngine.ExecuteComplexDDL( DBConnection, Request, getMacrosTypes(), getMacrosNames(), getMacrosNames(), ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strSQL, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
+
+				if ( ResultSetsResults != null ) {
 					
 					Response.setContentType( ResponseFormat.getContentType() );
 					Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-					CMemoryRowSet MemoryRowSet = new CMemoryRowSet( false );
+					/*CMemoryRowSet MemoryRowSet = new CMemoryRowSet( false );
 					
 		    		MemoryRowSet.addField( ConstantsSystemExecuteSQL._ResponseAffectedRows, ConstantsSystemExecuteSQL._ResponseAffectedRowsTypeID, ConstantsSystemExecuteSQL._ResponseAffectedRowsType, 0, "" );
 		    		MemoryRowSet.addField( ConstantsServicesTags._Code, ConstantsServicesTags._CodeTypeID, ConstantsServicesTags._CodeType, 0, "" );
@@ -383,9 +402,14 @@ public class CSystemExecuteSQL extends CAbstractService {
 		    			
 		    		}
 		    		
-		    		String strResponseBuffer = ResponseFormat.FormatMemoryRowSet( MemoryRowSet, strResponseFormatVersion );
+		    		String strResponseBuffer = ResponseFormat.FormatMemoryRowSet( MemoryRowSet, strResponseFormatVersion );*/
+					
+					String strResponseBuffer = ResponseFormat.FormatResultsSets( ResultSetsResults, strResponseFormatVersion, ConfigDBConnection!=null?ConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_DateTime_Format ), ConfigDBConnection!=null?ConfigDBConnection.strDateFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Date_Format ), ConfigDBConnection!=null?ConfigDBConnection.strTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang, 0 );
+		    		
 					Response.getWriter().print( strResponseBuffer );
 
+					DBEngine.CloseResultSetResultStatement( ResultSetsResults, ServiceLogger, ServiceLang );
+					
 					bResult = true;
 					
 				}
@@ -400,7 +424,7 @@ public class CSystemExecuteSQL extends CAbstractService {
 					Response.setContentType( ResponseFormat.getContentType() );
 					Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-					String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1011, ServiceLang.Translate( "Failed to execute SQL statement for transaction id: [%s], see the log file for more details", strTransactionID ), true, strResponseFormatVersion );
+					String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1011, ServiceLang.Translate( "Failed to execute SQL statement for transaction id: [%s], see the log file for more details", strTransactionID ), true, strResponseFormatVersion, ConfigDBConnection!=null?ConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_DateTime_Format ), ConfigDBConnection!=null?ConfigDBConnection.strDateFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Date_Format ), ConfigDBConnection!=null?ConfigDBConnection.strTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 					Response.getWriter().print( strResponseBuffer );
 					
 				}
@@ -435,7 +459,14 @@ public class CSystemExecuteSQL extends CAbstractService {
 
 		int intResultCode = -1000;
 		
-		if ( this.CheckServiceInputParameters( GroupsInputParametersService.get( ConstantsServicesTags._Default ), Request, Response, ResponseFormat, strResponseFormatVersion ) == true ) {
+		CSessionInfoManager SessionInfoManager = CSessionInfoManager.getSessionInfoManager();
+		
+		CConfigDBConnection LocalConfigDBConnection = null;
+		
+		if ( SessionInfoManager != null )
+			LocalConfigDBConnection = SessionInfoManager.getConfigDBConnectionFromSecurityTokenID( strSecurityTokenID, ServiceLogger, ServiceLang );
+		
+		if ( this.CheckServiceInputParameters( GroupsInputParametersService.get( ConstantsServicesTags._Default ), Request, Response, ResponseFormat, strResponseFormatVersion, LocalConfigDBConnection!=null?LocalConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_DateTime_Format ), LocalConfigDBConnection!=null?LocalConfigDBConnection.strDateFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Date_Format ), LocalConfigDBConnection!=null?LocalConfigDBConnection.strTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang ) == true ) {
 			
 			CServicePreExecuteResult ServicePreExecuteResult = this.RunServicePreExecute( intEntryCode, Request, Response, strSecurityTokenID, RegisteredServices, ResponseFormat, strResponseFormatVersion );
 
@@ -451,9 +482,9 @@ public class CSystemExecuteSQL extends CAbstractService {
 
 					if ( DBConnection != null ) {
 
-						CSessionInfoManager SessionInfoManager = CSessionInfoManager.getSessionInfoManager();
+						//CSessionInfoManager SessionInfoManager = CSessionInfoManager.getSessionInfoManager();
 
-						CConfigDBConnection LocalConfigDBConnection = SessionInfoManager.getConfigDBConnectionFromSecurityTokenID( strSecurityTokenID, ServiceLogger, ServiceLang ); 
+						//CConfigDBConnection LocalConfigDBConnection = SessionInfoManager.getConfigDBConnectionFromSecurityTokenID( strSecurityTokenID, ServiceLogger, ServiceLang ); 
 
 						if ( LocalConfigDBConnection != null ) {
 
@@ -465,7 +496,7 @@ public class CSystemExecuteSQL extends CAbstractService {
 
 								if ( DBConnectionSemaphore != null ) {
 
-									String strSQL = ( String ) Request.getParameter( ConstantsSystemExecuteSQL._RequestSQL );
+									String strSQL = ( String ) Request.getParameter( ConstantsSystemExecuteSQL._Request_SQL );
 
 									if ( strSQL != null ) {
 
@@ -480,7 +511,7 @@ public class CSystemExecuteSQL extends CAbstractService {
 
 											if ( bPlainSQLStatment == true ) {
 
-												if ( this.ExecutePlainSQL( DBConnection, DBEngine, strSQL, Response, ResponseFormat, strResponseFormatVersion, strTransactionID ) == true ) {
+												if ( this.ExecutePlainSQL( LocalConfigDBConnection, DBConnection, DBEngine, strSQL, Response, ResponseFormat, strResponseFormatVersion, strTransactionID ) == true ) {
 
 													intResultCode = 1;
 
@@ -513,7 +544,7 @@ public class CSystemExecuteSQL extends CAbstractService {
 												Response.setContentType( ResponseFormat.getContentType() );
 												Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-												String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1006, ServiceLang.Translate( "Failed to execute SQL statement for transaction id: [%s], see the log file for more details", strSecurityTokenID ), true, strResponseFormatVersion );
+												String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1006, ServiceLang.Translate( "Failed to execute SQL statement for transaction id: [%s], see the log file for more details", strSecurityTokenID ), true, strResponseFormatVersion, LocalConfigDBConnection.strDateTimeFormat, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 												Response.getWriter().print( strResponseBuffer );
 
 											}
@@ -542,7 +573,7 @@ public class CSystemExecuteSQL extends CAbstractService {
 											Response.setContentType( ResponseFormat.getContentType() );
 											Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-											String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1005, ServiceLang.Translate( "Failed to execute SQL statement for transaction id: [%s], see the log file for more details", strSecurityTokenID ), true, strResponseFormatVersion );
+											String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1005, ServiceLang.Translate( "Failed to execute SQL statement for transaction id: [%s], see the log file for more details", strSecurityTokenID ), true, strResponseFormatVersion, LocalConfigDBConnection.strDateTimeFormat, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 											Response.getWriter().print( strResponseBuffer );
 
 										}
@@ -572,7 +603,7 @@ public class CSystemExecuteSQL extends CAbstractService {
 										Response.setContentType( ResponseFormat.getContentType() );
 										Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-										String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1004, ServiceLang.Translate( "Failed to execute SQL statement for transaction id: [%s], see the log file for more details", strSecurityTokenID ), true, strResponseFormatVersion );
+										String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1004, ServiceLang.Translate( "Failed to execute SQL statement for transaction id: [%s], see the log file for more details", strSecurityTokenID ), true, strResponseFormatVersion, LocalConfigDBConnection.strDateTimeFormat, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 										Response.getWriter().print( strResponseBuffer );
 
 									}
@@ -602,7 +633,7 @@ public class CSystemExecuteSQL extends CAbstractService {
 									Response.setContentType( ResponseFormat.getContentType() );
 									Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-									String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1003, ServiceLang.Translate( "Failed to execute SQL statement for transaction id: [%s], see the log file for more details", strSecurityTokenID ), true, strResponseFormatVersion );
+									String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1003, ServiceLang.Translate( "Failed to execute SQL statement for transaction id: [%s], see the log file for more details", strSecurityTokenID ), true, strResponseFormatVersion, LocalConfigDBConnection.strDateTimeFormat, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 									Response.getWriter().print( strResponseBuffer );
 
 								}
@@ -629,7 +660,7 @@ public class CSystemExecuteSQL extends CAbstractService {
 							Response.setContentType( ResponseFormat.getContentType() );
 							Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-							String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1002, ServiceLang.Translate( "Failed to execute SQL statement for transaction id: [%s], see the log file for more details", strTransactionID ), true, strResponseFormatVersion );
+							String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1002, ServiceLang.Translate( "Failed to execute SQL statement for transaction id: [%s], see the log file for more details", strTransactionID ), true, strResponseFormatVersion, LocalConfigDBConnection!=null?LocalConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_DateTime_Format ), LocalConfigDBConnection!=null?LocalConfigDBConnection.strDateFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Date_Format ), LocalConfigDBConnection!=null?LocalConfigDBConnection.strTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 							Response.getWriter().print( strResponseBuffer );
 
 						}
@@ -646,7 +677,7 @@ public class CSystemExecuteSQL extends CAbstractService {
 						Response.setContentType( ResponseFormat.getContentType() );
 						Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-						String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1001, ServiceLang.Translate( "Failed to execute SQL statement for transaction id: [%s], see the log file for more details", strTransactionID ), true, strResponseFormatVersion );
+						String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1001, ServiceLang.Translate( "Failed to execute SQL statement for transaction id: [%s], see the log file for more details", strTransactionID ), true, strResponseFormatVersion, LocalConfigDBConnection!=null?LocalConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_DateTime_Format ), LocalConfigDBConnection!=null?LocalConfigDBConnection.strDateFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Date_Format ), LocalConfigDBConnection!=null?LocalConfigDBConnection.strTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 						Response.getWriter().print( strResponseBuffer );
 
 					}

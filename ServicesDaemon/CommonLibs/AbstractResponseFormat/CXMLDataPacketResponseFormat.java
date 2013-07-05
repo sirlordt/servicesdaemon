@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -32,17 +33,25 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+//import net.maindataservices.Base64;
+
+import net.maindataservices.Base64;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+//import sun.misc.BASE64Encoder;
+//import org.apache.commons.codec.binary.Base64;
+
 import AbstractService.CAbstractService;
 import AbstractService.CInputServiceParameter;
 import AbstractService.ConstantsServicesTags;
+import CommonClasses.CLanguage;
 import CommonClasses.CMemoryFieldData;
 import CommonClasses.CMemoryRowSet;
 import CommonClasses.CResultSetResult;
-import Utilities.Base64;
+import ExtendedLogger.CExtendedLogger;
 
 
 public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
@@ -55,7 +64,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 		
 	}
 
-    public String ConvertXMLDocumentToString( Document XMLDocument, boolean bOmitDeclaration, String strEnconding, boolean bIndent ) {
+    public String ConvertXMLDocumentToString( Document XMLDocument, boolean bOmitDeclaration, String strEnconding, boolean bIndent, CExtendedLogger Logger, CLanguage Lang ) {
         
         String strResult = "";
         
@@ -92,7 +101,10 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
         }
         catch ( Exception Ex ) {
             
-            OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+			if ( Logger != null )
+				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
+				OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
         
         }
         
@@ -100,37 +112,37 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     
     }
 
-    public String ConvertXMLDocumentToString( Document XMLDocument, boolean bOmitDeclaration, String strEnconding ) {
+    public String ConvertXMLDocumentToString( Document XMLDocument, boolean bOmitDeclaration, String strEnconding, CExtendedLogger Logger, CLanguage Lang ) {
 
-       return ConvertXMLDocumentToString( XMLDocument, bOmitDeclaration, strEnconding, true );
-
-    }
-
-    public String ConvertXMLDocumentToString( Document XMLDocument, boolean bOmitDeclaration, boolean bIndent ) {
-
-       return ConvertXMLDocumentToString( XMLDocument, bOmitDeclaration, OwnerConfig.getConfigValue( "strXML_DataPacket_CharSet" ), bIndent );
+       return ConvertXMLDocumentToString( XMLDocument, bOmitDeclaration, strEnconding, true, Logger, Lang );
 
     }
 
-    public String ConvertXMLDocumentToString( Document XMLDocument, boolean bOmitDeclaration ) {
+    public String ConvertXMLDocumentToString( Document XMLDocument, boolean bOmitDeclaration, boolean bIndent, CExtendedLogger Logger, CLanguage Lang ) {
 
-       return ConvertXMLDocumentToString( XMLDocument, bOmitDeclaration, OwnerConfig.getConfigValue( "strXML_DataPacket_CharSet" ), true );
-
-    }
-
-    public String ConvertXMLDocumentToString( Document XMLDocument, String strEnconding ) {
-
-       return ConvertXMLDocumentToString( XMLDocument, false, strEnconding, true );
+       return ConvertXMLDocumentToString( XMLDocument, bOmitDeclaration, OwnerConfig.getConfigValue( ConstantsResponseFormat._XML_DataPacket_CharSet ), bIndent, Logger, Lang );
 
     }
 
-    public String ConvertXMLDocumentToString( Document XMLDocument ) {
+    public String ConvertXMLDocumentToString( Document XMLDocument, boolean bOmitDeclaration, CExtendedLogger Logger, CLanguage Lang ) {
 
-       return ConvertXMLDocumentToString( XMLDocument, false, OwnerConfig.getConfigValue( "strXML_DataPacket_CharSet" ), true );
+       return ConvertXMLDocumentToString( XMLDocument, bOmitDeclaration, OwnerConfig.getConfigValue( ConstantsResponseFormat._XML_DataPacket_CharSet ), true, Logger, Lang );
 
     }
 
-    public Document BuildBasicResponseXMLStruct( String strVersion ) {
+    public String ConvertXMLDocumentToString( Document XMLDocument, String strEnconding, CExtendedLogger Logger, CLanguage Lang ) {
+
+       return ConvertXMLDocumentToString( XMLDocument, false, strEnconding, true, Logger, Lang );
+
+    }
+
+    public String ConvertXMLDocumentToString( Document XMLDocument, CExtendedLogger Logger, CLanguage Lang ) {
+
+       return ConvertXMLDocumentToString( XMLDocument, false, OwnerConfig.getConfigValue( ConstantsResponseFormat._XML_DataPacket_CharSet ), true, Logger, Lang );
+
+    }
+
+    public Document BuildBasicResponseXMLStruct( String strVersion, CExtendedLogger Logger, CLanguage Lang ) {
 
         Document XMLDocument = null;
 
@@ -185,7 +197,10 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
         }
         catch ( Exception Ex ) {
 
-            OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+			if ( Logger != null )
+				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
+				OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
 
         }
 
@@ -194,9 +209,9 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
     }
 
-    public Document BuildXMLSimpleMessageStruct( String strSecurityToken, String strTransactionID, int intCode, String strDescription, boolean bAttachToError, String strVersion ) {
+    public Document BuildXMLSimpleMessageStruct( String strSecurityToken, String strTransactionID, int intCode, String strDescription, boolean bAttachToError, String strVersion, CExtendedLogger Logger, CLanguage Lang ) {
 
-        Document XMLDocument = BuildBasicResponseXMLStruct( strVersion );
+        Document XMLDocument = BuildBasicResponseXMLStruct( strVersion, Logger, Lang );
 
         try {
 
@@ -306,14 +321,156 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
         }
         catch ( Exception Ex ) {
 
-        	OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+			if ( Logger != null )
+				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
+				OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
 
         }
 
         return XMLDocument;
 
     }
+    
+    class CSimpleXMLFieldDefinition {
 
+    	public String strFieldName = "";
+    	public String strFieldType = "";
+    	public String strFieldWidth = "";
+    	public String strFieldSubType = "";
+    	
+    	public CSimpleXMLFieldDefinition( String strFieldName, String strFieldType, String strFieldSubType, String strFieldWidth ) {
+    		
+    		this.strFieldName = strFieldName;
+    		this.strFieldType = strFieldType;
+    		this.strFieldSubType = strFieldSubType;
+    		this.strFieldWidth = strFieldWidth;
+    		
+    	}
+    	
+    }
+    
+    public Document BuildXMLFieldDefinedStruct( ArrayList<CSimpleXMLFieldDefinition> FieldDefinitions, String strVersion, CExtendedLogger Logger, CLanguage Lang ) {
+
+        Document XMLDocument = BuildBasicResponseXMLStruct( strVersion, Logger, Lang );
+
+        try {
+
+            NodeList XML_FieldsSection = XMLDocument.getElementsByTagName( XMLDataPacketTags._Fields );
+
+            if ( XML_FieldsSection.getLength() > 0 ) {
+
+    			//Iterator<Entry<String, String>> i = FieldDefinitions.entrySet().iterator();
+            	
+                for ( int intIndexFieldDefinition = 0; intIndexFieldDefinition < FieldDefinitions.size(); intIndexFieldDefinition++ ) {
+                	
+                	//Entry<String,String> FieldDefinition = i.next();
+                	CSimpleXMLFieldDefinition FieldDefinition = FieldDefinitions.get( intIndexFieldDefinition );
+                	
+                    Element XML_FieldSecurityToken = XMLDocument.createElement( XMLDataPacketTags._Field );
+                    XML_FieldSecurityToken.setAttribute( XMLDataPacketTags._AttrName, FieldDefinition.strFieldName );
+                    XML_FieldSecurityToken.setAttribute( XMLDataPacketTags._FieldType, FieldDefinition.strFieldType );
+
+                    if ( FieldDefinition.strFieldSubType != null && FieldDefinition.strFieldSubType.isEmpty() == false ) {
+                    	
+                        XML_FieldSecurityToken.setAttribute( XMLDataPacketTags._FieldSubType, FieldDefinition.strFieldSubType );
+                    	
+                    }
+                    
+                    if ( FieldDefinition.strFieldWidth != null && FieldDefinition.strFieldWidth.isEmpty() == false ) {
+                    	
+                        XML_FieldSecurityToken.setAttribute( XMLDataPacketTags._FieldTypeStringWidth, FieldDefinition.strFieldWidth );
+                    	
+                    }
+                    
+                } 
+            	
+            }
+
+            NodeList XML_ParamsSection = XMLDocument.getElementsByTagName( XMLDataPacketTags._Params );
+
+            if ( XML_ParamsSection.getLength() > 0 ) {
+
+               ((Element) XML_ParamsSection.item( 0 )).setAttribute( XMLDataPacketTags._RowCount , "0" );
+
+            }
+
+        }
+        catch ( Exception Ex ) {
+
+			if ( Logger != null )
+				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
+				OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+
+        }
+
+        return XMLDocument;
+
+    }
+    
+    public Document AddXMLToErrorSection( Document XMLDocument, LinkedHashMap<String,String> FieldValues, String strVersion ) {
+
+        NodeList XML_ErrorsSection = XMLDocument.getElementsByTagName( XMLDataPacketTags._Errors );
+
+        if ( XML_ErrorsSection != null && XML_ErrorsSection.getLength() > 0 ) {
+           
+            //XML-DataPacket 1.1 Errors Section found
+
+        	String strCountError = ( (Element) XML_ErrorsSection.item( 0 ) ).getAttribute( XMLDataPacketTags._ErrorCount );
+        	
+        	int intCountError = 0;
+        	
+        	if ( strCountError != null )
+        	   intCountError = net.maindataservices.Utilities.StrToInteger( strCountError ) + 1;
+        		
+        	( (Element) XML_ErrorsSection.item( 0 ) ).setAttribute( XMLDataPacketTags._ErrorCount, Integer.toString( intCountError ) );
+
+            Element Error = XMLDocument.createElement( XMLDataPacketTags._Error );
+            
+            Iterator<Entry<String, String>> i = FieldValues.entrySet().iterator();
+
+            while ( i.hasNext() ) {
+
+            	Entry<String,String> FieldValue = i.next();
+
+            	Error.setAttribute( FieldValue.getKey(), FieldValue.getValue() );
+
+            }
+            
+            ( (Element) XML_ErrorsSection.item( 0 ) ).appendChild( Error );
+        	
+        }
+        else {
+        	
+            //XML-DataPacket 1.0 NO errors section found
+
+        	NodeList XML_DataPacketSection = XMLDocument.getElementsByTagName( XMLDataPacketTags._DataPacket );
+
+            if ( XML_DataPacketSection != null && XML_DataPacketSection.getLength() > 0 ) {
+            	
+                Element Error = XMLDocument.createElement( XMLDataPacketTags._Error );
+
+                Iterator<Entry<String, String>> i = FieldValues.entrySet().iterator();
+
+                while ( i.hasNext() ) {
+
+                	Entry<String,String> FieldValue = i.next();
+
+                	Error.setAttribute( FieldValue.getKey(), FieldValue.getValue() );
+
+                }
+                
+                ( (Element) XML_DataPacketSection.item( 0 ) ).appendChild( Error );
+            	
+            }            
+            
+        }
+    	
+    	return XMLDocument;
+    	
+    }
+    
     public Document AddXMLToErrorSection( Document XMLDocument, int intCode, String strDescription, String strVersion ) {
 
         NodeList XML_ErrorsSection = XMLDocument.getElementsByTagName( XMLDataPacketTags._Errors );
@@ -327,7 +484,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
         	int intCountError = 0;
         	
         	if ( strCountError != null )
-        	   intCountError = Utilities.Utilities.StrToInteger( strCountError ) + 1;
+        	   intCountError = net.maindataservices.Utilities.StrToInteger( strCountError ) + 1;
         		
         	( (Element) XML_ErrorsSection.item( 0 ) ).setAttribute( XMLDataPacketTags._ErrorCount, Integer.toString( intCountError ) );
 
@@ -356,23 +513,37 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
             
         }
     	
-    	
     	return XMLDocument;
     	
     }
     
-    public Document AddXMLSimpleMessage( Document XMLDocument, int intCode, String strDescription, String strVersion, boolean bAttachToError ) {
+    public Document AddXMLSimpleMessage( Document XMLDocument, int intCode, String strDescription, String strVersion, boolean bAttachToError, CExtendedLogger Logger, CLanguage Lang ) {
     	
         NodeList XML_RowDataSection = XMLDocument.getElementsByTagName( XMLDataPacketTags._RowData );
 
         if ( XML_RowDataSection != null && XML_RowDataSection.getLength() > 0 ) {
 
-           Element XML_ROW = XMLDocument.createElement( XMLDataPacketTags._Row );
+            NodeList XML_ParamsSection = XMLDocument.getElementsByTagName( XMLDataPacketTags._Params );
 
-           XML_ROW.setAttribute( XMLDataPacketTags._XML_StructCode, Integer.toString( intCode ) );
-           XML_ROW.setAttribute( XMLDataPacketTags._XML_StructDescription, strDescription );
+            if ( XML_ParamsSection.getLength() > 0 ) {
 
-           XML_RowDataSection.item( 0 ).appendChild( XML_ROW );
+         	   String strCurrentRowCount = ( (Element) XML_ParamsSection.item( 0 ) ).getAttribute( XMLDataPacketTags._RowCount );
+            	
+         	   int intCurrentRowCount = 0;
+         	   
+         	   if ( strCurrentRowCount != null )
+         	       intCurrentRowCount = net.maindataservices.Utilities.StrToInteger( strCurrentRowCount );
+            		
+               ((Element) XML_ParamsSection.item( 0 )).setAttribute( XMLDataPacketTags._RowCount , Integer.toString( intCurrentRowCount + 1 ) );
+
+            }
+
+        	Element XML_ROW = XMLDocument.createElement( XMLDataPacketTags._Row );
+
+        	XML_ROW.setAttribute( XMLDataPacketTags._XML_StructCode, Integer.toString( intCode ) );
+        	XML_ROW.setAttribute( XMLDataPacketTags._XML_StructDescription, strDescription );
+
+        	XML_RowDataSection.item( 0 ).appendChild( XML_ROW );
            
         }
     	
@@ -386,23 +557,70 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	
     }
 
-    public String BuildXMLSimpleMessage( String strSecurityToken, String strTransactionID, int intCode, String strDescription, boolean bAttachToError, String strVersion ) {
+    public Document AddXMLSimpleMessage( Document XMLDocument, LinkedHashMap<String,String> FieldValues, String strVersion, boolean bAttachToError, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+        NodeList XML_RowDataSection = XMLDocument.getElementsByTagName( XMLDataPacketTags._RowData );
 
-        Document XMLDocument = BuildXMLSimpleMessageStruct( strSecurityToken, strTransactionID, intCode, strDescription, bAttachToError, strVersion );
+        if ( XML_RowDataSection != null && XML_RowDataSection.getLength() > 0 ) {
 
-        String strXMLBuffer = ConvertXMLDocumentToString( XMLDocument, false, OwnerConfig.getConfigValue( "strXML_DataPacket_CharSet" ), true );
+            NodeList XML_ParamsSection = XMLDocument.getElementsByTagName( XMLDataPacketTags._Params );
+
+            if ( XML_ParamsSection.getLength() > 0 ) {
+
+         	   String strCurrentRowCount = ( (Element) XML_ParamsSection.item( 0 ) ).getAttribute( XMLDataPacketTags._RowCount );
+            	
+         	   int intCurrentRowCount = 0;
+         	   
+         	   if ( strCurrentRowCount != null )
+         	       intCurrentRowCount = net.maindataservices.Utilities.StrToInteger( strCurrentRowCount );
+            		
+               ((Element) XML_ParamsSection.item( 0 )).setAttribute( XMLDataPacketTags._RowCount , Integer.toString( intCurrentRowCount + 1 ) );
+
+            }
+        	
+           Element XML_ROW = XMLDocument.createElement( XMLDataPacketTags._Row );
+
+		   Iterator<Entry<String, String>> i = FieldValues.entrySet().iterator();
+
+           while ( i.hasNext() ) {
+        	   
+        	   Entry<String,String> FieldValue = i.next();
+        	   
+               XML_ROW.setAttribute( FieldValue.getKey(), FieldValue.getValue() );
+        	   
+           }
+
+           XML_RowDataSection.item( 0 ).appendChild( XML_ROW );
+           
+        }
+    	
+        if ( bAttachToError == true ) {
+        	
+        	XMLDocument = AddXMLToErrorSection( XMLDocument, FieldValues, strVersion );
+        	
+        }
+        
+    	return XMLDocument;
+    	
+    }
+    
+    public String BuildXMLSimpleMessage( String strSecurityToken, String strTransactionID, int intCode, String strDescription, boolean bAttachToError, String strVersion, CExtendedLogger Logger, CLanguage Lang ) {
+
+        Document XMLDocument = BuildXMLSimpleMessageStruct( strSecurityToken, strTransactionID, intCode, strDescription, bAttachToError, strVersion, Logger, Lang );
+
+        String strXMLBuffer = ConvertXMLDocumentToString( XMLDocument, false, OwnerConfig.getConfigValue( ConstantsResponseFormat._XML_DataPacket_CharSet ), true, Logger, Lang );
 
         return strXMLBuffer;
 
     }
     
-    public static String EncodeTsValidXMLData( String strData ) {
+    public static String EncodeToValidXMLData( String strData ) {
 
         String strValidXMLData = "";
         
         try {
 
-           strValidXMLData = new String( strData.getBytes("ISO-8859-1"),"UTF-8" );
+           strValidXMLData = new String( strData.getBytes( "ISO-8859-1" ), "UTF-8" );
 
         }
         catch ( Exception Error ) {
@@ -422,7 +640,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
     }
 
-    public Document BuildXMLMetaData( Document XMLDocument, ResultSetMetaData DataSetMetaData, ArrayList<String> arrIncludedFields, ArrayList<String> arrExcludedFields ) {
+    public Document BuildXMLMetaData( Document XMLDocument, ResultSetMetaData DataSetMetaData, ArrayList<String> arrIncludedFields, ArrayList<String> arrExcludedFields, CExtendedLogger Logger, CLanguage Lang ) {
 
         try {
 
@@ -433,6 +651,10 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
               for ( int i = 1; i <= DataSetMetaData.getColumnCount(); i++ ) {
 
                  String strFieldName   = DataSetMetaData.getColumnName( i );
+                 
+                 if ( strFieldName == null || strFieldName.isEmpty() == true )
+                	 strFieldName = DataSetMetaData.getColumnLabel( i );
+                 
                  int    intFieldType   = DataSetMetaData.getColumnType( i );
                  int    intFieldLength = DataSetMetaData.getColumnDisplaySize( i );
 
@@ -459,7 +681,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 						case Types.BLOB: { 	
 							
 					                        XML_Field.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeBlob );
-					                        XML_Field.setAttribute( XMLDataPacketTags._FieldTypeSubType, XMLDataPacketTags._FieldTypeBlobSubTypeBinary );
+					                        XML_Field.setAttribute( XMLDataPacketTags._FieldSubType, XMLDataPacketTags._FieldTypeBlobSubTypeBinary );
 										    break; 
 				
 										 }
@@ -487,60 +709,6 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
 					}
 	    			
-                    /*if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_VARCHAR ) == true || strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_CHAR ) == true ) {
-
-                       XML_Field.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeString );
-                       XML_Field.setAttribute( XMLDataPacketTags._FieldTypeStringWidth, Integer.toString( intFieldLength ) );
-
-                    }
-                    else if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_INTEGER ) == true) {
-
-                       XML_Field.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeInteger );
-
-                    }
-                    else if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_SMALLINT ) == true) {
-
-                       XML_Field.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeShortInteger );
-
-                    }
-                    else if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_BIGINT ) == true) {
-
-                       XML_Field.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeBigInt );
-
-                    }
-                    else if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_DATE ) == true) {
-
-                       XML_Field.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeDate );
-
-                    }
-                    else if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_TIME ) == true) {
-                       
-                       XML_Field.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeTime );
-
-                    }
-                    else if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_TIMESTAMP ) == true) {
-
-                       XML_Field.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeDateTime );
-
-                    }
-                    else if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_BLOB ) == true) {
-
-                       XML_Field.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeBlob );
-                       XML_Field.setAttribute( XMLDataPacketTags._FieldTypeSubType, XMLDataPacketTags._FieldTypeBlobSubTypeBinary );
-
-                    }
-                    else if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_FLOAT ) == true || strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_DECIMAL ) == true || strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_NUMERIC ) == true ) {
-
-                       XML_Field.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeFloat );
-
-                    }
-                    else if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_CURRENCY ) == true ) {
-
-                       XML_Field.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeCurrency );
-                       XML_Field.setAttribute( XMLDataPacketTags._FieldTypeSubType, XMLDataPacketTags._FieldTypeCurrencySubTypeMoney );
-
-                    }*/
-
                     XML_FieldsSection.item( 0 ).appendChild( XML_Field );
 
                  }
@@ -552,7 +720,10 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
         }
         catch ( Exception Ex ) {
 
-        	OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+			if ( Logger != null )
+				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
+				OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
 
         }
         
@@ -560,7 +731,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
     }
 
-    public Document AddXMLToRowDataSection( Document XMLDocument, ResultSet SQLDataSet, ArrayList<String> arrIncludedFields, ArrayList<String> arrExcludedFields ) {
+    public Document AddXMLToRowDataSection( Document XMLDocument, ResultSet SQLDataSet, ArrayList<String> arrIncludedFields, ArrayList<String> arrExcludedFields, CExtendedLogger Logger, CLanguage Lang ) {
 
         try {
 
@@ -582,101 +753,75 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
             	  
             	  Element XML_ROW = XMLDocument.createElement( XMLDataPacketTags._Row );
 
-                 for ( int i = 1; i <= DataSetMetaData.getColumnCount(); i++ ) {
+            	  for ( int i = 1; i <= DataSetMetaData.getColumnCount(); i++ ) {
 
-                    String strFieldName = DataSetMetaData.getColumnName( i );
-                    int intFieldType = DataSetMetaData.getColumnType( i );
+            		  String strFieldName = DataSetMetaData.getColumnName( i );
 
-	    			switch ( intFieldType ) {
-	    			
-						case Types.INTEGER: { XML_ROW.setAttribute( strFieldName, Integer.toString( SQLDataSet.getInt( strFieldName ) ) ); break; }
-						case Types.BIGINT: { XML_ROW.setAttribute( strFieldName, Long.toString( SQLDataSet.getLong( strFieldName ) ) ); break; }
-						case Types.SMALLINT: { XML_ROW.setAttribute( strFieldName, Short.toString( SQLDataSet.getShort( strFieldName ) ) ); break; }
-						case Types.VARCHAR: 
-						case Types.CHAR: {  
-							
-											XML_ROW.setAttribute( strFieldName, SQLDataSet.getString( strFieldName ) );
-											break; 
-							             
-						                 }
-						case Types.BOOLEAN: {  break; }
-						case Types.BLOB: { 	
-							
-					                        Blob BinaryBLOBData = SQLDataSet.getBlob( strFieldName );
-					                       
-					                        String strBase64Coded = new String( Base64.encode( BinaryBLOBData.getBytes( 1, (int) BinaryBLOBData.length() ) ), "UTF-8" );
-			
-					                        XML_ROW.setAttribute( strFieldName, strBase64Coded );//Formated in base64
-										    break; 
+            		  if ( strFieldName == null || strFieldName.isEmpty() == true )
+            			  strFieldName = DataSetMetaData.getColumnLabel( i );
+
+            		  int intFieldType = DataSetMetaData.getColumnType( i );
+
+            		  if ( SQLDataSet.getObject( i ) != null ) {
+
+            			  switch ( intFieldType ) {
+		    			
+							case Types.INTEGER: { XML_ROW.setAttribute( strFieldName, Integer.toString( SQLDataSet.getInt( strFieldName ) ) ); break; }
+							case Types.BIGINT: { XML_ROW.setAttribute( strFieldName, Long.toString( SQLDataSet.getLong( strFieldName ) ) ); break; }
+							case Types.SMALLINT: { XML_ROW.setAttribute( strFieldName, Short.toString( SQLDataSet.getShort( strFieldName ) ) ); break; }
+							case Types.VARCHAR: 
+							case Types.CHAR: {  
+								
+												XML_ROW.setAttribute( strFieldName, SQLDataSet.getString( strFieldName ) );
+												break; 
+								             
+							                 }
+							case Types.BOOLEAN: {  break; }
+							case -4:  //What the hell firebird
+							case Types.BLOB: { 	
+								
+						                        Blob BinaryBLOBData = SQLDataSet.getBlob( strFieldName );
+						                       
+						                        String strBase64Coded = new String( Base64.encode( BinaryBLOBData.getBytes( 1, (int) BinaryBLOBData.length() ) ) );
 				
-										 }
-						case Types.DATE: {
-							               
-				                            XML_ROW.setAttribute( strFieldName, DFormatter.format( SQLDataSet.getDate( strFieldName ) ) );
-											break; 
-							             
-						                 }
-						case Types.TIME: {  
-							
-		                                    XML_ROW.setAttribute( strFieldName, TFormatter.format( SQLDataSet.getTime( strFieldName ) ) );
-											break; 
-							               
-						                 }
-						case Types.TIMESTAMP: {  
-							
-		                                         XML_ROW.setAttribute( strFieldName, DTFormatter.format( SQLDataSet.getTimestamp( strFieldName ) ) );
-							                     break; 
-							                    
-						                      }
-						case Types.FLOAT: 
-						case Types.DECIMAL: {  XML_ROW.setAttribute( strFieldName, Float.toString( SQLDataSet.getFloat( strFieldName ) ) ); break; }
-						case Types.DOUBLE: {  break; }
+						                        XML_ROW.setAttribute( strFieldName, strBase64Coded );//Formated in base64
+											    break; 
+					
+											 }
+							case Types.DATE: {
+								               
+					                            XML_ROW.setAttribute( strFieldName, DFormatter.format( SQLDataSet.getDate( strFieldName ) ) );
+												break; 
+								             
+							                 }
+							case Types.TIME: {  
+								
+			                                    XML_ROW.setAttribute( strFieldName, TFormatter.format( SQLDataSet.getTime( strFieldName ) ) );
+												break; 
+								               
+							                 }
+							case Types.TIMESTAMP: {  
+								
+			                                         XML_ROW.setAttribute( strFieldName, DTFormatter.format( SQLDataSet.getTimestamp( strFieldName ) ) );
+								                     break; 
+								                    
+							                      }
+							case Types.FLOAT: 
+							case Types.DECIMAL: {  XML_ROW.setAttribute( strFieldName, Float.toString( SQLDataSet.getFloat( strFieldName ) ) ); break; }
+							case Types.DOUBLE: {  break; }
+	
+            			  }
 
-					}
-	    			
-                    /*if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_VARCHAR ) == true || strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_CHAR ) == true ) {
+            		  }
+            		  else {
 
-                       XML_ROW.setAttribute( strFieldName, SQLDataSet.getString( strFieldName ) );
+            			  XML_ROW.setAttribute( strFieldName, "" );
 
-                    }
-                    else if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_INTEGER ) == true || strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_SMALLINT ) == true || strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_BIGINT ) == true ) {
+            		  }
 
-                       XML_ROW.setAttribute( strFieldName, Long.toString( SQLDataSet.getLong( strFieldName ) ) );
+            	  }
 
-                    }
-                    else if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_DATE ) == true) {
-
-                       XML_ROW.setAttribute( strFieldName, DFormatter.format( SQLDataSet.getDate( strFieldName ) ) );
-
-                    }
-                    else if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_TIME ) == true) {
-
-                       XML_ROW.setAttribute( strFieldName, TFormatter.format( SQLDataSet.getTime( strFieldName ) ) );
-
-                    }
-                    else if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_TIMESTAMP ) == true) {
-
-                       XML_ROW.setAttribute( strFieldName, DTFormatter.format( SQLDataSet.getTimestamp( strFieldName ) ) );
-
-                    }
-                    else if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_BLOB ) == true) {
-
-                       Blob BinaryBLOBData = SQLDataSet.getBlob( strFieldName );
-                       
-                       String strBase64Coded = new String( Base64.encode( BinaryBLOBData.getBytes( 1, (int) BinaryBLOBData.length() ) ), "UTF-8" );
-
-                       XML_ROW.setAttribute( strFieldName, strBase64Coded );//Formated in base64
-
-                    }
-                    else if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_FLOAT ) == true || strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_DECIMAL ) == true || strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_NUMERIC ) == true || strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_CURRENCY ) == true ) {
-
-                       XML_ROW.setAttribute( strFieldName, Float.toString( SQLDataSet.getFloat( strFieldName ) ) );
-
-                    }*/
-
-                 }
-
-                 XML_RowDataSection.item( 0 ).appendChild( XML_ROW );
+            	  XML_RowDataSection.item( 0 ).appendChild( XML_ROW );
 
               }
 
@@ -691,7 +836,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
         	   int intCurrentRowCount = 0;
         	   
         	   if ( strCurrentRowCount != null )
-        	       intCurrentRowCount = Utilities.Utilities.StrToInteger( strCurrentRowCount );
+        	       intCurrentRowCount = net.maindataservices.Utilities.StrToInteger( strCurrentRowCount );
            		
               ((Element) XML_ParamsSection.item( 0 )).setAttribute( XMLDataPacketTags._RowCount , Integer.toString( intCurrentRowCount + intRowCount ) );
 
@@ -700,7 +845,10 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
         }
         catch ( Exception Ex ) {
 
-        	OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+			if ( Logger != null )
+				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
+				OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
 
         }
         
@@ -708,7 +856,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
     }
     
-    public Document BuildXMLMetaData( Document XMLDocument, CMemoryRowSet MemoryRowSet ) {
+    public Document BuildXMLMetaData( Document XMLDocument, CMemoryRowSet MemoryRowSet, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	try {
     
@@ -745,7 +893,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 						case Types.BLOB: { 	
 							
 					                        XML_Field.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeBlob );
-					                        XML_Field.setAttribute( XMLDataPacketTags._FieldTypeSubType, XMLDataPacketTags._FieldTypeBlobSubTypeBinary );
+					                        XML_Field.setAttribute( XMLDataPacketTags._FieldSubType, XMLDataPacketTags._FieldTypeBlobSubTypeBinary );
 										    break; 
 				
 										 }
@@ -772,60 +920,6 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 						case Types.DOUBLE: {  break; }
 
 					}
-	    			
-            	   /*if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_VARCHAR ) == true || strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_CHAR ) == true ) {
-
-            		   XML_Field.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeString );
-            		   XML_Field.setAttribute( XMLDataPacketTags._FieldTypeStringWidth, Integer.toString( intFieldLength ) );
-
-            	   }
-            	   else if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_INTEGER ) == true) {
-
-            		   XML_Field.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeInteger );
-
-            	   }
-            	   else if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_SMALLINT ) == true) {
-
-            		   XML_Field.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeShortInteger );
-
-            	   }
-            	   else if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_BIGINT ) == true) {
-
-            		   XML_Field.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeBigInt );
-
-            	   }
-            	   else if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_DATE ) == true) {
-
-            		   XML_Field.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeDate );
-
-            	   }
-            	   else if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_TIME ) == true) {
-
-            		   XML_Field.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeTime );
-
-            	   }
-            	   else if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_TIMESTAMP ) == true) {
-
-            		   XML_Field.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeDateTime );
-
-            	   }
-            	   else if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_BLOB ) == true) {
-
-            		   XML_Field.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeBlob );
-            		   XML_Field.setAttribute( XMLDataPacketTags._FieldTypeSubType, XMLDataPacketTags._FieldTypeBlobSubTypeBinary );
-
-            	   }
-            	   else if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_FLOAT ) == true || strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_DECIMAL ) == true || strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_NUMERIC ) == true ) {
-
-            		   XML_Field.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeFloat );
-
-            	   }
-            	   else if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_CURRENCY ) == true ) {
-
-            		   XML_Field.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeCurrency );
-            		   XML_Field.setAttribute( XMLDataPacketTags._FieldTypeSubType, XMLDataPacketTags._FieldTypeCurrencySubTypeMoney );
-
-            	   }*/
 
             	   XML_FieldsSection.item( 0 ).appendChild( XML_Field );
 
@@ -836,14 +930,18 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	}
     	catch ( Exception Ex ) {
 
-    		OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+			if ( Logger != null )
+				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
+				OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
 
     	}
 
     	return XMLDocument;
     
     }
-    public Document AddXMLToRowDataSection( Document XMLDocument, CMemoryRowSet MemoryRowSet ) {
+    
+    public Document AddXMLToRowDataSection( Document XMLDocument, CMemoryRowSet MemoryRowSet, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	try {
 
@@ -935,56 +1033,6 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     						
     					}
     	    			
-    					/*if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_VARCHAR ) == true || strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_CHAR ) == true ) {
-
-    						XML_ROW.setAttribute( strFieldName, (String) FieldData );
-
-    					}
-    					else if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_INTEGER ) == true ) {
-
-    						XML_ROW.setAttribute( strFieldName, Long.toString( (Integer) FieldData ) );
-
-    					}
-    					else if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_BIGINT ) == true ) {
-
-    						XML_ROW.setAttribute( strFieldName, Long.toString( (Long) FieldData ) );
-    						
-    					}
-    					else if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_SMALLINT ) == true || strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_BIGINT ) == true ) {
-
-    						XML_ROW.setAttribute( strFieldName, Long.toString( (Short) FieldData ) );
-    						
-    					}
-    					else if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_DATE ) == true) {
-
-    						XML_ROW.setAttribute( strFieldName, DFormatter.format( (Date) FieldData ) );
-
-    					}
-    					else if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_TIME ) == true) {
-
-    						XML_ROW.setAttribute( strFieldName, TFormatter.format( (Time) FieldData ) );
-
-    					}
-    					else if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_TIMESTAMP ) == true) {
-
-    						XML_ROW.setAttribute( strFieldName, DTFormatter.format( (Timestamp) FieldData ) );
-
-    					}
-    					else if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_BLOB ) == true) {
-
-    						Blob BinaryBLOBData = (Blob) FieldData;
-
-    						String strBase64Coded = new String( Base64.encode( BinaryBLOBData.getBytes( 1, (int) BinaryBLOBData.length() ) ), "UTF-8" );
-
-    						XML_ROW.setAttribute( strFieldName, strBase64Coded );//Formated in base64
-
-    					}
-    					else if ( strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_FLOAT ) == true || strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_DECIMAL ) == true || strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_NUMERIC ) == true || strFieldType.toLowerCase().equals( NamesSQLTypes.strSQL_CURRENCY ) == true ) {
-
-    						XML_ROW.setAttribute( strFieldName, Float.toString( (Float) FieldData ) );
-
-    					}*/
-
     				}
 
     				XML_RowDataSection.item( 0 ).appendChild( XML_ROW );
@@ -1002,7 +1050,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
          	   int intCurrentRowCount = 0;
          	   
          	   if ( strCurrentRowCount != null )
-         	       intCurrentRowCount = Utilities.Utilities.StrToInteger( strCurrentRowCount );
+         	       intCurrentRowCount = net.maindataservices.Utilities.StrToInteger( strCurrentRowCount );
             		
                ((Element) XML_ParamsSection.item( 0 )).setAttribute( XMLDataPacketTags._RowCount , Integer.toString( intCurrentRowCount + intRowCount ) );
 
@@ -1011,7 +1059,10 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	}
     	catch ( Exception Ex ) {
 
-    		OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+			if ( Logger != null )
+				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
+				OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
 
     	}
 
@@ -1034,18 +1085,24 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     @Override
     public String getContentType() {
     	
-    	return OwnerConfig.getConfigValue( "strXML_DataPacket_ContentType" );
+    	if ( OwnerConfig != null )
+    	   return OwnerConfig.getConfigValue( ConstantsResponseFormat._XML_DataPacket_ContentType );
+    	else
+    	   return ""; 
     	
     }
     
     @Override
     public String getCharacterEncoding() {
     	
-    	return OwnerConfig.getConfigValue( "strXML_DataPacket_CharSet" );
+    	if ( OwnerConfig != null )
+    	   return OwnerConfig.getConfigValue( ConstantsResponseFormat._XML_DataPacket_CharSet );
+    	else
+    	   return ""; 
     	
     }
 
-    public int DescribeService( CAbstractService Service, Element XMLNode_RowDataSection ) {
+    public int DescribeService( CAbstractService Service, Element XMLNode_RowDataSection, CExtendedLogger Logger, CLanguage Lang ) {
 	   
     	int intResult = 0;
     	
@@ -1064,7 +1121,22 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
 	        Iterator< Entry< String, ArrayList< CInputServiceParameter > > > It = GroupsInputParametersService.entrySet().iterator();
 
-	        OwnerConfig.Logger.LogMessage( "1", OwnerConfig.Lang.Translate( "Service [%s] input params count: [%s]", Service.getServiceName(), Integer.toString( GroupsInputParametersService.size() ) ) );
+			if ( Logger != null ) {
+
+				if ( Lang != null )
+					Logger.LogMessage( "1", Lang.Translate( "Service [%s] input params count: [%s]", Service.getServiceName(), Integer.toString( GroupsInputParametersService.size() ) ) );
+				else
+					Logger.LogMessage( "1", String.format( "Service [%s] input params count: [%s]", Service.getServiceName(), Integer.toString( GroupsInputParametersService.size() ) ) );
+				
+			}    
+			else if ( OwnerConfig != null && OwnerConfig.Logger != null ) {
+	            
+				if ( OwnerConfig.Lang != null )
+					OwnerConfig.Logger.LogMessage( "1", OwnerConfig.Lang.Translate( "Service [%s] input params count: [%s]", Service.getServiceName(), Integer.toString( GroupsInputParametersService.size() ) ) );
+				else
+					OwnerConfig.Logger.LogMessage( "1", String.format( "Service [%s] input params count: [%s]", Service.getServiceName(), Integer.toString( GroupsInputParametersService.size() ) ) );
+					
+			}    
 	        
             while ( It.hasNext() ) {
 	        
@@ -1132,9 +1204,9 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
      }
 
     @Override 
-    public String EnumerateServices( HashMap<String,CAbstractService> RegisteredServices, String strVersion ) {
+    public String EnumerateServices( HashMap<String,CAbstractService> RegisteredServices, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 
-        Document XMLDocument = this.BuildBasicResponseXMLStruct( strVersion );
+        Document XMLDocument = this.BuildBasicResponseXMLStruct( strVersion, Logger, Lang );
 
         NodeList XML_FieldsSection = XMLDocument.getElementsByTagName( XMLDataPacketTags._Fields );
 
@@ -1248,7 +1320,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
               CAbstractService Service = RegisteredServices.get( strServName );
               
               if ( Service != null )
-                 intRowCount += this.DescribeService( Service, (Element) XML_RowDataSection.item( 0 ) );
+                 intRowCount += this.DescribeService( Service, (Element) XML_RowDataSection.item( 0 ), Logger, Lang );
         
            }
 
@@ -1262,12 +1334,12 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
         }
 
-    	return ConvertXMLDocumentToString( XMLDocument, true, this.getCharacterEncoding() );
+    	return ConvertXMLDocumentToString( XMLDocument, true, this.getCharacterEncoding(), Logger, Lang );
     	
     }
     
     @Override
-	public String FormatResultSet( ResultSet ResultSet, String strVersion ) {
+	public String FormatResultSet( ResultSet ResultSet, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 
     	String strResult = "";
     	
@@ -1275,21 +1347,24 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
 	        ResultSetMetaData DataSetMetaData = ResultSet.getMetaData();
 	
-	        Document XMLDocument = this.BuildBasicResponseXMLStruct( strVersion );
+	        Document XMLDocument = this.BuildBasicResponseXMLStruct( strVersion, Logger, Lang );
 	
 	        ArrayList<String> arrIncludedFields = new ArrayList<String>();
 	        ArrayList<String> arrExcludedFields = new ArrayList<String>();
 	
-	        XMLDocument = BuildXMLMetaData( XMLDocument, DataSetMetaData, arrIncludedFields, arrExcludedFields );
+	        XMLDocument = BuildXMLMetaData( XMLDocument, DataSetMetaData, arrIncludedFields, arrExcludedFields, Logger, Lang );
 	
-	        XMLDocument = AddXMLToRowDataSection( XMLDocument, ResultSet, arrIncludedFields, arrExcludedFields );
+	        XMLDocument = AddXMLToRowDataSection( XMLDocument, ResultSet, arrIncludedFields, arrExcludedFields, Logger, Lang );
 
-            strResult = this.ConvertXMLDocumentToString( XMLDocument, this.getCharacterEncoding() );
+            strResult = this.ConvertXMLDocumentToString( XMLDocument, this.getCharacterEncoding(), Logger, Lang );
 
         }
         catch ( Exception Ex ) {
 
-        	OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+			if ( Logger != null )
+				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
+				OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
 
         }
 
@@ -1297,7 +1372,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 		
 	}
     
-    public String FormatResultsSets( ArrayList<ResultSet> ResultsSetsList, String strVersion ) {
+    public String FormatResultsSets( ArrayList<ResultSet> ResultsSetsList, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	String strResult = "";
     	
@@ -1309,27 +1384,30 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 	        	
 		        ResultSetMetaData DataSetMetaData = ResultSetMetaData.getMetaData();
 		
-		        Document XMLDocument = this.BuildBasicResponseXMLStruct( strVersion );
+		        Document XMLDocument = this.BuildBasicResponseXMLStruct( strVersion, Logger, Lang );
 		
 		        ArrayList<String> arrIncludedFields = new ArrayList<String>();
 		        ArrayList<String> arrExcludedFields = new ArrayList<String>();
 		
-		        XMLDocument = BuildXMLMetaData( XMLDocument, DataSetMetaData, arrIncludedFields, arrExcludedFields );
+		        XMLDocument = BuildXMLMetaData( XMLDocument, DataSetMetaData, arrIncludedFields, arrExcludedFields, Logger, Lang );
 		
 		        for ( ResultSet ResultSetToAdd: ResultsSetsList ) {    
 		        
-		           XMLDocument = AddXMLToRowDataSection( XMLDocument, ResultSetToAdd, arrIncludedFields, arrExcludedFields );
+		           XMLDocument = AddXMLToRowDataSection( XMLDocument, ResultSetToAdd, arrIncludedFields, arrExcludedFields, Logger, Lang );
 		        
 		        }
 		        
-	            strResult = this.ConvertXMLDocumentToString( XMLDocument, this.getCharacterEncoding() );
+	            strResult = this.ConvertXMLDocumentToString( XMLDocument, this.getCharacterEncoding(), Logger, Lang );
 
         	}
 	            
         }
         catch ( Exception Ex ) {
 
-        	OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+			if ( Logger != null )
+				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
+				OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
 
         }
     	
@@ -1337,7 +1415,68 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	
     }
 
-    public String FormatResultsSets( ArrayList<CResultSetResult> ResultsSetsList, String strVersion, int intDummyParam ) {
+    @Override
+    public String FormatResultSet( CResultSetResult ResultSetResult, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+    	String strResult = "";
+    	
+        try {
+
+        	Document XMLDocument = null;
+        	
+        	if ( ResultSetResult.Result != null ) {
+
+            	XMLDocument = this.BuildBasicResponseXMLStruct( strVersion, Logger, Lang );
+
+        		ArrayList<String> arrIncludedFields = new ArrayList<String>();
+        		ArrayList<String> arrExcludedFields = new ArrayList<String>();
+
+        		XMLDocument = BuildXMLMetaData( XMLDocument, ResultSetResult.Result.getMetaData(), arrIncludedFields, arrExcludedFields, Logger, Lang );
+
+        		XMLDocument = AddXMLToRowDataSection( XMLDocument, ResultSetResult.Result, arrIncludedFields, arrExcludedFields, Logger, Lang );
+
+        	}
+        	else {
+
+        		ArrayList<CSimpleXMLFieldDefinition> FieldDefinitons = new ArrayList<CSimpleXMLFieldDefinition>();
+        		
+        		FieldDefinitons.add( new CSimpleXMLFieldDefinition( XMLDataPacketTags._XML_StructAffectedRows, XMLDataPacketTags._FieldTypeBigInt, "", "" ) );
+        		FieldDefinitons.add( new CSimpleXMLFieldDefinition( XMLDataPacketTags._XML_StructCode, XMLDataPacketTags._FieldTypeInteger, "", "" ) );
+        		FieldDefinitons.add( new CSimpleXMLFieldDefinition( XMLDataPacketTags._XML_StructDescription, XMLDataPacketTags._FieldTypeString, "", XMLDataPacketTags._XML_StructDescriptionLength ) );
+        		
+        		XMLDocument = this.BuildXMLFieldDefinedStruct( FieldDefinitons, strVersion, Logger, Lang );
+        		
+        		LinkedHashMap<String,String> FieldValues = new LinkedHashMap<String,String>();
+        		
+        		FieldValues.put( XMLDataPacketTags._XML_StructAffectedRows, Long.toString( ResultSetResult.lngAffectedRows ) );
+        		FieldValues.put( XMLDataPacketTags._XML_StructCode, Integer.toString( ResultSetResult.intCode ) );
+        		FieldValues.put( XMLDataPacketTags._XML_StructDescription, ResultSetResult.strDescription );
+        		
+        		if ( ResultSetResult.intCode >= 0 )
+        			XMLDocument = AddXMLSimpleMessage( XMLDocument, FieldValues, strVersion, false, Logger, Lang );
+        		else
+        			XMLDocument = AddXMLSimpleMessage( XMLDocument, FieldValues, strVersion, true, Logger, Lang );
+
+        	}
+
+        	strResult = this.ConvertXMLDocumentToString( XMLDocument, this.getCharacterEncoding(), Logger, Lang );
+	            
+        }
+        catch ( Exception Ex ) {
+
+			if ( Logger != null )
+				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
+				OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+
+        }
+    	
+    	return strResult;
+    	
+    }
+
+
+    public String FormatResultsSets( ArrayList<CResultSetResult> ResultsSetsList, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
     	
     	String strResult = "";
     	
@@ -1347,27 +1486,41 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
         		ResultSet ResultSetMetaData = CResultSetResult.getFirstResultSetNotNull( ResultsSetsList );
         		
-    			Document XMLDocument = this.BuildBasicResponseXMLStruct( strVersion );
+    			Document XMLDocument = null; 
 
         		if ( ResultSetMetaData != null ) {
 		        
+        			XMLDocument = this.BuildBasicResponseXMLStruct( strVersion, Logger, Lang );
+        			
         			ResultSetMetaData DataSetMetaData = ResultSetMetaData.getMetaData();
 
         			ArrayList<String> arrIncludedFields = new ArrayList<String>();
         			ArrayList<String> arrExcludedFields = new ArrayList<String>();
 
-        			XMLDocument = BuildXMLMetaData( XMLDocument, DataSetMetaData, arrIncludedFields, arrExcludedFields );
+        			XMLDocument = BuildXMLMetaData( XMLDocument, DataSetMetaData, arrIncludedFields, arrExcludedFields, Logger, Lang );
 
-        			for ( CResultSetResult ResultSetResultToAdd: ResultsSetsList ) {    
-
-        				if ( ResultSetResultToAdd.Result != null && ResultSetResultToAdd.intCode >= 0 ) {   
+            		LinkedHashMap<String,String> FieldValues = new LinkedHashMap<String,String>();
+        			
+        			for ( CResultSetResult ResultSetResultToAdd: ResultsSetsList ) { 
         				
-        					XMLDocument = AddXMLToRowDataSection( XMLDocument, ResultSetResultToAdd.Result, arrIncludedFields, arrExcludedFields );
+        				//String strTmp = "";
 
+        				if ( ResultSetResultToAdd.Result != null ) {   
+
+        					//strTmp = this.ConvertXMLDocumentToString( XMLDocument, this.getCharacterEncoding() );
+        				
+        					XMLDocument = AddXMLToRowDataSection( XMLDocument, ResultSetResultToAdd.Result, arrIncludedFields, arrExcludedFields, Logger, Lang );
+
+        					//strTmp = this.ConvertXMLDocumentToString( XMLDocument, this.getCharacterEncoding() );
+        					
         				}
         				else {
         					              
-        					XMLDocument = AddXMLToErrorSection( XMLDocument, ResultSetResultToAdd.intCode, ResultSetResultToAdd.strDescription, strVersion );
+                    		FieldValues.put( XMLDataPacketTags._XML_StructAffectedRows, Long.toString( ResultSetResultToAdd.lngAffectedRows ) );
+                    		FieldValues.put( XMLDataPacketTags._XML_StructCode, Integer.toString( ResultSetResultToAdd.intCode ) );
+                    		FieldValues.put( XMLDataPacketTags._XML_StructDescription, ResultSetResultToAdd.strDescription );
+
+        					XMLDocument = AddXMLToErrorSection( XMLDocument, FieldValues, strVersion );
         					
         				}
 
@@ -1376,21 +1529,42 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
         		}
         		else {
         			
+            		ArrayList<CSimpleXMLFieldDefinition> FieldDefinitons = new ArrayList<CSimpleXMLFieldDefinition>();
+            		
+            		FieldDefinitons.add( new CSimpleXMLFieldDefinition( XMLDataPacketTags._XML_StructAffectedRows, XMLDataPacketTags._FieldTypeBigInt, "", "" ) );
+            		FieldDefinitons.add( new CSimpleXMLFieldDefinition( XMLDataPacketTags._XML_StructCode, XMLDataPacketTags._FieldTypeInteger, "", "" ) );
+            		FieldDefinitons.add( new CSimpleXMLFieldDefinition( XMLDataPacketTags._XML_StructDescription, XMLDataPacketTags._FieldTypeString, "", XMLDataPacketTags._XML_StructDescriptionLength ) );
+            		
+            		XMLDocument = this.BuildXMLFieldDefinedStruct( FieldDefinitons, strVersion, Logger, Lang );
+            		
+            		LinkedHashMap<String,String> FieldValues = new LinkedHashMap<String,String>();
+        			
         			for ( CResultSetResult ResultSetResultToAdd: ResultsSetsList ) {    
 
-        				XMLDocument = AddXMLSimpleMessage( XMLDocument, ResultSetResultToAdd.intCode, ResultSetResultToAdd.strDescription, strVersion, true );
+                		FieldValues.put( XMLDataPacketTags._XML_StructAffectedRows, Long.toString( ResultSetResultToAdd.lngAffectedRows ) );
+                		FieldValues.put( XMLDataPacketTags._XML_StructCode, Integer.toString( ResultSetResultToAdd.intCode ) );
+                		FieldValues.put( XMLDataPacketTags._XML_StructDescription, ResultSetResultToAdd.strDescription );
+        				
+        				if ( ResultSetResultToAdd.intCode >= 0 )
+        					XMLDocument = AddXMLSimpleMessage( XMLDocument, FieldValues, strVersion, false, Logger, Lang );
+        				else
+        					XMLDocument = AddXMLSimpleMessage( XMLDocument, FieldValues, strVersion, true, Logger, Lang );
         			
         			}
+        			
         		}
 		        
-	            strResult = this.ConvertXMLDocumentToString( XMLDocument, this.getCharacterEncoding() );
+	            strResult = this.ConvertXMLDocumentToString( XMLDocument, this.getCharacterEncoding(), Logger, Lang );
 
         	}
 	            
         }
         catch ( Exception Ex ) {
 
-        	OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+			if ( Logger != null )
+				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
+				OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
 
         }
     	
@@ -1399,24 +1573,27 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     }
 
     @Override
-    public String FormatMemoryRowSet( CMemoryRowSet MemoryRowSet, String strVersion ) {
+    public String FormatMemoryRowSet( CMemoryRowSet MemoryRowSet, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	String strResult = "";
     	
         try {
 
-	        Document XMLDocument = this.BuildBasicResponseXMLStruct( strVersion );
+	        Document XMLDocument = this.BuildBasicResponseXMLStruct( strVersion, Logger, Lang );
 	
-	        XMLDocument = BuildXMLMetaData( XMLDocument, MemoryRowSet );
+	        XMLDocument = BuildXMLMetaData( XMLDocument, MemoryRowSet, Logger, Lang );
 	
-	        XMLDocument = AddXMLToRowDataSection( XMLDocument, MemoryRowSet );
+	        XMLDocument = AddXMLToRowDataSection( XMLDocument, MemoryRowSet, Logger, Lang );
 
-            strResult = this.ConvertXMLDocumentToString( XMLDocument, this.getCharacterEncoding() );
+            strResult = this.ConvertXMLDocumentToString( XMLDocument, this.getCharacterEncoding(), Logger, Lang );
 
         }
         catch ( Exception Ex ) {
 
-        	OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+			if ( Logger != null )
+				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
+				OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
 
         }
 
@@ -1425,7 +1602,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     }
     
     @Override
-    public String FormatMemoryRowSets( ArrayList<CMemoryRowSet> MemoryRowSets, String strVersion ) {
+    public String FormatMemoryRowSets( ArrayList<CMemoryRowSet> MemoryRowSets, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	String strResult = "";
 
@@ -1433,26 +1610,29 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
         	if ( MemoryRowSets.size() > 0 ) {
         	
-		        Document XMLDocument = this.BuildBasicResponseXMLStruct( strVersion );
+		        Document XMLDocument = this.BuildBasicResponseXMLStruct( strVersion, Logger, Lang );
 		
 		        CMemoryRowSet FirstMemoryRowSet = MemoryRowSets.get( 0 );
 
-        		XMLDocument = BuildXMLMetaData( XMLDocument, FirstMemoryRowSet );
+        		XMLDocument = BuildXMLMetaData( XMLDocument, FirstMemoryRowSet, Logger, Lang );
 		
 		        for ( CMemoryRowSet MemoryRowSetToAdd: MemoryRowSets ) {   
         		
-		        	XMLDocument = AddXMLToRowDataSection( XMLDocument, MemoryRowSetToAdd );
+		        	XMLDocument = AddXMLToRowDataSection( XMLDocument, MemoryRowSetToAdd, Logger, Lang );
 		        
 		        }
 	
-	            strResult = this.ConvertXMLDocumentToString( XMLDocument, this.getCharacterEncoding() );
+	            strResult = this.ConvertXMLDocumentToString( XMLDocument, this.getCharacterEncoding(), Logger, Lang );
 
         	} 
 	            
         }
         catch ( Exception Ex ) {
 
-        	OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+			if ( Logger != null )
+				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
+				OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
 
         }
         
@@ -1461,9 +1641,9 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     }
     
     @Override
-    public String FormatSimpleMessage( String strSecurityToken, String strTransactionID, int intCode, String strDescription, boolean bAttachToError, String strVersion ) {
+    public String FormatSimpleMessage( String strSecurityToken, String strTransactionID, int intCode, String strDescription, boolean bAttachToError, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
     	
-    	return BuildXMLSimpleMessage( strSecurityToken, strTransactionID, intCode, strDescription, bAttachToError, strVersion );
+    	return BuildXMLSimpleMessage( strSecurityToken, strTransactionID, intCode, strDescription, bAttachToError, strVersion, Logger, Lang );
     	
     }
 

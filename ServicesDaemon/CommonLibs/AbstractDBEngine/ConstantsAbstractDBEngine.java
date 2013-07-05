@@ -16,6 +16,12 @@ public interface ConstantsAbstractDBEngine {
 	public static final String _INSERT = "insert";
 	public static final String _UPDATE = "update";
 	public static final String _DELETE = "delete";
+	public static final String _TRUNCATE = "truncate";
 	public static final String _CALL = "call";
+	public static final String _CREATE = "create";
+	public static final String _ALTER = "alter";
+	public static final String _MODIFY = "modify";
+	public static final String _DROP = "drop";
+	public static final String _SHOW = "show";
 
 }

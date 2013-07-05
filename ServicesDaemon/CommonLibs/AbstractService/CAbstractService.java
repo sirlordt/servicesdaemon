@@ -22,7 +22,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import Utilities.Base64;
+import net.maindataservices.Base64;
+
 
 import AbstractResponseFormat.CAbstractResponseFormat;
 import AbstractService.CInputServiceParameter.TParameterScope;
@@ -722,7 +723,7 @@ public abstract class CAbstractService {
 
 	}
 
-	public boolean CheckServiceInputParameters( ArrayList<CInputServiceParameter> InputParametersService, HttpServletRequest Request, HttpServletResponse Response, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion ) {
+	public boolean CheckServiceInputParameters( ArrayList<CInputServiceParameter> InputParametersService, HttpServletRequest Request, HttpServletResponse Response, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang  ) {
 
 		boolean bResult = true;
 
@@ -755,12 +756,14 @@ public abstract class CAbstractService {
 
 						String strMessage = "The parameter name [%s] is not part of the input parameters of the service";
 						
-						if ( OwnerLang != null )
+						if ( ServiceLang != null )
+						    strMessage = ServiceLang.Translate( strMessage, strParamName );
+						else if ( OwnerLang != null )
 						    strMessage = OwnerLang.Translate( strMessage, strParamName );
 						else
 							strMessage = String.format( strMessage, strParamName );
 							
-						String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1015, strMessage, true, strResponseFormatVersion );
+						String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1015, strMessage, true, strResponseFormatVersion, strDateTimeFormat, strDateFormat, strTimeFormat, Logger, Lang );
 						Response.getWriter().print( strResponseBuffer );
 
 					} 
@@ -812,12 +815,14 @@ public abstract class CAbstractService {
 
 									String strMessage = "The paramete name [%s] position [%s] has the value [%s] is invalid";
 									
-									if ( OwnerLang != null )
+									if ( ServiceLang != null )
+									    strMessage = ServiceLang.Translate( strMessage, strParamName, Integer.toString( i ), arrPValues[ i ] );
+									else if ( OwnerLang != null )
 									    strMessage = OwnerLang.Translate( strMessage, strParamName, Integer.toString( i ), arrPValues[ i ] );
 									else
 										strMessage = String.format( strMessage, strParamName, Integer.toString( i ), arrPValues[ i ] );
 										
-									String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1014, strMessage, true, strResponseFormatVersion );
+									String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1014, strMessage, true, strResponseFormatVersion, strDateTimeFormat, strDateFormat, strTimeFormat, Logger, Lang );
 									Response.getWriter().print( strResponseBuffer );
 
 								}
@@ -848,12 +853,14 @@ public abstract class CAbstractService {
 
 							String strMessage = "The parameter [%s] has the value [%s] is invalid";
 							
-							if ( OwnerLang != null )
+							if ( ServiceLang != null )
+							    strMessage = ServiceLang.Translate( strMessage, strParamName, strParamValue );
+							else if ( OwnerLang != null )
 							    strMessage = OwnerLang.Translate( strMessage, strParamName, strParamValue );
 							else
 								strMessage = String.format( strMessage, strParamName,strParamValue );
 
-							String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1013, strMessage, true, strResponseFormatVersion );
+							String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1013, strMessage, true, strResponseFormatVersion, strDateTimeFormat, strDateFormat, strTimeFormat, Logger, Lang );
 							Response.getWriter().print( strResponseBuffer );
 
 						}
@@ -880,12 +887,14 @@ public abstract class CAbstractService {
 
 						String strMessage = "The parameter [%s] is multivalued";
 						
-						if ( OwnerLang != null )
+						if ( ServiceLang != null )
+						    strMessage = ServiceLang.Translate( strMessage, strParamName );
+						else if ( OwnerLang != null )
 						    strMessage = OwnerLang.Translate( strMessage, strParamName );
 						else
 							strMessage = String.format( strMessage, strParamName );
 
-						String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1012, strMessage, true, strResponseFormatVersion );
+						String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1012, strMessage, true, strResponseFormatVersion, strDateTimeFormat, strDateFormat, strTimeFormat, Logger, Lang );
 						Response.getWriter().print( strResponseBuffer );
 
 					} 
@@ -920,7 +929,7 @@ public abstract class CAbstractService {
 				else
 					strMessage = String.format( strMessage, arrMissingInputParameters.toString() );
 
-				String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1011, strMessage, true, strResponseFormatVersion );
+				String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1011, strMessage, true, strResponseFormatVersion, strDateTimeFormat, strDateFormat, strTimeFormat, Logger, Lang );
 				Response.getWriter().print(strResponseBuffer);
 
 			} 

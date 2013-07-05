@@ -11,6 +11,7 @@
 /MySQLDBEngine
 /PGSQLDBEngine
 /PreExecuteServiceTest
+/ServicesDaemon
 /SystemCommitTransaction
 /SystemEndSession
 /SystemEndTransaction
@@ -20,9 +21,5 @@
 /SystemRollbackTransaction
 /SystemStartSession
 /SystemStartTransaction
-/Utilities
-/ServicesDaemon
-/JSON
-/json
+/net
 /org
-/JSONStringer

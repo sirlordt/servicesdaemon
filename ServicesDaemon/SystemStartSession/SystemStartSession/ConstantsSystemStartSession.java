@@ -8,12 +8,16 @@
  * Contributors:
  *     SirLordT <sirlordt@gmail.com> - initial API and implementation
  ******************************************************************************/
-package Utilities;
+package SystemStartSession;
 
-class Base64Shared {
+public interface ConstantsSystemStartSession {
 
-   static final String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+	public final String _Request_DBConnection_Name = "DBConnection";
+	public final String _Request_DBConnection_Type = "varchar";
+	public final String _Request_DBConnection_Length = "150";
 
-   static final char pad = '=';
-
+	public static final String _Global_DateTime_Format = "Global_DateTime_Format";
+	public static final String _Global_Date_Format = "Global_Date_Format";
+	public static final String _Global_Time_Format = "Global_Time_Format";
+	
 }

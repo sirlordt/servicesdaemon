@@ -12,11 +12,12 @@ package SystemStartSession;
 
 import java.util.ArrayList;
 
+import net.maindataservices.Utilities;
+
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import Utilities.Utilities;
 
 
 import AbstractService.CInputServiceParameter;

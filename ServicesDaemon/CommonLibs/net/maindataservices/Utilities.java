@@ -8,11 +8,13 @@
  * Contributors:
  *     SirLordT <sirlordt@gmail.com> - initial API and implementation
  ******************************************************************************/
-package Utilities;
+package net.maindataservices;
 
 import java.io.File;
 import java.security.MessageDigest;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -433,7 +435,35 @@ public class Utilities {
 
     }
 
-	
+	public static boolean IsValidDateTimeFormat( String strDateTimeFormat, CExtendedLogger Logger ) {
+		
+		boolean bResult = false;
+		
+		try {
+		
+			SimpleDateFormat DTFormatter = new SimpleDateFormat( strDateTimeFormat );
+			//SimpleDateFormat TFormatter = new SimpleDateFormat("HHmmss");
+			//SimpleDateFormat DTFormatter = new SimpleDateFormat("yyyymmdd HHmmss");
+			//DateTimeFormat x = new DateTim
+
+			Date date = new Date();
+			
+			String strTmp = DTFormatter.format( date );
+			
+			return strTmp != null && strTmp.isEmpty() == false;
+			
+		}
+		catch ( Exception Ex ) {
+			
+    		if ( Logger != null )   
+      	       Logger.LogException( "-1015", Ex.getMessage(), Ex );        
+			
+		}
+		
+		return bResult;
+		
+	}
+    
 	public static String GenerateString( Random RandomGenerator, String strCharacters, int intLength ) {
 	    
 		char[] strText = new char[ intLength ];

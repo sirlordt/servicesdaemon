@@ -398,7 +398,7 @@ public class CDBServicesManager extends CAbstractServicesManager {
                }
                else {
             	   
-       			  DBServicesManagerLogger.LogError( "-1001", DBServicesManagerLang.Translate( "No datatabse drivers found in path [%s]", DBServicesManagerConfig.strDBDriversDir ) );
+       			  DBServicesManagerLogger.LogError( "-1001", DBServicesManagerLang.Translate( "No datatabase drivers found in path [%s]", DBServicesManagerConfig.strDBDriversDir ) );
             	   
                }
     			
@@ -530,7 +530,7 @@ public class CDBServicesManager extends CAbstractServicesManager {
         						   Response.setContentType( ResponseFormat.getContentType() );
         						   Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-        						   String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -3, DBServicesManagerConfig.Lang.Translate( "The security token [%s] is incorrect. Possible attempted robbery in progress session", strRequestSecurityTokenID ), true, strRequestResponseFormatVersion );
+        						   String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -3, DBServicesManagerConfig.Lang.Translate( "The security token [%s] is incorrect. Possible attempted robbery in progress session", strRequestSecurityTokenID ), true, strRequestResponseFormatVersion, DBServicesManagerConfig.strGlobalDateTimeFormat, DBServicesManagerConfig.strGlobalDateFormat, DBServicesManagerConfig.strGlobalTimeFormat, DBServicesManagerConfig.Logger, DBServicesManagerConfig.Lang );
         						   Response.getWriter().print( strResponseBuffer );
 
         					   }
@@ -550,7 +550,7 @@ public class CDBServicesManager extends CAbstractServicesManager {
         					   Response.setContentType( ResponseFormat.getContentType() );
         					   Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-        					   String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -2, DBServicesManagerConfig.Lang.Translate( "You must log in before using the service [%s]", strServiceName ), true, strRequestResponseFormatVersion );
+        					   String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -2, DBServicesManagerConfig.Lang.Translate( "You must log in before using the service [%s]", strServiceName ), true, strRequestResponseFormatVersion, DBServicesManagerConfig.strGlobalDateTimeFormat, DBServicesManagerConfig.strGlobalDateFormat, DBServicesManagerConfig.strGlobalTimeFormat, DBServicesManagerConfig.Logger, DBServicesManagerConfig.Lang );
         					   Response.getWriter().print( strResponseBuffer );
 
         				   }
@@ -570,7 +570,7 @@ public class CDBServicesManager extends CAbstractServicesManager {
         				   Response.setContentType( ResponseFormat.getContentType() );
         				   Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-        				   String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1, DBServicesManagerConfig.Lang.Translate( "The service name [%s] not found", strServiceName ), true, strRequestResponseFormatVersion );
+        				   String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1, DBServicesManagerConfig.Lang.Translate( "The service name [%s] not found", strServiceName ), true, strRequestResponseFormatVersion, DBServicesManagerConfig.strGlobalDateTimeFormat, DBServicesManagerConfig.strGlobalDateFormat, DBServicesManagerConfig.strGlobalTimeFormat, DBServicesManagerConfig.Logger, DBServicesManagerConfig.Lang );
         				   Response.getWriter().print( strResponseBuffer );
 
         			   }

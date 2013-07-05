@@ -160,137 +160,163 @@ public class CSystemEndTransaction extends CAbstractService {
 	public int ExecuteService(int intEntryCode, HttpServletRequest Request, HttpServletResponse Response, String strSecurityTokenID, HashMap<String, CAbstractService> RegisteredServices, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion) { 
 
 		int intResultCode = -1000;
+	
+		CSessionInfoManager SessionInfoManager = CSessionInfoManager.getSessionInfoManager();
 		
-		CServicePreExecuteResult ServicePreExecuteResult = this.RunServicePreExecute( intEntryCode, Request, Response, strSecurityTokenID, RegisteredServices, ResponseFormat, strResponseFormatVersion );
+		CConfigDBConnection LocalConfigDBConnection = null;
 		
-		if ( ServicePreExecuteResult == null || ServicePreExecuteResult.bStopExecuteService == false ) {
+		if ( SessionInfoManager != null )
+			LocalConfigDBConnection = SessionInfoManager.getConfigDBConnectionFromSecurityTokenID( strSecurityTokenID, ServiceLogger, ServiceLang );
+		
+		if ( this.CheckServiceInputParameters( GroupsInputParametersService.get( ConstantsServicesTags._Default ), Request, Response, ResponseFormat, strResponseFormatVersion, OwnerConfig.getConfigValue( ConstantsSystemEndTransaction._Global_DateTime_Format ), OwnerConfig.getConfigValue( ConstantsSystemEndTransaction._Global_Date_Format ), OwnerConfig.getConfigValue( ConstantsSystemEndTransaction._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang ) == true ) {
+		
+			CServicePreExecuteResult ServicePreExecuteResult = this.RunServicePreExecute( intEntryCode, Request, Response, strSecurityTokenID, RegisteredServices, ResponseFormat, strResponseFormatVersion );
 
-			try {
+			if ( ServicePreExecuteResult == null || ServicePreExecuteResult.bStopExecuteService == false ) {
 
-				String strTransactionID = ( String ) Request.getParameter( ConstantsServicesTags._RequestTransactionID );
+				try {
 
-				CDBConnectionsManager DBConnectionsManager = CDBConnectionsManager.getDBConnectionManager();
+					String strTransactionID = ( String ) Request.getParameter( ConstantsServicesTags._RequestTransactionID );
 
-				Connection DBConnection = DBConnectionsManager.getDBConnection( strTransactionID, ServiceLogger, ServiceLang );
+					CDBConnectionsManager DBConnectionsManager = CDBConnectionsManager.getDBConnectionManager();
 
-				if ( DBConnection != null ) {
+					Connection DBConnection = DBConnectionsManager.getDBConnection( strTransactionID, ServiceLogger, ServiceLang );
 
-					CSessionInfoManager SessionInfoManager = CSessionInfoManager.getSessionInfoManager();
+					if ( DBConnection != null ) {
 
-					CConfigDBConnection LocalConfigDBConnection = SessionInfoManager.getConfigDBConnectionFromSecurityTokenID( strSecurityTokenID, ServiceLogger, ServiceLang ); 
+						//CSessionInfoManager SessionInfoManager = CSessionInfoManager.getSessionInfoManager();
 
-					if ( LocalConfigDBConnection != null ) {
+						//CConfigDBConnection LocalConfigDBConnection = SessionInfoManager.getConfigDBConnectionFromSecurityTokenID( strSecurityTokenID, ServiceLogger, ServiceLang ); 
 
-						CAbstractDBEngine DBEngine = CAbstractDBEngine.getDBEngine( LocalConfigDBConnection.strEngine, LocalConfigDBConnection.strEngineVersion ); 
+						if ( LocalConfigDBConnection != null ) {
 
-						if ( DBEngine != null ) {
+							CAbstractDBEngine DBEngine = CAbstractDBEngine.getDBEngine( LocalConfigDBConnection.strEngine, LocalConfigDBConnection.strEngineVersion ); 
 
-							Semaphore DBConnectionSemaphore = DBConnectionsManager.getDBConnectionSemaphore( strTransactionID, ServiceLogger, ServiceLang );
+							if ( DBEngine != null ) {
 
-							if ( DBConnectionSemaphore != null ) {
+								Semaphore DBConnectionSemaphore = DBConnectionsManager.getDBConnectionSemaphore( strTransactionID, ServiceLogger, ServiceLang );
 
-								try {
+								if ( DBConnectionSemaphore != null ) {
 
-									DBConnectionsManager.removeDBConnectionByTransactionId( strTransactionID, ServiceLogger, ServiceLang );
+									try {
 
-									//SessionInfoManager.removeSecurityTokenID( strSecurityTokenID, ServiceLogger, ServiceLang );
-									
-									DBConnectionSemaphore.acquire(); //Blocks another threads to use this connection
+										DBConnectionsManager.removeDBConnectionByTransactionId( strTransactionID, ServiceLogger, ServiceLang );
 
-									try {  
+										//SessionInfoManager.removeSecurityTokenID( strSecurityTokenID, ServiceLogger, ServiceLang );
 
-										DBEngine.rollback( DBConnection, ServiceLogger, ServiceLang );
+										DBConnectionSemaphore.acquire(); //Blocks another threads to use this connection
 
-										DBEngine.close( DBConnection, ServiceLogger, ServiceLang );
+										try {  
 
-										Response.setContentType( ResponseFormat.getContentType() );
-										Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
+											DBEngine.rollback( DBConnection, ServiceLogger, ServiceLang );
 
-										String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", strTransactionID, 1, ServiceLang.Translate( "Success rollback and end transaction for id: [%s]", strTransactionID ), false, strResponseFormatVersion );
-										Response.getWriter().print( strResponseBuffer );
+											DBEngine.close( DBConnection, ServiceLogger, ServiceLang );
 
-										intResultCode = 1;
+											Response.setContentType( ResponseFormat.getContentType() );
+											Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
+
+											String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", strTransactionID, 1, ServiceLang.Translate( "Success rollback and end transaction for id: [%s]", strTransactionID ), false, strResponseFormatVersion, LocalConfigDBConnection.strDateTimeFormat, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
+											Response.getWriter().print( strResponseBuffer );
+
+											intResultCode = 1;
+
+										}
+										catch ( Exception Ex ) {
+
+											if ( ServiceLogger != null )
+												ServiceLogger.LogException( "-1024", Ex.getMessage(), Ex ); 
+											else if ( OwnerLogger != null )
+												OwnerLogger.LogException( "-1024", Ex.getMessage(), Ex );
+
+										}
+
+										DBConnectionSemaphore.release(); //Release another threads to use this connection
 
 									}
 									catch ( Exception Ex ) {
 
 										if ( ServiceLogger != null )
-											ServiceLogger.LogException( "-1024", Ex.getMessage(), Ex ); 
+											ServiceLogger.LogException( "-1023", Ex.getMessage(), Ex ); 
 										else if ( OwnerLogger != null )
-											OwnerLogger.LogException( "-1024", Ex.getMessage(), Ex );
+											OwnerLogger.LogException( "-1023", Ex.getMessage(), Ex );
+
 
 									}
 
-									DBConnectionSemaphore.release(); //Release another threads to use this connection
+
+								}                        
+								else {
+
+									try {
+
+										if ( ServiceLogger != null ) {
+
+											ServiceLogger.LogError( "-1004", ServiceLang.Translate( "The database connection semaphore not found for transaction id: [%s]", strTransactionID ) );        
+
+										}
+
+										Response.setContentType( ResponseFormat.getContentType() );
+										Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
+
+										String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1004, ServiceLang.Translate( "Failed to rollback and end transaction for id: [%s], see the log file for more details", strSecurityTokenID ), true, strResponseFormatVersion, LocalConfigDBConnection!=null?LocalConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemEndTransaction._Global_DateTime_Format ), LocalConfigDBConnection!=null?LocalConfigDBConnection.strDateFormat:OwnerConfig.getConfigValue( ConstantsSystemEndTransaction._Global_Date_Format ), LocalConfigDBConnection!=null?LocalConfigDBConnection.strTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemEndTransaction._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
+										Response.getWriter().print( strResponseBuffer );
+
+									}
+									catch ( Exception Ex ) {
+
+										if ( ServiceLogger != null )
+											ServiceLogger.LogException( "-1022", Ex.getMessage(), Ex ); 
+										else if ( OwnerLogger != null )
+											OwnerLogger.LogException( "-1022", Ex.getMessage(), Ex );
+
+									}
 
 								}
-								catch ( Exception Ex ) {
-
-									if ( ServiceLogger != null )
-										ServiceLogger.LogException( "-1023", Ex.getMessage(), Ex ); 
-									else if ( OwnerLogger != null )
-										OwnerLogger.LogException( "-1023", Ex.getMessage(), Ex );
 
 
-								}
-
-
-							}                        
+							}
 							else {
 
 								try {
 
 									if ( ServiceLogger != null ) {
 
-										ServiceLogger.LogError( "-1004", ServiceLang.Translate( "The database connection semaphore not found for transaction id: [%s]", strTransactionID ) );        
+										ServiceLogger.LogError( "-1003", ServiceLang.Translate( "The database engine name [%s] version [%s] not found", LocalConfigDBConnection.strEngine, LocalConfigDBConnection.strEngineVersion ) );        
 
 									}
 
 									Response.setContentType( ResponseFormat.getContentType() );
 									Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-									String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1004, ServiceLang.Translate( "Failed to rollback and end transaction for id: [%s], see the log file for more details", strSecurityTokenID ), true, strResponseFormatVersion );
+									String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1003, ServiceLang.Translate( "Failed to rollback and end transaction for id: [%s], see the log file for more details", strSecurityTokenID ), true, strResponseFormatVersion, LocalConfigDBConnection!=null?LocalConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemEndTransaction._Global_DateTime_Format ), LocalConfigDBConnection!=null?LocalConfigDBConnection.strDateFormat:OwnerConfig.getConfigValue( ConstantsSystemEndTransaction._Global_Date_Format ), LocalConfigDBConnection!=null?LocalConfigDBConnection.strTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemEndTransaction._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 									Response.getWriter().print( strResponseBuffer );
 
 								}
 								catch ( Exception Ex ) {
 
 									if ( ServiceLogger != null )
-										ServiceLogger.LogException( "-1022", Ex.getMessage(), Ex ); 
+										ServiceLogger.LogException( "-1021", Ex.getMessage(), Ex ); 
 									else if ( OwnerLogger != null )
-										OwnerLogger.LogException( "-1022", Ex.getMessage(), Ex );
+										OwnerLogger.LogException( "-1021", Ex.getMessage(), Ex );
 
 								}
 
 							}
-
 
 						}
 						else {
 
-							try {
+							if ( ServiceLogger != null ) {
 
-								if ( ServiceLogger != null ) {
-
-									ServiceLogger.LogError( "-1003", ServiceLang.Translate( "The database engine name [%s] version [%s] not found", LocalConfigDBConnection.strEngine, LocalConfigDBConnection.strEngineVersion ) );        
-
-								}
-
-								Response.setContentType( ResponseFormat.getContentType() );
-								Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
-
-								String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1003, ServiceLang.Translate( "Failed to rollback and end transaction for id: [%s], see the log file for more details", strSecurityTokenID ), true, strResponseFormatVersion );
-								Response.getWriter().print( strResponseBuffer );
+								ServiceLogger.LogError( "-1002", ServiceLang.Translate( "Cannot locate in session the database connection config for the security token: [%s]", strSecurityTokenID ) );        
 
 							}
-							catch ( Exception Ex ) {
 
-								if ( ServiceLogger != null )
-									ServiceLogger.LogException( "-1021", Ex.getMessage(), Ex ); 
-								else if ( OwnerLogger != null )
-									OwnerLogger.LogException( "-1021", Ex.getMessage(), Ex );
+							Response.setContentType( ResponseFormat.getContentType() );
+							Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-							}
+							String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1002, ServiceLang.Translate( "Failed to rollback and end transaction for id: [%s], see the log file for more details", strTransactionID ), true, strResponseFormatVersion, OwnerConfig.getConfigValue( ConstantsSystemEndTransaction._Global_DateTime_Format ), OwnerConfig.getConfigValue( ConstantsSystemEndTransaction._Global_Date_Format ), OwnerConfig.getConfigValue( ConstantsSystemEndTransaction._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
+							Response.getWriter().print( strResponseBuffer );
 
 						}
 
@@ -299,61 +325,46 @@ public class CSystemEndTransaction extends CAbstractService {
 
 						if ( ServiceLogger != null ) {
 
-							ServiceLogger.LogError( "-1002", ServiceLang.Translate( "Cannot locate in session the database connection config for the security token: [%s]", strSecurityTokenID ) );        
+							ServiceLogger.LogError( "-1001", ServiceLang.Translate( "No found database connection from transaction id: [%s]", strTransactionID ) );        
 
 						}
 
 						Response.setContentType( ResponseFormat.getContentType() );
 						Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-						String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1002, ServiceLang.Translate( "Failed to rollback and end transaction for id: [%s], see the log file for more details", strTransactionID ), true, strResponseFormatVersion );
+						String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1001, ServiceLang.Translate( "Failed to rollback and end transaction for id: [%s], see the log file for more details", strTransactionID ), true, strResponseFormatVersion, OwnerConfig.getConfigValue( ConstantsSystemEndTransaction._Global_DateTime_Format ), OwnerConfig.getConfigValue( ConstantsSystemEndTransaction._Global_Date_Format ), OwnerConfig.getConfigValue( ConstantsSystemEndTransaction._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 						Response.getWriter().print( strResponseBuffer );
 
 					}
 
-				}
-				else {
-
-					if ( ServiceLogger != null ) {
-
-						ServiceLogger.LogError( "-1001", ServiceLang.Translate( "No found database connection from transaction id: [%s]", strTransactionID ) );        
-
-					}
-
-					Response.setContentType( ResponseFormat.getContentType() );
-					Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
-
-					String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1001, ServiceLang.Translate( "Failed to rollback and end transaction for id: [%s], see the log file for more details", strTransactionID ), true, strResponseFormatVersion );
-					Response.getWriter().print( strResponseBuffer );
 
 				}
+				catch ( Exception Ex ) {
 
+					if ( ServiceLogger != null )
+						ServiceLogger.LogException( "-1020", Ex.getMessage(), Ex ); 
+					else if ( OwnerLogger != null )
+						OwnerLogger.LogException( "-1020", Ex.getMessage(), Ex );
+
+				}  
 
 			}
-			catch ( Exception Ex ) {
+			else {
 
-				if ( ServiceLogger != null )
-					ServiceLogger.LogException( "-1020", Ex.getMessage(), Ex ); 
-				else if ( OwnerLogger != null )
-					OwnerLogger.LogException( "-1020", Ex.getMessage(), Ex );
+				intResultCode = ServicePreExecuteResult.intResultCode;
 
-			}  
+			}
 
-		}
-		else {
+			CServicePostExecuteResult ServicePostExecuteResult = this.RunServicePostExecute( intEntryCode, Request, Response, strSecurityTokenID, RegisteredServices, ResponseFormat, strResponseFormatVersion );
 
-			intResultCode = ServicePreExecuteResult.intResultCode;
+			if ( ServicePostExecuteResult != null ) {
 
-		}
+				intResultCode = ServicePostExecuteResult.intResultCode;
 
-		CServicePostExecuteResult ServicePostExecuteResult = this.RunServicePostExecute( intEntryCode, Request, Response, strSecurityTokenID, RegisteredServices, ResponseFormat, strResponseFormatVersion );
-
-		if ( ServicePostExecuteResult != null ) {
-
-			intResultCode = ServicePostExecuteResult.intResultCode;
+			}
 
 		}
-
+		
 		return intResultCode;
 	
 	}

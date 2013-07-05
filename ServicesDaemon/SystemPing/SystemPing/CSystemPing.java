@@ -143,7 +143,7 @@ public class CSystemPing extends CAbstractService {
 
 		int intResultCode = -1000;
 
-		if ( this.CheckServiceInputParameters( GroupsInputParametersService.get( ConstantsServicesTags._Default ), Request, Response, ResponseFormat, strResponseFormatVersion ) == true ) {
+		if ( this.CheckServiceInputParameters( GroupsInputParametersService.get( ConstantsServicesTags._Default ), Request, Response, ResponseFormat, strResponseFormatVersion, OwnerConfig.getConfigValue( ConstantsSystemPing._Global_DateTime_Format ) , OwnerConfig.getConfigValue( ConstantsSystemPing._Global_Date_Format ), OwnerConfig.getConfigValue( ConstantsSystemPing._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang ) == true ) {
 
 			CServicePreExecuteResult ServicePreExecuteResult = this.RunServicePreExecute( intEntryCode, Request, Response, strSecurityTokenID, RegisteredServices, ResponseFormat, strResponseFormatVersion );
 
@@ -191,7 +191,7 @@ public class CSystemPing extends CAbstractService {
 
 					CachedRowset.moveToCurrentRow();
 
-					String strResponseBuffer = ResponseFormat.FormatResultSet( CachedRowset, strResponseFormatVersion );
+					String strResponseBuffer = ResponseFormat.FormatResultSet( CachedRowset, strResponseFormatVersion, OwnerConfig.getConfigValue( ConstantsSystemPing._Global_DateTime_Format ) , OwnerConfig.getConfigValue( ConstantsSystemPing._Global_Date_Format ), OwnerConfig.getConfigValue( ConstantsSystemPing._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 
 					Response.getWriter().print( strResponseBuffer );
 

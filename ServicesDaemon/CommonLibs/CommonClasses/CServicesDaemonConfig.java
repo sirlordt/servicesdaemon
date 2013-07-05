@@ -16,11 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
+import net.maindataservices.Utilities;
+
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import Utilities.Utilities;
 
 import ExtendedLogger.CExtendedLogFilter;
 import ExtendedLogger.CExtendedLogger;

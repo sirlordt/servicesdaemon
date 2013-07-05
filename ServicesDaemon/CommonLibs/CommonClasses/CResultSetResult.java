@@ -11,25 +11,59 @@
 package CommonClasses;
 
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 public class CResultSetResult {
 
-	public int intCode = -1;
+	
 	public ResultSet Result = null;
 	public CNamedPreparedStatement NamedPreparedStatement = null; 
-	public String strDescription;
+	public CNamedCallableStatement NamedCallableStatement = null; 
+	public Statement SQLStatement = null;
+	public long lngAffectedRows = -1;
+	public int intCode = -1;
+	public String strDescription = "";
 	
 	public CResultSetResult() {
 		
 		
 	}
 
-	public CResultSetResult( int intCode, String strDescription, CNamedPreparedStatement NamedPreparedStatement, ResultSet Result ) {
+	public CResultSetResult( int intAffectedRows, int intCode, String strDescription ) {
 		
+		this.lngAffectedRows = intAffectedRows;
+		this.intCode = intCode;
+		this.strDescription = strDescription;
+		
+	}
+	
+	public CResultSetResult( int intAffectedRows, int intCode, String strDescription, CNamedPreparedStatement NamedPreparedStatement, ResultSet Result ) {
+		
+		this.lngAffectedRows = intAffectedRows;
 		this.intCode = intCode;
 		this.strDescription = strDescription;
 		this.NamedPreparedStatement = NamedPreparedStatement;
+		this.Result = Result;
+		
+	}
+
+	public CResultSetResult( int intAffectedRows, int intCode, String strDescription, CNamedCallableStatement NamedCallableStatement, ResultSet Result ) {
+		
+		this.lngAffectedRows = intAffectedRows;
+		this.intCode = intCode;
+		this.strDescription = strDescription;
+		this.NamedCallableStatement = NamedCallableStatement;
+		this.Result = Result;
+		
+	}
+	
+	public CResultSetResult( int intAffectedRows, int intCode, String strDescription, Statement SQLStatement, ResultSet Result ) {
+		
+		this.lngAffectedRows = intAffectedRows;
+		this.intCode = intCode;
+		this.strDescription = strDescription;
+		this.SQLStatement = SQLStatement;
 		this.Result = Result;
 		
 	}

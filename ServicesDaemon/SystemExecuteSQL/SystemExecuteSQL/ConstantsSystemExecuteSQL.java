@@ -14,13 +14,16 @@ import java.sql.Types;
 
 public interface ConstantsSystemExecuteSQL {
 
-	public static final String _RequestSQL           = "SQL";
-	public static final String _RequestSQLType       = "VarChar";
-	public static final String _RequestSQLLength     = "10240";
+	public static final String _Request_SQL           = "SQL";
+	public static final String _Request_SQL_Type       = "VarChar";
+	public static final String _Request_SQL_Length     = "10240";
 
-	public static final String _ResponseAffectedRows     = "AffectedRows";
-	public static final int _ResponseAffectedRowsTypeID  = Types.BIGINT;
-	public static final String _ResponseAffectedRowsType = "BigInt";
+	public static final String _Response_AffectedRows     = "AffectedRows";
+	public static final int _Response_AffectedRows_TypeID  = Types.BIGINT;
+	public static final String _Response_AffectedRows_Type = "BigInt";
 	
+	public static final String _Global_DateTime_Format = "Global_DateTime_Format";
+	public static final String _Global_Date_Format = "Global_Date_Format";
+	public static final String _Global_Time_Format = "Global_Time_Format";
 	
 }

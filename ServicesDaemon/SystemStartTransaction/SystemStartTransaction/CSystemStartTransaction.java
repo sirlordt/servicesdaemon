@@ -159,7 +159,14 @@ public class CSystemStartTransaction extends CAbstractService {
 
 		int intResultCode = -1000;
 
-		if ( this.CheckServiceInputParameters( GroupsInputParametersService.get( ConstantsServicesTags._Default ), Request, Response, ResponseFormat, strResponseFormatVersion ) == true ) {
+		CSessionInfoManager SessionInfoManager = CSessionInfoManager.getSessionInfoManager();
+		
+		CConfigDBConnection LocalConfigDBConnection = null;
+		
+		if ( SessionInfoManager != null )
+			LocalConfigDBConnection = SessionInfoManager.getConfigDBConnectionFromSecurityTokenID( strSecurityTokenID, ServiceLogger, ServiceLang ); 
+
+		if ( this.CheckServiceInputParameters( GroupsInputParametersService.get( ConstantsServicesTags._Default ), Request, Response, ResponseFormat, strResponseFormatVersion, LocalConfigDBConnection!=null?LocalConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemStartTransaction._Global_DateTime_Format ), LocalConfigDBConnection!=null?LocalConfigDBConnection.strDateFormat:OwnerConfig.getConfigValue( ConstantsSystemStartTransaction._Global_Date_Format ), LocalConfigDBConnection!=null?LocalConfigDBConnection.strTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemStartTransaction._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang ) == true ) {
 			
 			CServicePreExecuteResult ServicePreExecuteResult = this.RunServicePreExecute( intEntryCode, Request, Response, strSecurityTokenID, RegisteredServices, ResponseFormat, strResponseFormatVersion );
 
@@ -169,9 +176,9 @@ public class CSystemStartTransaction extends CAbstractService {
 
 					try { 
 
-						CSessionInfoManager SessionInfoManager = CSessionInfoManager.getSessionInfoManager();
+						//CSessionInfoManager SessionInfoManager = CSessionInfoManager.getSessionInfoManager();
 
-						CConfigDBConnection LocalConfigDBConnection = SessionInfoManager.getConfigDBConnectionFromSecurityTokenID( strSecurityTokenID, ServiceLogger, ServiceLang ); //(CConfigDBConnection) ServiceSession.getAttribute( strSecurityTokenID ); 
+						//CConfigDBConnection LocalConfigDBConnection = SessionInfoManager.getConfigDBConnectionFromSecurityTokenID( strSecurityTokenID, ServiceLogger, ServiceLang ); //(CConfigDBConnection) ServiceSession.getAttribute( strSecurityTokenID ); 
 
 						if ( LocalConfigDBConnection != null ) {
 
@@ -185,7 +192,7 @@ public class CSystemStartTransaction extends CAbstractService {
 
 									DBEngine.setAutoCommit( DBConnection, false, ServiceLogger, ServiceLang );  //Disable auto commit VERY VERY IMPORTANT!!!!
 
-									ResultSet DummyResultSet =  DBEngine.ExecuteDummyQuery( DBConnection, "", ServiceLogger, ServiceLang );
+									ResultSet DummyResultSet =  DBEngine.ExecuteDummySQL( DBConnection, "", ServiceLogger, ServiceLang );
 
 									if ( DummyResultSet != null &&  DummyResultSet.next() == true ) {
 
@@ -207,7 +214,7 @@ public class CSystemStartTransaction extends CAbstractService {
 										Response.setContentType( ResponseFormat.getContentType() );
 										Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-										String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", strTransactionID, 1, ServiceLang.Translate( "Sucess start transaction in database name: [%s]", LocalConfigDBConnection.strName ), false, strResponseFormatVersion );
+										String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", strTransactionID, 1, ServiceLang.Translate( "Sucess start transaction in database name: [%s]", LocalConfigDBConnection.strName ), false, strResponseFormatVersion, LocalConfigDBConnection.strDateTimeFormat, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 										Response.getWriter().print( strResponseBuffer );
 
 										intResultCode = 1;
@@ -226,7 +233,7 @@ public class CSystemStartTransaction extends CAbstractService {
 											Response.setContentType( ResponseFormat.getContentType() );
 											Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-											String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1003, ServiceLang.Translate( "Failed to start transaction for security token: [%s], see the log file for more details", strSecurityTokenID ), true, strResponseFormatVersion );
+											String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1003, ServiceLang.Translate( "Failed to start transaction for security token: [%s], see the log file for more details", strSecurityTokenID ), true, strResponseFormatVersion, LocalConfigDBConnection.strDateTimeFormat, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 											Response.getWriter().print( strResponseBuffer );
 
 										}
@@ -255,7 +262,7 @@ public class CSystemStartTransaction extends CAbstractService {
 										Response.setContentType( ResponseFormat.getContentType() );
 										Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-										String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1003, ServiceLang.Translate( "Failed to connect to database name: [%s], see the log file for more details", LocalConfigDBConnection.strName ), true, strResponseFormatVersion );
+										String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1003, ServiceLang.Translate( "Failed to connect to database name: [%s], see the log file for more details", LocalConfigDBConnection.strName ), true, strResponseFormatVersion, LocalConfigDBConnection.strDateTimeFormat, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 										Response.getWriter().print( strResponseBuffer );
 
 									}
@@ -284,7 +291,7 @@ public class CSystemStartTransaction extends CAbstractService {
 									Response.setContentType( ResponseFormat.getContentType() );
 									Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-									String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1002, ServiceLang.Translate( "Failed to start transaction for security token: [%s], see the log file for more details", strSecurityTokenID ), true, strResponseFormatVersion );
+									String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1002, ServiceLang.Translate( "Failed to start transaction for security token: [%s], see the log file for more details", strSecurityTokenID ), true, strResponseFormatVersion, LocalConfigDBConnection.strDateTimeFormat, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 									Response.getWriter().print( strResponseBuffer );
 
 								}
@@ -311,7 +318,7 @@ public class CSystemStartTransaction extends CAbstractService {
 							Response.setContentType( ResponseFormat.getContentType() );
 							Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-							String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1001, ServiceLang.Translate( "Failed to start transaction for security token: [%s], see the log file for more details", strSecurityTokenID ), true, strResponseFormatVersion );
+							String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1001, ServiceLang.Translate( "Failed to start transaction for security token: [%s], see the log file for more details", strSecurityTokenID ), true, strResponseFormatVersion, LocalConfigDBConnection!=null?LocalConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemStartTransaction._Global_DateTime_Format ), LocalConfigDBConnection!=null?LocalConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemStartTransaction._Global_Date_Format ), LocalConfigDBConnection!=null?LocalConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemStartTransaction._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 							Response.getWriter().print( strResponseBuffer );
 
 						}

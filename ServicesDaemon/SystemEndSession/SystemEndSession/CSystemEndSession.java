@@ -157,7 +157,14 @@ public class CSystemEndSession extends CAbstractService {
 
 		int intResultCode = -1000;
 		
-		if ( this.CheckServiceInputParameters( GroupsInputParametersService.get( ConstantsServicesTags._Default ), Request, Response, ResponseFormat, strResponseFormatVersion ) == true ) {
+		CSessionInfoManager SessionInfoManager = CSessionInfoManager.getSessionInfoManager();
+		
+		CConfigDBConnection LocalConfigDBConnection = null;
+		
+		if ( SessionInfoManager != null )
+			LocalConfigDBConnection = SessionInfoManager.getConfigDBConnectionFromSecurityTokenID( strSecurityTokenID, ServiceLogger, ServiceLang );
+		
+		if ( this.CheckServiceInputParameters( GroupsInputParametersService.get( ConstantsServicesTags._Default ), Request, Response, ResponseFormat, strResponseFormatVersion, LocalConfigDBConnection!=null?LocalConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemEndSession._Global_DateTime_Format ), LocalConfigDBConnection!=null?LocalConfigDBConnection.strDateFormat:OwnerConfig.getConfigValue( ConstantsSystemEndSession._Global_Date_Format ), LocalConfigDBConnection!=null?LocalConfigDBConnection.strTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemEndSession._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang ) == true ) {
 			
 			CServicePreExecuteResult ServicePreExecuteResult = this.RunServicePreExecute( intEntryCode, Request, Response, strSecurityTokenID, RegisteredServices, ResponseFormat, strResponseFormatVersion );
 
@@ -165,9 +172,9 @@ public class CSystemEndSession extends CAbstractService {
 
 				try {
 
-					CSessionInfoManager SessionInfoManager = CSessionInfoManager.getSessionInfoManager();
+					//CSessionInfoManager SessionInfoManager = CSessionInfoManager.getSessionInfoManager();
 
-					CConfigDBConnection LocalConfigDBConnection = SessionInfoManager.getConfigDBConnectionFromSecurityTokenID( strSecurityTokenID, ServiceLogger, ServiceLang ); 
+					//CConfigDBConnection LocalConfigDBConnection = SessionInfoManager.getConfigDBConnectionFromSecurityTokenID( strSecurityTokenID, ServiceLogger, ServiceLang ); 
 
 					if ( LocalConfigDBConnection != null ) {
 
@@ -259,7 +266,7 @@ public class CSystemEndSession extends CAbstractService {
 									Response.setContentType( ResponseFormat.getContentType() );
 									Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-									String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", 1, ServiceLang.Translate( "Success end session for security token id: [%s]", strSecurityTokenID ), false, strResponseFormatVersion );
+									String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", 1, ServiceLang.Translate( "Success end session for security token id: [%s]", strSecurityTokenID ), false, strResponseFormatVersion, LocalConfigDBConnection.strDateTimeFormat, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 									Response.getWriter().print( strResponseBuffer );
 
 									intResultCode = 1;
@@ -270,7 +277,7 @@ public class CSystemEndSession extends CAbstractService {
 									Response.setContentType( ResponseFormat.getContentType() );
 									Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-									String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1004, ServiceLang.Translate( "Failed to end session for security token id: [%s], see the log file for more details", strSecurityTokenID ), true, strResponseFormatVersion );
+									String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1004, ServiceLang.Translate( "Failed to end session for security token id: [%s], see the log file for more details", strSecurityTokenID ), true, strResponseFormatVersion, LocalConfigDBConnection.strDateTimeFormat, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 									Response.getWriter().print( strResponseBuffer );
 
 								}
@@ -299,7 +306,7 @@ public class CSystemEndSession extends CAbstractService {
 								Response.setContentType( ResponseFormat.getContentType() );
 								Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-								String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1003, ServiceLang.Translate( "Failed to end session for security token id: [%s], see the log file for more details", strSecurityTokenID ), true, strResponseFormatVersion );
+								String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1003, ServiceLang.Translate( "Failed to end session for security token id: [%s], see the log file for more details", strSecurityTokenID ), true, strResponseFormatVersion, LocalConfigDBConnection.strDateTimeFormat, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 								Response.getWriter().print( strResponseBuffer );
 
 							}
@@ -326,7 +333,7 @@ public class CSystemEndSession extends CAbstractService {
 						Response.setContentType( ResponseFormat.getContentType() );
 						Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-						String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1002, ServiceLang.Translate( "Failed to end session for security token id: [%s], see the log file for more details", strSecurityTokenID ), true, strResponseFormatVersion );
+						String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1002, ServiceLang.Translate( "Failed to end session for security token id: [%s], see the log file for more details", strSecurityTokenID ), true, strResponseFormatVersion, LocalConfigDBConnection!=null?LocalConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemEndSession._Global_DateTime_Format ), LocalConfigDBConnection!=null?LocalConfigDBConnection.strDateFormat:OwnerConfig.getConfigValue( ConstantsSystemEndSession._Global_Date_Format ), LocalConfigDBConnection!=null?LocalConfigDBConnection.strTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemEndSession._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 						Response.getWriter().print( strResponseBuffer );
 
 					}

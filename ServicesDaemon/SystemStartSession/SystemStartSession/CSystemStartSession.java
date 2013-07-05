@@ -23,7 +23,8 @@ import java.util.Random;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import Utilities.Utilities;
+import net.maindataservices.Utilities;
+
 
 import AbstractDBEngine.CAbstractDBEngine;
 import AbstractDBEngine.CAbstractDBEngine.SQLStatementType;
@@ -100,7 +101,7 @@ public class CSystemStartSession extends CAbstractService {
 
     		SystemStartSessionDBConnection.RemoveInputParameterByName( ConstantsServicesTags._RequestResponseFormatVersion );
 
-    		SystemStartSessionDBConnection.RemoveInputParameterByName( ConstantsSystemStartSessionTags._RequestDBConnection );
+    		SystemStartSessionDBConnection.RemoveInputParameterByName( ConstantsSystemStartSession._Request_DBConnection_Name );
 
     		//Force to add standards parameters ServiceSD and DBConnection
     		CInputServiceParameter InputParameter = new CInputServiceParameter( ConstantsServicesTags._RequestResponseFormat, false, ConstantsServicesTags._RequestResponseFormatType, ConstantsServicesTags._RequestResponseFormatLength, TParameterScope.IN, ServiceLang.Translate( "Response format name, example: XML-DATAPACKET, CSV, JSON" ) );
@@ -115,7 +116,7 @@ public class CSystemStartSession extends CAbstractService {
     		
     		SystemStartSessionDBConnection.InputParameters.add( InputParameter ); 	
     		
-    		InputParameter = new CInputServiceParameter( ConstantsSystemStartSessionTags._RequestDBConnection, true, ConstantsSystemStartSessionTags._RequestDBConnectionType, ConstantsSystemStartSessionTags._RequestDBConnectionLength, TParameterScope.IN, ServiceLang.Translate( "Database connection name" ) );
+    		InputParameter = new CInputServiceParameter( ConstantsSystemStartSession._Request_DBConnection_Name, true, ConstantsSystemStartSession._Request_DBConnection_Type, ConstantsSystemStartSession._Request_DBConnection_Length, TParameterScope.IN, ServiceLang.Translate( "Database connection name" ) );
     		
     		SystemStartSessionDBConnection.InputParameters.add( InputParameter ); 	
 
@@ -349,7 +350,7 @@ public class CSystemStartSession extends CAbstractService {
 
 	    	if ( StartSessionRowSet == null || ( AddFieldToResponseSucess.size() == 0 && AddFieldToResponseAny.size() == 0 ) ) {
 	    	
-	    		String strResponseBuffer = ResponseFormat.FormatSimpleMessage( strSecurityTokenID, "", Integer.parseInt( strCode ), ServiceLang.Translate( "Success start session" ), false, strResponseFormatVersion );
+	    		String strResponseBuffer = ResponseFormat.FormatSimpleMessage( strSecurityTokenID, "", Integer.parseInt( strCode ), ServiceLang.Translate( "Success start session" ), false, strResponseFormatVersion, ConfigDBConnection.strDateTimeFormat, ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 
 	    		Response.getWriter().print( strResponseBuffer );
 	    	
@@ -390,7 +391,7 @@ public class CSystemStartSession extends CAbstractService {
 	    			
 	    		}
 				
-				String strResponseBuffer = ResponseFormat.FormatMemoryRowSet( StartSessionRowSet, strResponseFormatVersion );
+				String strResponseBuffer = ResponseFormat.FormatMemoryRowSet( StartSessionRowSet, strResponseFormatVersion, ConfigDBConnection.strDateTimeFormat, ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 				
 				Response.getWriter().print( strResponseBuffer );
 	    						
@@ -408,7 +409,7 @@ public class CSystemStartSession extends CAbstractService {
 	    
 	}
 	
-	public void FailedStartSession( CMemoryRowSet StartSessionRowSet, String strCode, ArrayList<String> AddFieldToResponseFailed, ArrayList<String> AddFieldToResponseAny, HttpServletRequest Request, HttpServletResponse Response, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion ) {
+	public void FailedStartSession( CMemoryRowSet StartSessionRowSet, CConfigDBConnection ConfigDBConnection, String strCode, ArrayList<String> AddFieldToResponseFailed, ArrayList<String> AddFieldToResponseAny, HttpServletRequest Request, HttpServletResponse Response, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion ) {
 		
 		try {
 
@@ -417,7 +418,7 @@ public class CSystemStartSession extends CAbstractService {
 
 	    	if ( StartSessionRowSet == null || ( AddFieldToResponseFailed.size() == 0 && AddFieldToResponseAny.size() == 0 ) ) {
 
-	    		String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", Integer.parseInt( strCode ), ServiceLang.Translate( "Failed start session" ), false, strResponseFormatVersion );
+	    		String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", Integer.parseInt( strCode ), ServiceLang.Translate( "Failed start session" ), false, strResponseFormatVersion, ConfigDBConnection.strDateTimeFormat, ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 
 	    		Response.getWriter().print( strResponseBuffer );
 
@@ -444,7 +445,7 @@ public class CSystemStartSession extends CAbstractService {
 	    		StartSessionRowSet.setAllData( ConstantsServicesTags._Code, Integer.parseInt( strCode ) );
 	    		StartSessionRowSet.setAllData( ConstantsServicesTags._Description, ServiceLang.Translate( "Failed start session" ) );
 
-	    		String strResponseBuffer = ResponseFormat.FormatMemoryRowSet( StartSessionRowSet, strResponseFormatVersion );
+	    		String strResponseBuffer = ResponseFormat.FormatMemoryRowSet( StartSessionRowSet, strResponseFormatVersion, ConfigDBConnection.strDateTimeFormat, ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 
 	    		Response.getWriter().print( strResponseBuffer );
 	    	
@@ -462,7 +463,7 @@ public class CSystemStartSession extends CAbstractService {
 		
 	}
 	
-	public void DisabledStartSession( CMemoryRowSet StartSessionRowSet, String strCode, ArrayList<String> AddFieldToResponseDisabled, ArrayList<String> AddFieldToResponseAny, HttpServletRequest Request, HttpServletResponse Response, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion ) {
+	public void DisabledStartSession( CMemoryRowSet StartSessionRowSet, CConfigDBConnection ConfigDBConnection, String strCode, ArrayList<String> AddFieldToResponseDisabled, ArrayList<String> AddFieldToResponseAny, HttpServletRequest Request, HttpServletResponse Response, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion ) {
 		
 		try {
 
@@ -471,7 +472,7 @@ public class CSystemStartSession extends CAbstractService {
 
 	    	if ( StartSessionRowSet == null || ( AddFieldToResponseDisabled.size() == 0 && AddFieldToResponseAny.size() == 0 ) ) {
 
-	    		String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", Integer.parseInt( strCode ), ServiceLang.Translate( "Start session failed, disabled account" ), false, strResponseFormatVersion );
+	    		String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", Integer.parseInt( strCode ), ServiceLang.Translate( "Start session failed, disabled account" ), false, strResponseFormatVersion, ConfigDBConnection.strDateTimeFormat, ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 
 	    		Response.getWriter().print( strResponseBuffer );
 
@@ -498,7 +499,7 @@ public class CSystemStartSession extends CAbstractService {
 	    		StartSessionRowSet.setAllData( ConstantsServicesTags._Code, Integer.parseInt( strCode ) );
 	    		StartSessionRowSet.setAllData( ConstantsServicesTags._Description, ServiceLang.Translate( "Start session failed, disabled account" ) );
 
-	    		String strResponseBuffer = ResponseFormat.FormatMemoryRowSet( StartSessionRowSet, strResponseFormatVersion );
+	    		String strResponseBuffer = ResponseFormat.FormatMemoryRowSet( StartSessionRowSet, strResponseFormatVersion, ConfigDBConnection.strDateTimeFormat, ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 
 	    		Response.getWriter().print( strResponseBuffer );
     		
@@ -516,7 +517,7 @@ public class CSystemStartSession extends CAbstractService {
 
 	}
 	
-	public void NotFoundStartSession( CMemoryRowSet StartSessionRowSet, String strCode, ArrayList<String> AddFieldToResponseNotFound, ArrayList<String> AddFieldToResponseAny, HttpServletRequest Request, HttpServletResponse Response, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion ) {
+	public void NotFoundStartSession( CMemoryRowSet StartSessionRowSet, CConfigDBConnection ConfigDBConnection, String strCode, ArrayList<String> AddFieldToResponseNotFound, ArrayList<String> AddFieldToResponseAny, HttpServletRequest Request, HttpServletResponse Response, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion ) {
 		
 		try {
 
@@ -525,7 +526,7 @@ public class CSystemStartSession extends CAbstractService {
 
 	    	if ( StartSessionRowSet == null || ( AddFieldToResponseNotFound.size() == 0 && AddFieldToResponseAny.size() == 0 ) ) {
 
-	    		String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", Integer.parseInt( strCode ), ServiceLang.Translate( "Start session failed, account not found" ), false, strResponseFormatVersion );
+	    		String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", Integer.parseInt( strCode ), ServiceLang.Translate( "Start session failed, account not found" ), false, strResponseFormatVersion, ConfigDBConnection.strDateTimeFormat, ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 
 	    		Response.getWriter().print( strResponseBuffer );
 
@@ -552,7 +553,7 @@ public class CSystemStartSession extends CAbstractService {
 	    		StartSessionRowSet.setAllData( ConstantsServicesTags._Code, Integer.parseInt( strCode ) );
 	    		StartSessionRowSet.setAllData( ConstantsServicesTags._Description, ServiceLang.Translate( "Start session failed, account not found" ) );
 
-	    		String strResponseBuffer = ResponseFormat.FormatMemoryRowSet( StartSessionRowSet, strResponseFormatVersion );
+	    		String strResponseBuffer = ResponseFormat.FormatMemoryRowSet( StartSessionRowSet, strResponseFormatVersion, ConfigDBConnection.strDateTimeFormat, ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 
 	    		Response.getWriter().print( strResponseBuffer );
 	    	
@@ -611,12 +612,12 @@ public class CSystemStartSession extends CAbstractService {
 
 						if ( SQLType == SQLStatementType.Call ) {
 
-							DBEngine.InputServiceParameterStoredProcedure( DBConnection, Request, InputServiceParameters, this.getMacrosTypes(), this.getMacrosNames(), strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, strSQL, ServiceLogger, ServiceLang );
+							DBEngine.ExecuteCallableStatementByInputServiceParameters( DBConnection, Request, InputServiceParameters, this.getMacrosTypes(), this.getMacrosNames(), strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, strSQL, ServiceLogger, ServiceLang );
 
 						}
 						else if ( DBEngine.isModifySQLStatement( SQLType ) ) {
 
-							DBEngine.InputServiceParameterModifySQL( DBConnection, Request, InputServiceParameters, this.getMacrosTypes(), this.getMacrosNames(), strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, strSQL, ServiceLogger, ServiceLang );
+							DBEngine.ExecuteModifySQLByInputServiceParameters( DBConnection, Request, InputServiceParameters, this.getMacrosTypes(), this.getMacrosNames(), strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, strSQL, ServiceLogger, ServiceLang );
 
 						}
 						else {
@@ -662,7 +663,7 @@ public class CSystemStartSession extends CAbstractService {
 
 			if ( DBServicesManagerConfig != null ) {
 
-				String strPostDBConnection = ( String ) Request.getParameter( ConstantsSystemStartSessionTags._RequestDBConnection );
+				String strPostDBConnection = ( String ) Request.getParameter( ConstantsSystemStartSession._Request_DBConnection_Name );
 
 				if ( strPostDBConnection != null && strPostDBConnection.isEmpty() == false ) {
 
@@ -681,7 +682,7 @@ public class CSystemStartSession extends CAbstractService {
 
 						if ( InputServiceParameters != null && ConfigDBConnection != null && SystemStartSessionDBConnection != null ) {
 
-							if ( this.CheckServiceInputParameters( InputServiceParameters, Request, Response, ResponseFormat, strResponseFormatVersion ) == true ) {
+							if ( this.CheckServiceInputParameters( InputServiceParameters, Request, Response, ResponseFormat, strResponseFormatVersion, ConfigDBConnection.strDateTimeFormat, ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang ) == true ) {
 
 								CAbstractDBEngine DBEngine = CAbstractDBEngine.getDBEngine( ConfigDBConnection.strEngine, ConfigDBConnection.strEngineVersion ); 
 
@@ -733,12 +734,12 @@ public class CSystemStartSession extends CAbstractService {
 
 												if ( SystemStartSessionDBConnection.strSQLType.equals( ConfigXMLTagsSystemStartSession._SQLType_sql )  ) {
 
-													StartSessionResultSet = DBEngine.InputServiceParameterQuerySQL( DBConnection, Request, InputServiceParameters, this.getMacrosTypes(), this.getMacrosNames(), strMacrosValues, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, LocalConfigDBConnection.strDateTimeFormat, strSQL, ServiceLogger, ServiceLang );
+													StartSessionResultSet = DBEngine.ExecuteQuerySQLByInputServiceParameters( DBConnection, Request, InputServiceParameters, this.getMacrosTypes(), this.getMacrosNames(), strMacrosValues, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, LocalConfigDBConnection.strDateTimeFormat, strSQL, ServiceLogger, ServiceLang );
 
 												}
 												else if ( SystemStartSessionDBConnection.strSQLType.equals( ConfigXMLTagsSystemStartSession._SQLType_stored_procedure )  ) {
 
-													StartSessionResultSet = DBEngine.InputServiceParameterStoredProcedure( DBConnection, Request, InputServiceParameters, this.getMacrosTypes(), this.getMacrosNames(), strMacrosValues, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, LocalConfigDBConnection.strDateTimeFormat, strSQL, ServiceLogger, ServiceLang );
+													StartSessionResultSet = DBEngine.ExecuteCallableStatementByInputServiceParameters( DBConnection, Request, InputServiceParameters, this.getMacrosTypes(), this.getMacrosNames(), strMacrosValues, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, LocalConfigDBConnection.strDateTimeFormat, strSQL, ServiceLogger, ServiceLang );
 
 												}
 
@@ -777,21 +778,21 @@ public class CSystemStartSession extends CAbstractService {
 
 																AfterCheckSQL( 2, DBEngine, SystemStartSessionDBConnection, DBConnection, Request, InputServiceParameters, this.getMacrosTypes(), this.getMacrosNames(), strMacrosValues, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, LocalConfigDBConnection.strDateTimeFormat, ServiceLogger, ServiceLang );
 
-																FailedStartSession( StartSessionResultSet, SystemStartSessionDBConnection.strFieldValueFailed, SystemStartSessionDBConnection.AddFieldToResponseFailed, SystemStartSessionDBConnection.AddFieldToResponseAny, Request, Response, ResponseFormat, strResponseFormatVersion );
+																FailedStartSession( StartSessionResultSet, LocalConfigDBConnection, SystemStartSessionDBConnection.strFieldValueFailed, SystemStartSessionDBConnection.AddFieldToResponseFailed, SystemStartSessionDBConnection.AddFieldToResponseAny, Request, Response, ResponseFormat, strResponseFormatVersion );
 
 															}
 															else if ( Field.checkFieldValue( 0, SystemStartSessionDBConnection.strFieldValueDisabled, intSQLType, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, LocalConfigDBConnection.strDateTimeFormat, ServiceLogger, ServiceLang ) ) {
 
 																AfterCheckSQL( 3, DBEngine, SystemStartSessionDBConnection, DBConnection, Request, InputServiceParameters, this.getMacrosTypes(), this.getMacrosNames(), strMacrosValues, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, LocalConfigDBConnection.strDateTimeFormat, ServiceLogger, ServiceLang );
 
-																DisabledStartSession( StartSessionResultSet, SystemStartSessionDBConnection.strFieldValueDisabled, SystemStartSessionDBConnection.AddFieldToResponseDisabled, SystemStartSessionDBConnection.AddFieldToResponseAny, Request, Response, ResponseFormat, strResponseFormatVersion );
+																DisabledStartSession( StartSessionResultSet, LocalConfigDBConnection, SystemStartSessionDBConnection.strFieldValueDisabled, SystemStartSessionDBConnection.AddFieldToResponseDisabled, SystemStartSessionDBConnection.AddFieldToResponseAny, Request, Response, ResponseFormat, strResponseFormatVersion );
 
 															}
 															else if ( Field.checkFieldValue( 0, SystemStartSessionDBConnection.strFieldValueNotFound, intSQLType, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, LocalConfigDBConnection.strDateTimeFormat, ServiceLogger, ServiceLang ) ) {
 
 																AfterCheckSQL( 4, DBEngine, SystemStartSessionDBConnection, DBConnection, Request, InputServiceParameters, this.getMacrosTypes(), this.getMacrosNames(), strMacrosValues, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, LocalConfigDBConnection.strDateTimeFormat, ServiceLogger, ServiceLang );
 
-																NotFoundStartSession( StartSessionResultSet, SystemStartSessionDBConnection.strFieldValueNotFound, SystemStartSessionDBConnection.AddFieldToResponseNotFound, SystemStartSessionDBConnection.AddFieldToResponseAny, Request, Response, ResponseFormat, strResponseFormatVersion );
+																NotFoundStartSession( StartSessionResultSet, LocalConfigDBConnection, SystemStartSessionDBConnection.strFieldValueNotFound, SystemStartSessionDBConnection.AddFieldToResponseNotFound, SystemStartSessionDBConnection.AddFieldToResponseAny, Request, Response, ResponseFormat, strResponseFormatVersion );
 
 															}
 															else { //field value wrong 
@@ -807,7 +808,7 @@ public class CSystemStartSession extends CAbstractService {
 																Response.setContentType( ResponseFormat.getContentType() );
 																Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-																String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1009, ServiceLang.Translate( "Failed to start session in database name: [%s], see the log file for more details", ConfigDBConnection.strName ), true, strResponseFormatVersion );
+																String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1009, ServiceLang.Translate( "Failed to start session in database name: [%s], see the log file for more details", ConfigDBConnection.strName ), true, strResponseFormatVersion, ConfigDBConnection.strDateTimeFormat, ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 																Response.getWriter().print( strResponseBuffer );
 
 															}
@@ -824,7 +825,7 @@ public class CSystemStartSession extends CAbstractService {
 															Response.setContentType( ResponseFormat.getContentType() );
 															Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-															String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1008, ServiceLang.Translate( "Failed to start session in database name: [%s], see the log file for more details", ConfigDBConnection.strName ), true, strResponseFormatVersion );
+															String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1008, ServiceLang.Translate( "Failed to start session in database name: [%s], see the log file for more details", ConfigDBConnection.strName ), true, strResponseFormatVersion, ConfigDBConnection.strDateTimeFormat, ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 															Response.getWriter().print( strResponseBuffer );
 
 														}
@@ -849,7 +850,7 @@ public class CSystemStartSession extends CAbstractService {
 														Response.setContentType( ResponseFormat.getContentType() );
 														Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-														String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1007, ServiceLang.Translate( "Failed to start session in database name: [%s], see the log file for more details", ConfigDBConnection.strName ), true, strResponseFormatVersion );
+														String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1007, ServiceLang.Translate( "Failed to start session in database name: [%s], see the log file for more details", ConfigDBConnection.strName ), true, strResponseFormatVersion, ConfigDBConnection.strDateTimeFormat, ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 														Response.getWriter().print( strResponseBuffer );
 
 													}
@@ -881,7 +882,7 @@ public class CSystemStartSession extends CAbstractService {
 													Response.setContentType( ResponseFormat.getContentType() );
 													Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-													String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1006, ServiceLang.Translate( "Failed to connect to database name: [%s], see the log file for more details", ConfigDBConnection.strName ), true, strResponseFormatVersion );
+													String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1006, ServiceLang.Translate( "Failed to connect to database name: [%s], see the log file for more details", ConfigDBConnection.strName ), true, strResponseFormatVersion, ConfigDBConnection.strDateTimeFormat, ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 													Response.getWriter().print( strResponseBuffer );
 
 												}
@@ -907,7 +908,7 @@ public class CSystemStartSession extends CAbstractService {
 												Response.setContentType( ResponseFormat.getContentType() );
 												Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-												String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1005, ServiceLang.Translate( "Failed to connect to database name: [%s], see the log file for more details", ConfigDBConnection.strName ), true, strResponseFormatVersion );
+												String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1005, ServiceLang.Translate( "Failed to connect to database name: [%s], see the log file for more details", ConfigDBConnection.strName ), true, strResponseFormatVersion, ConfigDBConnection.strDateTimeFormat, ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 												Response.getWriter().print( strResponseBuffer );
 
 											}
@@ -940,7 +941,7 @@ public class CSystemStartSession extends CAbstractService {
 										Response.setContentType( ResponseFormat.getContentType() );
 										Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-										String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1004, ServiceLang.Translate( "The database engine name [%s] version [%s] not found", ConfigDBConnection.strEngine, ConfigDBConnection.strEngineVersion ), true, strResponseFormatVersion );
+										String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1004, ServiceLang.Translate( "The database engine name [%s] version [%s] not found", ConfigDBConnection.strEngine, ConfigDBConnection.strEngineVersion ), true, strResponseFormatVersion, ConfigDBConnection.strDateTimeFormat, ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 										Response.getWriter().print( strResponseBuffer );
 
 									}
@@ -965,7 +966,7 @@ public class CSystemStartSession extends CAbstractService {
 								Response.setContentType( ResponseFormat.getContentType() );
 								Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-								String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1003, ServiceLang.Translate( "The batabase connection name [%s] not found", strPostDBConnection ), true, strResponseFormatVersion );
+								String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1003, ServiceLang.Translate( "The database connection name [%s] not found", strPostDBConnection ), true, strResponseFormatVersion, OwnerConfig.getConfigValue( ConstantsSystemStartSession._Global_DateTime_Format ), OwnerConfig.getConfigValue( ConstantsSystemStartSession._Global_Date_Format ), OwnerConfig.getConfigValue( ConstantsSystemStartSession._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 								Response.getWriter().print( strResponseBuffer );
 
 							}
@@ -988,7 +989,7 @@ public class CSystemStartSession extends CAbstractService {
 							Response.setContentType( ResponseFormat.getContentType() );
 							Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-							String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1002, ServiceLang.Translate( "The session already started" ), true, strResponseFormatVersion );
+							String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1002, ServiceLang.Translate( "The session already started" ), true, strResponseFormatVersion, OwnerConfig.getConfigValue( ConstantsSystemStartSession._Global_DateTime_Format ), OwnerConfig.getConfigValue( ConstantsSystemStartSession._Global_Date_Format ), OwnerConfig.getConfigValue( ConstantsSystemStartSession._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 							Response.getWriter().print( strResponseBuffer );
 
 						}
@@ -1011,7 +1012,7 @@ public class CSystemStartSession extends CAbstractService {
 						Response.setContentType( ResponseFormat.getContentType() );
 						Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-						String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1001, ServiceLang.Translate( "The [%s] parameter is required for service and was not sent or its contents is empty", ConstantsSystemStartSessionTags._RequestDBConnection ), true, strResponseFormatVersion );
+						String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1001, ServiceLang.Translate( "The [%s] parameter is required for service and was not sent or its contents is empty", ConstantsSystemStartSession._Request_DBConnection_Name ), true, strResponseFormatVersion, OwnerConfig.getConfigValue( ConstantsSystemStartSession._Global_DateTime_Format ), OwnerConfig.getConfigValue( ConstantsSystemStartSession._Global_Date_Format ), OwnerConfig.getConfigValue( ConstantsSystemStartSession._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 						Response.getWriter().print( strResponseBuffer );
 
 					}

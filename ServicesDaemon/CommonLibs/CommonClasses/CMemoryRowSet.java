@@ -273,6 +273,9 @@ public class CMemoryRowSet {
 				for ( int intIndexMetaData = 1; intIndexMetaData <= MetaData.getColumnCount(); intIndexMetaData++ ) {
 
 					String strFieldName = MetaData.getColumnName( intIndexMetaData );
+
+					if ( strFieldName == null || strFieldName.isEmpty() == true )
+						strFieldName = MetaData.getColumnLabel( intIndexMetaData );
 					
 					if ( strFieldsNames == null || strFieldsNames.contains( strFieldName ) ) {
 					
@@ -301,7 +304,7 @@ public class CMemoryRowSet {
 
 						if ( bAddField ) {
 
-							bResult = this.addField( MetaData.getColumnName( intIndexMetaData ), MetaData.getColumnType( intIndexMetaData ), MetaData.getColumnTypeName( intIndexMetaData ), MetaData.getColumnDisplaySize( intIndexMetaData ), MetaData.getColumnLabel( intIndexMetaData ) );
+							bResult = this.addField( strFieldName, MetaData.getColumnType( intIndexMetaData ), MetaData.getColumnTypeName( intIndexMetaData ), MetaData.getColumnDisplaySize( intIndexMetaData ), MetaData.getColumnLabel( intIndexMetaData ) );
 
 						}
 
@@ -381,6 +384,9 @@ public class CMemoryRowSet {
 
 					String strColumnName = MetaData.getColumnName( intIndexColumn );
 					
+					if ( strColumnName == null || strColumnName.isEmpty() == true )
+						strColumnName = MetaData.getColumnLabel( intIndexColumn );
+
 					CMemoryFieldData Field = this.getFieldByNameAndType( strColumnName, MetaData.getColumnType( intIndexColumn ) );
 
 			        CachedColumnsName.put( strColumnName, Field );
@@ -391,7 +397,12 @@ public class CMemoryRowSet {
 
 					for ( int intIndexColumn = 1; intIndexColumn <= MetaData.getColumnCount(); intIndexColumn++ ) {
 
-						CMemoryFieldData Field = CachedColumnsName.get( MetaData.getColumnName( intIndexColumn ) ); //this.getFieldByNameAndType( MetaData.getColumnName( intIndexColumn ), MetaData.getColumnType( intIndexColumn ) );
+						String strColumnName = MetaData.getColumnName( intIndexColumn );
+								
+						if ( strColumnName == null || strColumnName.isEmpty() == true )
+							strColumnName = MetaData.getColumnLabel( intIndexColumn );
+						
+						CMemoryFieldData Field = CachedColumnsName.get( strColumnName ); //this.getFieldByNameAndType( MetaData.getColumnName( intIndexColumn ), MetaData.getColumnType( intIndexColumn ) );
 
 						if ( Field != null ) {
 
@@ -1357,6 +1368,22 @@ public class CMemoryRowSet {
 		if ( MemoryField != null ) {
 			
 			bResult = MemoryField.setFieldDataToPreparedStatement( NamedPreparedStatement, strPreparedStatementFieldName, intIndexRow, bUseLastRowIfRowNotExits, Logger, Lang );
+			
+		}
+		
+		return bResult;
+		
+	}
+	
+	public boolean setFieldDataToCallableStatement( CNamedCallableStatement NamedCallableStatement, String strCallableStatementFieldName, String strFieldName, int intIndexRow, boolean bUseLastRowIfRowNotExits, CExtendedLogger Logger, CLanguage Lang ) {
+		
+		boolean bResult = false;
+		
+		CMemoryFieldData MemoryField = this.getFieldByName( strFieldName );
+		
+		if ( MemoryField != null ) {
+			
+			bResult = MemoryField.setFieldDataToCallableStatement( NamedCallableStatement, strCallableStatementFieldName, intIndexRow, bUseLastRowIfRowNotExits, Logger, Lang );
 			
 		}
 		

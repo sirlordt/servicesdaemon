@@ -7,8 +7,10 @@ import java.util.HashMap;
 import javax.sql.rowset.CachedRowSet;
 
 import AbstractService.CAbstractService;
+import CommonClasses.CLanguage;
 import CommonClasses.CMemoryRowSet;
 import CommonClasses.CResultSetResult;
+import ExtendedLogger.CExtendedLogger;
 
 public class CJSONResponseFormat extends CAbstractResponseFormat {
 
@@ -34,14 +36,20 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
 	@Override
 	public String getContentType() {
 
-    	return OwnerConfig.getConfigValue( "strJSON_ContentType" );
+		if ( OwnerConfig != null )
+			return OwnerConfig.getConfigValue( ConstantsResponseFormat._JSON_ContentType );
+		else
+			return "";
 	
 	}
 
 	@Override
 	public String getCharacterEncoding() {
 
-    	return OwnerConfig.getConfigValue( "strJSON_CharSet" );
+		if ( OwnerConfig != null )
+			return OwnerConfig.getConfigValue( ConstantsResponseFormat._JSON_CharSet );
+		else
+			return "";
 	
 	}
 
@@ -54,52 +62,52 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
     }
 
 	@Override
-	public String EnumerateServices( HashMap<String, CAbstractService> RegisteredServices, String strVersion ) {
+	public String EnumerateServices( HashMap<String, CAbstractService> RegisteredServices, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String FormatResultSet(ResultSet ResultSet, String strVersion) {
+	public String FormatResultSet( ResultSet ResultSet, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String FormatResultsSets(ArrayList<ResultSet> ResultsSest,
-			String strVersion) {
+	public String FormatResultsSets( ArrayList<ResultSet> ResultsSest, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String FormatResultsSets(
-			ArrayList<CResultSetResult> ResultsSetsList, String strVersion,
-			int intDummyParam) {
+	public String FormatResultSet( CResultSetResult ResultSetResult, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String FormatMemoryRowSet(CMemoryRowSet MemoryRowSet,
-			String strVersion) {
+	public String FormatResultsSets( ArrayList<CResultSetResult> ResultsSetsList, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String FormatMemoryRowSets(ArrayList<CMemoryRowSet> MemoryRowSets,
-			String strVersion) {
+	public String FormatMemoryRowSet( CMemoryRowSet MemoryRowSet, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String FormatSimpleMessage(String strSecurityToken,
-			String strTransactionID, int intCode, String strDescription,
-			boolean bAttachToError, String strVersion) {
+	public String FormatMemoryRowSets( ArrayList<CMemoryRowSet> MemoryRowSets, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public String FormatSimpleMessage( String strSecurityToken, String strTransactionID, int intCode, String strDescription, boolean bAttachToError, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }

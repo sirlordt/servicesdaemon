@@ -14,14 +14,17 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import Utilities.Utilities;
+import net.maindataservices.Utilities;
+
 
 import AbstractService.CAbstractService;
 import CommonClasses.CAbstractConfigLoader;
+import CommonClasses.CLanguage;
 import CommonClasses.CMemoryRowSet;
 import CommonClasses.CResultSetResult;
 import CommonClasses.CServicesDaemonConfig;
 import DBServicesManager.DefaultConstantsDBServicesManager;
+import ExtendedLogger.CExtendedLogger;
 
 public abstract class CAbstractResponseFormat {
 
@@ -149,12 +152,13 @@ public abstract class CAbstractResponseFormat {
     public abstract CAbstractResponseFormat getNewInstance();
     public abstract String getContentType();
     public abstract String getCharacterEncoding();
-    public abstract String EnumerateServices( HashMap<String,CAbstractService> RegisteredServices, String strVersion );
-    public abstract String FormatResultSet( ResultSet ResultSet, String strVersion );
-    public abstract String FormatResultsSets( ArrayList<ResultSet> ResultsSest, String strVersion );
-    public abstract String FormatResultsSets( ArrayList<CResultSetResult> ResultsSetsList, String strVersion, int intDummyParam );
-    public abstract String FormatMemoryRowSet( CMemoryRowSet MemoryRowSet, String strVersion );
-    public abstract String FormatMemoryRowSets( ArrayList<CMemoryRowSet> MemoryRowSets, String strVersion );
-    public abstract String FormatSimpleMessage( String strSecurityToken, String strTransactionID, int intCode, String strDescription, boolean bAttachToError, String strVersion );
+    public abstract String EnumerateServices( HashMap<String,CAbstractService> RegisteredServices, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang );
+    public abstract String FormatResultSet( ResultSet ResultSet, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang );
+    public abstract String FormatResultsSets( ArrayList<ResultSet> ResultsSest, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang );
+    public abstract String FormatResultSet( CResultSetResult ResultSetResult, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang );
+    public abstract String FormatResultsSets( ArrayList<CResultSetResult> ResultsSetsList, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang, int intDummyParam );
+    public abstract String FormatMemoryRowSet( CMemoryRowSet MemoryRowSet, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang );
+    public abstract String FormatMemoryRowSets( ArrayList<CMemoryRowSet> MemoryRowSets, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang );
+    public abstract String FormatSimpleMessage( String strSecurityToken, String strTransactionID, int intCode, String strDescription, boolean bAttachToError, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang );
 
 }

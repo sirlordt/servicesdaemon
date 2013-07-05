@@ -23,12 +23,14 @@
 
 <entry key="Unkown Macro type [%s], field name [%s], field value [%s]">Tipo del macro desconocido [%s], nombre del campo [%s], valor del campo [%s]</entry>
 <entry key="Unkown SQL field type [%s], field name [%s], field value [%s]">Tipo SQL del campo desconocido [%s], nombre del campo [%s], valor del campo [%s]</entry>
-<entry key="Executing the next SQL statment [%s] index call [%s]">Ejecutando la siguiente instrucción SQL [%s] índice de la llamada [%s]</entry>
+<entry key="Executing the next SQL statement [%s] index call [%s]">Ejecutando la siguiente instrucción SQL [%s] índice de la llamada [%s]</entry>
 <entry key="Sucess to execute the SQL statement">Éxito al ejecutar la instrucción SQL</entry>
 <entry key="Error to execute the SQL statement, see the log file for more details">Error al ejecutar la instrucción SQL, vea el archivo de registro para más detalles</entry>
-<entry key="Success execute the modify sql">Éxito al ejecutar el SQL de modificación</entry>
-<entry key="Fail to execute the modify sql, see the log file for more details">Falló al ejecutar el SQL de modificación, vea el archivo de registro para más detalles</entry>
-<entry key=""></entry>
+<entry key="Error to execute the next SQL statement [%s] index call [%s]">Error al ejecutar la siguiente instrucción SQL [%s] índice de llamada [%s</entry>
+<entry key="Sucess to execute the plain query SQL statement [%s]">Éxito al ejecutar la instrucción de consulta plana SQL [%s]</entry>
+<entry key="Error to execute the plain query SQL statement [%s]">Error al ejecutar la instrucción de consulta plana SQL [%s]</entry>
+<entry key="Sucess to execute the plain SQL statement [%s]">Éxito al ejecutar la instrucción SQL plana [%s]</entry>
+<entry key="Error to execute the plain SQL statement [%s]">Éxito al ejecutar la instrucción SQL plana [%s]</entry>
 <entry key=""></entry>
 <entry key=""></entry>
 <entry key=""></entry>

@@ -14,12 +14,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.maindataservices.Utilities;
+
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import Utilities.Utilities;
-
 
 import CommonClasses.CAbstractConfigLoader;
 import CommonClasses.CClassPathLoader;
@@ -32,6 +31,10 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 
 	protected static CDBServicesManagerConfig DBServicesManagerConfig = null;
 
+	public String strGlobalDateTimeFormat;
+	public String strGlobalDateFormat;
+	public String strGlobalTimeFormat;
+	
 	public String strDBServicesDir;
 	public String strDBDriversDir;
 	public String strDBEnginesDir;
@@ -84,6 +87,10 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 		strDBEnginesDir = DefaultConstantsDBServicesManager.strDefaultRunningPath + DefaultConstantsDBServicesManager.strDefaultDBEnginesDir; //"DBEnginess/";
 		strResponsesFormatsDir = DefaultConstantsDBServicesManager.strDefaultRunningPath + DefaultConstantsDBServicesManager.strDefaultResponsesFormatsDir; //"ResponsesFormats/";
 		
+		strGlobalDateTimeFormat = DefaultConstantsDBServicesManager.strDefaultGlobalDateTimeFormat;
+		strGlobalDateFormat = DefaultConstantsDBServicesManager.strDefaultGlobalDateFormat;
+		strGlobalTimeFormat = DefaultConstantsDBServicesManager.strDefaultGlobalTimeFormat;
+		
 		strDefaultResponseFormat = DefaultConstantsDBServicesManager.strDefaultResponseFormat;
 		strDefaultResponseFormatVersion = DefaultConstantsDBServicesManager.strDefaultResponseFormatVersion;
 
@@ -133,7 +140,7 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 		   
 			if ( ConfigSectionNode.hasAttributes() == true ) {
 		
-				String strAttributesOrder[] = { ConfigXMLTagsDBServicesManager._DBServices_Dir, ConfigXMLTagsDBServicesManager._DBDrivers_Dir, ConfigXMLTagsDBServicesManager._DBEngines_Dir, ConfigXMLTagsDBServicesManager._Responses_Formats_Dir, ConfigXMLTagsDBServicesManager._Default_Response_Format, ConfigXMLTagsDBServicesManager._Default_Response_Format_Version, ConfigXMLTagsServicesDaemon._Response_Request_Method };
+				String strAttributesOrder[] = { ConfigXMLTagsDBServicesManager._Global_Date_Time_Format, ConfigXMLTagsDBServicesManager._Global_Date_Format, ConfigXMLTagsDBServicesManager._Global_Time_Format, ConfigXMLTagsDBServicesManager._DBServices_Dir, ConfigXMLTagsDBServicesManager._DBDrivers_Dir, ConfigXMLTagsDBServicesManager._DBEngines_Dir, ConfigXMLTagsDBServicesManager._Responses_Formats_Dir, ConfigXMLTagsDBServicesManager._Default_Response_Format, ConfigXMLTagsDBServicesManager._Default_Response_Format_Version, ConfigXMLTagsServicesDaemon._Response_Request_Method };
 
 				NamedNodeMap NodeAttributes = ConfigSectionNode.getAttributes();
 
@@ -146,11 +153,89 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 		            	Logger.LogMessage( "1", Lang.Translate( "Node attribute name: [%s]", NodeAttribute.getNodeName() ) );
 		            	Logger.LogMessage( "1", Lang.Translate( "Node attribute value: [%s]", NodeAttribute.getNodeValue() ) );
 						
-						if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsDBServicesManager._DBServices_Dir ) ) {
+						if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsDBServicesManager._Global_Date_Time_Format ) ) {
+							
+							if ( NodeAttribute.getNodeValue() != null ) {
+							
+								if ( NodeAttribute.getNodeValue().trim().isEmpty() == true ) {
+
+									Logger.LogWarning( "-1", Lang.Translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConfigXMLTagsDBServicesManager._Global_Date_Time_Format, this.strGlobalDateTimeFormat ) );
+
+
+								}
+								else if ( Utilities.IsValidDateTimeFormat( this.strGlobalDateTimeFormat.trim(), Logger ) == false ) {
+
+									Logger.LogWarning( "-1", Lang.Translate( "The [%s] attribute value [%s] is no valid date and time format, using the default value [%s]", ConfigXMLTagsDBServicesManager._Global_Date_Time_Format, NodeAttribute.getNodeValue().trim(), this.strGlobalDateTimeFormat ) );
+
+								}
+								else {
+									
+									this.strGlobalDateTimeFormat = NodeAttribute.getNodeValue().trim();
+									
+							        Logger.LogMessage( "1", Lang.Translate( "Runtime config value [%s] changed to: [%s]", "strGlobalDateTimeFormat", this.strGlobalDateTimeFormat ) );
+									
+								}
+
+							}
+							
+						}
+						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsDBServicesManager._Global_Date_Format ) ) {
+							
+							if ( NodeAttribute.getNodeValue() != null ) {
+							
+								if ( NodeAttribute.getNodeValue().trim().isEmpty() == true ) {
+
+									Logger.LogWarning( "-1", Lang.Translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConfigXMLTagsDBServicesManager._Global_Date_Format, this.strGlobalDateFormat ) );
+
+
+								}
+								else if ( Utilities.IsValidDateTimeFormat( this.strGlobalDateFormat.trim(), Logger ) == false ) {
+
+									Logger.LogWarning( "-1", Lang.Translate( "The [%s] attribute value [%s] is no valid date format, using the default value [%s]", ConfigXMLTagsDBServicesManager._Global_Date_Format, NodeAttribute.getNodeValue().trim(), this.strGlobalDateFormat ) );
+
+								}
+								else {
+									
+									this.strGlobalDateFormat = NodeAttribute.getNodeValue().trim();
+									
+							        Logger.LogMessage( "1", Lang.Translate( "Runtime config value [%s] changed to: [%s]", "strGlobalDateFormat", this.strGlobalDateFormat ) );
+									
+								}
+
+							}
+							
+						}
+						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsDBServicesManager._Global_Time_Format ) ) {
+							
+							if ( NodeAttribute.getNodeValue() != null ) {
+							
+								if ( NodeAttribute.getNodeValue().trim().isEmpty() == true ) {
+
+									Logger.LogWarning( "-1", Lang.Translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConfigXMLTagsDBServicesManager._Global_Time_Format, this.strGlobalTimeFormat ) );
+
+
+								}
+								else if ( Utilities.IsValidDateTimeFormat( this.strGlobalDateFormat.trim(), Logger ) == false ) {
+
+									Logger.LogWarning( "-1", Lang.Translate( "The [%s] attribute value [%s] is no valid time format, using the default value [%s]", ConfigXMLTagsDBServicesManager._Global_Time_Format, NodeAttribute.getNodeValue().trim(), this.strGlobalTimeFormat ) );
+
+								}
+								else {
+									
+									this.strGlobalTimeFormat = NodeAttribute.getNodeValue().trim();
+									
+							        Logger.LogMessage( "1", Lang.Translate( "Runtime config value [%s] changed to: [%s]", "strGlobalTimeFormat", this.strGlobalTimeFormat ) );
+									
+								}
+
+							}
+							
+						}
+						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsDBServicesManager._DBServices_Dir ) ) {
 
 							this.strDBServicesDir = NodeAttribute.getNodeValue();
 		
-					        if ( this.strDBServicesDir.isEmpty() == false && new File( this.strDBServicesDir ).isAbsolute() == false ) {
+					        if ( this.strDBServicesDir != null && this.strDBServicesDir.isEmpty() == false && new File( this.strDBServicesDir ).isAbsolute() == false ) {
 
 					        	this.strDBServicesDir = DefaultConstantsDBServicesManager.strDefaultRunningPath + this.strDBServicesDir;
 						        	
@@ -171,7 +256,7 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 
 							this.strDBDriversDir = NodeAttribute.getNodeValue();
 		            		  
-					        if ( this.strDBDriversDir.isEmpty() == false && new File( this.strDBDriversDir ).isAbsolute() == false ) {
+					        if ( this.strDBDriversDir != null && this.strDBDriversDir.isEmpty() == false && new File( this.strDBDriversDir ).isAbsolute() == false ) {
 
 					        	this.strDBDriversDir = DefaultConstantsDBServicesManager.strDefaultRunningPath + this.strDBDriversDir;
 						        	
@@ -186,19 +271,13 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 					        	break;
 						    	
 						    }
-					        else {
-					        	
-					        	//Load class 
-					        	
-					        	
-					        }
 						    
 						}
 						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsDBServicesManager._DBEngines_Dir ) ) {
 
 							this.strDBEnginesDir = NodeAttribute.getNodeValue();
 		            		  
-					        if ( this.strDBEnginesDir.isEmpty() == false && new File( this.strDBEnginesDir ).isAbsolute() == false ) {
+					        if ( this.strDBEnginesDir != null && this.strDBEnginesDir.isEmpty() == false && new File( this.strDBEnginesDir ).isAbsolute() == false ) {
 
 					        	this.strDBEnginesDir = DefaultConstantsDBServicesManager.strDefaultRunningPath + this.strDBEnginesDir;
 						        	
@@ -219,7 +298,7 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 
 							this.strResponsesFormatsDir = NodeAttribute.getNodeValue();
 		            		  
-					        if ( this.strResponsesFormatsDir.isEmpty() == false && new File( this.strResponsesFormatsDir ).isAbsolute() == false ) {
+					        if ( this.strResponsesFormatsDir != null && this.strResponsesFormatsDir.isEmpty() == false && new File( this.strResponsesFormatsDir ).isAbsolute() == false ) {
 	                        
 					        	this.strResponsesFormatsDir = DefaultConstantsDBServicesManager.strDefaultRunningPath + this.strResponsesFormatsDir;
 						        	
@@ -238,7 +317,7 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 						}
 						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsDBServicesManager._Default_Response_Format ) ) {
 						
-					        if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
+					        if ( NodeAttribute.getNodeValue() != null && NodeAttribute.getNodeValue().isEmpty() == false ) {
 
 					        	this.strDefaultResponseFormat = NodeAttribute.getNodeValue();
 						    	
@@ -249,14 +328,14 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 						    }
 					        else {
 					        	
-						        Logger.LogWarning( "-1", Lang.Translate( "The [%s] attribute cannot empty string, using the default value [%s]", "strDefaultResponseFormat", this.strDefaultResponseFormat ) );
+						        Logger.LogWarning( "-1", Lang.Translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConfigXMLTagsDBServicesManager._Default_Response_Format, this.strDefaultResponseFormat ) );
 					        	
 					        }
 					        
 						}
 						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsDBServicesManager._Default_Response_Format_Version ) ) {
 							
-					        if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
+					        if ( NodeAttribute.getNodeValue() != null && NodeAttribute.getNodeValue().isEmpty() == false ) {
 
 					        	this.strDefaultResponseFormatVersion = NodeAttribute.getNodeValue();
 						    	
@@ -274,7 +353,7 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 						}
 						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsServicesDaemon._Response_Request_Method ) ) {
 							
-					        if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
+					        if ( NodeAttribute.getNodeValue() != null && NodeAttribute.getNodeValue().isEmpty() == false ) {
 
 					        	if ( NodeAttribute.getNodeValue().trim().toLowerCase().equals( ConfigXMLTagsServicesDaemon._Request_Method_ANY.toLowerCase() ) ) {
 
@@ -317,7 +396,22 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 		            }
 		            else {
 
-				        if ( strAttributesOrder[ intAttributesIndex ].equals( ConfigXMLTagsDBServicesManager._DBServices_Dir ) ) {
+				        if ( strAttributesOrder[ intAttributesIndex ].equals( ConfigXMLTagsDBServicesManager._Global_Date_Time_Format ) ) {
+		            		
+					        Logger.LogWarning( "-1", Lang.Translate( "The [%s] attribute not found, using the default value [%s]", ConfigXMLTagsDBServicesManager._Global_Date_Time_Format, this.strGlobalDateTimeFormat ) );
+		            		
+		            	}
+				        else if ( strAttributesOrder[ intAttributesIndex ].equals( ConfigXMLTagsDBServicesManager._Global_Date_Format ) ) {
+		            		
+					        Logger.LogWarning( "-1", Lang.Translate( "The [%s] attribute not found, using the default value [%s]", ConfigXMLTagsDBServicesManager._Global_Date_Format, this.strGlobalDateFormat ) );
+		            		
+		            	}
+				        else if ( strAttributesOrder[ intAttributesIndex ].equals( ConfigXMLTagsDBServicesManager._Global_Time_Format ) ) {
+		            		
+					        Logger.LogWarning( "-1", Lang.Translate( "The [%s] attribute not found, using the default value [%s]", ConfigXMLTagsDBServicesManager._Global_Time_Format, this.strGlobalTimeFormat ) );
+		            		
+		            	}
+				        else if ( strAttributesOrder[ intAttributesIndex ].equals( ConfigXMLTagsDBServicesManager._DBServices_Dir ) ) {
 		            		
 					        Logger.LogWarning( "-1", Lang.Translate( "The [%s] attribute not found, using the default value [%s]", ConfigXMLTagsDBServicesManager._DBServices_Dir, this.strDBServicesDir ) );
 
@@ -1091,24 +1185,30 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
     @Override
 	public String getConfigValue( String strConfigKey ) {
 		
-		if ( strConfigKey.equals( "strXML_DataPacket_CharSet" ) )
-		   return this.strXML_DataPacket_CharSet;
-		else if ( strConfigKey.equals( "strXML_DataPacket_ContentType" ) )
+		if ( strConfigKey.equals( "XML_DataPacket_CharSet" ) )
+			return this.strXML_DataPacket_CharSet;
+		else if ( strConfigKey.equals( "XML_DataPacket_ContentType" ) )
 			return this.strXML_DataPacket_ContentType;
-		else if ( strConfigKey.equals( "strJavaXML_WebRowSet_CharSet" ) )
+		else if ( strConfigKey.equals( "JavaXML_WebRowSet_CharSet" ) )
 			return this.strJavaXML_WebRowSet_CharSet;  
-		else if ( strConfigKey.equals( "strJavaXML_WebRowSet_ContentType" ) )
+		else if ( strConfigKey.equals( "JavaXML_WebRowSet_ContentType" ) )
 			return this.strJavaXML_WebRowSet_ContentType;  
-		else if ( strConfigKey.equals( "strJSON_CharSet" ) )
+		else if ( strConfigKey.equals( "JSON_CharSet" ) )
 			return this.strJSON_CharSet;  
-		else if ( strConfigKey.equals( "strJSON_ContentType" ) )
+		else if ( strConfigKey.equals( "JSON_ContentType" ) )
 			return this.strJSON_ContentType;  
-		else if ( strConfigKey.equals( "strCSV_CharSet" ) )
+		else if ( strConfigKey.equals( "CSV_CharSet" ) )
 			return this.strCSV_CharSet;  
-		else if ( strConfigKey.equals( "strCSV_ContentType" ) )
+		else if ( strConfigKey.equals( "CSV_ContentType" ) )
 			return this.strCSV_ContentType;  
+		else if ( strConfigKey.equals( "Global_DateTime_Format" ) )
+			return this.strGlobalDateTimeFormat;  
+		else if ( strConfigKey.equals( "Global_Date_Format" ) )
+			return this.strGlobalDateFormat;  
+		else if ( strConfigKey.equals( "Global_Time_Format" ) )
+			return this.strGlobalTimeFormat;  
 		else	
-    	   return "";
+			return "";
 		
 	}
 	

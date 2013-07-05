@@ -8,11 +8,12 @@
  * Contributors:
  *     SirLordT <sirlordt@gmail.com> - initial API and implementation
  ******************************************************************************/
-/**
- * 
- */
-/**
- * @author sirlordt
- *
- */
-package Utilities;
+package net.maindataservices;
+
+class Base64Shared {
+
+   static final String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+   static final char pad = '=';
+
+}

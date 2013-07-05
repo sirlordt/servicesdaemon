@@ -43,6 +43,7 @@ public interface JavaXMLWebRowSetTags {
 	public final static String _XML_StructParamDescription           = "ParamDescription";
 	public final static int _XML_StructParamDescriptionLength        = 255;
 	
+	public final static String _XML_StructSQLOperationAffectedRows   = "SQLOperationAffectedRows";
 	public final static String _XML_StructSQLOperationCode           = "SQLOperationCode";
 	public final static String _XML_StructSQLOperationDescription    = "SQLOperationDescription";
 	public final static int _XML_StructSQLOperationDescriptionLength = 255;

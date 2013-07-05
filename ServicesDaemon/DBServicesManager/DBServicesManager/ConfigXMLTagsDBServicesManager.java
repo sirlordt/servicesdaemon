@@ -12,6 +12,10 @@ package DBServicesManager;
 
 public interface ConfigXMLTagsDBServicesManager {
 
+	public static final String _Global_Date_Time_Format = "Global_Date_Time_Format";
+	public static final String _Global_Date_Format = "Global_Date_Format";
+	public static final String _Global_Time_Format = "Global_Time_Format";
+	
 	public static final String _DBServices_Dir = "DBServices_Dir";
 	public static final String _DBDrivers_Dir = "DBDrivers_Dir";
 	public static final String _DBEngines_Dir = "DBEngines_Dir";
