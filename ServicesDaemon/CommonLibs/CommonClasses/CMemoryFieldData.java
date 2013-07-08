@@ -109,7 +109,7 @@ public class CMemoryFieldData {
 				
 				if ( ChildNode.strValue.isEmpty() == false ) {
 					
-					if ( ChildNode.strValue.equals( NamesSQLTypes._NULL ) ) {
+					if ( ChildNode.strValue.trim().toLowerCase().equals( NamesSQLTypes._NULL ) ) {
 						
 						this.addNull();
 						
@@ -119,6 +119,11 @@ public class CMemoryFieldData {
 						this.addData( ChildNode.strValue, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
 						
 					}
+					
+				}
+				else {
+					
+					this.addNull();
 					
 				}
 				
@@ -260,83 +265,92 @@ public class CMemoryFieldData {
 	public void addData( String strData, String strDateFormat, String strTimeFormat, String strDateTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		try {
-
-			switch ( intSQLType ) {
-
-				case Types.INTEGER: { this.addData( Integer.parseInt( strData ) ); break; }
-				case Types.BIGINT: { this.addData( Long.parseLong( strData ) ); break; }
-				case Types.SMALLINT: { this.addData( Short.parseShort( strData ) ); break; }
-				case Types.VARCHAR: 
-				case Types.CHAR: { this.addData( (String) strData ); break; }
-				case Types.BOOLEAN: { this.addData( Boolean.parseBoolean( strData ) ); break; }
-				case Types.BLOB: {
-
-									//BASE64Decoder decoder = new BASE64Decoder();
-									//byte[] decodedBytes = decoder.decodeBuffer( strData );
-				
-									//java.sql.Blob BlobData = new SerialBlob( decodedBytes ); 
-									java.sql.Blob BlobData = new SerialBlob( Base64.decode( strData.getBytes() ) );
-				
-									this.addData( BlobData );
-					                
-									break;
-				
-								 }
-				case Types.DATE: { 
-					
-								    SimpleDateFormat DateFormat = new SimpleDateFormat( strDateFormat );
-									
-									java.util.Date D = DateFormat.parse( strData );
-									
-									this.addData( D ); 
-		
-									break; 
-					              
-				                 }
-				case Types.TIME: { 
-					
-									SimpleDateFormat TimeFormat = new SimpleDateFormat( strTimeFormat );
-									
-									java.util.Date T = TimeFormat.parse( strData );
-		
-									this.addData( T ); 
-									
-									break; 
-									
-								}
-				case Types.TIMESTAMP: { 
-					
-										   SimpleDateFormat DateTimeFormat = new SimpleDateFormat( strDateTimeFormat );
-											
-										   java.util.Date DateTime = DateTimeFormat.parse( strData );
 			
-										   this.addData( DateTime ); 
-									
-										   break; 
-										
-									  }
-				case Types.FLOAT: 
-				case Types.DECIMAL: { this.addData( Float.parseFloat( strData ) ); break; }
-				case Types.DOUBLE: { this.addData( Double.parseDouble( strData ) ); break; }
+			if ( strData != null && strData.isEmpty() == false && strData.toLowerCase().equals( "null" ) == false ) {
 
-				default:{
+				switch ( intSQLType ) {
+	
+					case Types.INTEGER: { this.addData( Integer.parseInt( strData ) ); break; }
+					case Types.BIGINT: { this.addData( Long.parseLong( strData ) ); break; }
+					case Types.SMALLINT: { this.addData( Short.parseShort( strData ) ); break; }
+					case Types.VARCHAR: 
+					case Types.CHAR: { this.addData( (String) strData ); break; }
+					case Types.BOOLEAN: { this.addData( Boolean.parseBoolean( strData ) ); break; }
+					case Types.BLOB: {
+	
+										//BASE64Decoder decoder = new BASE64Decoder();
+										//byte[] decodedBytes = decoder.decodeBuffer( strData );
+					
+										//java.sql.Blob BlobData = new SerialBlob( decodedBytes ); 
+										java.sql.Blob BlobData = new SerialBlob( Base64.decode( strData.getBytes() ) );
+					
+										this.addData( BlobData );
+						                
+										break;
+					
+									 }
+					case Types.DATE: { 
+						
+									    SimpleDateFormat DateFormat = new SimpleDateFormat( strDateFormat );
+										
+										java.util.Date D = DateFormat.parse( strData );
+										
+										this.addData( D ); 
+			
+										break; 
+						              
+					                 }
+					case Types.TIME: { 
+						
+										SimpleDateFormat TimeFormat = new SimpleDateFormat( strTimeFormat );
+										
+										java.util.Date T = TimeFormat.parse( strData );
+			
+										this.addData( T ); 
+										
+										break; 
+										
+									}
+					case Types.TIMESTAMP: { 
+						
+											   SimpleDateFormat DateTimeFormat = new SimpleDateFormat( strDateTimeFormat );
+												
+											   java.util.Date DateTime = DateTimeFormat.parse( strData );
 				
-					if ( Logger != null ) {
+											   this.addData( DateTime ); 
+										
+											   break; 
+											
+										  }
+					case Types.FLOAT: 
+					case Types.DECIMAL: { this.addData( Float.parseFloat( strData ) ); break; }
+					case Types.DOUBLE: { this.addData( Double.parseDouble( strData ) ); break; }
+	
+					default:{
+					
+						if ( Logger != null ) {
+							
+							if ( Lang != null )
+							    Logger.LogWarning( "-1", Lang.Translate( "Unknown SQL data type [%s]", Integer.toString( intSQLType ) ) );
+							else
+							    Logger.LogWarning( "-1", String.format( "Unknown SQL data type [%s]", Integer.toString( intSQLType ) ) );
+							
+							
+						}
 						
-						if ( Lang != null )
-						    Logger.LogWarning( "-1", Lang.Translate( "Unknown SQL data type [%s]", Integer.toString( intSQLType ) ) );
-						else
-						    Logger.LogWarning( "-1", String.format( "Unknown SQL data type [%s]", Integer.toString( intSQLType ) ) );
-						
+						break;
 						
 					}
 					
-					break;
-					
 				}
+
+			}
+			else {
+				
+				this.addNull();
 				
 			}
-
+				
 		}
 		catch ( Exception Ex ) {
 

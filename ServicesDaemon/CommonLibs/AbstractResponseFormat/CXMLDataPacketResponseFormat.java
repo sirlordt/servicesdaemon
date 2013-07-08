@@ -142,7 +142,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
     }
 
-    public Document BuildBasicResponseXMLStruct( String strVersion, CExtendedLogger Logger, CLanguage Lang ) {
+    public Document BuildBasicResponseXMLStruct( String strVersion, boolean  bAttachErrorNode, CExtendedLogger Logger, CLanguage Lang ) {
 
         Document XMLDocument = null;
 
@@ -175,16 +175,19 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
                Element ErrorsSection = XMLDocument.createElement( XMLDataPacketTags._Errors );
                ErrorsSection.setAttribute( XMLDataPacketTags._ErrorCount, "0" );
 
-               Element Error = XMLDocument.createElement( XMLDataPacketTags._Error );
-               Error.setAttribute( XMLDataPacketTags._XML_StructCode , "0" );
-               Error.setAttribute( XMLDataPacketTags._XML_StructDescription , "" );
+               if ( bAttachErrorNode == true ) {
+
+            	   Element Error = XMLDocument.createElement( XMLDataPacketTags._Error );
+            	   Error.setAttribute( XMLDataPacketTags._XML_StructCode , "0" );
+            	   Error.setAttribute( XMLDataPacketTags._XML_StructDescription , "" );
+                   ErrorsSection.appendChild( Error );
                
-               ErrorsSection.appendChild( Error );
+               }
                
                DataPacketSection.appendChild( ErrorsSection );
 
             }
-            else {
+            else if ( bAttachErrorNode == true ) {
 
                Element ErrorSection = XMLDocument.createElement( XMLDataPacketTags._Error );
                ErrorSection.setAttribute( XMLDataPacketTags._XML_StructCode , "0" );
@@ -204,8 +207,13 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
         }
 
-
         return XMLDocument;
+    	
+    }
+    
+    public Document BuildBasicResponseXMLStruct( String strVersion, CExtendedLogger Logger, CLanguage Lang ) {
+
+    	return BuildBasicResponseXMLStruct( strVersion, true, Logger, Lang );
 
     }
 
@@ -352,7 +360,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     
     public Document BuildXMLFieldDefinedStruct( ArrayList<CSimpleXMLFieldDefinition> FieldDefinitions, String strVersion, CExtendedLogger Logger, CLanguage Lang ) {
 
-        Document XMLDocument = BuildBasicResponseXMLStruct( strVersion, Logger, Lang );
+        Document XMLDocument = BuildBasicResponseXMLStruct( strVersion, false, Logger, Lang );
 
         try {
 
@@ -1490,7 +1498,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
         		if ( ResultSetMetaData != null ) {
 		        
-        			XMLDocument = this.BuildBasicResponseXMLStruct( strVersion, Logger, Lang );
+        			XMLDocument = this.BuildBasicResponseXMLStruct( strVersion, false, Logger, Lang );
         			
         			ResultSetMetaData DataSetMetaData = ResultSetMetaData.getMetaData();
 

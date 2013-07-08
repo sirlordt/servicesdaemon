@@ -154,6 +154,38 @@ end ^
 
 set term ; ^
 
+set term ^ ;
+
+create or alter procedure SPGETGROUPS (
+    FORIDGROUP integer)
+returns (
+    IDGROUP integer,
+    DESCRIPTION varchar(50))
+as
+begin
+  /* Procedure Text */
+  For Select A.IdGroup, A.Description from tblGroups A Where :ForIdGroup Is Null Or A.IdGroup = :ForIdGroup Into :IdGroup, :Description Do
+  Begin
+    Suspend;
+  End
+
+end^
+
+set term ; ^
+
+set term ^ ;
+
+create or alter procedure SPSETGROUPS (
+    IDGROUP integer,
+    DESCRIPTION varchar(50))
+as
+begin
+  /* Procedure Text */
+  Insert Into tblGroups(IdGroup,Description) Values(:IdGroup,:Description);
+  --suspend;
+end^
+
+set term ; ^
 
 /** Insert basic data **/
 

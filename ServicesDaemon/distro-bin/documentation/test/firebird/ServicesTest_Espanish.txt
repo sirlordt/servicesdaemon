@@ -1,6 +1,18 @@
 Pruebas a realizar:
 
-Desde linux usa el comando isql-fb desde windows usa el isql
+Para crear la base de datos inicial en firebird desde linux usa el sisguiente comando:
+
+Linux:
+#isql-fb -input FirebirdTestDB.sql
+
+Windows:
+#isql -input FirebirdTestDB.sql
+
+Nota 1: El archivo .sql asume que la clave de su usuario sysdba es masterkey si eso no es correcto edite el archivo para coincidir con su contraseña, configurada para su servidor firebird 
+
+Nota 2: El archivo FirebirdTestDB.sql lo encontrarás en la carpeta documentation, dentro de la carpeta distro-bin
+
+Luego de creada la base de datos de prueba, desde linux usa el comando isql-fb desde windows usa el isql
 
 Luego usa el siguiente comando en el pront SQL>  coloca esto CONNECT 'localhost:FirebirdTestDB' USER 'SYSDBA' PASSWORD 'masterkey'; 
 
@@ -39,7 +51,7 @@ Observa que unos de los parámetros es el número que obtienes en el servicio an
 
 Pruebas de Consultas (Select)
 
-Nota: Para poder continuar las pruebas toma nota del campo TransactionID, ese número cambia constatemente para inicio de trasaccción, para este caso es 5684949502159010901
+Nota: Para poder continuar las pruebas toma nota del campo TransactionID, ese número cambia constantemente para inicio de trasaccción, para este caso es 5684949502159010901
 
 Prueba 4 Caso 1 (Ejecutar una consulta parametrizado sobre DB1), para ver la salida del servicio vea el archivo test4_service_output_case1.xml
 
@@ -155,5 +167,209 @@ BLOB display set to subtype 1. This BLOB: subtype = 0
 
 Nota 4: La característica de enviar blob se debe usar con cuidado solo la he probado para archivo de 100kb, que codificado en base64 es un poco más de 100kb casi 123kb, no se que pasé si envia por lo menos un archivo de 1mb por ejemplo, si algún valiente desea hacer la prueba pues la hace y me avisa como le fue.
 
+Prueba 7 Caso 5 (Ejecutar una inserción parametrizada, sobre DB1), para ver la salida del servicio vea el archivo test7_service_output_case5.xml
 
+ServiceName=System.Execute.SQL
+SecurityTokenID=2516928058540951569
+TransactionID=5684949502159010901
+SQL=Insert Into tblGenericData(Id,Data1,Data2) Values([paramvalue]Id[/paramvalue],[paramvalue]Data1[/paramvalue],[paramvalue]Data2[/paramvalue])
+Id=[array datatype="integer"] [value]1000[/value] [value]NULL[/value] [/array]
+Data1=[array datatype="varchar"] [value]Data Test Id:1000[/value] [value]NULL[/value] [/array]
+Data2=[array datatype="varchar"] [value]NULL[/value] [value]Data Test Id:Auto[/value] [/array]
 
+Pruebas de Actualización (Update)
+
+Pre Nota 1: Para está series de prueba e tenido que iniciar una nueva sesión y una nueva transacción por eso el número es distinto, esto es motivado a que se fue la corriente electrica y mi laptop no tiene bateria para pasar más de 15 minutos sin suministro eléctrico
+
+Prueba 8 Caso 1 (Ejecutar una modificación plana, sin parámetros, sobre DB1), para ver la salida del servicio vea el archivo test8_service_output_case1.xml
+
+ServiceName=System.Execute.SQL
+SecurityTokenID=6313480527295389617
+TransactionID=6228182853220312979
+SQL=Update tblGroups Set Description='test group2 modified' Where IdGroup=2
+
+Nota 1: La modificación no se materializa en la tabla hasta aplicar un commit llamando al servicios System.Commit.Transaction de la siguiente manera
+
+ServiceName=System.Commit.Transaction
+SecurityTokenID=6313480527295389617
+TransactionID=6228182853220312979
+
+Nota 2: Para verificar que se modificó correctamente puedes usar la siguiente llamada al servicio System.Execute.SQL
+
+ServiceName=System.Execute.SQL
+SecurityTokenID=6313480527295389617
+TransactionID=6228182853220312979
+SQL=Select * From tblGroups Where IdGroup=2
+
+Prueba 8 Caso 2 (Ejecutar una modificación parametrizada, sobre DB1), para ver la salida del servicio vea el archivo test8_service_output_case2.xml
+
+ServiceName=System.Execute.SQL
+SecurityTokenID=6313480527295389617
+TransactionID=6228182853220312979
+SQL=Update tblGroups Set Description=[paramvalue]Description[/paramvalue] Where IdGroup=[paramvalue]IdGroup[/paramvalue]
+Description=[array datatype="varchar"] [value]test group4 modified[/value] [value]test group5 modified[/value] [/array]
+IdGroup=[array datatype="integer"] [value]3[/value] [value]4[/value] [/array]
+
+Nota 1: La modificación no se materializa en la tabla hasta aplicar un commit llamando al servicios System.Commit.Transaction de la siguiente manera
+
+ServiceName=System.Commit.Transaction
+SecurityTokenID=6313480527295389617
+TransactionID=6228182853220312979
+
+Nota 2: Para verificar que se modificó correctamente puedes usar la siguiente llamada al servicio System.Execute.SQL
+
+ServiceName=System.Execute.SQL
+SecurityTokenID=6313480527295389617
+TransactionID=6228182853220312979
+SQL=Select * From tblGroups Where IdGroup=[paramvalue]IdGroup[/paramvalue]
+IdGroup=[array datatype="integer"] [value]3[/value] [value]4[/value] [/array]
+
+Pruebas de Eliminación (Delete)
+
+Prueba 9 Caso 1 (Ejecutar una eliminación plana, sin parámetros, sobre DB1), para ver la salida del servicio vea el archivo test9_service_output_case1.xml
+
+ServiceName=System.Execute.SQL
+SecurityTokenID=6313480527295389617
+TransactionID=6228182853220312979
+SQL=Delete From tblGenericData Where Id=1
+
+Nota 1: La eliminación no se materializa en la tabla hasta aplicar un commit llamando al servicios System.Commit.Transaction de la siguiente manera
+
+ServiceName=System.Commit.Transaction
+SecurityTokenID=6313480527295389617
+TransactionID=6228182853220312979
+
+Nota 2: Para verificar que se eliminó correctamente puedes usar la siguiente llamada al servicio System.Execute.SQL
+
+ServiceName=System.Execute.SQL
+SecurityTokenID=6313480527295389617
+TransactionID=6228182853220312979
+SQL=Select * From tblGenericData
+
+Prueba 9 Caso 2 (Ejecutar una modificación parametrizada, sobre DB1), para ver la salida del servicio vea el archivo test9_service_output_case2.xml
+
+ServiceName=System.Execute.SQL
+SecurityTokenID=6313480527295389617
+TransactionID=6228182853220312979
+SQL=Delete From tblGenericData Where Id=[paramvalue]Id[/paramvalue]
+Id=[array datatype="integer"] [value]3[/value] [value]5[/value] [/array]
+
+Nota 1: La eliminación no se materializa en la tabla hasta aplicar un commit llamando al servicios System.Commit.Transaction de la siguiente manera
+
+ServiceName=System.Commit.Transaction
+SecurityTokenID=6313480527295389617
+TransactionID=6228182853220312979
+
+Pruebas de llamadas a procedimientos almacenados (Call)
+
+Prueba 10 Case 1 (Ejecutar un procedimiento almacenado con retorno de información y parametrizado, sobre DB1), para ver la salida del servicio vea el archivo test10_service_output_case1.xml
+
+ServiceName=System.Execute.SQL
+SecurityTokenID=6313480527295389617
+TransactionID=6228182853220312979
+SQL=Call spGetGroups([paramvalue]IdGroup[/paramvalue])
+IdGroup=[array datatype="integer"] [value]1[/value] [value]2[/value] [/array]
+
+Prueba 10 Case 1 (Ejecutar un procedimiento almacenado plano con retorno de información, sobre DB1), para ver la salida del servicio vea el archivo test10_service_output_case2.xml
+
+ServiceName=System.Execute.SQL
+SecurityTokenID=6313480527295389617
+TransactionID=6228182853220312979
+SQL=Call spGetGroups(1)
+
+Prueba 10 Case 2 (Ejecutar un procedimiento almacenado plano sin retorno de información, sobre DB1), para ver la salida del servicio vea el archivo test10_service_output_case3.xml
+
+ServiceName=System.Execute.SQL
+SecurityTokenID=6313480527295389617
+TransactionID=6228182853220312979
+SQL=Call spSetGroups(NULL,'Test Callable statement')
+
+Nota 1: El procedimiento almacenado lleva a cabo una inserción que no se materializa en la tabla hasta aplicar un commit llamando al servicios System.Commit.Transaction de la siguiente manera
+
+ServiceName=System.Commit.Transaction
+SecurityTokenID=6313480527295389617
+TransactionID=6228182853220312979
+
+Prueba de llamadas a DDL 
+
+Prueba 11 Caso 1 (Ejecutar un Create plano, no parametrizado, sobre DB1), para ver la salida del servicio vea el archivo test11_service_output_case1.xml
+
+Pre Nota 1: Movilize mi laptop a otro sitio con otra red con distintas IP, por lo que que reinicie el ServiceDaemon y llame de nuevo a System.Start.Transaction y System.Start.Transaction, para obtener nuevos SecurityTokenId y TransactionID.
+
+ServiceName=System.Execute.SQL
+SecurityTokenID=9164928049278459408
+TransactionID=2715893450326737348
+SQL=CREATE TABLE TBLTESTTABLE1( ID INTEGER NOT NULL,  DATA1  VARCHAR(100), DATA2  VARCHAR(100), PRIMARY KEY (id) );
+
+Nota 1: La instrucción DDL lleva a cabo la creación de una tabla que no se materializa hasta aplicar un commit llamando al servicios System.Commit.Transaction de la siguiente manera
+
+ServiceName=System.Commit.Transaction
+SecurityTokenID=6313480527295389617
+TransactionID=6228182853220312979
+
+Prueba 11 Caso 2 (Ejecutar un Alter plano, no paramétrizado, sobre DB1), para ver la salida del servicio vea el archivo test11_service_output_case2.xml
+
+ServiceName=System.Execute.SQL
+SecurityTokenID=9164928049278459408
+TransactionID=2715893450326737348
+SQL=ALTER TABLE TBLTESTTABLE1 ADD DATA3 VarChar(100)
+
+Nota 1: La instrucción DDL lleva a cabo la creación de un campo DATA3 en la tabla que no se materializa hasta aplicar un commit llamando al servicios System.Commit.Transaction de la siguiente manera
+
+ServiceName=System.Commit.Transaction
+SecurityTokenID=6313480527295389617
+TransactionID=6228182853220312979
+
+Prueba 11 Caso 3 (Ejecutar un DROP plano, no paramétrizado, sobre DB1), para ver la salida del servicio vea el archivo test11_service_output_case3.xml
+
+ServiceName=System.Execute.SQL
+SecurityTokenID=9164928049278459408
+TransactionID=2715893450326737348
+SQL=ALTER TABLE TBLTESTTABLE1 DROP DATA3
+
+Nota 1: La instrucción DDL lleva a cabo la eliminación de un campo DATA3 en la tabla que no se materializa hasta aplicar un commit llamando al servicios System.Commit.Transaction de la siguiente manera
+
+ServiceName=System.Commit.Transaction
+SecurityTokenID=6313480527295389617
+TransactionID=6228182853220312979
+
+Prueba 12 Caso 1 (Ejecutar un Create plano, no parametrizado, sobre DB1), para ver la salida del servicio vea el archivo test12_service_output_case1.xml
+
+ServiceName=System.Execute.SQL
+SecurityTokenID=9164928049278459408
+TransactionID=2715893450326737348
+SQL=create or alter procedure SPGETGROUP1 ( FORIDGROUP integer) returns ( IDGROUP integer, DESCRIPTION varchar(50)) as begin  /* Procedure Text */ For Select A.IdGroup, A.Description from tblGroups A Where :ForIdGroup Is Null Or A.IdGroup = :ForIdGroup Into :IdGroup, :Description Do Begin Suspend; End end
+
+Nota 1: La instrucción DDL lleva a cabo la creación de un procedimiento almacenado SPGETGROUP1 que no se materializa hasta aplicar un commit llamando al servicios System.Commit.Transaction de la siguiente manera
+
+ServiceName=System.Commit.Transaction
+SecurityTokenID=6313480527295389617
+TransactionID=6228182853220312979
+
+Prueba 12 Caso 2 (Ejecutar un DROP plano, no parametrizado, sobre DB1), para ver la salida del servicio vea el archivo test12_service_output_case2.xml
+
+ServiceName=System.Execute.SQL
+SecurityTokenID=9164928049278459408
+TransactionID=2715893450326737348
+SQL=DROP PROCEDURE SPGETGROUP1
+
+Nota 1: La instrucción DDL lleva a cabo la eliminación de un procedimiento almacenado SPGETGROUP1 que no se materializa hasta aplicar un commit llamando al servicios System.Commit.Transaction de la siguiente manera
+
+ServiceName=System.Commit.Transaction
+SecurityTokenID=6313480527295389617
+TransactionID=6228182853220312979
+
+Prueba 13 Caso 1 (Ejecutar un ALTER plano, no parametrizado, sobre DB1), para ver la salida del servicio vea el archivo test13_service_output_case1.xml
+
+ServiceName=System.Execute.SQL
+SecurityTokenID=9164928049278459408
+TransactionID=2715893450326737348
+SQL=ALTER SEQUENCE GEN_TBLBLOBDATA_ID RESTART WITH 10
+
+Nota 1: La instrucción DDL lleva a cabo el establecimiento de la secuencia GEN_TBLBLOBDATA_ID a el número 10 que no se materializa hasta aplicar un commit llamando al servicios System.Commit.Transaction de la siguiente manera
+
+ServiceName=System.Commit.Transaction
+SecurityTokenID=6313480527295389617
+TransactionID=6228182853220312979
+
+Nota: las instrucciones Show tables y Describle table no funcionan en el Firebird

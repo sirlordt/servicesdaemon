@@ -34,7 +34,7 @@
   </ERRORS>
 </DATAPACKET>
 
-<!--- Output from call service System.Execute.SQL (Para consultar si se inserto bien el blob valor del campo BLOBDATA debe ser identico al del BlobData de la llamada al System.Execute.SQL de inserción) -->
+<!--- Output from call service System.Execute.SQL (To see if the blob insert either BLOBDATA field value must be identical to the call BlobData System.Execute.SQL the insertion) -->
 
 <?xml version="1.0" encoding="UTF-8"?>
 <DATAPACKET dpversion="1.1">

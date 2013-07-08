@@ -1,0 +1,56 @@
+<!--- Output from call service System.Execute.SQL -->
+
+<?xml version="1.0" encoding="UTF-8"?>
+<DATAPACKET dpversion="1.1">
+    <METADATA>
+        <FIELDS/>
+        <PARAMS rowcount="1"/>
+    </METADATA>
+    <ROWDATA>
+        <ROW AffectedRows="1" Code="1" Description="Éxito al ejecutar la instrucción SQL plana [Delete From tblGenericData Where Id=1]"/>
+    </ROWDATA>
+    <ERRORS errorcount="0"/>
+</DATAPACKET>
+
+<!--- Output from call service System.Commit.Transaction -->
+
+<?xml version="1.0" encoding="UTF-8"?>
+<DATAPACKET dpversion="1.1">
+    <METADATA>
+        <FIELDS>
+            <FIELD attrname="TransactionID" fieldtype="i8"/>
+            <FIELD attrname="Code" fieldtype="i4"/>
+            <FIELD attrname="Description" fieldtype="string" width="255"/>
+        </FIELDS>
+        <PARAMS rowcount="1"/>
+    </METADATA>
+    <ROWDATA>
+        <ROW Code="1" Description="Trasacción aplicada con éxito para el id: [6228182853220312979]" TransactionID="6228182853220312979"/>
+    </ROWDATA>
+    <ERRORS errorcount="0">
+        <ERROR Code="0" Description=""/>
+    </ERRORS>
+</DATAPACKET>
+
+<!--- Output from call service System.Execute.SQL -->
+
+<?xml version="1.0" encoding="UTF-8"?>
+<DATAPACKET dpversion="1.1">
+    <METADATA>
+        <FIELDS>
+            <FIELD attrname="ID" fieldtype="i4"/>
+            <FIELD attrname="DATA1" fieldtype="string" width="100"/>
+            <FIELD attrname="DATA2" fieldtype="string" width="100"/>
+        </FIELDS>
+        <PARAMS rowcount="4"/>
+    </METADATA>
+    <ROWDATA>
+        <ROW DATA1="DataB1" DATA2="DataB2" ID="2"/>
+        <ROW DATA1="DataC1" DATA2="DataC2" ID="3"/>
+        <ROW DATA1="Data Test Id:1000" DATA2="" ID="1000"/>
+        <ROW DATA1="" DATA2="Data Test Id:Auto" ID="5"/>
+    </ROWDATA>
+    <ERRORS errorcount="0">
+        <ERROR Code="0" Description=""/>
+    </ERRORS>
+</DATAPACKET>

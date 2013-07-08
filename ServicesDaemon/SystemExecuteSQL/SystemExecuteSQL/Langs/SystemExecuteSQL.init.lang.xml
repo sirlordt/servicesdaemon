@@ -11,10 +11,11 @@
 <entry key="Reading XML node filter: [%s]">Leyendo nodo XML del filtro: [%s]</entry>
 
 <entry key="The database connection semaphore not found for transaction id: [%s]">El semáforo para la conexión de base de datos no fue encontrado para el id de transacción: [%s]</entry>
-<entry key="Failed to execute SQL statement for transaction id: [%s], see the log file for more details">Error al ejecutar la instrucción SQL para la transacción id: [%s]</entry>
+<entry key="Failed to execute SQL statement for transaction id: [%s], see the log file for more details">Error al ejecutar la instrucción SQL para la transacción id: [%s], vea el archivo de registro para más detalles</entry>
 <entry key="The database engine name [%s] version [%s] not found">El motor de base de datos de nombre [%s] no fue econtrado</entry>
 <entry key="Cannot locate in session the database connection config for the security token: [%s]">No puedo localizar en la sesión la configuración de conexión a la base de datos para el token de seguridad: [%s]</entry>
-<entry key="No found transaction for id: [%s]">No se encontró la trasacción para el id: [%s]</entry>
+<entry key="No found transaction for id: [%s]">No se encontró la transacción para el id: [%s]</entry>
+<entry key="No found transaction for id: [%s], see the log file for more details">No se encontró la transacción para el id: [%s], vea el archivo de registro para más detalles</entry>
 <entry key="Duplicate filters name [%s], for the section [%s]">Filtros con nombre [%s] duplicado, para la seción [%s]</entry>
 <entry key="Cannot add filters name [%s], the filters list is empty, for the section [%s]">No puedo agregar los filtros de nombre [%s], la lista de filtros se encuentra vacía, para la sección [%s]</entry>
 <entry key="Count of registered filters [%s], for filters name [%s] section [%s]">Cantidad de filtros registrados [%s], para el nombre de filtros [%s] sección [%s]</entry>
@@ -26,11 +27,12 @@
 <entry key="Executing the next SQL statement [%s] index call [%s]">Ejecutando la siguiente instrucción SQL [%s] índice de la llamada [%s]</entry>
 <entry key="Sucess to execute the SQL statement">Éxito al ejecutar la instrucción SQL</entry>
 <entry key="Error to execute the SQL statement, see the log file for more details">Error al ejecutar la instrucción SQL, vea el archivo de registro para más detalles</entry>
+<entry key="Error to execute the next SQL statement, no valid params names found for service call">Error al ejecutar la instrucción SQL, no fueron encontrados nombres de parámetros válidos en la llamada al servicio</entry>
 <entry key="Error to execute the next SQL statement [%s] index call [%s]">Error al ejecutar la siguiente instrucción SQL [%s] índice de llamada [%s</entry>
 <entry key="Sucess to execute the plain query SQL statement [%s]">Éxito al ejecutar la instrucción de consulta plana SQL [%s]</entry>
 <entry key="Error to execute the plain query SQL statement [%s]">Error al ejecutar la instrucción de consulta plana SQL [%s]</entry>
 <entry key="Sucess to execute the plain SQL statement [%s]">Éxito al ejecutar la instrucción SQL plana [%s]</entry>
-<entry key="Error to execute the plain SQL statement [%s]">Éxito al ejecutar la instrucción SQL plana [%s]</entry>
+<entry key="Error to execute the plain SQL statement [%s]">Error al ejecutar la instrucción SQL plana [%s]</entry>
 <entry key=""></entry>
 <entry key=""></entry>
 <entry key=""></entry>

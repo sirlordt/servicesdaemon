@@ -184,7 +184,7 @@ public abstract class CAbstractDBEngine {
 					Result = SQLStatementType.Delete;
 					
 				}
-				else if ( strSQL.indexOf( ConstantsAbstractDBEngine._CREATE ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._ALTER ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._MODIFY ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._DROP ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._SHOW ) == 0 ) {
+				else if ( strSQL.indexOf( ConstantsAbstractDBEngine._CREATE ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._ALTER ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._MODIFY ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._DROP ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._SHOW ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._DESCRIBE ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._SET ) == 0 ) {
 					
 					Result = SQLStatementType.DDL;
 					
@@ -1241,23 +1241,24 @@ public abstract class CAbstractDBEngine {
     	
     		CallableStatement CallStatement = DBConnection.prepareCall( strSQL );
 
-    		ResultSet ResultQuery = CallStatement.executeQuery( strSQL );
+    		CallStatement.execute();
     		
     		Result.intCode = 1;
-    		Result.Result = ResultQuery;
+    		Result.Result = CallStatement.getResultSet();
+    		Result.lngAffectedRows = 0;
 
     		if ( Lang != null )   
-    			Result.strDescription = Lang.Translate( "Sucess to execute the SQL statement [%s]", strSQL );
+    			Result.strDescription = Lang.Translate( "Sucess to execute the plain SQL statement [%s]", strSQL );
     		else
-    			Result.strDescription = String.format( "Sucess to execute the SQL statement [%s]", strSQL );
-    	
+    			Result.strDescription = String.format( "Sucess to execute the plain SQL statement [%s]", strSQL );
+    		
     	}
     	catch ( Exception Ex ) {
     		
     		if ( Lang != null )   
-    		    Result.strDescription = Lang.Translate( "Error to execute the next SQL statement [%s]", strSQL );
+    		    Result.strDescription = Lang.Translate( "Error to execute the plain SQL statement [%s]", strSQL );
     		else
-    		    Result.strDescription = String.format( "Error to execute the next SQL statement [%s]", strSQL ) ;
+    		    Result.strDescription = String.format( "Error to execute the plain SQL statement [%s]", strSQL ) ;
 
     		if ( Logger != null )
 				Logger.LogException( "-1015", Ex.getMessage(), Ex );
@@ -1458,7 +1459,7 @@ public abstract class CAbstractDBEngine {
 					}
 					
 				}
-				else if ( strInputServiceParameterValue.isEmpty() == false ) {
+				else if ( strInputServiceParameterValue != null && strInputServiceParameterValue.isEmpty() == false ) {
 					
 					CMemoryFieldData MemoryField = new CMemoryFieldData( strInputServiceParameterValue, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
 					
@@ -1478,84 +1479,95 @@ public abstract class CAbstractDBEngine {
 				
 			}
 			
-			for ( int intIndexCall = 0; intIndexCall < intMaxCalls; intIndexCall++ ) {
-				
-				i = NamedParams.entrySet().iterator();
+			if ( intMaxCalls > 0 ) {
+			
+				for ( int intIndexCall = 0; intIndexCall < intMaxCalls; intIndexCall++ ) {
 
-				String strParsedStatement = new String( MainNamedPreparedStatement.getParsedStatement() );
-				
-				int intCount = Utilities.countSubString( strParsedStatement, "?" );
-				
-				strParsedStatement = strParsedStatement.replace( "?", "%s" );
-				
-				try {
+					i = NamedParams.entrySet().iterator();
 
-					ArrayList<String> strRow = MemoryRowSet.RowToString( intIndexCall, true, strDateFormat, strTimeFormat, strDateTimeFormat, true, Logger, Lang );				
+					String strParsedStatement = new String( MainNamedPreparedStatement.getParsedStatement() );
 
-					if ( intCount > strRow.size() ) {
-						
-						for ( int I = 0; I < intCount - strRow.size(); I++ ) {
-							
-							strRow.add( "unkown" );
-							
+					int intCount = Utilities.countSubString( strParsedStatement, "?" );
+
+					strParsedStatement = strParsedStatement.replace( "?", "%s" );
+
+					try {
+
+						ArrayList<String> strRow = MemoryRowSet.RowToString( intIndexCall, true, strDateFormat, strTimeFormat, strDateTimeFormat, true, Logger, Lang );				
+
+						if ( intCount > strRow.size() ) {
+
+							for ( int I = 0; I < intCount - strRow.size(); I++ ) {
+
+								strRow.add( "unkown" );
+
+							}
+
 						}
-						
+
+						strParsedStatement = String.format( strParsedStatement, strRow.toArray() );
+
+					}
+					catch ( Exception Ex ) {
+
+						if ( Logger != null ) {
+
+							Logger.LogException( "-1017", Ex.getMessage(), Ex );
+
+						}	
+
 					}
 
-					strParsedStatement = String.format( strParsedStatement, strRow.toArray() );
+					try {
+
+						CNamedPreparedStatement NamedPreparedStatement = new CNamedPreparedStatement( DBConnection, MainNamedPreparedStatement.getNamedParams(), MainNamedPreparedStatement.getParsedStatement() );
+
+						while ( i.hasNext() ) {
+
+							Entry<String,Integer> NamedParam = i.next();
+
+							MemoryRowSet.setFieldDataToPreparedStatement( NamedPreparedStatement, NamedParam.getKey(), NamedParam.getKey(), intIndexCall, true, Logger, Lang );
+
+						}
+
+						if ( bLogParsedSQL == true ) {
+
+							Logger.LogInfo( "2", Lang.Translate( "Executing the next SQL statement [%s] index call [%s]", strParsedStatement, Integer.toString( intIndexCall ) )  );
+
+						}
+
+						int intAffectedRows = NamedPreparedStatement.executeUpdate();
+
+						Result.add( new CResultSetResult( intAffectedRows, 1, Lang.Translate( "Sucess to execute the SQL statement" ) ) );
+
+						NamedPreparedStatement.close(); //Close immediately to prevent resource leak in database driver
+
+					}
+					catch ( Exception Ex ) {
+
+						if ( Logger != null ) {
+
+							Result.add( new CResultSetResult( -1, -1, Lang.Translate( "Error to execute the SQL statement, see the log file for more details" ) ) );
+
+							Logger.LogError( "-1001", Lang.Translate( "Error to execute the next SQL statement [%s] index call [%s]", strParsedStatement, Integer.toString( intIndexCall ) )  );
+
+							Logger.LogException( "-1016", Ex.getMessage(), Ex );
+
+						}	
+
+					}
 
 				}
-				catch ( Exception Ex ) {
-					
-					if ( Logger != null ) {
-						
-						Logger.LogException( "-1017", Ex.getMessage(), Ex );
-					
-					}	
-					
-				}
 
-				try {
-					
-					CNamedPreparedStatement NamedPreparedStatement = new CNamedPreparedStatement( DBConnection, MainNamedPreparedStatement.getNamedParams(), MainNamedPreparedStatement.getParsedStatement() );
-
-					while ( i.hasNext() ) {
-
-						Entry<String,Integer> NamedParam = i.next();
-
-						MemoryRowSet.setFieldDataToPreparedStatement( NamedPreparedStatement, NamedParam.getKey(), NamedParam.getKey(), intIndexCall, true, Logger, Lang );
-
-					}
-
-					if ( bLogParsedSQL == true ) {
-						
-						Logger.LogInfo( "2", Lang.Translate( "Executing the next SQL statement [%s] index call [%s]", strParsedStatement, Integer.toString( intIndexCall ) )  );
-						
-					}
-					
-					int intAffectedRows = NamedPreparedStatement.executeUpdate();
+			}
+			else {
 				
-					Result.add( new CResultSetResult( intAffectedRows, 1, Lang.Translate( "Sucess to execute the SQL statement" ) ) );
-						
-					NamedPreparedStatement.close(); //Close immediately to prevent resource leak in database driver
-					
-				}
-				catch ( Exception Ex ) {
-					
-					if ( Logger != null ) {
-					
-						Result.add( new CResultSetResult( -1, -1, Lang.Translate( "Error to execute the SQL statement, see the log file for more details" ) ) );
+				Result.add( new CResultSetResult( -1, -1, Lang.Translate( "Error to execute the SQL statement, see the log file for more details" ) ) );
 
-						Logger.LogError( "-1001", Lang.Translate( "Error to execute the next SQL statement [%s] index call [%s]", strParsedStatement, Integer.toString( intIndexCall ) )  );
-						
-						Logger.LogException( "-1016", Ex.getMessage(), Ex );
-					
-					}	
-				
-				}
+				Logger.LogError( "-1001", Lang.Translate( "Error to execute the next SQL statement, no valid params names found for service call" )  );
 				
 			}
-
+			
 			MainNamedPreparedStatement.close();
 
     	}
@@ -1709,13 +1721,9 @@ public abstract class CAbstractDBEngine {
 						
 					}
 					
-					ResultSet QueryResult = NamedCallableStatement.executeQuery();
-				
-					if ( QueryResult != null ) {
-						
-						Result.add( new CResultSetResult( -1, 1, Lang.Translate( "Sucess to execute the SQL statement" ), NamedCallableStatement, QueryResult ) );
-						
-					}
+					NamedCallableStatement.execute();
+					
+					Result.add( new CResultSetResult( 0, 1, Lang.Translate( "Sucess to execute the SQL statement" ), NamedCallableStatement, NamedCallableStatement.getResultSet() ) );
 					
 				}
 				catch ( Exception Ex ) {

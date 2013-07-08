@@ -1397,8 +1397,14 @@ public class CMemoryRowSet {
 		
 		for ( CMemoryFieldData MemoryField: FieldsData ) {
 			
-			if ( bVarCharQuoted == true && ( MemoryField.intSQLType == Types.VARCHAR || MemoryField.intSQLType == Types.CHAR ) )
-				Result.add( "\'" + MemoryField.FieldValueToSt5ring( intIndexRow, true, strDateFormat, strTimeFormat, strDateTimeFormat, bUseLastRowIfRowNotExits, Logger, Lang ) + "\'" );
+			if ( bVarCharQuoted == true && ( MemoryField.intSQLType == Types.VARCHAR || MemoryField.intSQLType == Types.CHAR ) ) {
+				
+				if ( MemoryField.DataIsNull( intIndexRow ) == false )
+					Result.add( "\'" + MemoryField.FieldValueToSt5ring( intIndexRow, true, strDateFormat, strTimeFormat, strDateTimeFormat, bUseLastRowIfRowNotExits, Logger, Lang ) + "\'" );
+				else
+					Result.add( MemoryField.FieldValueToSt5ring( intIndexRow, true, strDateFormat, strTimeFormat, strDateTimeFormat, bUseLastRowIfRowNotExits, Logger, Lang ) );
+					
+			}	
 			else	
 				Result.add( MemoryField.FieldValueToSt5ring( intIndexRow, true, strDateFormat, strTimeFormat, strDateTimeFormat, bUseLastRowIfRowNotExits, Logger, Lang ) );
 			

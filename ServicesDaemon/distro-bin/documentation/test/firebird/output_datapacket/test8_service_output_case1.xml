@@ -1,0 +1,55 @@
+<!--- Output from call service System.Execute.SQL -->
+
+<?xml version="1.0" encoding="UTF-8"?>
+<DATAPACKET dpversion="1.1">
+    <METADATA>
+        <FIELDS/>
+        <PARAMS rowcount="1"/>
+    </METADATA>
+    <ROWDATA>
+        <ROW AffectedRows="1" Code="1" Description="Éxito al ejecutar la instrucción SQL plana [Update tblGroups Set Description='test group2 modified' Where IdGroup=2]"/>
+    </ROWDATA>
+    <ERRORS errorcount="0">
+        <ERROR Code="0" Description=""/>
+    </ERRORS>
+</DATAPACKET>
+
+<!--- Output from call service System.Commit.Transaction -->
+
+<?xml version="1.0" encoding="UTF-8"?>
+<DATAPACKET dpversion="1.1">
+    <METADATA>
+        <FIELDS>
+            <FIELD attrname="TransactionID" fieldtype="i8"/>
+            <FIELD attrname="Code" fieldtype="i4"/>
+            <FIELD attrname="Description" fieldtype="string" width="255"/>
+        </FIELDS>
+        <PARAMS rowcount="1"/>
+    </METADATA>
+    <ROWDATA>
+        <ROW Code="1" Description="Trasacción aplicada con éxito para el id: [6228182853220312979]" TransactionID="6228182853220312979"/>
+    </ROWDATA>
+    <ERRORS errorcount="0">
+        <ERROR Code="0" Description=""/>
+    </ERRORS>
+</DATAPACKET>
+
+<!--- Output from call service System.Execute.SQL (To see if you change either the Description field value must be identical to the Description of the call modification System.Execute.SQL) -->
+
+<?xml version="1.0" encoding="UTF-8"?>
+<DATAPACKET dpversion="1.1">
+    <METADATA>
+        <FIELDS>
+            <FIELD attrname="IDGROUP" fieldtype="i4"/>
+            <FIELD attrname="DESCRIPTION" fieldtype="string" width="50"/>
+        </FIELDS>
+        <PARAMS rowcount="1"/>
+    </METADATA>
+    <ROWDATA>
+        <ROW DESCRIPTION="test group2 modified" IDGROUP="2"/>
+    </ROWDATA>
+    <ERRORS errorcount="0">
+        <ERROR Code="0" Description=""/>
+    </ERRORS>
+</DATAPACKET>
+

@@ -1,0 +1,33 @@
+<!--- Output from call service System.Execute.SQL -->
+
+<?xml version="1.0" encoding="UTF-8"?>
+<DATAPACKET dpversion="1.1">
+    <METADATA>
+        <FIELDS/>
+        <PARAMS rowcount="1"/>
+    </METADATA>
+    <ROWDATA>
+        <ROW AffectedRows="0" Code="1" Description="Éxito al ejecutar la instrucción SQL plana [CREATE TABLE TBLTESTTABLE1( ID INTEGER NOT NULL,  DATA1  VARCHAR(100), DATA2  VARCHAR(100), PRIMARY KEY (id) );]"/>
+    </ROWDATA>
+    <ERRORS errorcount="0"/>
+</DATAPACKET>
+
+<!--- Output from call service System.Commit.Transaction -->
+
+<?xml version="1.0" encoding="UTF-8"?>
+<DATAPACKET dpversion="1.1">
+    <METADATA>
+        <FIELDS>
+            <FIELD attrname="TransactionID" fieldtype="i8"/>
+            <FIELD attrname="Code" fieldtype="i4"/>
+            <FIELD attrname="Description" fieldtype="string" width="255"/>
+        </FIELDS>
+        <PARAMS rowcount="1"/>
+    </METADATA>
+    <ROWDATA>
+        <ROW Code="1" Description="Transacción aplicada con éxito para el id: [2715893450326737348]" TransactionID="2715893450326737348"/>
+    </ROWDATA>
+    <ERRORS errorcount="0">
+        <ERROR Code="0" Description=""/>
+    </ERRORS>
+</DATAPACKET>
