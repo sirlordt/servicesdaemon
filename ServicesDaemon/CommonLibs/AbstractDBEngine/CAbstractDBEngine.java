@@ -32,6 +32,7 @@ import net.maindataservices.Utilities;
 import AbstractService.CInputServiceParameter;
 import CommonClasses.CLanguage;
 import CommonClasses.CMemoryFieldData;
+import CommonClasses.CMemoryFieldData.TFieldScope;
 import CommonClasses.CMemoryRowSet;
 import CommonClasses.CNamedCallableStatement;
 import CommonClasses.CNamedPreparedStatement;
@@ -1241,9 +1242,15 @@ public abstract class CAbstractDBEngine {
     	
     		CallableStatement CallStatement = DBConnection.prepareCall( strSQL );
 
+			/*CallStatement.registerOutParameter( 1, Types.INTEGER );
+			CallStatement.registerOutParameter( 2, Types.INTEGER );
+			CallStatement.registerOutParameter( 3, Types.INTEGER );
+			CallStatement.registerOutParameter( 4, Types.DATE );
+			CallStatement.registerOutParameter( 5, Types.TIME );*/
+
     		CallStatement.execute();
     		
-    		Result.intCode = 1;
+    		Result.intCode = 1; //CallStatement.getInt( "IdValid" );
     		Result.Result = CallStatement.getResultSet();
     		Result.lngAffectedRows = 0;
 
@@ -1650,7 +1657,7 @@ public abstract class CAbstractDBEngine {
 					
 					CMemoryFieldData MemoryField = new CMemoryFieldData( strInputServiceParameterValue, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
 					
-					if ( MemoryField.strName.isEmpty() == false && MemoryField.Data.size() > 0 && MemoryField.intSQLType >= 0 ) {
+					if ( MemoryField.strName.isEmpty() == false && ( MemoryField.Data.size() > 0 || MemoryField.Scope.equals( TFieldScope.OUT ) ) && MemoryField.intSQLType >= 0 ) {
 
 						if ( MemoryField.Data.size() > intMaxCalls )
 							intMaxCalls = MemoryField.Data.size();
@@ -1665,6 +1672,8 @@ public abstract class CAbstractDBEngine {
 				}
 				
 			}
+			
+			boolean bContainsOutParams = MemoryRowSet.ContainsFieldsScopeOut();
 			
 			for ( int intIndexCall = 0; intIndexCall < intMaxCalls; intIndexCall++ ) {
 				
@@ -1723,7 +1732,15 @@ public abstract class CAbstractDBEngine {
 					
 					NamedCallableStatement.execute();
 					
-					Result.add( new CResultSetResult( 0, 1, Lang.Translate( "Sucess to execute the SQL statement" ), NamedCallableStatement, NamedCallableStatement.getResultSet() ) );
+					ResultSet CallableStatementResultSet = NamedCallableStatement.getResultSet();
+
+					if ( CallableStatementResultSet == null && bContainsOutParams ) {
+						
+						CallableStatementResultSet = MemoryRowSet.BuildCachedRowSetFromFieldsScopeOut( NamedCallableStatement, Logger, Lang );
+						
+					}
+					
+					Result.add( new CResultSetResult( 0, 1, Lang.Translate( "Sucess to execute the SQL statement" ), NamedCallableStatement, CallableStatementResultSet ) );
 					
 				}
 				catch ( Exception Ex ) {

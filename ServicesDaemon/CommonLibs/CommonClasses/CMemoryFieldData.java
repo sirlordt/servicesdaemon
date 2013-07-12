@@ -618,7 +618,7 @@ public class CMemoryFieldData {
 		
 	}
 	
-	public String FieldValueToSt5ring( int intIndexRow, boolean bResumeBlob, String strDateFormat, String strTimeFormat, String strDateTimeFormat, boolean bUseLastRowIfRowNotExits, CExtendedLogger Logger, CLanguage Lang ) {
+	public String FieldValueToString( int intIndexRow, boolean bResumeBlob, String strDateFormat, String strTimeFormat, String strDateTimeFormat, boolean bUseLastRowIfRowNotExits, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		String strResult = "";
 		
@@ -650,11 +650,15 @@ public class CMemoryFieldData {
 					
 											int intBlobLength = strFieldDataBase64Coded.length();
 											
-											if ( bResumeBlob == false || intBlobLength <= 200 )
-											    strResult = strFieldDataBase64Coded;
+											if ( bResumeBlob == false || intBlobLength <= 200 ) {
+											 
+												strResult = strFieldDataBase64Coded;
+												
+											}    
 											else {
 											    
-												strResult = strFieldDataBase64Coded.substring( 0, 100 ) + "..." + strFieldDataBase64Coded.substring( intBlobLength - 100, intBlobLength + 100 );
+												strResult = strFieldDataBase64Coded.substring( 0, 100 ) + "..." + strFieldDataBase64Coded.substring( intBlobLength - 100, intBlobLength );
+												
 											}	
 					
 											break;
@@ -860,119 +864,142 @@ public class CMemoryFieldData {
 
 		boolean bResult = false;
 
-		if ( intIndexRow >= Data.size() && bUseLastRowIfRowNotExits ) {
-			
-			intIndexRow = Data.size() - 1;
-			
-		}
+		if ( Scope.equals( TFieldScope.IN ) || Scope.equals( TFieldScope.INOUT ) ) {
 		
-		if ( intIndexRow >= 0 && intIndexRow < Data.size() ) {
-			
-			Object FieldData = Data.get( intIndexRow );
-			
-			if ( FieldData != null ) { 
+			if ( intIndexRow >= Data.size() && bUseLastRowIfRowNotExits ) {
 				
-				try {
-
-					switch ( intSQLType ) {
-
-						case Types.INTEGER: { NamedCallableStatement.setInt( strCallableStatementFieldName, (Integer) FieldData ); bResult = true; break; }
-						case Types.BIGINT: { NamedCallableStatement.setLong( strCallableStatementFieldName, (Long) FieldData ); bResult = true; break; }
-						case Types.SMALLINT: { NamedCallableStatement.setShort( strCallableStatementFieldName, (Short) FieldData ); bResult = true; break; }
-						case Types.VARCHAR: 
-						case Types.CHAR: { NamedCallableStatement.setString( strCallableStatementFieldName, (String) FieldData ); bResult = true; break; }
-						case Types.BOOLEAN: { NamedCallableStatement.setBoolean( strCallableStatementFieldName, ( Boolean ) FieldData ); bResult = true; break; }
-						case Types.BLOB: { 	
-							
-										    NamedCallableStatement.setBlob( strCallableStatementFieldName, (Blob) FieldData );
-				                            
-										    bResult = true;
-										    
-										    break; 
+				intIndexRow = Data.size() - 1;
 				
-										 }
-						case Types.DATE: {
-							               
-											NamedCallableStatement.setDate( strCallableStatementFieldName, (java.sql.Date) FieldData );
-							               
-											bResult = true;
-											
-											break; 
-							             
-						                 }
-						case Types.TIME: {  
-											
-											NamedCallableStatement.setTime( strCallableStatementFieldName, (Time) FieldData );
-							               
-											bResult = true;
-											
-											break; 
-							               
-						                 }
-						case Types.TIMESTAMP: {  
-							
-												 NamedCallableStatement.setTimestamp( strCallableStatementFieldName, (Timestamp) FieldData );
+			}
+			
+			if ( intIndexRow >= 0 && intIndexRow < Data.size() ) {
+				
+				Object FieldData = Data.get( intIndexRow );
+				
+				if ( FieldData != null ) { 
+					
+					try {
 	
-												 bResult = true;
-												 
-							                     break; 
-							                    
-						                      }
-						case Types.FLOAT: 
-						case Types.DECIMAL: { NamedCallableStatement.setFloat( strCallableStatementFieldName, (Float) FieldData ); bResult = true; break; }
-						case Types.DOUBLE: { NamedCallableStatement.setDouble( strCallableStatementFieldName, (Double) FieldData ); bResult = true; break; }
-
-						default:{
-							
-							if ( Logger != null ) {
+						switch ( this.intSQLType ) {
+	
+							case Types.INTEGER: { NamedCallableStatement.setInt( strCallableStatementFieldName, (Integer) FieldData ); bResult = true; break; }
+							case Types.BIGINT: { NamedCallableStatement.setLong( strCallableStatementFieldName, (Long) FieldData ); bResult = true; break; }
+							case Types.SMALLINT: { NamedCallableStatement.setShort( strCallableStatementFieldName, (Short) FieldData ); bResult = true; break; }
+							case Types.VARCHAR: 
+							case Types.CHAR: { NamedCallableStatement.setString( strCallableStatementFieldName, (String) FieldData ); bResult = true; break; }
+							case Types.BOOLEAN: { NamedCallableStatement.setBoolean( strCallableStatementFieldName, ( Boolean ) FieldData ); bResult = true; break; }
+							case Types.BLOB: { 	
 								
-								if ( Lang != null )
-								    Logger.LogWarning( "-1", Lang.Translate( "Unknown SQL data type [%s]", Integer.toString( intSQLType ) ) );
-								else
-								    Logger.LogWarning( "-1", String.format( "Unknown SQL data type [%s]", Integer.toString( intSQLType ) ) );
+											    NamedCallableStatement.setBlob( strCallableStatementFieldName, (Blob) FieldData );
+					                            
+											    bResult = true;
+											    
+											    break; 
+					
+											 }
+							case Types.DATE: {
+								               
+												NamedCallableStatement.setDate( strCallableStatementFieldName, (java.sql.Date) FieldData );
+								               
+												bResult = true;
+												
+												break; 
+								             
+							                 }
+							case Types.TIME: {  
+												
+												NamedCallableStatement.setTime( strCallableStatementFieldName, (Time) FieldData );
+								               
+												bResult = true;
+												
+												break; 
+								               
+							                 }
+							case Types.TIMESTAMP: {  
 								
+													 NamedCallableStatement.setTimestamp( strCallableStatementFieldName, (Timestamp) FieldData );
+		
+													 bResult = true;
+													 
+								                     break; 
+								                    
+							                      }
+							case Types.FLOAT: 
+							case Types.DECIMAL: { NamedCallableStatement.setFloat( strCallableStatementFieldName, (Float) FieldData ); bResult = true; break; }
+							case Types.DOUBLE: { NamedCallableStatement.setDouble( strCallableStatementFieldName, (Double) FieldData ); bResult = true; break; }
+	
+							default:{
+								
+								if ( Logger != null ) {
+									
+									if ( Lang != null )
+									    Logger.LogWarning( "-1", Lang.Translate( "Unknown SQL data type [%s]", Integer.toString( intSQLType ) ) );
+									else
+									    Logger.LogWarning( "-1", String.format( "Unknown SQL data type [%s]", Integer.toString( intSQLType ) ) );
+									
+									
+								}
+								
+								break;
 								
 							}
 							
-							break;
+						}
+	
+					}
+					catch ( Exception Ex ) {
+	
+						if ( Logger != null ) {
 							
+							Logger.LogException( "-1015", Ex.getMessage(), Ex );
+						
+						}	
+	
+					}
+				
+				}
+				else {
+	
+					try {
+	
+						NamedCallableStatement.setNull( strCallableStatementFieldName, this.intSQLType );
+					
+						bResult = true;
+						
+					}
+					catch ( Exception Ex ) {
+						
+						if ( Logger != null ) {
+							
+							Logger.LogException( "-1016", Ex.getMessage(), Ex );
+						
 						}
 						
 					}
-
-				}
-				catch ( Exception Ex ) {
-
-					if ( Logger != null ) {
-						
-						Logger.LogException( "-1015", Ex.getMessage(), Ex );
 					
-					}	
-
 				}
+	
+			}
+		
+		}
+		
+		if ( Scope.equals( TFieldScope.OUT ) ) {
+			
+			try {
+			
+				NamedCallableStatement.registerOutParameter( strCallableStatementFieldName, this.intSQLType );
 			
 			}
-			else {
-
-				try {
-
-					NamedCallableStatement.setNull( strCallableStatementFieldName, intSQLType );
+			catch ( Exception Ex ) {
 				
-					bResult = true;
+				if ( Logger != null ) {
 					
-				}
-				catch ( Exception Ex ) {
-					
-					if ( Logger != null ) {
-						
-						Logger.LogException( "-1015", Ex.getMessage(), Ex );
-					
-					}
-					
+					Logger.LogException( "-1017", Ex.getMessage(), Ex );
+				
 				}
 				
 			}
-
+			
 		}
 		
 		return bResult;

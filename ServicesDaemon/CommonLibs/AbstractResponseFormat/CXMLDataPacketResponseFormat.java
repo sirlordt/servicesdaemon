@@ -1077,7 +1077,6 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	return XMLDocument;
     	
     }
-    
 
     public CAbstractResponseFormat getNewInstance() {
     	
@@ -1088,7 +1087,6 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	return NewInstance;
     	
     }
-    
     
     @Override
     public String getContentType() {
@@ -1482,7 +1480,6 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	return strResult;
     	
     }
-
 
     public String FormatResultsSets( ArrayList<CResultSetResult> ResultsSetsList, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
     	

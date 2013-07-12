@@ -240,7 +240,7 @@ public class CSystemExecuteSQLConfig extends CAbstractConfigLoader {
     						String strType = "";
     						String strExpression = "";
 
-    						if ( ConfigFilterNode.getNodeValue().isEmpty() == false ) {
+    						if ( ConfigFilterNode.getNodeValue() != null && ConfigFilterNode.getNodeValue().isEmpty() == false ) {
 
     							NamedNodeMap NodeAttributes = ConfigSectionNode.getAttributes();
 

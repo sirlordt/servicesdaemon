@@ -128,7 +128,10 @@ begin
         else
         begin
 
-           IdValid = -2;  /*Disabled*/
+            IdUser = -1;
+            IdGroup = -1;
+	        
+	        IdValid = -2;  /*Disabled*/
 
         end
 
@@ -136,7 +139,10 @@ begin
      else
      begin
 
-        IdValid = -1; /*Invalid password*/
+         IdUser = -1;
+         IdGroup = -1;
+
+         IdValid = -1; /*Invalid password*/
 
      end
 
@@ -144,7 +150,10 @@ begin
   else
   begin
 
-     IdValid = -3; /*Not found*/
+      IdUser = -1;
+      IdGroup = -1;
+
+      IdValid = -3; /*Not found*/
 
   end
 

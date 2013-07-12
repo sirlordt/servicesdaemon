@@ -799,7 +799,7 @@ public class CSystemStartSession extends CAbstractService {
 
 																if ( ServiceLogger != null ) {
 
-																	String strFieldValue = Field.FieldValueToSt5ring( 0, true, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, LocalConfigDBConnection.strDateTimeFormat, false, ServiceLogger, ServiceLang );
+																	String strFieldValue = Field.FieldValueToString( 0, true, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, LocalConfigDBConnection.strDateTimeFormat, false, ServiceLogger, ServiceLang );
 
 																	ServiceLogger.LogError( "-1009", ServiceLang.Translate( "Field name [%s] has value [%s] which is unkown, for the service config file, in result from SQL [%s]", SystemStartSessionDBConnection.strFieldName, strFieldValue, strSQL ) );        
 

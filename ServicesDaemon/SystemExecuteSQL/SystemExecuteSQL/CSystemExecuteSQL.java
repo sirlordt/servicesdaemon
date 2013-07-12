@@ -525,6 +525,15 @@ public class CSystemExecuteSQL extends CAbstractService {
 													intResultCode = 1;
 
 												}
+												else {
+													
+													Response.setContentType( ResponseFormat.getContentType() );
+													Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
+
+													String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1006, ServiceLang.Translate( "Failed to execute SQL statement for transaction id: [%s], see the log file for more details", strSecurityTokenID ), true, strResponseFormatVersion, LocalConfigDBConnection.strDateTimeFormat, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
+													Response.getWriter().print( strResponseBuffer );
+													
+												}
 
 											}
 

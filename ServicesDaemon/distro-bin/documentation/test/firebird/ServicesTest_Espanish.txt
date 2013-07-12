@@ -1,5 +1,3 @@
-Pruebas a realizar:
-
 Para crear la base de datos inicial en firebird desde linux usa el sisguiente comando:
 
 Linux:
@@ -12,24 +10,24 @@ Nota 1: El archivo .sql asume que la clave de su usuario sysdba es masterkey si 
 
 Nota 2: El archivo FirebirdTestDB.sql lo encontrarás en la carpeta documentation, dentro de la carpeta distro-bin
 
-Luego de creada la base de datos de prueba, desde linux usa el comando isql-fb desde windows usa el isql
-
-Luego usa el siguiente comando en el pront SQL>  coloca esto CONNECT 'localhost:FirebirdTestDB' USER 'SYSDBA' PASSWORD 'masterkey'; 
+Luego de creada la base de datos de prueba usa el siguiente comando, despues de llamara a isql-fb, en el pront SQL>  coloca esto CONNECT 'localhost:FirebirdTestDB' USER 'SYSDBA' PASSWORD 'masterkey'; 
 
 Para realizar las pruebas puedes usar una utilidad llamada ClienteWeb.exe es para windows realizada en C++ Builder XE, pero funciona bastante bien con wine en linux
 También recomiendo ampliamante el Postman un plugin para Google Chrome, es lo más parecido al anterior programa que e encontrado lo único es que es engorroso enviar los parámetros uno por uno, sin embargo es capaz de guardar las llamadas con sus parámetros.
 
 Yo realice estas pruebas desde un Linux Mint 14.0
 
-Usando Firebird un ReponseFormat=XML-DATAPACKET y un ReponseFormatVersion=1.1
+Pruebas a realizar:
 
-Prueba 1 (Enumerar Servicios), para ver la salida del servicio vea el archivo test1_service_output.xml
+Usando Firebird 2.5.2 un ReponseFormat=XML-DATAPACKET y un ReponseFormatVersion=1.1
+
+Prueba 1 caso 1 (Enumerar Servicios), para ver la salida del servicio vea el archivo test1_service_output_case1.xml
 
 ServiceName=System.Enum.Services
 ResponseFormat=XML-DATAPACKET
 ResponseFormatVersion=1.1
 
-Prueba 2 (Iniciar Sesión en DB1 => Firebird), para ver la salida del servicio vea el archivo test2_service_output_case1.xml
+Prueba 2 caso 1 (Iniciar Sesión en DB1 => Firebird), para ver la salida del servicio vea el archivo test2_service_output_case1.xml
 
 ServiceName=System.Start.Session
 ResponseFormat=XML-DATAPACKET
@@ -38,16 +36,16 @@ DBConnection=DB1
 username=test1
 password=123qwerty
 
-Nota: Para poder continuar las pruebas toma nota del campo SecurityTokenID, ese número cambia constantemente en cada inicio de sesión, para este caso es 2516928058540951569
+Nota 1: Para poder continuar las pruebas toma nota del campo SecurityTokenID, ese número cambia constantemente en cada inicio de sesión, para este caso es 2516928058540951569, para tú caso debería ser otro número distinto.
 
-Prueba 3 (Iniciar Transacción en DB1 => Firebird), para ver la salida del servicio vea el archivo test3_service_output_case1.xml
+Prueba 3 caso 1 (Iniciar Transacción en DB1 => Firebird), para ver la salida del servicio vea el archivo test3_service_output_case1.xml
 
 ServiceName=System.Start.Transaction
 ResponseFormat=XML-DATAPACKET
 ResponseFormatVersion=1.1
 SecurityTokenID=2516928058540951569
 
-Observa que unos de los parámetros es el número que obtienes en el servicio anterior sin ese número no puede iniciar transacción ni usar las otros servicios.
+Nota 1: Observa que unos de los parámetros es el número que obtienes en el servicio anterior sin ese número no puede iniciar transacción ni usar las otros servicios, para este caso es 5684949502159010901, para tú caso debería ser otro número distinto.
 
 Pruebas de Consultas (Select)
 

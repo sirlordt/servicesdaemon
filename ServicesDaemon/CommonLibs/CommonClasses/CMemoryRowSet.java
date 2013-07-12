@@ -25,6 +25,7 @@ import javax.sql.RowSetMetaData;
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetMetaDataImpl;
 
+import CommonClasses.CMemoryFieldData.TFieldScope;
 import ExtendedLogger.CExtendedLogger;
 
 import com.sun.rowset.CachedRowSetImpl;
@@ -518,6 +519,40 @@ public class CMemoryRowSet {
 			
 				FieldsData.add( FieldData );
 
+				return true;
+				
+			}
+			else {
+				
+				return false;
+				
+			}
+			
+		}
+		else {
+			
+			return false;
+
+		}
+		
+	}
+	
+	public boolean addField( CMemoryFieldData FieldData, boolean bCopyRows ) {
+		
+		if ( bAllowDuplicateNames == true || getFieldByName( FieldData.strName ) == null ) {
+
+			if ( getFieldByNameAndType( FieldData.strName, FieldData.intSQLType ) == null ) {
+			
+				CMemoryFieldData NewFieldData = new CMemoryFieldData( FieldData.strName, FieldData.intSQLType, FieldData.strSQLTypeName, FieldData.intLength, FieldData.strLabel );
+
+				FieldsData.add( NewFieldData );
+
+				if ( bCopyRows == true ) {
+					
+					NewFieldData.Data = new ArrayList<Object>( FieldData.Data );
+					
+				}
+				
 				return true;
 				
 			}
@@ -1397,16 +1432,20 @@ public class CMemoryRowSet {
 		
 		for ( CMemoryFieldData MemoryField: FieldsData ) {
 			
-			if ( bVarCharQuoted == true && ( MemoryField.intSQLType == Types.VARCHAR || MemoryField.intSQLType == Types.CHAR ) ) {
-				
-				if ( MemoryField.DataIsNull( intIndexRow ) == false )
-					Result.add( "\'" + MemoryField.FieldValueToSt5ring( intIndexRow, true, strDateFormat, strTimeFormat, strDateTimeFormat, bUseLastRowIfRowNotExits, Logger, Lang ) + "\'" );
-				else
-					Result.add( MemoryField.FieldValueToSt5ring( intIndexRow, true, strDateFormat, strTimeFormat, strDateTimeFormat, bUseLastRowIfRowNotExits, Logger, Lang ) );
-					
-			}	
-			else	
-				Result.add( MemoryField.FieldValueToSt5ring( intIndexRow, true, strDateFormat, strTimeFormat, strDateTimeFormat, bUseLastRowIfRowNotExits, Logger, Lang ) );
+			if ( MemoryField.Scope.equals( TFieldScope.IN ) || MemoryField.Scope.equals( TFieldScope.INOUT ) ) {
+			
+				if ( bVarCharQuoted == true && ( MemoryField.intSQLType == Types.VARCHAR || MemoryField.intSQLType == Types.CHAR ) ) {
+
+					if ( MemoryField.DataIsNull( intIndexRow ) == false )
+						Result.add( "\'" + MemoryField.FieldValueToString( intIndexRow, true, strDateFormat, strTimeFormat, strDateTimeFormat, bUseLastRowIfRowNotExits, Logger, Lang ) + "\'" );
+					else
+						Result.add( MemoryField.FieldValueToString( intIndexRow, true, strDateFormat, strTimeFormat, strDateTimeFormat, bUseLastRowIfRowNotExits, Logger, Lang ) );
+
+				}	
+				else	
+					Result.add( MemoryField.FieldValueToString( intIndexRow, true, strDateFormat, strTimeFormat, strDateTimeFormat, bUseLastRowIfRowNotExits, Logger, Lang ) );
+			
+			}
 			
 		}
 		
@@ -1423,17 +1462,17 @@ public class CMemoryRowSet {
 			if ( bVarCharQuoted == true && ( MemoryField.intSQLType == Types.VARCHAR || MemoryField.intSQLType == Types.CHAR ) ) {
 			
 				if ( strResult.isEmpty() == false )
-					strResult = strResult + strFieldSeparator + "\'" + MemoryField.FieldValueToSt5ring( intIndexRow, true, strDateFormat, strTimeFormat, strDateTimeFormat, bUseLastRowIfRowNotExits, Logger, Lang ) + "\'";
+					strResult = strResult + strFieldSeparator + "\'" + MemoryField.FieldValueToString( intIndexRow, true, strDateFormat, strTimeFormat, strDateTimeFormat, bUseLastRowIfRowNotExits, Logger, Lang ) + "\'";
 				else
-					strResult =  strFieldSeparator + "\'" + MemoryField.FieldValueToSt5ring( intIndexRow, true, strDateFormat, strTimeFormat, strDateTimeFormat, bUseLastRowIfRowNotExits, Logger, Lang ) + "\'";
+					strResult =  strFieldSeparator + "\'" + MemoryField.FieldValueToString( intIndexRow, true, strDateFormat, strTimeFormat, strDateTimeFormat, bUseLastRowIfRowNotExits, Logger, Lang ) + "\'";
 
 			}
 			else {
 				
 				if ( strResult.isEmpty() == false )
-					strResult = strResult + strFieldSeparator + MemoryField.FieldValueToSt5ring( intIndexRow, true, strDateFormat, strTimeFormat, strDateTimeFormat, bUseLastRowIfRowNotExits, Logger, Lang );
+					strResult = strResult + strFieldSeparator + MemoryField.FieldValueToString( intIndexRow, true, strDateFormat, strTimeFormat, strDateTimeFormat, bUseLastRowIfRowNotExits, Logger, Lang );
 				else
-					strResult =  strFieldSeparator + MemoryField.FieldValueToSt5ring( intIndexRow, true, strDateFormat, strTimeFormat, strDateTimeFormat, bUseLastRowIfRowNotExits, Logger, Lang );
+					strResult =  strFieldSeparator + MemoryField.FieldValueToString( intIndexRow, true, strDateFormat, strTimeFormat, strDateTimeFormat, bUseLastRowIfRowNotExits, Logger, Lang );
 				
 			}
 			
@@ -1449,11 +1488,89 @@ public class CMemoryRowSet {
 		
 		if ( MemoryFieldData != null ) {
 			
-			return MemoryFieldData.FieldValueToSt5ring(intIndexRow, bResumeBlob, strDateFormat, strTimeFormat, strDateTimeFormat, bUseLastRowIfRowNotExits, Logger, Lang );
+			return MemoryFieldData.FieldValueToString(intIndexRow, bResumeBlob, strDateFormat, strTimeFormat, strDateTimeFormat, bUseLastRowIfRowNotExits, Logger, Lang );
 			
 		}
 			
 		return null;
+		
+	}
+	
+	public boolean ContainsFieldsScopeOut() {
+		
+		for ( CMemoryFieldData Field: FieldsData ) {
+
+			if ( Field.Scope.equals( TFieldScope.OUT ) || Field.Scope.equals( TFieldScope.INOUT ) ) {
+
+				return true;
+				
+			}
+			
+		}
+		
+		return false;
+		
+	}
+	
+	public CachedRowSet BuildCachedRowSetFromFieldsScopeOut( CNamedCallableStatement NamedCallableStatement, CExtendedLogger Logger, CLanguage Lang ) {
+		
+		CachedRowSet Result = null;
+		
+		try {
+			
+			CMemoryRowSet TmpMemoryRowSet = new CMemoryRowSet( false );
+			
+			for ( CMemoryFieldData Field: FieldsData ) {
+
+				if ( Field.Scope.equals( TFieldScope.OUT ) || Field.Scope.equals( TFieldScope.INOUT ) ) {
+
+					TmpMemoryRowSet.addField( Field, false );
+					
+				}
+				
+			}
+
+			for ( CMemoryFieldData Field: TmpMemoryRowSet.FieldsData ) {
+
+				String strFieldName =  Field.strName;
+				
+				if ( strFieldName == null || strFieldName.isEmpty() )
+					strFieldName =  Field.strLabel;
+				
+    			switch ( Field.intSQLType ) {
+    			
+					case Types.INTEGER: { Field.addData( NamedCallableStatement.getInt( strFieldName ) ); break; }
+					case Types.BIGINT: { Field.addData( NamedCallableStatement.getLong( strFieldName ) ); break; }
+					case Types.SMALLINT: { Field.addData( NamedCallableStatement.getShort( strFieldName ) ); break; }
+					case Types.VARCHAR: 
+					case Types.CHAR: { Field.addData( NamedCallableStatement.getString( strFieldName ) ); break; }
+					case Types.BOOLEAN: { Field.addData( NamedCallableStatement.getBoolean( strFieldName ) ); break; }
+					case Types.BLOB: { Field.addData( NamedCallableStatement.getBlob( strFieldName ) ); break; }
+					case Types.DATE: { Field.addData( NamedCallableStatement.getDate( strFieldName ) ); break; }
+					case Types.TIME: { Field.addData( NamedCallableStatement.getTime( strFieldName ) ); break; }
+					case Types.TIMESTAMP: { Field.addData( NamedCallableStatement.getTimestamp( strFieldName ) ); break; }
+					case Types.FLOAT: 
+					case Types.DECIMAL: { Field.addData( NamedCallableStatement.getFloat( strFieldName ) ); break; }
+					case Types.DOUBLE: { Field.addData( NamedCallableStatement.getDouble( strFieldName ) ); break; }
+
+				}
+				
+			}
+			
+			Result = TmpMemoryRowSet.createCachedRowSet();
+			
+		}
+		catch ( Exception Ex ) {
+			
+			if ( Logger != null ) {
+				
+				Logger.LogException( "-1016", Ex.getMessage(), Ex );
+			
+			}	
+			
+		}
+		
+		return Result;
 		
 	}
 	
