@@ -417,23 +417,27 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
     }
     
-    public Document AddXMLToErrorSection( Document XMLDocument, LinkedHashMap<String,String> FieldValues, String strVersion ) {
+    public Document AddXMLToErrorSection( Document XMLDocument, LinkedHashMap<String,String> FieldValues, String strVersion, boolean bIncrementErrorCount ) {
 
         NodeList XML_ErrorsSection = XMLDocument.getElementsByTagName( XMLDataPacketTags._Errors );
 
         if ( XML_ErrorsSection != null && XML_ErrorsSection.getLength() > 0 ) {
            
             //XML-DataPacket 1.1 Errors Section found
-
-        	String strCountError = ( (Element) XML_ErrorsSection.item( 0 ) ).getAttribute( XMLDataPacketTags._ErrorCount );
         	
-        	int intCountError = 0;
-        	
-        	if ( strCountError != null )
-        	   intCountError = net.maindataservices.Utilities.StrToInteger( strCountError ) + 1;
-        		
-        	( (Element) XML_ErrorsSection.item( 0 ) ).setAttribute( XMLDataPacketTags._ErrorCount, Integer.toString( intCountError ) );
+        	if ( bIncrementErrorCount == true ) {
 
+        		String strCountError = ( (Element) XML_ErrorsSection.item( 0 ) ).getAttribute( XMLDataPacketTags._ErrorCount );
+
+        		int intCountError = 0;
+
+        		if ( strCountError != null )
+        			intCountError = net.maindataservices.Utilities.StrToInteger( strCountError ) + 1;
+
+        		( (Element) XML_ErrorsSection.item( 0 ) ).setAttribute( XMLDataPacketTags._ErrorCount, Integer.toString( intCountError ) );
+
+        	}
+        	
             Element Error = XMLDocument.createElement( XMLDataPacketTags._Error );
             
             Iterator<Entry<String, String>> i = FieldValues.entrySet().iterator();
@@ -479,23 +483,27 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	
     }
     
-    public Document AddXMLToErrorSection( Document XMLDocument, int intCode, String strDescription, String strVersion ) {
-
+    public Document AddXMLToErrorSection( Document XMLDocument, int intCode, String strDescription, String strVersion, boolean bIncrementErrorCount ) {
+    	
         NodeList XML_ErrorsSection = XMLDocument.getElementsByTagName( XMLDataPacketTags._Errors );
 
         if ( XML_ErrorsSection != null && XML_ErrorsSection.getLength() > 0 ) {
            
             //XML-DataPacket 1.1 Errors Section found
 
-        	String strCountError = ( (Element) XML_ErrorsSection.item( 0 ) ).getAttribute( XMLDataPacketTags._ErrorCount );
+        	if ( bIncrementErrorCount == true ) {
         	
-        	int intCountError = 0;
-        	
-        	if ( strCountError != null )
-        	   intCountError = net.maindataservices.Utilities.StrToInteger( strCountError ) + 1;
-        		
-        	( (Element) XML_ErrorsSection.item( 0 ) ).setAttribute( XMLDataPacketTags._ErrorCount, Integer.toString( intCountError ) );
+        		String strCountError = ( (Element) XML_ErrorsSection.item( 0 ) ).getAttribute( XMLDataPacketTags._ErrorCount );
 
+        		int intCountError = 0;
+
+        		if ( strCountError != null )
+        			intCountError = net.maindataservices.Utilities.StrToInteger( strCountError ) + 1;
+
+        		( (Element) XML_ErrorsSection.item( 0 ) ).setAttribute( XMLDataPacketTags._ErrorCount, Integer.toString( intCountError ) );
+
+        	};
+        	
             Element Error = XMLDocument.createElement( XMLDataPacketTags._Error );
             Error.setAttribute( XMLDataPacketTags._XML_StructCode , Integer.toString( intCode ) );
             Error.setAttribute( XMLDataPacketTags._XML_StructDescription , strDescription );
@@ -557,7 +565,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	
         if ( bAttachToError == true ) {
         	
-        	XMLDocument = AddXMLToErrorSection( XMLDocument, intCode, strDescription, strVersion );
+        	XMLDocument = AddXMLToErrorSection( XMLDocument, intCode, strDescription, strVersion, true );
         	
         }
         
@@ -604,7 +612,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	
         if ( bAttachToError == true ) {
         	
-        	XMLDocument = AddXMLToErrorSection( XMLDocument, FieldValues, strVersion );
+        	XMLDocument = AddXMLToErrorSection( XMLDocument, FieldValues, strVersion, true );
         	
         }
         
@@ -749,9 +757,9 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
            if ( XML_RowDataSection.getLength() > 0 ) {
 
-              SimpleDateFormat DFormatter = new SimpleDateFormat("yyyymmdd");
+              SimpleDateFormat DFormatter = new SimpleDateFormat("yyyyMMdd");
               SimpleDateFormat TFormatter = new SimpleDateFormat("HHmmss");
-              SimpleDateFormat DTFormatter = new SimpleDateFormat("yyyymmdd HHmmss");
+              SimpleDateFormat DTFormatter = new SimpleDateFormat("yyyyMMdd HHmmss");
 
               java.sql.ResultSetMetaData DataSetMetaData = SQLDataSet.getMetaData();
 
@@ -959,9 +967,9 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
     		if ( XML_RowDataSection.getLength() > 0 ) {
 
-    			SimpleDateFormat DFormatter = new SimpleDateFormat("yyyymmdd");
+    			SimpleDateFormat DFormatter = new SimpleDateFormat("yyyyMMdd");
     			SimpleDateFormat TFormatter = new SimpleDateFormat("HHmmss");
-    			SimpleDateFormat DTFormatter = new SimpleDateFormat("yyyymmdd HHmmss");
+    			SimpleDateFormat DTFormatter = new SimpleDateFormat("yyyyMMdd HHmmss");
 
 				intRowCount = MemoryRowSet.getRowCount();
 				int intColCount = MemoryRowSet.getFieldsCount();
@@ -1493,6 +1501,8 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
         		
     			Document XMLDocument = null; 
 
+    			boolean bNodeErrorAdded = false;
+    			
         		if ( ResultSetMetaData != null ) {
 		        
         			XMLDocument = this.BuildBasicResponseXMLStruct( strVersion, false, Logger, Lang );
@@ -1525,7 +1535,9 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
                     		FieldValues.put( XMLDataPacketTags._XML_StructCode, Integer.toString( ResultSetResultToAdd.intCode ) );
                     		FieldValues.put( XMLDataPacketTags._XML_StructDescription, ResultSetResultToAdd.strDescription );
 
-        					XMLDocument = AddXMLToErrorSection( XMLDocument, FieldValues, strVersion );
+        					XMLDocument = AddXMLToErrorSection( XMLDocument, FieldValues, strVersion, true );
+        					
+        					bNodeErrorAdded = true;
         					
         				}
 
@@ -1550,15 +1562,29 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
                 		FieldValues.put( XMLDataPacketTags._XML_StructCode, Integer.toString( ResultSetResultToAdd.intCode ) );
                 		FieldValues.put( XMLDataPacketTags._XML_StructDescription, ResultSetResultToAdd.strDescription );
         				
-        				if ( ResultSetResultToAdd.intCode >= 0 )
+        				if ( ResultSetResultToAdd.intCode >= 0 ) {
+        				
         					XMLDocument = AddXMLSimpleMessage( XMLDocument, FieldValues, strVersion, false, Logger, Lang );
-        				else
+        					
+        				}	
+        				else {
+        				
         					XMLDocument = AddXMLSimpleMessage( XMLDocument, FieldValues, strVersion, true, Logger, Lang );
+        				 
+        					bNodeErrorAdded = true;
+        				
+        				}	
         			
         			}
         			
         		}
 		        
+        		if ( bNodeErrorAdded == false ) { //Add the default node error
+        			
+        		    XMLDocument = this.AddXMLToErrorSection( XMLDocument, 0, "", strVersion, false );
+        			
+        		}
+        		
 	            strResult = this.ConvertXMLDocumentToString( XMLDocument, this.getCharacterEncoding(), Logger, Lang );
 
         	}

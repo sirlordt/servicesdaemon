@@ -22,6 +22,8 @@ ALTER TABLE TBLUsersENG ADD CONSTRAINT FK_TBLUSERSENG_1 FOREIGN KEY (IDGROUP) RE
 
 CREATE GENERATOR GEN_TBLGENERICDATA_ID;
 
+ALTER SEQUENCE GEN_TBLGENERICDATA_ID RESTART WITH 3;
+
 CREATE TABLE tblGenericData( id INT, data1 VARCHAR(100), data2 VARCHAR(100), PRIMARY KEY (id) );
 
 CREATE GENERATOR GEN_TBLBLOBDATA_ID;
@@ -36,7 +38,9 @@ begin
 
   if ( NEW.iduser is null ) then
      NEW.iduser = gen_id( GEN_TBLUSERSDB_ID, 1 );
-
+  else
+     gen_id( GEN_TBLUSERSDB_ID, 1 );
+     
 end ^
 
 set term ; ^
@@ -49,6 +53,8 @@ begin
 
   if ( NEW.iduser is null ) then
      NEW.iduser = gen_id( GEN_TBLUSERSENG_ID, 1 );
+  else   
+     gen_id( GEN_TBLUSERSENG_ID, 1 );
 
 end ^
 
@@ -62,7 +68,9 @@ begin
 
   if ( NEW.idgroup is null ) then
      NEW.idgroup = gen_id( GEN_TBLGROUPS_ID, 1 );
-
+  else
+     gen_id( GEN_TBLGROUPS_ID, 1 );
+     
 end ^
 
 set term ; ^
@@ -75,7 +83,9 @@ begin
 
   if ( NEW.id is null ) then
      NEW.id = gen_id( GEN_TBLGENERICDATA_ID, 1 );
-
+  else   
+     gen_id( GEN_TBLGENERICDATA_ID, 1 );
+  
 end ^
 
 set term ; ^
@@ -88,6 +98,8 @@ begin
 
   if ( NEW.id is null ) then
      NEW.id = gen_id( GEN_TBLBLOBDATA_ID, 1 );
+  else
+     gen_id( GEN_TBLBLOBDATA_ID, 1 );
 
 end ^ 
 

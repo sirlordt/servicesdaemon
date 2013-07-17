@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DATAPACKET dpversion="1.1">
+    <METADATA>
+        <FIELDS>
+            <FIELD attrname="iduser" fieldtype="i4"/>
+            <FIELD attrname="idgroup" fieldtype="i4"/>
+            <FIELD attrname="disabled" fieldtype="i2"/>
+            <FIELD attrname="username" fieldtype="string" width="50"/>
+            <FIELD attrname="passwd" fieldtype="string" width="50"/>
+            <FIELD attrname="firstname" fieldtype="string" width="50"/>
+            <FIELD attrname="lastname" fieldtype="string" width="50"/>
+            <FIELD attrname="access_date" fieldtype="date"/>
+            <FIELD attrname="access_time" fieldtype="time"/>
+        </FIELDS>
+        <PARAMS rowcount="2"/>
+    </METADATA>
+    <ROWDATA>
+        <ROW access_date="20130717" access_time="095013" disabled="0" firstname="System user firstname" idgroup="1" iduser="1" lastname="System user lastname" passwd="123qwerty" username="test1"/>
+        <ROW access_date="" access_time="" disabled="0" firstname="" idgroup="1" iduser="2" lastname="" passwd="12345678" username="test2"/>
+    </ROWDATA>
+    <ERRORS errorcount="0">
+        <ERROR Code="0" Description=""/>
+    </ERRORS>
+</DATAPACKET>

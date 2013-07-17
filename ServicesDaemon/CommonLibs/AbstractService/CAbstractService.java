@@ -663,7 +663,7 @@ public abstract class CAbstractService {
 		} 
 		else if ( strParameterType.toLowerCase().equals( NamesSQLTypes._TIMESTAMP ) == true ) {
 
-			DateFormat dtf = new SimpleDateFormat( "dd/mm/yyyy HH:mm:ss" );
+			DateFormat dtf = new SimpleDateFormat( "dd/MM/yyyy HH:mm:ss" );
 
 			try {
 
@@ -682,7 +682,7 @@ public abstract class CAbstractService {
 		} 
 		else if ( strParameterType.toLowerCase().equals( NamesSQLTypes._DATE ) == true ) {
 
-			DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
+			DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 
 			try {
 

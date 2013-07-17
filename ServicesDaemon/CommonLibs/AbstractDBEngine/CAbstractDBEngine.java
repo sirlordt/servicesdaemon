@@ -30,6 +30,7 @@ import net.maindataservices.Utilities;
 
 
 import AbstractService.CInputServiceParameter;
+import AbstractService.CInputServiceParameter.TParameterScope;
 import CommonClasses.CLanguage;
 import CommonClasses.CMemoryFieldData;
 import CommonClasses.CMemoryFieldData.TFieldScope;
@@ -521,89 +522,112 @@ public abstract class CAbstractDBEngine {
 		
 	}
 	
-	public boolean setFieldValueToNamedCallableStatement( CNamedCallableStatement NamedCallableStatement, int intFieldType, String strFieldName, String strFieldValue, String strDateFormat, String strTimeFormat, String strDateTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+	public boolean setFieldValueToNamedCallableStatement( CNamedCallableStatement NamedCallableStatement, TParameterScope FieldScope, int intFieldType, String strFieldName, String strFieldValue, String strDateFormat, String strTimeFormat, String strDateTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		boolean bResult =  false;
 		
 		try {
 
-			if ( strFieldValue != null && strFieldValue.isEmpty() == false && strFieldValue.equals( NamesSQLTypes._NULL ) == false ) {
-			
-				switch ( intFieldType ) {
+			if ( FieldScope.equals( TParameterScope.IN ) || FieldScope.equals( TParameterScope.INOUT ) ) {
+
+				if ( strFieldValue != null && strFieldValue.isEmpty() == false && strFieldValue.equals( NamesSQLTypes._NULL ) == false ) {
 				
-					case Types.INTEGER: { NamedCallableStatement.setInt( strFieldName, Integer.parseInt( strFieldValue ) ); break; }
-					case Types.BIGINT: { NamedCallableStatement.setLong( strFieldName, Long.parseLong( strFieldValue ) ); break; }
-					case Types.SMALLINT: { NamedCallableStatement.setShort( strFieldName, Short.parseShort( strFieldValue ) ); break; }
-					case Types.VARCHAR: 
-					case Types.CHAR: { NamedCallableStatement.setString( strFieldName, strFieldValue ); break; }
-					case Types.BOOLEAN: { NamedCallableStatement.setBoolean( strFieldName, Boolean.parseBoolean( strFieldValue ) ); break; }
-					case Types.BLOB: { 	
-						
-										java.sql.Blob BlobData = new SerialBlob( Base64.decode( strFieldValue.getBytes() ) );
-									
-									    NamedCallableStatement.setBlob( strFieldName, BlobData );
-			                            
-									    break; 
-			
-									 }
-					case Types.DATE: {
-						               
-									    SimpleDateFormat DateFormat = new SimpleDateFormat( strDateFormat );
+					switch ( intFieldType ) {
+					
+						case Types.INTEGER: { NamedCallableStatement.setInt( strFieldName, Integer.parseInt( strFieldValue ) ); break; }
+						case Types.BIGINT: { NamedCallableStatement.setLong( strFieldName, Long.parseLong( strFieldValue ) ); break; }
+						case Types.SMALLINT: { NamedCallableStatement.setShort( strFieldName, Short.parseShort( strFieldValue ) ); break; }
+						case Types.VARCHAR: 
+						case Types.CHAR: { NamedCallableStatement.setString( strFieldName, strFieldValue ); break; }
+						case Types.BOOLEAN: { NamedCallableStatement.setBoolean( strFieldName, Boolean.parseBoolean( strFieldValue ) ); break; }
+						case Types.BLOB: { 	
+							
+											java.sql.Blob BlobData = new SerialBlob( Base64.decode( strFieldValue.getBytes() ) );
 										
-										java.util.Date Date = DateFormat.parse( strFieldValue );
-										
-										java.sql.Date SQLDate = new java.sql.Date( Date.getTime() ); 
-										
-										NamedCallableStatement.setDate( strFieldName, SQLDate );
-						               
-										break; 
-						             
-					                 }
-					case Types.TIME: {  
-						
-										SimpleDateFormat TimeFormat = new SimpleDateFormat( strTimeFormat );
-										
-										java.util.Date Date = TimeFormat.parse( strFieldValue );
-										
-										java.sql.Time SQLTime = new java.sql.Time( Date.getTime() ); 
-										
-										NamedCallableStatement.setTime( strFieldName, SQLTime );
-						               
-										break; 
-						               
-					                 }
-					case Types.TIMESTAMP: {  
-						
-											 SimpleDateFormat DateTimeFormat = new SimpleDateFormat( strDateTimeFormat );
+										    NamedCallableStatement.setBlob( strFieldName, BlobData );
+				                            
+										    break; 
+				
+										 }
+						case Types.DATE: {
+							               
+										    SimpleDateFormat DateFormat = new SimpleDateFormat( strDateFormat );
 											
-											 java.util.Date Date = DateTimeFormat.parse( strFieldValue );
+											java.util.Date Date = DateFormat.parse( strFieldValue );
 											
-											 java.sql.Timestamp SQLTimeStamp = new java.sql.Timestamp( Date.getTime() ); 
+											java.sql.Date SQLDate = new java.sql.Date( Date.getTime() ); 
 											
-											 NamedCallableStatement.setTimestamp( strFieldName, SQLTimeStamp );
-	
-						                     break; 
-						                    
-					                      }
-					case Types.FLOAT: 
-					case Types.DECIMAL: { NamedCallableStatement.setFloat( strFieldName, Float.parseFloat( strFieldValue ) ); break; }
-					case Types.DOUBLE: { NamedCallableStatement.setDouble( strFieldName, Double.parseDouble( strFieldValue ) ); break; }
-					default: {
-						
-						       if ( Logger != null && Lang != null ) {
-						    	   
-									Logger.LogWarning( "-1", Lang.Translate( "Unkown SQL field type [%s], field name [%s], field value [%s]", Integer.toString( intFieldType ), strFieldName, strFieldValue ) );
-						    	   
-						       } 
-						
-					        }
-	
+											NamedCallableStatement.setDate( strFieldName, SQLDate );
+							               
+											break; 
+							             
+						                 }
+						case Types.TIME: {  
+							
+											SimpleDateFormat TimeFormat = new SimpleDateFormat( strTimeFormat );
+											
+											java.util.Date Date = TimeFormat.parse( strFieldValue );
+											
+											java.sql.Time SQLTime = new java.sql.Time( Date.getTime() ); 
+											
+											NamedCallableStatement.setTime( strFieldName, SQLTime );
+							               
+											break; 
+							               
+						                 }
+						case Types.TIMESTAMP: {  
+							
+												 SimpleDateFormat DateTimeFormat = new SimpleDateFormat( strDateTimeFormat );
+												
+												 java.util.Date Date = DateTimeFormat.parse( strFieldValue );
+												
+												 java.sql.Timestamp SQLTimeStamp = new java.sql.Timestamp( Date.getTime() ); 
+												
+												 NamedCallableStatement.setTimestamp( strFieldName, SQLTimeStamp );
+		
+							                     break; 
+							                    
+						                      }
+						case Types.FLOAT: 
+						case Types.DECIMAL: { NamedCallableStatement.setFloat( strFieldName, Float.parseFloat( strFieldValue ) ); break; }
+						case Types.DOUBLE: { NamedCallableStatement.setDouble( strFieldName, Double.parseDouble( strFieldValue ) ); break; }
+						default: {
+							
+							       if ( Logger != null && Lang != null ) {
+							    	   
+										Logger.LogWarning( "-1", Lang.Translate( "Unkown SQL field type [%s], field name [%s], field value [%s]", Integer.toString( intFieldType ), strFieldName, strFieldValue ) );
+							    	   
+							       } 
+							
+						        }
+		
+					}
+				
+				}
+				else {
+					
+					NamedCallableStatement.setNull( strFieldName, intFieldType );
+					
 				}
 			
 			}
-			else {
+			
+			if ( FieldScope.equals( TParameterScope.OUT ) ) {
 				
-				NamedCallableStatement.setNull( strFieldName, intFieldType );
+				try {
+					
+					NamedCallableStatement.registerOutParameter( strFieldName, intFieldType );
+				
+				}
+				catch ( Exception Ex ) {
+					
+					if ( Logger != null ) {
+						
+						Logger.LogException( "-1015", Ex.getMessage(), Ex );
+					
+					}
+					
+				}
 				
 			}
 			
@@ -611,7 +635,7 @@ public abstract class CAbstractDBEngine {
 		catch ( Exception Ex ) {
 			
 			if ( Logger != null )
-				Logger.LogException( "-1015", Ex.getMessage(), Ex );
+				Logger.LogException( "-1016", Ex.getMessage(), Ex );
 			
 		}
 		
@@ -1030,19 +1054,43 @@ public abstract class CAbstractDBEngine {
 			
 			boolean bSQLParsed = true;
 			
+			boolean bContainsOutParams = false; 
+			
+			boolean bIsOutParam =  false;
+			
+			CMemoryRowSet TmpMemoryRowSet = new CMemoryRowSet( false );
+			
 			while ( i.hasNext() ) {
 			       
 				Entry<String,Integer> NamedParam = i.next();
 
-				CInputServiceParameter InputServiceParameterDef = this.getInputServiceParameterByName(InputServiceParameters, NamedParam.getKey() );
+				CInputServiceParameter InputServiceParameterDef = this.getInputServiceParameterByName( InputServiceParameters, NamedParam.getKey() );
 
 				String strInputServiceParameterValue = Request.getParameter( NamedParam.getKey() );
 
 				int intMacroIndex = Utilities.getIndexByValue( strMacrosNames, ConfigXMLTagsServicesDaemon._StartMacroTag + NamedParam.getKey() + ConfigXMLTagsServicesDaemon._EndMacroTag );
 				
-				if ( InputServiceParameterDef != null && strInputServiceParameterValue != null ) {
+				bIsOutParam = InputServiceParameterDef != null && ( InputServiceParameterDef.getParameterScope().equals( TParameterScope.OUT ) || InputServiceParameterDef.getParameterScope().equals( TParameterScope.INOUT ) );
 				
-					this.setFieldValueToNamedCallableStatement( NamedCallableStatement, InputServiceParameterDef.getParameterDataTypeID(), NamedParam.getKey(), strInputServiceParameterValue, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
+				if ( InputServiceParameterDef != null && ( strInputServiceParameterValue != null || bIsOutParam ) ) {
+				
+					if ( bIsOutParam ) {
+
+                        int intFieldLength = 0;						
+						
+						if ( InputServiceParameterDef.getParameterDataTypeWidth() != null || InputServiceParameterDef.getParameterDataTypeWidth().isEmpty() == false ) {
+							
+							intFieldLength = Integer.parseInt( InputServiceParameterDef.getParameterDataTypeWidth() );
+							
+						}
+						
+						TmpMemoryRowSet.addField( InputServiceParameterDef.getParameterName(), InputServiceParameterDef.getParameterDataTypeID(), InputServiceParameterDef.getParameterDataType(), intFieldLength, InputServiceParameterDef.getParameterName(), TFieldScope.OUT );
+						
+						bContainsOutParams = true;
+						
+					}
+					
+					this.setFieldValueToNamedCallableStatement( NamedCallableStatement, InputServiceParameterDef.getParameterScope(), InputServiceParameterDef.getParameterDataTypeID(), NamedParam.getKey(), strInputServiceParameterValue, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
 	    			
                 }
 				else if ( intMacroIndex >= 0 ) {
@@ -1073,7 +1121,7 @@ public abstract class CAbstractDBEngine {
                 	
                 }
                 
-				if ( strInputServiceParameterValue == null && intMacroIndex == -1 ) {
+				if ( ( strInputServiceParameterValue == null && bIsOutParam == false ) && intMacroIndex == -1 ) {
                 	
                     if ( Logger != null ) {
                     	
@@ -1089,7 +1137,17 @@ public abstract class CAbstractDBEngine {
 			
 			if ( bSQLParsed == true ) {
 				
-				Result = new CMemoryRowSet( false, NamedCallableStatement.executeQuery() );
+				NamedCallableStatement.execute();
+				
+				ResultSet CallableStatementResultSet = NamedCallableStatement.getResultSet();
+
+				if ( CallableStatementResultSet == null && bContainsOutParams ) {
+					
+					CallableStatementResultSet = TmpMemoryRowSet.BuildCachedRowSetFromFieldsScopeOut( NamedCallableStatement, Logger, Lang );
+					
+				}
+
+				Result = new CMemoryRowSet( false, CallableStatementResultSet );
 				
 			}
 			else {

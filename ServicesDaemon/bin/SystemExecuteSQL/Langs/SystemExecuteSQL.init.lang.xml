@@ -28,7 +28,7 @@
 <entry key="Sucess to execute the SQL statement">Éxito al ejecutar la instrucción SQL</entry>
 <entry key="Error to execute the SQL statement, see the log file for more details">Error al ejecutar la instrucción SQL, vea el archivo de registro para más detalles</entry>
 <entry key="Error to execute the next SQL statement, no valid params names found for service call">Error al ejecutar la instrucción SQL, no fueron encontrados nombres de parámetros válidos en la llamada al servicio</entry>
-<entry key="Error to execute the next SQL statement [%s] index call [%s]">Error al ejecutar la siguiente instrucción SQL [%s] índice de llamada [%s</entry>
+<entry key="Error to execute the next SQL statement [%s] index call [%s]">Error al ejecutar la siguiente instrucción SQL [%s] índice de llamada [%s]</entry>
 <entry key="Sucess to execute the plain query SQL statement [%s]">Éxito al ejecutar la instrucción de consulta plana SQL [%s]</entry>
 <entry key="Error to execute the plain query SQL statement [%s]">Error al ejecutar la instrucción de consulta plana SQL [%s]</entry>
 <entry key="Sucess to execute the plain SQL statement [%s]">Éxito al ejecutar la instrucción SQL plana [%s]</entry>

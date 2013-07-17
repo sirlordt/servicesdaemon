@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DATAPACKET dpversion="1.1">
+    <METADATA>
+        <FIELDS>
+            <FIELD attrname="NEW_ID" fieldtype="i8"/>
+        </FIELDS>
+        <PARAMS rowcount="1"/>
+    </METADATA>
+    <ROWDATA>
+        <ROW NEW_ID="2"/>
+    </ROWDATA>
+    <ERRORS errorcount="0">
+        <ERROR Code="0" Description=""/>
+    </ERRORS>
+</DATAPACKET>

@@ -8,9 +8,9 @@ CREATE TABLE tblUsersEng( iduser INT NOT NULL AUTO_INCREMENT, idgroup INT NOT NU
 
 CREATE TABLE tblGroups( idgroup INT NOT NULL AUTO_INCREMENT, description VARCHAR(50) NOT NULL, PRIMARY KEY (idgroup) );
 
-CREATE TABLE tblGenericData( id INT, data1 VARCHAR(100), data2 VARCHAR(100), PRIMARY KEY (id) );
+CREATE TABLE tblGenericData( id INT NOT NULL AUTO_INCREMENT, data1 VARCHAR(100), data2 VARCHAR(100), PRIMARY KEY (id) );
 
-CREATE TABLE tblBlobData( id INT, blobdata blob, PRIMARY KEY (id) );
+CREATE TABLE tblBlobData( id INT NOT NULL AUTO_INCREMENT, blobdata blob, PRIMARY KEY (id) );
 
 DELIMITER $$
 
@@ -88,6 +88,4 @@ insert into tblUsersEng( iduser, idgroup, disabled, username, firstname, lastnam
 insert into tblGenericData( id, data1, data2 ) Values( 1, 'DataA1', 'DataA2' );
 insert into tblGenericData( id, data1, data2 ) Values( 2, 'DataB1', 'DataB2' );
 insert into tblGenericData( id, data1, data2 ) Values( 3, 'DataC1', 'DataC2' );
-
-ALTER TABLE tblGenericData AUTO_INCREMENT=4;
 

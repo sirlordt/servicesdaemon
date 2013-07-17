@@ -485,12 +485,20 @@ public class CMemoryRowSet {
 
 	public boolean addField( String strName, int intSQLType, String strSQLName, int intLength, String strLabel ) {
 		
+		return this.addField( strName, intSQLType, strSQLName, intLength, strLabel, TFieldScope.IN );
+		
+	}
+
+	public boolean addField( String strName, int intSQLType, String strSQLName, int intLength, String strLabel, TFieldScope Scope ) {
+		
 		if ( bAllowDuplicateNames == true || getFieldByName( strName ) == null ) {
 
 			if ( getFieldByNameAndType( strName, intSQLType ) == null ) {
 			
 				CMemoryFieldData FieldData = new CMemoryFieldData( strName, intSQLType, strSQLName, intLength, strLabel );
 
+				FieldData.Scope = Scope;
+				
 				FieldsData.add( FieldData );
 
 				return true;
@@ -510,7 +518,6 @@ public class CMemoryRowSet {
 		}
 		
 	}
-
 	public boolean addLinkedField( CMemoryFieldData FieldData ) {
 		
 		if ( bAllowDuplicateNames == true || getFieldByName( FieldData.strName ) == null ) {

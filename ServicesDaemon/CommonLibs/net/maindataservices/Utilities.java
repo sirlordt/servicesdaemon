@@ -443,7 +443,7 @@ public class Utilities {
 		
 			SimpleDateFormat DTFormatter = new SimpleDateFormat( strDateTimeFormat );
 			//SimpleDateFormat TFormatter = new SimpleDateFormat("HHmmss");
-			//SimpleDateFormat DTFormatter = new SimpleDateFormat("yyyymmdd HHmmss");
+			//SimpleDateFormat DTFormatter = new SimpleDateFormat("yyyyMMdd HHmmss");
 			//DateTimeFormat x = new DateTim
 
 			Date date = new Date();
