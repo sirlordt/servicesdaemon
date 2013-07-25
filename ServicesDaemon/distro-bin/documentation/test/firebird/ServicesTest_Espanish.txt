@@ -1,4 +1,4 @@
-Para crear la base de datos inicial en firebird desde linux usa el sisguiente comando:
+Para crear la base de datos inicial en firebird desde linux usa el siguiente comando:
 
 Linux:
 #isql-fb -input FirebirdTestDB.sql

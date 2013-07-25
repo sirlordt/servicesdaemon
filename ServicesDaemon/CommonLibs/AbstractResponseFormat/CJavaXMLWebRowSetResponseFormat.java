@@ -19,6 +19,7 @@ import net.maindataservices.Utilities;
 import com.sun.rowset.CachedRowSetImpl;
 import com.sun.rowset.WebRowSetImpl;
 
+import AbstractDBEngine.CAbstractDBEngine;
 import AbstractService.CAbstractService;
 import AbstractService.CInputServiceParameter;
 import CommonClasses.CLanguage;
@@ -289,7 +290,7 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 	}
 
 	@Override
-	public String FormatResultSet( ResultSet ResultSet, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+	public String FormatResultSet( ResultSet ResultSet, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 
 		String strResult = "";
 
@@ -344,7 +345,7 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 	}
 
 	@Override
-	public String FormatResultsSets( ArrayList<ResultSet> ResultsSets, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+	public String FormatResultsSets( ArrayList<ResultSet> ResultsSets, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 
 		String strResult = "";
 
@@ -432,7 +433,7 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 	}
 
     @Override
-    public String FormatResultSet( CResultSetResult ResultSetResult, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+    public String FormatResultSet( CResultSetResult ResultSetResult, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	String strResult = "";
     	
@@ -444,7 +445,7 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 
 				if ( ResultSetResult != null ) {
 
-					MemoryRowSet.cloneOnlyMetaData( ResultSetResult.Result, null );
+					MemoryRowSet.cloneOnlyMetaData( ResultSetResult.Result, DBEngine, null, Logger, Lang );
 					MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructSQLOperationAffectedRows, Types.BIGINT, NamesSQLTypes._BIGINT, 0, JavaXMLWebRowSetTags._XML_StructSQLOperationAffectedRows );
 					MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructSQLOperationCode, Types.INTEGER, NamesSQLTypes._INTEGER, 0, JavaXMLWebRowSetTags._XML_StructSQLOperationCode );
 					MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructSQLOperationDescription, Types.VARCHAR, NamesSQLTypes._VARCHAR, JavaXMLWebRowSetTags._XML_StructSQLOperationDescriptionLength, JavaXMLWebRowSetTags._XML_StructSQLOperationDescription );
@@ -459,7 +460,7 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 						DefaultFieldValues.put( JavaXMLWebRowSetTags._XML_StructSQLOperationCode, ResultSetResult.intCode );
 						DefaultFieldValues.put( JavaXMLWebRowSetTags._XML_StructSQLOperationDescription, ResultSetResult.strDescription );
 
-						MemoryRowSet.addRowData( ResultSetResult.Result );
+						MemoryRowSet.addRowData( ResultSetResult.Result, DBEngine, Logger, Lang );
 						MemoryRowSet.NormalizeRowCount( DefaultFieldValues ); //add null to code and description field values
 
 					}
@@ -530,7 +531,7 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
     }
     
 	@Override
-	public String FormatResultsSets( ArrayList<CResultSetResult> ResultsSetsList, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
+	public String FormatResultsSets( ArrayList<CResultSetResult> ResultsSetsList, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
     	
     	String strResult = "";
     	
@@ -546,7 +547,7 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 
 					if ( ResultSet != null ) {
 
-						MemoryRowSet.cloneOnlyMetaData( ResultSet, null );
+						MemoryRowSet.cloneOnlyMetaData( ResultSet, DBEngine, null, Logger, Lang );
 						MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructSQLOperationAffectedRows, Types.BIGINT, NamesSQLTypes._BIGINT, 0, JavaXMLWebRowSetTags._XML_StructSQLOperationAffectedRows );
 						MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructSQLOperationCode, Types.INTEGER, NamesSQLTypes._INTEGER, 0, JavaXMLWebRowSetTags._XML_StructSQLOperationCode );
 						MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructSQLOperationDescription, Types.VARCHAR, NamesSQLTypes._VARCHAR, JavaXMLWebRowSetTags._XML_StructSQLOperationDescriptionLength, JavaXMLWebRowSetTags._XML_StructSQLOperationDescription );
@@ -563,7 +564,7 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 								DefaultFieldValues.put( JavaXMLWebRowSetTags._XML_StructSQLOperationCode, ResultSetResultToAdd.intCode );
 								DefaultFieldValues.put( JavaXMLWebRowSetTags._XML_StructSQLOperationDescription, ResultSetResultToAdd.strDescription );
 
-								MemoryRowSet.addRowData( ResultSet );
+								MemoryRowSet.addRowData( ResultSet, DBEngine, Logger, Lang );
 								MemoryRowSet.NormalizeRowCount( DefaultFieldValues ); //add null to code and description field values
 
 							}
@@ -644,7 +645,7 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
     	return strResult;
 
 	}
-
+	
 	@Override
 	public String FormatMemoryRowSet( CMemoryRowSet MemoryRowSet, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 		

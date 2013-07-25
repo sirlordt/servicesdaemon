@@ -57,7 +57,7 @@ public class NamesSQLTypes {
 		
 	}
 	
-	public static boolean CheckSQLType( String strSQLType ) {
+	public static boolean CheckJavaSQLType( String strSQLType ) {
 		
 		return SQLTypes.contains( strSQLType.toLowerCase() );
 		
@@ -134,7 +134,7 @@ public class NamesSQLTypes {
 		
 	}
 	
-	public static int ConvertToSQLType( String strSQLName ) {
+	public static int ConvertToJavaSQLType( String strSQLName ) {
 		
 		int intResult = -1;
 		
@@ -205,6 +205,58 @@ public class NamesSQLTypes {
 		}
 		
 		return intResult;
+		
+	}
+	
+	public static boolean IsJavaSQLType( int intSQlType ) {
+		
+		boolean bResult = false;
+		
+		switch ( intSQlType ) {
+	
+			case Types.INTEGER:
+			case Types.BIGINT:
+			case Types.SMALLINT:
+			case Types.VARCHAR: 
+			case Types.CHAR:  
+			case Types.BOOLEAN:
+			case Types.BLOB:
+			case Types.DATE:
+			case Types.TIME:
+			case Types.TIMESTAMP:
+			case Types.FLOAT: 
+			case Types.DECIMAL: 
+			case Types.DOUBLE: { bResult = true; break; }
+
+	    }
+		
+		return bResult;
+		
+	}
+	
+	public static String getJavaSQLTypeName( int intSQlType ) {
+		
+		String strResult = "";
+		
+		switch ( intSQlType ) {
+	
+			case Types.INTEGER: { strResult = NamesSQLTypes._INTEGER; break; }
+			case Types.BIGINT: { strResult = NamesSQLTypes._BIGINT; break; }
+			case Types.SMALLINT: { strResult = NamesSQLTypes._SMALLINT; break; }
+			case Types.VARCHAR: { strResult = NamesSQLTypes._VARCHAR; break; }
+			case Types.CHAR: { strResult = NamesSQLTypes._CHAR; break; } 
+			case Types.BOOLEAN:  { strResult = NamesSQLTypes._BOOLEAN; break; }
+			case Types.BLOB: { strResult = NamesSQLTypes._BLOB; break; }
+			case Types.DATE: { strResult = NamesSQLTypes._DATE; break; }
+			case Types.TIME: { strResult = NamesSQLTypes._TIME; break; }
+			case Types.TIMESTAMP: { strResult = NamesSQLTypes._TIMESTAMP; break; }
+			case Types.FLOAT: { strResult = NamesSQLTypes._FLOAT; break; } 
+			case Types.DECIMAL: { strResult = NamesSQLTypes._DECIMAL; break; }
+			case Types.DOUBLE:  { strResult = NamesSQLTypes._DOUBLE; break; }
+
+	    }
+		
+		return strResult;
 		
 	}
 	

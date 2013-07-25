@@ -259,7 +259,7 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
 				       
 					Entry<String,Integer> NamedParam = i.next();
 
-					MemoryRowSet.setFieldDataToPreparedStatement( NamedPreparedStatement, NamedParam.getKey(), NamedParam.getKey(), intIndexCall, true, Logger, Lang );
+					this.setFieldDataToPreparedStatement( MemoryRowSet, NamedPreparedStatement, NamedParam.getKey(), NamedParam.getKey(), intIndexCall, true, Logger, Lang );
 				
 				}
 

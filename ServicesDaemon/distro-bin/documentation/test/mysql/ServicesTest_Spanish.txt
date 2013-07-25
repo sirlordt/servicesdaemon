@@ -1,11 +1,11 @@
-Para crear la base de datos inicial en firebird desde linux usa el sisguiente comando:
+Para crear la base de datos inicial en mysql desde linux usa el siguiente comando:
 
 Linux/Windows:
 mysql -u root -p < MySQLTestDB.sql
 
 Nota 1: El archivo MySQLTestDB.sql lo encontrarás en la carpeta documentation, dentro de la carpeta distro-bin
 
-Recomiendo ampliamente el Postman un plugin para Google Chrome, para realizar las siguientes pruebas el único detalle es un poco engorroso enviar los parámetros uno por uno, sin embargo es capaz de guardar las llamadas con sus parámetros, puedes importar la lista de llamadas a los servicios importando los archivos "DBServices Test Firebird.json" y "Generic Calls.json" del directorio postman_google_chrome y las variables de entorno del archivo "Variable Test 192.168.2.133-environment.json", este último se importa desde la parte superior derecha, donde dice "No environment", estos archivos ayudan mucho para no tener que crear desde cero el entorno de pruebas adecuado.
+Recomiendo ampliamente el Postman un plugin para Google Chrome, para realizar las siguientes pruebas el único detalle es un poco engorroso enviar los parámetros uno por uno, sin embargo es capaz de guardar las llamadas con sus parámetros, puedes importar la lista de llamadas a los servicios importando los archivos "DBServices Test MySQL.json" y "Generic Calls.json" del directorio postman_google_chrome y las variables de entorno del archivo "Variable Test 192.168.2.133-environment.json", este último se importa desde la parte superior derecha, donde dice "No environment", estos archivos ayudan mucho para no tener que crear desde cero el entorno de pruebas adecuado.
 
 Yo realice estas pruebas desde un Linux Mint 14.0
 
@@ -37,8 +37,7 @@ ResponseFormat=XML-DATAPACKET
 ResponseFormatVersion=1.1
 SecurityTokenID=8876415734354505252
 
-Nota 1: Recuerden los que se explica en la Pre Nota 1 al inicio de este documento 
-Nota 2: Observa que unos de los parámetros es el número que obtienes en el servicio anterior sin ese número no puede iniciar transacción ni usar las otros servicios, para este caso es 5998257635420778602, para tú caso debería ser otro número distinto.
+Nota 1: Observa que unos de los parámetros es el número que obtienes en el servicio anterior sin ese número no puede iniciar transacción ni usar las otros servicios, para este caso es 7185005767632626866, para tú caso debería ser otro número distinto.
 
 Prueba 4 Caso 1 (Ejecutar una consulta parametrizado sobre DB4), para ver la salida del servicio vea el archivo test04_service_output_case1.xml
 
@@ -72,7 +71,7 @@ SecurityTokenID=8876415734354505252
 TransactionID=7185005767632626866
 SQL=Select * From tblUsersDB Where IdUser=1 Or IdUser=2
 
-Prueba 6 Caso 1 (Ejecutar una consulta plana, sin parámetros, sobre DB1), para ver la salida del servicio vea el archivo test06_service_output_case1.xml
+Prueba 6 Caso 1 (Ejecutar una consulta plana, sin parámetros, sobre DB4), para ver la salida del servicio vea el archivo test06_service_output_case1.xml
 
 No se realiza motivado a que MySQL no maneja el concepto de secuencias o generadores de secuencias.
 
@@ -280,7 +279,7 @@ ServiceName=System.Commit.Transaction
 SecurityTokenID=8876415734354505252
 TransactionID=7185005767632626866
 
-Prueba 10 Case 4 (Ejecutar un procedimiento almacenado plano con retorno de información, sobre DB1), para ver la salida del servicio vea el archivo test10_service_output_case4.xml
+Prueba 10 Case 4 (Ejecutar un procedimiento almacenado plano con retorno de información, sobre DB4), para ver la salida del servicio vea el archivo test10_service_output_case4.xml
 
 ServiceName=System.Execute.SQL
 SecurityTokenID=8876415734354505252

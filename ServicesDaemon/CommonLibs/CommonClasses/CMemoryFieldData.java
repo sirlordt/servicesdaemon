@@ -74,7 +74,7 @@ public class CMemoryFieldData {
 		CSMDNode DataNode = new CSMDNode( strSMDToParse );
 		
 		this.strName = DataNode.strName;
-		this.intSQLType = NamesSQLTypes.ConvertToSQLType( DataNode.getAttributeByName( "datatype" ) );
+		this.intSQLType = NamesSQLTypes.ConvertToJavaSQLType( DataNode.getAttributeByName( "datatype" ) );
 		this.strSQLTypeName = DataNode.getAttributeByName( "datatype" );
 		
 		String strScope = DataNode.getAttributeByName( "scope" );
@@ -737,6 +737,7 @@ public class CMemoryFieldData {
 		
 	}
 	
+	/*
 	public boolean setFieldDataToPreparedStatement( CNamedPreparedStatement NamedPreparedStatement, String strPreparedStatementFieldName, int intIndexRow, boolean bUseLastRowIfRowNotExits, CExtendedLogger Logger, CLanguage Lang ) {
 
 		boolean bResult = false;
@@ -765,7 +766,10 @@ public class CMemoryFieldData {
 						case Types.BOOLEAN: { NamedPreparedStatement.setBoolean( strPreparedStatementFieldName, ( Boolean ) FieldData ); bResult = true; break; }
 						case Types.BLOB: { 	
 							
-										    NamedPreparedStatement.setBlob( strPreparedStatementFieldName, (Blob) FieldData );
+							                if ( intBlobType == 1 ) //PostgreSQL Cases 
+							                	NamedPreparedStatement.setBinaryStream( strPreparedStatementFieldName, ((Blob) FieldData).getBinaryStream(), ((Blob) FieldData).getBinaryStream().available() );  
+							                else
+							                	NamedPreparedStatement.setBlob( strPreparedStatementFieldName, (Blob) FieldData );
 				                            
 										    bResult = true;
 										    
@@ -890,7 +894,10 @@ public class CMemoryFieldData {
 							case Types.BOOLEAN: { NamedCallableStatement.setBoolean( strCallableStatementFieldName, ( Boolean ) FieldData ); bResult = true; break; }
 							case Types.BLOB: { 	
 								
-											    NamedCallableStatement.setBlob( strCallableStatementFieldName, (Blob) FieldData );
+				                                if ( intBlobType == 1 ) //PostgreSQL Cases 
+				                	                NamedCallableStatement.setBinaryStream( strCallableStatementFieldName, ((Blob) FieldData).getBinaryStream(), ((Blob) FieldData).getBinaryStream().available() );  
+				                                else
+				                                	NamedCallableStatement.setBlob( strCallableStatementFieldName, (Blob) FieldData );
 					                            
 											    bResult = true;
 											    
@@ -1004,6 +1011,6 @@ public class CMemoryFieldData {
 		
 		return bResult;
 		
-	}
+	}*/
 	
 }

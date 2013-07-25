@@ -154,7 +154,7 @@ public class CSystemStartSessionConfig extends CAbstractConfigLoader {
  
 							if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 								
-								if ( NamesSQLTypes.CheckSQLType( NodeAttribute.getNodeValue().trim() ) == true ) {
+								if ( NamesSQLTypes.CheckJavaSQLType( NodeAttribute.getNodeValue().trim() ) == true ) {
 					           
 									strDataType = NodeAttribute.getNodeValue().trim();
 									
@@ -284,7 +284,7 @@ public class CSystemStartSessionConfig extends CAbstractConfigLoader {
 					
 					SystemStartSessionDBConnection.InputParameters.add( InputParameter );
 					
-					Logger.LogMessage( "1", Lang.Translate( "Added input parameter strName: [%s] bRequiered: [%s] strDataType: [%s] strScope: [%s] intLength: [%s] strDescription: [%s]", strName, bRequired==true?"true":"false", strDataType, strScope, Integer.toString( intLength ), strDescription ) );
+					Logger.LogMessage( "1", Lang.Translate( "Added input parameter strName: [%s] bRequired: [%s] strDataType: [%s] strScope: [%s] intLength: [%s] strDescription: [%s]", strName, bRequired==true?"true":"false", strDataType, strScope, Integer.toString( intLength ), strDescription ) );
 					
 					bResult = true;
 					
@@ -526,7 +526,7 @@ public class CSystemStartSessionConfig extends CAbstractConfigLoader {
 							 
 							if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 								
-								if ( NamesSQLTypes.CheckSQLType( NodeAttribute.getNodeValue().trim() ) == true ) {
+								if ( NamesSQLTypes.CheckJavaSQLType( NodeAttribute.getNodeValue().trim() ) == true ) {
 							           
 									SystemStartSessionDBConnection.strFieldType = NodeAttribute.getNodeValue().trim();
 									
@@ -1177,6 +1177,9 @@ public class CSystemStartSessionConfig extends CAbstractConfigLoader {
 
 					if ( NameAttribute != null ) { 
 
+		            	Logger.LogMessage( "1", Lang.Translate( "Node attribute name: [%s]", NameAttribute.getNodeName() ) );
+		            	Logger.LogMessage( "1", Lang.Translate( "Node attribute value: [%s]", NameAttribute.getNodeValue() ) );
+						
 						if ( NameAttribute.getNodeValue().isEmpty() == false ) {
 
 							String strDBConnectionName = NameAttribute.getNodeValue();

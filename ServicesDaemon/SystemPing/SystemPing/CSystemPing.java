@@ -19,12 +19,6 @@ import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.sql.RowSetMetaData;
-import javax.sql.rowset.CachedRowSet;
-import javax.sql.rowset.RowSetMetaDataImpl;
-
-import com.sun.rowset.CachedRowSetImpl;
-
 import AbstractResponseFormat.CAbstractResponseFormat;
 import AbstractService.CAbstractService;
 import AbstractService.CInputServiceParameter;
@@ -34,6 +28,7 @@ import AbstractService.DefaultConstantsServices;
 import AbstractService.CInputServiceParameter.TParameterScope;
 import CommonClasses.CAbstractConfigLoader;
 import CommonClasses.CClassPathLoader;
+import CommonClasses.CMemoryRowSet;
 import CommonClasses.CServicePostExecuteResult;
 import CommonClasses.CServicesDaemonConfig;
 import CommonClasses.DefaultConstantsServicesDaemon;
@@ -154,7 +149,7 @@ public class CSystemPing extends CAbstractService {
 
 				try {
 
-					RowSetMetaData RowsetMetaData = new RowSetMetaDataImpl();
+					/*RowSetMetaData RowsetMetaData = new RowSetMetaDataImpl();
 					RowsetMetaData.setColumnCount( 3 );
 
 					RowsetMetaData.setColumnName( 1, ConstantsSystemPing._ResponsePong );
@@ -189,9 +184,21 @@ public class CSystemPing extends CAbstractService {
 
 					CachedRowset.insertRow();
 
-					CachedRowset.moveToCurrentRow();
+					CachedRowset.moveToCurrentRow();*/
+					
+					int intPing = Integer.parseInt( Request.getParameter( ConstantsSystemPing._RequestPing ) );
 
-					String strResponseBuffer = ResponseFormat.FormatResultSet( CachedRowset, strResponseFormatVersion, OwnerConfig.getConfigValue( ConstantsSystemPing._Global_DateTime_Format ) , OwnerConfig.getConfigValue( ConstantsSystemPing._Global_Date_Format ), OwnerConfig.getConfigValue( ConstantsSystemPing._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
+					CMemoryRowSet ResultMemoryRowSet = new CMemoryRowSet( false );
+					
+					ResultMemoryRowSet.addField( ConstantsSystemPing._ResponsePong, Types.BIGINT, NamesSQLTypes._BIGINT, 0, NamesSQLTypes._BIGINT );
+					ResultMemoryRowSet.addField( ConstantsSystemPing._ResponseDateRequest, Types.DATE, NamesSQLTypes._DATE, 0, NamesSQLTypes._DATE );
+					ResultMemoryRowSet.addField( ConstantsSystemPing._ResponseTimeRequest, Types.TIME, NamesSQLTypes._TIME, 0, NamesSQLTypes._TIME );
+					
+					ResultMemoryRowSet.addData( ConstantsSystemPing._ResponsePong, intPing + 1 );
+					ResultMemoryRowSet.addData( ConstantsSystemPing._ResponseDateRequest, new Date( System.currentTimeMillis() ) );
+					ResultMemoryRowSet.addData( ConstantsSystemPing._ResponseTimeRequest, new Time( System.currentTimeMillis() ) );
+					
+					String strResponseBuffer = ResponseFormat.FormatMemoryRowSet( ResultMemoryRowSet, strResponseFormatVersion, OwnerConfig.getConfigValue( ConstantsSystemPing._Global_DateTime_Format ) , OwnerConfig.getConfigValue( ConstantsSystemPing._Global_Date_Format ), OwnerConfig.getConfigValue( ConstantsSystemPing._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 
 					Response.getWriter().print( strResponseBuffer );
 

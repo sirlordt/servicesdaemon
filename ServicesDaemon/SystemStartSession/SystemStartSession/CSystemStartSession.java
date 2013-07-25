@@ -765,7 +765,7 @@ public class CSystemStartSession extends CAbstractService {
 
 														if ( Field != null ) {
 
-															int intSQLType = NamesSQLTypes.ConvertToSQLType( SystemStartSessionDBConnection.strFieldType );
+															int intSQLType = NamesSQLTypes.ConvertToJavaSQLType( SystemStartSessionDBConnection.strFieldType );
 
 															if ( Field.checkFieldValue( 0, SystemStartSessionDBConnection.strFieldValueSuccess, intSQLType, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, LocalConfigDBConnection.strDateTimeFormat, ServiceLogger, ServiceLang ) ) {
 

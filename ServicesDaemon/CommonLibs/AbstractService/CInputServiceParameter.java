@@ -52,7 +52,7 @@ public class CInputServiceParameter {
           this.ParameterScope             = ParameterScope;  //IN, OUT, INOUT
 	      this.strParameterDescription    = strParameterDescription;
 
-	      this.intParameterDataTypeID =  NamesSQLTypes.ConvertToSQLType( this.strParameterDataType );
+	      this.intParameterDataTypeID =  NamesSQLTypes.ConvertToJavaSQLType( this.strParameterDataType );
 	      
 	      /*if ( this.strParameterType.equals( NamesSQLTypes.strSQL_VARCHAR ) ) {
 

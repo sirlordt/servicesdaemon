@@ -8,7 +8,7 @@
 <entry key="Response format version, example: 1.1">Versión del formato de respuesta, ejemplo: 1.1</entry>
 <entry key="The [%s] attribute value [%s] is invalid, name not found in databases conections from manager config file, for the section [%s] at relative index [%s], ignoring the section">El [%s] atributo con el valor de [%s] es inválido, el nombre de la conexión a base de datos no fue encontrado en archivo de configuración del DBManager, para la sección [%s] en la posición relativa [%s], ignorando la sección></entry>
 <entry key="The [%s] attribute value [%s] is invalid, name duplicated config file, for the section [%s] at relative index [%s], ignoring the section">El [%s] atributo con el valor de [%s] es inválido, el nombre se encuentra duplicado en el archivo de configuración, para la sección [%s] en la posición relativa [%s], ignorando la sección></entry>
-<entry key="Added input parameter strName: [%s] bRequiered: [%s] strDataType: [%s] strScope: [%s] intLength: [%s] strDescription: [%s]">Agregado el parámetro de entrada strName: [%s] bRequiered: [%s] strType: [%s] strSubType: [%s] intLength: [%s] strDescription: [%s]</entry>
+<entry key="Added input parameter strName: [%s] bRequired: [%s] strDataType: [%s] strScope: [%s] intLength: [%s] strDescription: [%s]">Agregado el parámetro de entrada strName: [%s] bRequiered: [%s] strType: [%s] strSubType: [%s] intLength: [%s] strDescription: [%s]</entry>
 <entry key="Cannot add the input parameter some values ​​are missing or invalid, for the node [%s] at relative index [%s]">No puedo agregar el parámetro de entrada algunos valores faltan o son inválidos, para el nodo [%s] en la posición relativa [%s]</entry>
 <entry key="No valid input parameters defined, for the node [%s] at relative index [%s]">No hay parámetros de entrada válidos definidos, para el nodo [%s] en la posición relativa [%s]</entry>
 <entry key="At least one required parameter must be defined, for the node [%s] at relative index [%s]">Al menos un parámetro requerido debe ser definido, para el nodo [%s] en la posición relativa [%s]</entry>
@@ -28,7 +28,7 @@
 <entry key="Added field [%s] for any response">Campo [%s] agregado para cualquier tipo de respuesta</entry>
 <entry key="The [%s] parameter is required for service and was not sent or its contents is empty">El parámetro [%s] es requerido por el servicio y no fue enviado o su contenido está vacío</entry>
 <entry key="The batabase connection name [%s] not found">La conexión de base de datos con nombre [%s] no fue encontrada</entry>
-<entry key="The database engine name [%s] version [%s] not found">El motor de base de datos de nombre [%s] no fue econtrado</entry>
+<entry key="The database engine name [%s] version [%s] not found">El motor de base de datos de nombre [%s] no fue encontrado</entry>
 <entry key="Database connection established to next URL: [%s] and user: [%s]">Conexión a base de datos establecida al siguiente URL: [%s] y usuario: [%s]</entry>
 <entry key="Trying to connect with the next URL: [%s] and user: [%s]">Intentado establecer conexión con el siguiente URL: [%s] y usuario: [%s]</entry>
 <entry key="Failed to connect to database name: [%s]">Falló al conectarse a la base de datos de nombre: [%s]</entry>

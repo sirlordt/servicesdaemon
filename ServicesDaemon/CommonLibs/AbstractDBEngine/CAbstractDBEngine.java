@@ -10,6 +10,7 @@
  ******************************************************************************/
 package AbstractDBEngine;
 
+import java.sql.Blob;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -23,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.serial.SerialBlob;
 
 import net.maindataservices.Base64;
@@ -220,7 +222,7 @@ public abstract class CAbstractDBEngine {
 
 			if ( strMacrosValues[ intMacroIndex ] != null && strMacrosValues[ intMacroIndex ].isEmpty() == false && strMacrosValues[ intMacroIndex ].equals( NamesSQLTypes._NULL ) == false ) {
 
-				switch ( intMacrosTypes[ intMacroIndex ] ) {
+				switch ( this.getJavaSQLColumnType( intMacrosTypes[ intMacroIndex ], Logger, Lang ) ) {
 				
 					case Types.INTEGER: { NamedPreparedStatement.setInt( strFieldName, Integer.parseInt( strMacrosValues[ intMacroIndex ] ) ); bResult = true; break; }
 					case Types.BIGINT: { NamedPreparedStatement.setLong( strFieldName, Long.parseLong( strMacrosValues[ intMacroIndex ] ) ); bResult = true; break; }
@@ -228,6 +230,8 @@ public abstract class CAbstractDBEngine {
 					case Types.VARCHAR: 
 					case Types.CHAR: { NamedPreparedStatement.setString( strFieldName, strMacrosValues[ intMacroIndex ] ); bResult = true; break; }
 					case Types.BOOLEAN: { NamedPreparedStatement.setBoolean( strFieldName, Boolean.parseBoolean( strMacrosValues[ intMacroIndex ] ) ); bResult = true; break; }
+					//case -2: //PostgreSQL ByteA  now managed for CPGSQLDBEngine Class method getJavaSQLColumnType to convert to Types.BLOB constant value
+					//case -4: //Firebird Blob now managed for CFirebirdDBEngine Class method getJavaSQLColumnType to convert to Types.BLOB constant value
 					case Types.BLOB: { 	
 						
 										java.sql.Blob BlobData = new SerialBlob( Base64.decode( strMacrosValues[ intMacroIndex ].getBytes() ) );
@@ -326,7 +330,7 @@ public abstract class CAbstractDBEngine {
 
 			if ( strFieldValue != null && strFieldValue.isEmpty() == false && strFieldValue.equals( NamesSQLTypes._NULL ) == false ) {
 			
-				switch ( intFieldType ) {
+				switch ( this.getJavaSQLColumnType( intFieldType, Logger, Lang ) ) {
 				
 					case Types.INTEGER: { NamedPreparedStatement.setInt( strFieldName, Integer.parseInt( strFieldValue ) ); break; }
 					case Types.BIGINT: { NamedPreparedStatement.setLong( strFieldName, Long.parseLong( strFieldValue ) ); break; }
@@ -334,6 +338,8 @@ public abstract class CAbstractDBEngine {
 					case Types.VARCHAR: 
 					case Types.CHAR: { NamedPreparedStatement.setString( strFieldName, strFieldValue ); break; }
 					case Types.BOOLEAN: { NamedPreparedStatement.setBoolean( strFieldName, Boolean.parseBoolean( strFieldValue ) ); break; }
+					//case -2: //PostgreSQL ByteA  now managed for CPGSQLDBEngine Class method getJavaSQLColumnType to convert to Types.BLOB constant value
+					//case -4: //Firebird Blob now managed for CFirebirdDBEngine Class method getJavaSQLColumnType to convert to Types.BLOB constant value
 					case Types.BLOB: { 	
 						
 										java.sql.Blob BlobData = new SerialBlob( Base64.decode( strFieldValue.getBytes() ) );
@@ -424,7 +430,7 @@ public abstract class CAbstractDBEngine {
 
 			if ( strMacrosValues[ intMacroIndex ] != null && strMacrosValues[ intMacroIndex ].isEmpty() == false && strMacrosValues[ intMacroIndex ].equals( NamesSQLTypes._NULL ) == false ) {
 
-				switch ( intMacrosTypes[ intMacroIndex ] ) {
+				switch ( this.getJavaSQLColumnType( intMacrosTypes[ intMacroIndex ], Logger, Lang ) ) {
 				
 					case Types.INTEGER: { NamedCallableStatement.setInt( strFieldName, Integer.parseInt( strMacrosValues[ intMacroIndex ] ) ); bResult = true; break; }
 					case Types.BIGINT: { NamedCallableStatement.setLong( strFieldName, Long.parseLong( strMacrosValues[ intMacroIndex ] ) ); bResult = true; break; }
@@ -432,6 +438,8 @@ public abstract class CAbstractDBEngine {
 					case Types.VARCHAR: 
 					case Types.CHAR: { NamedCallableStatement.setString( strFieldName, strMacrosValues[ intMacroIndex ] ); bResult = true; break; }
 					case Types.BOOLEAN: { NamedCallableStatement.setBoolean( strFieldName, Boolean.parseBoolean( strMacrosValues[ intMacroIndex ] ) ); bResult = true; break; }
+					//case -2: //PostgreSQL ByteA  now managed for CPGSQLDBEngine Class method getJavaSQLColumnType to convert to Types.BLOB constant value
+					//case -4: //Firebird Blob now managed for CFirebirdDBEngine Class method getJavaSQLColumnType to convert to Types.BLOB constant value
 					case Types.BLOB: { 	
 						
 										java.sql.Blob BlobData = new SerialBlob( Base64.decode( strMacrosValues[ intMacroIndex ].getBytes() ) );
@@ -532,7 +540,7 @@ public abstract class CAbstractDBEngine {
 
 				if ( strFieldValue != null && strFieldValue.isEmpty() == false && strFieldValue.equals( NamesSQLTypes._NULL ) == false ) {
 				
-					switch ( intFieldType ) {
+					switch ( this.getJavaSQLColumnType( intFieldType, Logger, Lang ) ) {
 					
 						case Types.INTEGER: { NamedCallableStatement.setInt( strFieldName, Integer.parseInt( strFieldValue ) ); break; }
 						case Types.BIGINT: { NamedCallableStatement.setLong( strFieldName, Long.parseLong( strFieldValue ) ); break; }
@@ -540,6 +548,8 @@ public abstract class CAbstractDBEngine {
 						case Types.VARCHAR: 
 						case Types.CHAR: { NamedCallableStatement.setString( strFieldName, strFieldValue ); break; }
 						case Types.BOOLEAN: { NamedCallableStatement.setBoolean( strFieldName, Boolean.parseBoolean( strFieldValue ) ); break; }
+						//case -2: //PostgreSQL ByteA  now managed for CPGSQLDBEngine Class method getJavaSQLColumnType to convert to Types.BLOB constant value
+						//case -4: //Firebird Blob now managed for CFirebirdDBEngine Class method getJavaSQLColumnType to convert to Types.BLOB constant value
 						case Types.BLOB: { 	
 							
 											java.sql.Blob BlobData = new SerialBlob( Base64.decode( strFieldValue.getBytes() ) );
@@ -902,7 +912,7 @@ public abstract class CAbstractDBEngine {
 			
 			if ( bSQLParsed == true ) {
 				
-				Result = new CMemoryRowSet( false, NamedPreparedStatement.executeQuery() );
+				Result = new CMemoryRowSet( false, NamedPreparedStatement.executeQuery(), this, Logger, Lang );
 				
 			}
 			else {
@@ -1143,11 +1153,11 @@ public abstract class CAbstractDBEngine {
 
 				if ( CallableStatementResultSet == null && bContainsOutParams ) {
 					
-					CallableStatementResultSet = TmpMemoryRowSet.BuildCachedRowSetFromFieldsScopeOut( NamedCallableStatement, Logger, Lang );
+					CallableStatementResultSet = this.BuildCachedRowSetFromFieldsScopeOut( TmpMemoryRowSet, NamedCallableStatement, Logger, Lang );
 					
 				}
 
-				Result = new CMemoryRowSet( false, CallableStatementResultSet );
+				Result = new CMemoryRowSet( false, CallableStatementResultSet, this, Logger, Lang );
 				
 			}
 			else {
@@ -1334,6 +1344,367 @@ public abstract class CAbstractDBEngine {
     	
     }
 
+	public boolean setFieldDataToPreparedStatement( CMemoryRowSet MemoryRowSet, CNamedPreparedStatement NamedPreparedStatement, String strPreparedStatementFieldName, String strFieldName, int intIndexRow, boolean bUseLastRowIfRowNotExits, CExtendedLogger Logger, CLanguage Lang ) {
+
+		boolean bResult = false;
+		
+		CMemoryFieldData MemoryField = MemoryRowSet.getFieldByName( strFieldName );
+		
+		if ( MemoryField != null ) {
+			
+			if ( intIndexRow >= MemoryField.Data.size() && bUseLastRowIfRowNotExits ) {
+				
+				intIndexRow = MemoryField.Data.size() - 1;
+				
+			}
+			
+			if ( intIndexRow >= 0 && intIndexRow < MemoryField.Data.size() ) {
+				
+				Object FieldData = MemoryField.Data.get( intIndexRow );
+				
+				if ( FieldData != null ) { 
+					
+					try {
+
+						switch ( this.getJavaSQLColumnType( MemoryField.intSQLType, Logger, Lang ) ) {
+
+							case Types.INTEGER: { NamedPreparedStatement.setInt( strPreparedStatementFieldName, (Integer) FieldData ); bResult = true; break; }
+							case Types.BIGINT: { NamedPreparedStatement.setLong( strPreparedStatementFieldName, (Long) FieldData ); bResult = true; break; }
+							case Types.SMALLINT: { NamedPreparedStatement.setShort( strPreparedStatementFieldName, (Short) FieldData ); bResult = true; break; }
+							case Types.VARCHAR: 
+							case Types.CHAR: { NamedPreparedStatement.setString( strPreparedStatementFieldName, (String) FieldData ); bResult = true; break; }
+							case Types.BOOLEAN: { NamedPreparedStatement.setBoolean( strPreparedStatementFieldName, ( Boolean ) FieldData ); bResult = true; break; }
+							//case -2: //PostgreSQL ByteA  now managed for CPGSQLDBEngine Class method getJavaSQLColumnType to convert to Types.BLOB constant value
+							//case -4: //Firebird Blob now managed for CFirebirdDBEngine Class method getJavaSQLColumnType to convert to Types.BLOB constant value
+							case Types.BLOB: { 	
+								
+								                NamedPreparedStatement.setBlob( strPreparedStatementFieldName, (Blob) FieldData );
+					                            
+											    bResult = true;
+											    
+											    break; 
+					
+											 }
+							case Types.DATE: {
+								               
+												NamedPreparedStatement.setDate( strPreparedStatementFieldName, (java.sql.Date) FieldData );
+								               
+												bResult = true;
+												
+												break; 
+								             
+							                 }
+							case Types.TIME: {  
+												
+												NamedPreparedStatement.setTime( strPreparedStatementFieldName, (java.sql.Time) FieldData );
+								               
+												bResult = true;
+												
+												break; 
+								               
+							                 }
+							case Types.TIMESTAMP: {  
+								
+													 NamedPreparedStatement.setTimestamp( strPreparedStatementFieldName, (java.sql.Timestamp) FieldData );
+		
+													 bResult = true;
+													 
+								                     break; 
+								                    
+							                      }
+							case Types.FLOAT: 
+							case Types.DECIMAL: { NamedPreparedStatement.setFloat( strPreparedStatementFieldName, (Float) FieldData ); bResult = true; break; }
+							case Types.DOUBLE: { NamedPreparedStatement.setDouble( strPreparedStatementFieldName, (Double) FieldData ); bResult = true; break; }
+
+							default:{
+								
+								if ( Logger != null ) {
+									
+									if ( Lang != null )
+									    Logger.LogWarning( "-1", Lang.Translate( "Unknown SQL data type [%s]", Integer.toString( MemoryField.intSQLType ) ) );
+									else
+									    Logger.LogWarning( "-1", String.format( "Unknown SQL data type [%s]", Integer.toString( MemoryField.intSQLType ) ) );
+									
+									
+								}
+								
+								break;
+								
+							}
+							
+						}
+
+					}
+					catch ( Exception Ex ) {
+
+						if ( Logger != null ) {
+							
+							Logger.LogException( "-1015", Ex.getMessage(), Ex );
+						
+						}	
+
+					}
+				
+				}
+				else {
+
+					try {
+
+						NamedPreparedStatement.setNull( strPreparedStatementFieldName, MemoryField.intSQLType );
+					
+						bResult = true;
+						
+					}
+					catch ( Exception Ex ) {
+						
+						if ( Logger != null ) {
+							
+							Logger.LogException( "-1015", Ex.getMessage(), Ex );
+						
+						}
+						
+					}
+					
+				}
+
+			}
+			
+		}
+		
+		return bResult;
+		
+	}
+    
+	public boolean setFieldDataToCallableStatement( CMemoryRowSet MemoryRowSet, CNamedCallableStatement NamedCallableStatement, String strCallableStatementFieldName, String strFieldName, int intIndexRow, boolean bUseLastRowIfRowNotExits, CExtendedLogger Logger, CLanguage Lang ) {
+
+		boolean bResult = false;
+
+		CMemoryFieldData MemoryField = MemoryRowSet.getFieldByName( strFieldName );
+
+		if ( MemoryField != null ) {
+
+			if ( MemoryField.Scope.equals( TFieldScope.IN ) || MemoryField.Scope.equals( TFieldScope.INOUT ) ) {
+				
+				if ( intIndexRow >= MemoryField.Data.size() && bUseLastRowIfRowNotExits ) {
+					
+					intIndexRow = MemoryField.Data.size() - 1;
+					
+				}
+				
+				if ( intIndexRow >= 0 && intIndexRow < MemoryField.Data.size() ) {
+					
+					Object FieldData = MemoryField.Data.get( intIndexRow );
+					
+					if ( FieldData != null ) { 
+						
+						try {
+		
+							switch ( this.getJavaSQLColumnType( MemoryField.intSQLType, Logger, Lang ) ) {
+		
+								case Types.INTEGER: { NamedCallableStatement.setInt( strCallableStatementFieldName, (Integer) FieldData ); bResult = true; break; }
+								case Types.BIGINT: { NamedCallableStatement.setLong( strCallableStatementFieldName, (Long) FieldData ); bResult = true; break; }
+								case Types.SMALLINT: { NamedCallableStatement.setShort( strCallableStatementFieldName, (Short) FieldData ); bResult = true; break; }
+								case Types.VARCHAR: 
+								case Types.CHAR: { NamedCallableStatement.setString( strCallableStatementFieldName, (String) FieldData ); bResult = true; break; }
+								case Types.BOOLEAN: { NamedCallableStatement.setBoolean( strCallableStatementFieldName, ( Boolean ) FieldData ); bResult = true; break; }
+								//case -2: //PostgreSQL ByteA  now managed for CPGSQLDBEngine Class method getJavaSQLColumnType to convert to Types.BLOB constant value
+								//case -4: //Firebird Blob now managed for CFirebirdDBEngine Class method getJavaSQLColumnType to convert to Types.BLOB constant value
+								case Types.BLOB: { 	
+									
+					                                NamedCallableStatement.setBlob( strCallableStatementFieldName, (Blob) FieldData );
+						                            
+												    bResult = true;
+												    
+												    break; 
+						
+												 }
+								case Types.DATE: {
+									               
+													NamedCallableStatement.setDate( strCallableStatementFieldName, (java.sql.Date) FieldData );
+									               
+													bResult = true;
+													
+													break; 
+									             
+								                 }
+								case Types.TIME: {  
+													
+													NamedCallableStatement.setTime( strCallableStatementFieldName, (java.sql.Time) FieldData );
+									               
+													bResult = true;
+													
+													break; 
+									               
+								                 }
+								case Types.TIMESTAMP: {  
+									
+														 NamedCallableStatement.setTimestamp( strCallableStatementFieldName, (java.sql.Timestamp) FieldData );
+			
+														 bResult = true;
+														 
+									                     break; 
+									                    
+								                      }
+								case Types.FLOAT: 
+								case Types.DECIMAL: { NamedCallableStatement.setFloat( strCallableStatementFieldName, (Float) FieldData ); bResult = true; break; }
+								case Types.DOUBLE: { NamedCallableStatement.setDouble( strCallableStatementFieldName, (Double) FieldData ); bResult = true; break; }
+		
+								default:{
+									
+									if ( Logger != null ) {
+										
+										if ( Lang != null )
+										    Logger.LogWarning( "-1", Lang.Translate( "Unknown SQL data type [%s]", Integer.toString( MemoryField.intSQLType ) ) );
+										else
+										    Logger.LogWarning( "-1", String.format( "Unknown SQL data type [%s]", Integer.toString( MemoryField.intSQLType ) ) );
+										
+										
+									}
+									
+									break;
+									
+								}
+								
+							}
+		
+						}
+						catch ( Exception Ex ) {
+		
+							if ( Logger != null ) {
+								
+								Logger.LogException( "-1015", Ex.getMessage(), Ex );
+							
+							}	
+		
+						}
+					
+					}
+					else {
+		
+						try {
+		
+							NamedCallableStatement.setNull( strCallableStatementFieldName, MemoryField.intSQLType );
+						
+							bResult = true;
+							
+						}
+						catch ( Exception Ex ) {
+							
+							if ( Logger != null ) {
+								
+								Logger.LogException( "-1016", Ex.getMessage(), Ex );
+							
+							}
+							
+						}
+						
+					}
+		
+				}
+			
+			}
+			
+			if ( MemoryField.Scope.equals( TFieldScope.OUT ) ) {
+				
+				try {
+				
+					NamedCallableStatement.registerOutParameter( strCallableStatementFieldName, MemoryField.intSQLType );
+				
+				}
+				catch ( Exception Ex ) {
+					
+					if ( Logger != null ) {
+						
+						Logger.LogException( "-1017", Ex.getMessage(), Ex );
+					
+					}
+					
+				}
+				
+			}
+
+		}
+
+		return bResult;
+
+	}
+	
+	public CachedRowSet BuildCachedRowSetFromFieldsScopeOut( CMemoryRowSet MemoryRowSet, CNamedCallableStatement NamedCallableStatement, CExtendedLogger Logger, CLanguage Lang ) {
+		
+		CachedRowSet Result = null;
+		
+		try {
+			
+			CMemoryRowSet TmpMemoryRowSet = new CMemoryRowSet( false );
+			
+			for ( CMemoryFieldData Field: MemoryRowSet.getFieldsData() ) {
+
+				if ( Field.Scope.equals( TFieldScope.OUT ) || Field.Scope.equals( TFieldScope.INOUT ) ) {
+
+					TmpMemoryRowSet.addField( Field, false );
+					
+				}
+				
+			}
+
+			for ( CMemoryFieldData Field: TmpMemoryRowSet.getFieldsData() ) {
+
+				String strFieldName =  Field.strName;
+				
+				if ( strFieldName == null || strFieldName.isEmpty() )
+					strFieldName =  Field.strLabel;
+				
+    			switch ( this.getJavaSQLColumnType( Field.intSQLType, Logger, Lang ) ) {
+    			
+					case Types.INTEGER: { Field.addData( NamedCallableStatement.getInt( strFieldName ) ); break; }
+					case Types.BIGINT: { Field.addData( NamedCallableStatement.getLong( strFieldName ) ); break; }
+					case Types.SMALLINT: { Field.addData( NamedCallableStatement.getShort( strFieldName ) ); break; }
+					case Types.VARCHAR: 
+					case Types.CHAR: { Field.addData( NamedCallableStatement.getString( strFieldName ) ); break; }
+					case Types.BOOLEAN: { Field.addData( NamedCallableStatement.getBoolean( strFieldName ) ); break; }
+					case Types.BLOB: { 
+						
+						                /*if ( intBlobType == 1 ) {  //Reimplement in PostgreSQL
+						                
+											java.sql.Blob BlobData = new SerialBlob( NamedCallableStatement.getBytes( strFieldName ) );
+						                	
+						                    Field.addData( BlobData );
+						                	
+						                }
+						                else*/ 
+						                Field.addData( NamedCallableStatement.getBlob( strFieldName ) );
+						                	
+						                break; 
+						             
+					                  }
+					case Types.DATE: { Field.addData( NamedCallableStatement.getDate( strFieldName ) ); break; }
+					case Types.TIME: { Field.addData( NamedCallableStatement.getTime( strFieldName ) ); break; }
+					case Types.TIMESTAMP: { Field.addData( NamedCallableStatement.getTimestamp( strFieldName ) ); break; }
+					case Types.FLOAT: 
+					case Types.DECIMAL: { Field.addData( NamedCallableStatement.getFloat( strFieldName ) ); break; }
+					case Types.DOUBLE: { Field.addData( NamedCallableStatement.getDouble( strFieldName ) ); break; }
+
+				}
+				
+			}
+			
+			Result = TmpMemoryRowSet.createCachedRowSet();
+			
+		}
+		catch ( Exception Ex ) {
+			
+			if ( Logger != null ) {
+				
+				Logger.LogException( "-1016", Ex.getMessage(), Ex );
+			
+			}	
+			
+		}
+		
+		return Result;
+		
+	}
+	
     public ArrayList<CResultSetResult> ExecuteComplexQueySQL( Connection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	ArrayList<CResultSetResult> Result = new ArrayList<CResultSetResult>();
@@ -1437,7 +1808,7 @@ public abstract class CAbstractDBEngine {
 
 						Entry<String,Integer> NamedParam = i.next();
 
-						MemoryRowSet.setFieldDataToPreparedStatement( NamedPreparedStatement, NamedParam.getKey(), NamedParam.getKey(), intIndexCall, true, Logger, Lang );
+						this.setFieldDataToPreparedStatement( MemoryRowSet, NamedPreparedStatement, NamedParam.getKey(), NamedParam.getKey(), intIndexCall, true, Logger, Lang );
 
 					}
 
@@ -1591,7 +1962,7 @@ public abstract class CAbstractDBEngine {
 
 							Entry<String,Integer> NamedParam = i.next();
 
-							MemoryRowSet.setFieldDataToPreparedStatement( NamedPreparedStatement, NamedParam.getKey(), NamedParam.getKey(), intIndexCall, true, Logger, Lang );
+							this.setFieldDataToPreparedStatement( MemoryRowSet, NamedPreparedStatement, NamedParam.getKey(), NamedParam.getKey(), intIndexCall, true, Logger, Lang );
 
 						}
 
@@ -1776,7 +2147,7 @@ public abstract class CAbstractDBEngine {
 				       
 					Entry<String,Integer> NamedParam = i.next();
 
-					MemoryRowSet.setFieldDataToCallableStatement( NamedCallableStatement, NamedParam.getKey(), NamedParam.getKey(), intIndexCall, true, Logger, Lang );
+					this.setFieldDataToCallableStatement( MemoryRowSet, NamedCallableStatement, NamedParam.getKey(), NamedParam.getKey(), intIndexCall, true, Logger, Lang );
 				
 				}
 
@@ -1794,7 +2165,7 @@ public abstract class CAbstractDBEngine {
 
 					if ( CallableStatementResultSet == null && bContainsOutParams ) {
 						
-						CallableStatementResultSet = MemoryRowSet.BuildCachedRowSetFromFieldsScopeOut( NamedCallableStatement, Logger, Lang );
+						CallableStatementResultSet = this.BuildCachedRowSetFromFieldsScopeOut( MemoryRowSet, NamedCallableStatement, Logger, Lang );
 						
 					}
 					
@@ -1916,6 +2287,263 @@ public abstract class CAbstractDBEngine {
 				Logger.LogException( "-1015", Ex.getMessage(), Ex ); 
 
 		}
+    	
+    }
+    
+    public int getJavaSQLColumnType( int intSQLType, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+	    switch ( intSQLType ) {
+
+			case -4: //Firebird Blob, ver 2.5.2, Jaybird Driver 2.2, MySQL Blob, ver 5.5, driver from oracle
+			case Types.BLOB: { 	
+				
+				return Types.BLOB;
+				
+			}   
+	    
+			default: {
+				
+				return intSQLType;
+				
+			}
+			
+	    }
+	    
+    }
+    
+    public String getJavaSQLColumnTypeName( int intSQLType, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+    	return NamesSQLTypes.getJavaSQLTypeName( intSQLType ); //Do nothing
+    	
+    }
+    
+    public String getFieldValueAsString( int intFieldType, int intColumnIndex, ResultSet Resultset, String strDateFormat, String strTimeFormat, String strDateTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+	    String strResult = "";
+
+	    try {
+	   
+		    switch ( this.getJavaSQLColumnType( intFieldType, Logger, Lang ) ) {
+			
+				case Types.INTEGER: { strResult = Integer.toString( Resultset.getInt( intColumnIndex ) ); break; }
+				case Types.BIGINT: { strResult = Long.toString( Resultset.getLong( intColumnIndex ) ); break; }
+				case Types.SMALLINT: { strResult = Short.toString( Resultset.getShort( intColumnIndex ) ); break; }
+				case Types.VARCHAR: 
+				case Types.CHAR: {  
+					
+					                strResult = Resultset.getString( intColumnIndex );
+									break; 
+					             
+				                 }
+				case Types.BOOLEAN: { strResult = Resultset.getBoolean( intColumnIndex )?"true":"false"; break; }
+				//case -2: //PostgreSQL ByteA  now managed for CPGSQLDBEngine Class method getJavaSQLColumnType to convert to Types.BLOB constant value
+				//case -4: //Firebird Blob now managed for CFirebirdDBEngine Class method getJavaSQLColumnType to convert to Types.BLOB constant value
+				case Types.BLOB: { 	
+					
+					                Blob BinaryBLOBData = Resultset.getBlob( intColumnIndex );
+		
+					                String strBase64Coded = new String( Base64.encode( BinaryBLOBData.getBytes( 1, (int) BinaryBLOBData.length() ) ) );
+		
+					                strResult = strBase64Coded;//Formated in base64
+					                
+								    break; 
+		
+								 }
+				case Types.DATE: {
+					               
+					                SimpleDateFormat DFormatter = new SimpleDateFormat("yyyyMMdd");
+					                strResult = DFormatter.format( Resultset.getDate( intColumnIndex ) );
+									break; 
+					             
+				                 }
+				case Types.TIME: {  
+					
+		                            SimpleDateFormat TFormatter = new SimpleDateFormat("HHmmss");
+					                strResult = TFormatter.format( Resultset.getTime( intColumnIndex ) );
+									break; 
+					               
+				                 }
+				case Types.TIMESTAMP: {  
+					
+		                                 SimpleDateFormat DTFormatter = new SimpleDateFormat("yyyyMMdd HHmmss");
+					                     strResult = DTFormatter.format( Resultset.getTimestamp( intColumnIndex ) );
+					                     break; 
+					                    
+				                      }
+				case Types.FLOAT: 
+				case Types.DECIMAL: {  strResult = Float.toString( Resultset.getFloat( intColumnIndex ) ); break; }
+				case Types.DOUBLE: {  break; }
+	
+		    }
+	   
+	    }
+	    catch ( Exception Ex ) {
+		   
+			if ( Logger != null )
+				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+		   
+	    }
+	   
+	   return strResult;
+    	
+    }
+    
+    public String getFieldValueAsString( int intFieldType, String strFieldName, ResultSet Resultset, String strDateFormat, String strTimeFormat, String strDateTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+	    String strResult = "";
+
+	    try {
+	   
+		    switch ( this.getJavaSQLColumnType( intFieldType, Logger, Lang ) ) {
+			
+				case Types.INTEGER: { strResult = Integer.toString( Resultset.getInt( strFieldName ) ); break; }
+				case Types.BIGINT: { strResult = Long.toString( Resultset.getLong( strFieldName ) ); break; }
+				case Types.SMALLINT: { strResult = Short.toString( Resultset.getShort( strFieldName ) ); break; }
+				case Types.VARCHAR: 
+				case Types.CHAR: {  
+					
+					                strResult = Resultset.getString( strFieldName );
+									break; 
+					             
+				                 }
+				case Types.BOOLEAN: {  break; }
+				//case -2: //PostgreSQL ByteA  now managed for CPGSQLDBEngine Class method getJavaSQLColumnType to convert to Types.BLOB constant value
+				//case -4: //Firebird Blob now managed for CFirebirdDBEngine Class method getJavaSQLColumnType to convert to Types.BLOB constant value
+				case Types.BLOB: { 	
+					
+					                Blob BinaryBLOBData = Resultset.getBlob( strFieldName );
+		
+					                String strBase64Coded = new String( Base64.encode( BinaryBLOBData.getBytes( 1, (int) BinaryBLOBData.length() ) ) );
+		
+					                strResult = strBase64Coded;//Formated in base64
+					                
+								    break; 
+		
+								 }
+				case Types.DATE: {
+					               
+					                SimpleDateFormat DFormatter = new SimpleDateFormat("yyyyMMdd");
+					                strResult = DFormatter.format( Resultset.getDate( strFieldName ) );
+									break; 
+					             
+				                 }
+				case Types.TIME: {  
+					
+		                            SimpleDateFormat TFormatter = new SimpleDateFormat("HHmmss");
+					                strResult = TFormatter.format( Resultset.getTime( strFieldName ) );
+									break; 
+					               
+				                 }
+				case Types.TIMESTAMP: {  
+					
+		                                 SimpleDateFormat DTFormatter = new SimpleDateFormat("yyyyMMdd HHmmss");
+					                     strResult = DTFormatter.format( Resultset.getTimestamp( strFieldName ) );
+					                     break; 
+					                    
+				                      }
+				case Types.FLOAT: 
+				case Types.DECIMAL: {  strResult = Float.toString( Resultset.getFloat( strFieldName ) ); break; }
+				case Types.DOUBLE: {  break; }
+	
+		    }
+	   
+	    }
+	    catch ( Exception Ex ) {
+		   
+			if ( Logger != null )
+				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+		   
+	    }
+	   
+	   return strResult;
+    	
+    }
+
+    public Object getFieldValueAsObject( int intFieldType, String strFieldName, ResultSet Resultset, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+    	Object Result = null;
+    	
+    	try {
+    	
+			switch ( this.getJavaSQLColumnType( intFieldType, Logger, Lang ) ) {
+			
+				case Types.INTEGER: { Result = Resultset.getInt( strFieldName ); break; }
+				case Types.BIGINT: { Result = Resultset.getLong( strFieldName ); break; }
+				case Types.SMALLINT: { Result = Resultset.getShort( strFieldName ); break; }
+				case Types.VARCHAR: 
+				case Types.CHAR: { Result = Resultset.getString( strFieldName ); break; }
+				case Types.BOOLEAN: { Result = Resultset.getBoolean( strFieldName ); break; }
+				//case -2: //PostgreSQL ByteA  now managed for CPGSQLDBEngine Class method getJavaSQLColumnType to convert to Types.BLOB constant value
+				//case -4: //Firebird Blob now managed for CFirebirdDBEngine Class method getJavaSQLColumnType to convert to Types.BLOB constant value
+				case Types.BLOB: { 
+					
+					                Result = Resultset.getBlob( strFieldName );
+	                                 
+					                break; 
+					                
+					              }
+				case Types.DATE: { Result = Resultset.getDate( strFieldName ); break; }
+				case Types.TIME: { Result = Resultset.getTime( strFieldName ); break; }
+				case Types.TIMESTAMP: { Result = Resultset.getTimestamp( strFieldName ); break; }
+				case Types.FLOAT: 
+				case Types.DECIMAL: { Result = Resultset.getFloat( strFieldName ); break; }
+				case Types.DOUBLE: { Result = Resultset.getDouble( strFieldName ); break; }
+	
+			}
+    	
+	    }
+	    catch ( Exception Ex ) {
+		   
+			if ( Logger != null )
+				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+		   
+	    }
+    	
+    	return Result;
+    	
+    }
+
+    public Object getFieldValueAsObject( int intFieldType, int intColumnIndex, ResultSet Resultset, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+    	Object Result = null;
+    	
+    	try {
+    	
+			switch ( this.getJavaSQLColumnType( intFieldType, Logger, Lang ) ) {
+			
+				case Types.INTEGER: { Result = Resultset.getInt( intColumnIndex ); break; }
+				case Types.BIGINT: { Result = Resultset.getLong( intColumnIndex ); break; }
+				case Types.SMALLINT: { Result = Resultset.getShort( intColumnIndex ); break; }
+				case Types.VARCHAR: 
+				case Types.CHAR: { Result = Resultset.getString( intColumnIndex ); break; }
+				case Types.BOOLEAN: { Result = Resultset.getBoolean( intColumnIndex ); break; }
+				//case -2: //PostgreSQL ByteA  now managed for CPGSQLDBEngine Class method getJavaSQLColumnType to convert to Types.BLOB constant value
+				//case -4: //Firebird Blob now managed for CFirebirdDBEngine Class method getJavaSQLColumnType to convert to Types.BLOB constant value
+				case Types.BLOB: { 
+					
+					                 Result = Resultset.getBlob( intColumnIndex );
+					                
+					                 break; 
+					                
+					              }
+				case Types.DATE: { Result = Resultset.getDate( intColumnIndex ); break; }
+				case Types.TIME: { Result = Resultset.getTime( intColumnIndex ); break; }
+				case Types.TIMESTAMP: { Result = Resultset.getTimestamp( intColumnIndex ); break; }
+				case Types.FLOAT: 
+				case Types.DECIMAL: { Result = Resultset.getFloat( intColumnIndex ); break; }
+				case Types.DOUBLE: { Result = Resultset.getDouble( intColumnIndex ); break; }
+	
+			}
+    	
+	    }
+	    catch ( Exception Ex ) {
+		   
+			if ( Logger != null )
+				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+		   
+	    }
+    	
+    	return Result;
     	
     }
     

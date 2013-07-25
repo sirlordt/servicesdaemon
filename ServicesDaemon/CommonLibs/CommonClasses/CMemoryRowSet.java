@@ -24,7 +24,10 @@ import java.util.LinkedHashMap;
 import javax.sql.RowSetMetaData;
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetMetaDataImpl;
+//import javax.sql.rowset.serial.SerialBlob;
 
+import AbstractDBEngine.CAbstractDBEngine;
+//import AbstractResponseFormat.CAbstractResponseFormat;
 import CommonClasses.CMemoryFieldData.TFieldScope;
 import ExtendedLogger.CExtendedLogger;
 
@@ -51,19 +54,19 @@ public class CMemoryRowSet {
 		
 	}
 	
-	public CMemoryRowSet( boolean bAllowDuplicateNames, ResultSet ResultSetToClone ) {
+	public CMemoryRowSet( boolean bAllowDuplicateNames, ResultSet ResultSetToClone, CAbstractDBEngine DBEngine, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		this( bAllowDuplicateNames );
 
-		this.cloneResultSet( ResultSetToClone, null );
+		this.cloneResultSet( ResultSetToClone, null, DBEngine, Logger, Lang );
 		
 	}
 
-	public CMemoryRowSet( boolean bAllowDuplicateNames, ResultSet ResultSetToClone, ArrayList<String> strFieldsNames ) {
+	public CMemoryRowSet( boolean bAllowDuplicateNames, ResultSet ResultSetToClone, CAbstractDBEngine DBEngine, ArrayList<String> strFieldsNames, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		this( bAllowDuplicateNames );
 
-		this.cloneResultSet( ResultSetToClone, strFieldsNames );
+		this.cloneResultSet( ResultSetToClone, strFieldsNames, DBEngine, Logger, Lang );
 		
 	}
 
@@ -85,47 +88,47 @@ public class CMemoryRowSet {
 		
 	}
 	
-	public boolean cloneResultSet( ResultSet ResultSetToClone ) {
+	public boolean cloneResultSet( ResultSet ResultSetToClone, CAbstractDBEngine DBEngine, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		boolean bResult = false;
 		
 		this.clearAll();		
-		bResult = addMetaData( ResultSetToClone, null );
-		bResult = addRowData( ResultSetToClone );
+		bResult = addMetaData( ResultSetToClone, DBEngine, null, Logger, Lang );
+		bResult = addRowData( ResultSetToClone, DBEngine, Logger, Lang );
 		
 		return bResult;
 		
 	}
 
-	public boolean cloneResultSet( ResultSet ResultSetToClone, ArrayList<String> strFieldsNames ) {
+	public boolean cloneResultSet( ResultSet ResultSetToClone, ArrayList<String> strFieldsNames, CAbstractDBEngine DBEngine, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		boolean bResult = false;
 		
 		this.clearAll();		
-		bResult = addMetaData( ResultSetToClone, strFieldsNames );
-		bResult = addRowData( ResultSetToClone );
+		bResult = addMetaData( ResultSetToClone, DBEngine, strFieldsNames, Logger, Lang );
+		bResult = addRowData( ResultSetToClone, DBEngine, Logger, Lang );
 		
 		return bResult;
 		
 	}
 
-	public boolean cloneOnlyMetaData( ResultSet ResultSetToClone, ArrayList<String> strFieldsNames ) {
+	public boolean cloneOnlyMetaData( ResultSet ResultSetToClone, CAbstractDBEngine DBEngine, ArrayList<String> strFieldsNames, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		boolean bResult = false;
 		
 		this.clearAll();		
-		bResult = addMetaData( ResultSetToClone, strFieldsNames );
+		bResult = addMetaData( ResultSetToClone, DBEngine, strFieldsNames, Logger, Lang );
 		
 		return bResult;
 		
 	}
 
-	public boolean cloneRowData( ResultSet ResultSetToClone ) {
+	public boolean cloneRowData( ResultSet ResultSetToClone, CAbstractDBEngine DBEngine, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		boolean bResult = false;
 		
 		this.clearData();
-		bResult = addRowData( ResultSetToClone );
+		bResult = addRowData( ResultSetToClone, DBEngine, Logger, Lang );
 		
 		return bResult;
 		
@@ -261,7 +264,7 @@ public class CMemoryRowSet {
 		
 	}
 
-	public boolean addMetaData( ResultSet ResultSetToClone, ArrayList<String> strFieldsNames ) {
+	public boolean addMetaData( ResultSet ResultSetToClone, CAbstractDBEngine DBEngine, ArrayList<String> strFieldsNames, CExtendedLogger Logger, CLanguage Lang ) {
 	
 		boolean bResult = false;
 		
@@ -288,7 +291,7 @@ public class CMemoryRowSet {
 
 							if ( bAllowDuplicateNames == true ) {
 
-								if ( MetaData.getColumnType(intIndexMetaData) != Field.intSQLType ) {
+								if ( DBEngine.getJavaSQLColumnType( MetaData.getColumnType( intIndexMetaData ), Logger, Lang ) != Field.intSQLType ) {
 
 									bAddField = true;
 
@@ -305,7 +308,10 @@ public class CMemoryRowSet {
 
 						if ( bAddField ) {
 
-							bResult = this.addField( strFieldName, MetaData.getColumnType( intIndexMetaData ), MetaData.getColumnTypeName( intIndexMetaData ), MetaData.getColumnDisplaySize( intIndexMetaData ), MetaData.getColumnLabel( intIndexMetaData ) );
+							int intSQLType = DBEngine.getJavaSQLColumnType( MetaData.getColumnType( intIndexMetaData ), Logger, Lang );
+							String strSQLTypeName = DBEngine.getJavaSQLColumnTypeName( intSQLType, Logger, Lang );
+							
+							bResult = this.addField( strFieldName, intSQLType, strSQLTypeName, MetaData.getColumnDisplaySize( intIndexMetaData ), MetaData.getColumnLabel( intIndexMetaData ) );
 
 						}
 
@@ -318,7 +324,8 @@ public class CMemoryRowSet {
 		}
 		catch ( Exception Ex ) {
 			
-			//System.out.println( Ex );
+			if ( Logger != null )
+				Logger.LogException( "-1010", Ex.getMessage(), Ex );
 			
 		}
 		
@@ -326,7 +333,7 @@ public class CMemoryRowSet {
 		
 	}
 
-	public boolean addMetaData( CMemoryRowSet MemoryResultSetToAdd, ArrayList<String> strFieldsNames ) {
+	public boolean addMetaData( CMemoryRowSet MemoryResultSetToAdd, ArrayList<String> strFieldsNames, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		boolean bResult = false;
 		
@@ -363,13 +370,16 @@ public class CMemoryRowSet {
 		}
 		catch ( Exception Ex ) {
 			
+			if ( Logger != null )
+				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+			
 		}
 		
 		return bResult;
 		
 	}
 
-	public boolean addRowData( ResultSet ResultSetToClone ) {
+	public boolean addRowData( ResultSet ResultSetToClone, CAbstractDBEngine DBEngine, CExtendedLogger Logger, CLanguage Lang ) {
 	
 		boolean bResult = true;
 		
@@ -407,6 +417,11 @@ public class CMemoryRowSet {
 
 						if ( Field != null ) {
 
+							Object FieldData = DBEngine.getFieldValueAsObject( Field.intSQLType, strColumnName, ResultSetToClone, Logger, Lang);
+							
+                       	    Field.addData( FieldData );
+							
+							/*
 			    			switch ( Field.intSQLType ) {
 			    			
 								case Types.INTEGER: { Field.addData( ResultSetToClone.getInt( intIndexColumn ) ); break; }
@@ -415,7 +430,24 @@ public class CMemoryRowSet {
 								case Types.VARCHAR: 
 								case Types.CHAR: { Field.addData( ResultSetToClone.getString( intIndexColumn ) ); break; }
 								case Types.BOOLEAN: { Field.addData( ResultSetToClone.getBoolean( intIndexColumn ) ); break; }
-								case Types.BLOB: { Field.addData( ResultSetToClone.getBlob( intIndexColumn ) ); break; }
+								case Types.BLOB: { 
+									
+					                                 /*if ( strEngineName.equals( "pgsql" ) ) {
+						                
+										                  java.sql.Blob BlobData = new SerialBlob( ResultSetToClone.getBytes( intIndexColumn ) );
+					                	
+					                                      Field.addData( BlobData );
+					                	
+					                                 }
+					                                 else {*
+									                 
+					                                	 Field.addData( ResultSetToClone.getBlob( intIndexColumn ) );
+					                                 
+					                                 //};     
+									                
+									                 break; 
+									                
+									              }
 								case Types.DATE: { Field.addData( ResultSetToClone.getDate( intIndexColumn ) ); break; }
 								case Types.TIME: { Field.addData( ResultSetToClone.getTime( intIndexColumn ) ); break; }
 								case Types.TIMESTAMP: { Field.addData( ResultSetToClone.getTimestamp( intIndexColumn ) ); break; }
@@ -424,7 +456,9 @@ public class CMemoryRowSet {
 								case Types.DOUBLE: { Field.addData( ResultSetToClone.getDouble( intIndexColumn ) ); break; }
 	
 							}
-
+ 
+					*/
+					
 						}
 
 					}
@@ -436,6 +470,9 @@ public class CMemoryRowSet {
 		}
 		catch ( Exception Ex ) {
 			
+			if ( Logger != null )
+				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+
 			bResult = false;
 			
 		}
@@ -444,7 +481,7 @@ public class CMemoryRowSet {
 		
 	}
 	
-	public boolean addRowData( CMemoryRowSet MemoryResultSetToAdd ) {
+	public boolean addRowData( CMemoryRowSet MemoryResultSetToAdd, CExtendedLogger Logger, CLanguage Lang  ) {
 		
 		boolean bResult = false;
 		
@@ -476,6 +513,9 @@ public class CMemoryRowSet {
 
 		}
 		catch ( Exception Ex ) {
+			
+			if ( Logger != null )
+				Logger.LogException( "-1010", Ex.getMessage(), Ex );
 			
 		}
 		
@@ -518,6 +558,7 @@ public class CMemoryRowSet {
 		}
 		
 	}
+
 	public boolean addLinkedField( CMemoryFieldData FieldData ) {
 		
 		if ( bAllowDuplicateNames == true || getFieldByName( FieldData.strName ) == null ) {
@@ -1401,7 +1442,7 @@ public class CMemoryRowSet {
 		
 	}
 	
-	public boolean setFieldDataToPreparedStatement( CNamedPreparedStatement NamedPreparedStatement, String strPreparedStatementFieldName, String strFieldName, int intIndexRow, boolean bUseLastRowIfRowNotExits, CExtendedLogger Logger, CLanguage Lang ) {
+	/*public boolean setFieldDataToPreparedStatement( CNamedPreparedStatement NamedPreparedStatement, String strPreparedStatementFieldName, String strFieldName, int intIndexRow, boolean bUseLastRowIfRowNotExits, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		boolean bResult = false;
 		
@@ -1417,7 +1458,7 @@ public class CMemoryRowSet {
 		
 	}
 	
-	public boolean setFieldDataToCallableStatement( CNamedCallableStatement NamedCallableStatement, String strCallableStatementFieldName, String strFieldName, int intIndexRow, boolean bUseLastRowIfRowNotExits, CExtendedLogger Logger, CLanguage Lang ) {
+	/*public boolean setFieldDataToCallableStatement( CNamedCallableStatement NamedCallableStatement, String strCallableStatementFieldName, String strFieldName, int intIndexRow, boolean bUseLastRowIfRowNotExits, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		boolean bResult = false;
 		
@@ -1431,7 +1472,7 @@ public class CMemoryRowSet {
 		
 		return bResult;
 		
-	}
+	}*/
 	
 	public ArrayList<String> RowToString( int intIndexRow, boolean bVarCharQuoted, String strDateFormat, String strTimeFormat, String strDateTimeFormat, boolean bUseLastRowIfRowNotExits, CExtendedLogger Logger, CLanguage Lang ) {
 		
@@ -1489,7 +1530,7 @@ public class CMemoryRowSet {
 		
 	}
 	
-	public String FieldValueToSt5ring( String strName, int intIndexRow, boolean bResumeBlob, String strDateFormat, String strTimeFormat, String strDateTimeFormat, boolean bUseLastRowIfRowNotExits, CExtendedLogger Logger, CLanguage Lang ) {
+	public String FieldValueToString( String strName, int intIndexRow, boolean bResumeBlob, String strDateFormat, String strTimeFormat, String strDateTimeFormat, boolean bUseLastRowIfRowNotExits, CExtendedLogger Logger, CLanguage Lang ) {
 
 		CMemoryFieldData MemoryFieldData = this.getFieldByName( strName );
 		
@@ -1519,7 +1560,7 @@ public class CMemoryRowSet {
 		
 	}
 	
-	public CachedRowSet BuildCachedRowSetFromFieldsScopeOut( CNamedCallableStatement NamedCallableStatement, CExtendedLogger Logger, CLanguage Lang ) {
+	/*public CachedRowSet BuildCachedRowSetFromFieldsScopeOut( CNamedCallableStatement NamedCallableStatement, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		CachedRowSet Result = null;
 		
@@ -1552,7 +1593,21 @@ public class CMemoryRowSet {
 					case Types.VARCHAR: 
 					case Types.CHAR: { Field.addData( NamedCallableStatement.getString( strFieldName ) ); break; }
 					case Types.BOOLEAN: { Field.addData( NamedCallableStatement.getBoolean( strFieldName ) ); break; }
-					case Types.BLOB: { Field.addData( NamedCallableStatement.getBlob( strFieldName ) ); break; }
+					case Types.BLOB: { 
+						
+						                /*if ( intBlobType == 1 ) {
+						                
+											java.sql.Blob BlobData = new SerialBlob( NamedCallableStatement.getBytes( strFieldName ) );
+						                	
+						                    Field.addData( BlobData );
+						                	
+						                }
+						                else* 
+						                    Field.addData( NamedCallableStatement.getBlob( strFieldName ) );
+						                	
+						                break; 
+						             
+					                  }
 					case Types.DATE: { Field.addData( NamedCallableStatement.getDate( strFieldName ) ); break; }
 					case Types.TIME: { Field.addData( NamedCallableStatement.getTime( strFieldName ) ); break; }
 					case Types.TIMESTAMP: { Field.addData( NamedCallableStatement.getTimestamp( strFieldName ) ); break; }
@@ -1579,6 +1634,6 @@ public class CMemoryRowSet {
 		
 		return Result;
 		
-	}
+	}*/
 	
 }

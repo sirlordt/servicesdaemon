@@ -1,0 +1,33 @@
+<!-- Output from call service System.Execute.SQL -->
+
+<?xml version="1.0" encoding="UTF-8"?>
+<DATAPACKET dpversion="1.1">
+    <METADATA>
+        <FIELDS/>
+        <PARAMS rowcount="1"/>
+    </METADATA>
+    <ROWDATA>
+        <ROW AffectedRows="1" Code="1" Description="Éxito al ejecutar la instrucción SQL plana [Insert Into tblGroups(IdGroup,Description) Values(2,'test group2')]"/>
+    </ROWDATA>
+    <ERRORS errorcount="0"/>
+</DATAPACKET>
+
+<!-- Output from call service System.Commit.Transaction -->
+
+<?xml version="1.0" encoding="UTF-8"?>
+<DATAPACKET dpversion="1.1">
+    <METADATA>
+        <FIELDS>
+            <FIELD attrname="TransactionID" fieldtype="i8"/>
+            <FIELD attrname="Code" fieldtype="i4"/>
+            <FIELD attrname="Description" fieldtype="string" width="255"/>
+        </FIELDS>
+        <PARAMS rowcount="1"/>
+    </METADATA>
+    <ROWDATA>
+        <ROW Code="1" Description="Transacción aplicada con éxito para el id: [1568342447065610717]" TransactionID="1568342447065610717"/>
+    </ROWDATA>
+    <ERRORS errorcount="0">
+        <ERROR Code="0" Description=""/>
+    </ERRORS>
+</DATAPACKET>

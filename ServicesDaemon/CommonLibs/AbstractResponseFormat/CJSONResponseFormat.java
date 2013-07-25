@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import javax.sql.rowset.CachedRowSet;
 
+import AbstractDBEngine.CAbstractDBEngine;
 import AbstractService.CAbstractService;
 import CommonClasses.CLanguage;
 import CommonClasses.CMemoryRowSet;
@@ -68,25 +69,25 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
 	}
 
 	@Override
-	public String FormatResultSet( ResultSet ResultSet, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+	public String FormatResultSet( ResultSet ResultSet, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String FormatResultsSets( ArrayList<ResultSet> ResultsSest, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+	public String FormatResultsSets( ArrayList<ResultSet> ResultsSest, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String FormatResultSet( CResultSetResult ResultSetResult, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+	public String FormatResultSet( CResultSetResult ResultSetResult, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String FormatResultsSets( ArrayList<CResultSetResult> ResultsSetsList, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
+	public String FormatResultsSets( ArrayList<CResultSetResult> ResultsSetsList, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
 		// TODO Auto-generated method stub
 		return null;
 	}
