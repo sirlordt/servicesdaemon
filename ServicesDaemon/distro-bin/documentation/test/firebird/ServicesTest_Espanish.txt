@@ -139,6 +139,13 @@ ServiceName=System.Commit.Transaction
 SecurityTokenID=8082223615663676309
 TransactionID=9190353927525735764
 
+Nota 2: Para evitar errores de duplicación de llave primaria el IdGroup, (prueba 10 caso 3), debemos corregir el generador a 5. 
+
+ServiceName=System.Execute.SQL
+SecurityTokenID=8082223615663676309
+TransactionID=9190353927525735764
+SQL=ALTER SEQUENCE GEN_TBLGROUPS_ID RESTART WITH 5
+
 Prueba 7 Caso 4 (Ejecutar una inserción parametrizada, sobre DB1), para ver la salida del servicio vea el archivo test07_service_output_case4.xml
 
 ServiceName=System.Execute.SQL

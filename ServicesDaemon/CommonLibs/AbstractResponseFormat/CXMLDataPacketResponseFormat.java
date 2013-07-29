@@ -376,21 +376,23 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
                 	//Entry<String,String> FieldDefinition = i.next();
                 	CSimpleXMLFieldDefinition FieldDefinition = FieldDefinitions.get( intIndexFieldDefinition );
                 	
-                    Element XML_FieldSecurityToken = XMLDocument.createElement( XMLDataPacketTags._Field );
-                    XML_FieldSecurityToken.setAttribute( XMLDataPacketTags._AttrName, FieldDefinition.strFieldName );
-                    XML_FieldSecurityToken.setAttribute( XMLDataPacketTags._FieldType, FieldDefinition.strFieldType );
+                    Element XML_Field = XMLDocument.createElement( XMLDataPacketTags._Field );
+                    XML_Field.setAttribute( XMLDataPacketTags._AttrName, FieldDefinition.strFieldName );
+                    XML_Field.setAttribute( XMLDataPacketTags._FieldType, FieldDefinition.strFieldType );
 
                     if ( FieldDefinition.strFieldSubType != null && FieldDefinition.strFieldSubType.isEmpty() == false ) {
                     	
-                        XML_FieldSecurityToken.setAttribute( XMLDataPacketTags._FieldSubType, FieldDefinition.strFieldSubType );
+                        XML_Field.setAttribute( XMLDataPacketTags._FieldSubType, FieldDefinition.strFieldSubType );
                     	
                     }
                     
                     if ( FieldDefinition.strFieldWidth != null && FieldDefinition.strFieldWidth.isEmpty() == false ) {
                     	
-                        XML_FieldSecurityToken.setAttribute( XMLDataPacketTags._FieldTypeStringWidth, FieldDefinition.strFieldWidth );
+                        XML_Field.setAttribute( XMLDataPacketTags._FieldTypeStringWidth, FieldDefinition.strFieldWidth );
                     	
                     }
+                    
+                    XML_FieldsSection.item(0).appendChild( XML_Field );
                     
                 } 
             	
@@ -1532,7 +1534,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
         			ArrayList<String> arrIncludedFields = new ArrayList<String>();
         			ArrayList<String> arrExcludedFields = new ArrayList<String>();
 
-        			XMLDocument = BuildXMLMetaData( XMLDocument, DataSetMetaData, DBEngine, arrIncludedFields, arrExcludedFields, Logger, Lang );
+        			XMLDocument = this.BuildXMLMetaData( XMLDocument, DataSetMetaData, DBEngine, arrIncludedFields, arrExcludedFields, Logger, Lang );
 
             		LinkedHashMap<String,String> FieldValues = new LinkedHashMap<String,String>();
         			

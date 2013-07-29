@@ -186,11 +186,13 @@ public class CNamedCallableStatement implements CallableStatement {
 		
 	}
 
-	public CNamedCallableStatement( Connection db, LinkedHashMap<String, Integer> strParsedParams, String strParsedQuery ) throws SQLException {
+	public CNamedCallableStatement( Connection db, LinkedHashMap<String, Integer> strParsedParams, String strParsedStatement ) throws SQLException {
 
 		params = new LinkedHashMap<String, Integer>( strParsedParams );
 		
-		cs = db.prepareCall( strParsedQuery.toString() );
+		this.strParsedStatement = strParsedStatement;
+		
+		cs = db.prepareCall( strParsedStatement.toString() );
 
 	}
 

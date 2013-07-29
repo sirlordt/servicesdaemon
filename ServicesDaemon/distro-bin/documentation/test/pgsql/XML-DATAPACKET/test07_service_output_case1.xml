@@ -7,7 +7,7 @@
         <PARAMS rowcount="1"/>
     </METADATA>
     <ROWDATA>
-        <ROW AffectedRows="1" Code="1" Description="Éxito al ejecutar la instrucción SQL plana [Insert Into tblGroups(IdGroup,Description) Values(2,'test group2')]"/>
+        <ROW AffectedRows="1" Code="1" Description="Éxito al ejecutar la sentencia SQL plana [Insert Into tblGroups(IdGroup,Description) Values(2,'test group2')]"/>
     </ROWDATA>
     <ERRORS errorcount="0"/>
 </DATAPACKET>
@@ -25,7 +25,7 @@
         <PARAMS rowcount="1"/>
     </METADATA>
     <ROWDATA>
-        <ROW Code="1" Description="Transacción aplicada con éxito para el id: [1568342447065610717]" TransactionID="1568342447065610717"/>
+        <ROW Code="1" Description="Transacción aplicada con éxito para el id: [4563204432336409570]" TransactionID="4563204432336409570"/>
     </ROWDATA>
     <ERRORS errorcount="0">
         <ERROR Code="0" Description=""/>

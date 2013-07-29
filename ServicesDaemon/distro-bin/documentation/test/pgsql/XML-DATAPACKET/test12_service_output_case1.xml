@@ -3,11 +3,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <DATAPACKET dpversion="1.1">
     <METADATA>
-        <FIELDS/>
+        <FIELDS>
+            <FIELD attrname="AffectedRows" fieldtype="i8"/>
+            <FIELD attrname="Code" fieldtype="i4"/>
+            <FIELD attrname="Description" fieldtype="string" width="255"/>
+        </FIELDS>
         <PARAMS rowcount="1"/>
     </METADATA>
     <ROWDATA>
-        <ROW AffectedRows="1" Code="1" Description="Éxito al ejecutar la sentencia SQL plana [Insert Into tblGroups(IdGroup,Description) Values(null,'test group3')]"/>
+        <ROW AffectedRows="0" Code="1" Description="Éxito al ejecutar la sentencia SQL plana [create Function SPGETGROUPS1 ( FORIDGROUP int ) RETURNS SETOF tblGroups AS $$ DECLARE BEGIN &#9; &#9;RETURN QUERY Select A.IdGroup, A.Description from tblGroups A Where ForIdGroup Is Null Or A.IdGroup = ForIdGroup; &#9; END;  $$ LANGUAGE plpgsql;]"/>
     </ROWDATA>
     <ERRORS errorcount="0"/>
 </DATAPACKET>

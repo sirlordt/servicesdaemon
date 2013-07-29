@@ -186,7 +186,7 @@ public class CSystemPing extends CAbstractService {
 
 					CachedRowset.moveToCurrentRow();*/
 					
-					int intPing = Integer.parseInt( Request.getParameter( ConstantsSystemPing._RequestPing ) );
+					Long lngPing = Long.parseLong( Request.getParameter( ConstantsSystemPing._RequestPing ) );
 
 					CMemoryRowSet ResultMemoryRowSet = new CMemoryRowSet( false );
 					
@@ -194,7 +194,7 @@ public class CSystemPing extends CAbstractService {
 					ResultMemoryRowSet.addField( ConstantsSystemPing._ResponseDateRequest, Types.DATE, NamesSQLTypes._DATE, 0, NamesSQLTypes._DATE );
 					ResultMemoryRowSet.addField( ConstantsSystemPing._ResponseTimeRequest, Types.TIME, NamesSQLTypes._TIME, 0, NamesSQLTypes._TIME );
 					
-					ResultMemoryRowSet.addData( ConstantsSystemPing._ResponsePong, intPing + 1 );
+					ResultMemoryRowSet.addData( ConstantsSystemPing._ResponsePong, lngPing + 1 );
 					ResultMemoryRowSet.addData( ConstantsSystemPing._ResponseDateRequest, new Date( System.currentTimeMillis() ) );
 					ResultMemoryRowSet.addData( ConstantsSystemPing._ResponseTimeRequest, new Time( System.currentTimeMillis() ) );
 					

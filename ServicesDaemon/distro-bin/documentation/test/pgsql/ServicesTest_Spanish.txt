@@ -158,11 +158,18 @@ SQL=Insert Into tblGroups(IdGroup,Description) Values([paramvalue]IdUser[/paramv
 IdUser=[array datatype="integer"] [value]4[/value] [value]5[/value] [/array]
 Description=[array datatype="varchar"] [value]test group4[/value] [value]test group5[/value] [/array]
 
-Nota1: La inserción no se materializa en la tabla hasta aplicar un commit llamando al servicios System.Commit.Transaction de la siguiente manera
+Nota 1: La inserción no se materializa en la tabla hasta aplicar un commit llamando al servicios System.Commit.Transaction de la siguiente manera
 
 ServiceName=System.Commit.Transaction
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
+
+Nota 2: Para evitar errores de duplicación de llave primaria el IdGroup, (prueba 10 caso 3), debemos corregir el generador a 5. 
+
+ServiceName=System.Execute.SQL
+SecurityTokenID=1885853838911741669
+TransactionID=1568342447065610717
+SQL=ALTER SEQUENCE GEN_TBLGROUPS_ID RESTART WITH 6
 
 Prueba 7 Caso 4 (Ejecutar una inserción parametrizada, sobre DB6), para ver la salida del servicio vea el archivo test07_service_output_case4.xml
 
@@ -179,7 +186,7 @@ ServiceName=System.Commit.Transaction
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 
-Nota 2: El mysql desde la línea de comandos le mostratará la info del campo blob, usando el comando Select * From tblBlobData Where Id=1; como una cantidad grande caracteres extraños, tendrá que consultar usando el ServicesDaemon para verificar la data insertada de la siguiente manera o usando in manager como EMS for Mysql y verificar si la imágen es correcta en el visor de blob
+Nota 2: El psql desde la línea de comandos le mostratará la info del campo blob, usando el comando Select * From tblBlobData Where Id=1; como una cantidad grande de espacios en blanco y un : al final al cual debe dar entrar varias veces para hace scroll hacia abajo, para salir persiones la tecla q, tendrá que consultar usando el ServicesDaemon para verificar la data insertada de la siguiente manera o usando in manager como EMS for postgresql y verificar si la imágen es correcta en el visor de blob (bytea para el caso de postgresql)
 
 ServiceName=System.Execute.SQL
 SecurityTokenID=1885853838911741669
@@ -189,8 +196,6 @@ SQL=Select * From tblBlobData Where Id=1
 Para verificar que le base64 devuelto es la imágen válida usa la otra utilidad llamada Base64Decode, copias y pegas el la cadena del base64 y luego haces click en el boton que dice "Decode", deberías ver la una imagen con fondo negro con letras que dicen navy seal (Si usaste el el mismo base64 de la parte superior), también para windows pero funciona bien con wine en linux.
 
 Nota 4: La característica de enviar blob se debe usar con cuidado solo la he probado para archivo de 100kb, que codificado en base64 es un poco más de 100kb casi 123kb, no se que pasé si envia por lo menos un archivo de 1mb por ejemplo, si algún valiente desea hacer la prueba pues la hace y me avisa como le fue.
-
-Pre Nota 1: Observe que hay un cambio en el SecurityTokenID y TransactionID eso es debido a que tuve que trasladar mi laptop a otra red, y llamme nuevamente al System.Start.Session y System.Start.Transaction generando nuevos ID  
 
 Prueba 7 Caso 5 (Ejecutar una inserción parametrizada, recodando que el campos ID de la tabla es AutoIncrement, sobre DB6), para ver la salida del servicio vea el archivo test07_service_output_case5.xml
 
@@ -297,12 +302,14 @@ SQL=Select * From tblGenericData
 
 Pruebas de llamadas a procedimientos almacenados (Call)
 
+Nota 1: Para usar el call es obligatorio colocar unas llaves {} al inicio y al final, ni firebird ni mysql me las pidieron, pero para postgre-sql es obligatorio, también deber ser call y no Call ni otra cosa como CALL sólo call y unicamente call
+
 Prueba 10 Case 1 (Ejecutar un procedimiento almacenado con retorno de información y parametrizado, sobre DB6), para ver la salida del servicio vea el archivo test10_service_output_case1.xml
 
 ServiceName=System.Execute.SQL
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
-SQL=Call spGetGroups([paramvalue]IdGroup[/paramvalue])
+SQL={call spGetGroups([paramvalue]IdGroup[/paramvalue])}
 IdGroup=[array datatype="integer"] [value]1[/value] [value]2[/value] [/array]
 
 Prueba 10 Case 2 (Ejecutar un procedimiento almacenado plano con retorno de información, sobre DB6), para ver la salida del servicio vea el archivo test10_service_output_case2.xml
@@ -310,14 +317,14 @@ Prueba 10 Case 2 (Ejecutar un procedimiento almacenado plano con retorno de info
 ServiceName=System.Execute.SQL
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
-SQL=Call spGetGroups(1)
+SQL={call spGetGroups(1)}
 
 Prueba 10 Case 3 (Ejecutar un procedimiento almacenado plano sin retorno de información, sobre DB6), para ver la salida del servicio vea el archivo test10_service_output_case3.xml
 
 ServiceName=System.Execute.SQL
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
-SQL=Call spSetGroups(NULL,'Test Callable statement')
+SQL={call spSetGroups(NULL,'Test Callable statement')}
 
 Nota 1: El procedimiento almacenado lleva a cabo una inserción que no se materializa en la tabla hasta aplicar un commit llamando al servicios System.Commit.Transaction de la siguiente manera
 
@@ -325,19 +332,14 @@ ServiceName=System.Commit.Transaction
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 
-Prueba 10 Case 4 (Ejecutar un procedimiento almacenado plano con retorno de información, sobre DB1), para ver la salida del servicio vea el archivo test10_service_output_case4.xml
+Prueba 10 Case 4 (Ejecutar un procedimiento almacenado plano con retorno de información, sobre DB6), para ver la salida del servicio vea el archivo test10_service_output_case4.xml
 
 ServiceName=System.Execute.SQL
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
-SQL=Call spCheckDBUser([paramvalue]User[/paramvalue],[paramvalue]Password[/paramvalue],[paramvalue]IdValid[/paramvalue],[paramvalue]IdUser[/paramvalue],[paramvalue]IdGroup[/paramvalue],[paramvalue]LastAccessDate[/paramvalue],[paramvalue]LastAccessTime[/paramvalue])
+SQL={call spCheckDBUser([paramvalue]User[/paramvalue],[paramvalue]Password[/paramvalue])}
 User=[array scope="in" datatype="varchar"] [value]test1[/value] [/array]
 Password=[array scope="in" datatype="varchar"] [value]123qwerty[/value] [/array]
-IdValid=[array scope="out" datatype="integer"][/array]
-IdUser=[array scope="out" datatype="integer"][/array]
-IdGroup=[array scope="out" datatype="integer"][/array]
-LastAccessDate=[array scope="out" datatype="date"][/array]
-LastAccessTime=[array scope="out" datatype="time"][/array]
 
 Nota 1: El procedimiento almacenado lleva a cabo una inserción que no se materializa en la tabla hasta aplicar un commit llamando al servicios System.Commit.Transaction de la siguiente manera
 
@@ -393,9 +395,9 @@ Prueba 12 Caso 1 (Ejecutar un Create plano, no parametrizado, sobre DB6), para v
 ServiceName=System.Execute.SQL
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
-SQL=CREATE PROCEDURE SPGETGROUP1 ( IN FORIDGROUP integer ) BEGIN Select A.IdGroup, A.Description from tblGroups A Where ForIdGroup Is Null Or A.IdGroup = ForIdGroup; END 
+SQL=create Function SPGETGROUPS1 ( FORIDGROUP int ) RETURNS SETOF tblGroups AS $$ DECLARE BEGIN         RETURN QUERY Select A.IdGroup, A.Description from tblGroups A Where ForIdGroup Is Null Or A.IdGroup = ForIdGroup;    END;  $$ LANGUAGE plpgsql; 
 
-Nota 1: La instrucción DDL lleva a cabo la creación de un procedimiento almacenado SPGETGROUP1 que no se materializa hasta aplicar un commit llamando al servicios System.Commit.Transaction de la siguiente manera
+Nota 1: La instrucción DDL lleva a cabo la creación de una procedimiento (función para el caso postgresql) almacenado SPGETGROUP1 que no se materializa hasta aplicar un commit llamando al servicios System.Commit.Transaction de la siguiente manera
 
 ServiceName=System.Commit.Transaction
 SecurityTokenID=1885853838911741669
@@ -406,7 +408,7 @@ Prueba 12 Caso 2 (Ejecutar un DROP plano, no parametrizado, sobre DB6), para ver
 ServiceName=System.Execute.SQL
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
-SQL=DROP PROCEDURE SPGETGROUP1
+SQL=DROP FUNCTION SPGETGROUP1(integer);
 
 Nota 1: La instrucción DDL lleva a cabo la eliminación de un procedimiento almacenado SPGETGROUP1 que no se materializa hasta aplicar un commit llamando al servicios System.Commit.Transaction de la siguiente manera
 
@@ -420,9 +422,3 @@ ServiceName=System.Execute.SQL
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 SQL=ALTER TABLE tblBlobData auto_increment=10
-
-Nota 1: La instrucción DDL lleva a cabo el establecimiento de la secuencia GEN_TBLBLOBDATA_ID a el número 10 que no se materializa hasta aplicar un commit llamando al servicios System.Commit.Transaction de la siguiente manera
-
-ServiceName=System.Commit.Transaction
-SecurityTokenID=1885853838911741669
-TransactionID=1568342447065610717

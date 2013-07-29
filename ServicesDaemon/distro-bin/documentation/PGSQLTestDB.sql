@@ -68,8 +68,6 @@ BEGIN
    
    if ( NEW.idgroup is null ) then
       NEW.idgroup := nextval( 'GEN_TBLGROUPS_ID' );
-   else
-      Perform nextval( 'GEN_TBLGROUPS_ID' );
    end if;
   
    return NEW;

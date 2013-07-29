@@ -14,6 +14,7 @@ import java.sql.Blob;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
@@ -163,7 +164,7 @@ public abstract class CAbstractDBEngine {
 
 				strSQL = strSQL.toLowerCase();
 				
-				if ( strSQL.indexOf( ConstantsAbstractDBEngine._CALL ) == 0 ) {
+				if ( strSQL.indexOf( ConstantsAbstractDBEngine._CALL ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._CALL1 ) == 0 ) { 
 
 					Result = SQLStatementType.Call;
 					
@@ -1302,6 +1303,52 @@ public abstract class CAbstractDBEngine {
     	
     }
     
+    public boolean IsValidResult( ResultSet Resultset, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+    	try {
+    	
+    		if ( Resultset != null ) {
+    		
+    			ResultSetMetaData DataSetMetaData = Resultset.getMetaData();
+
+    			for ( int i = 1; i <= DataSetMetaData.getColumnCount(); i++ ) {
+
+    				String strFieldName   = DataSetMetaData.getColumnName( i );
+
+    				if ( strFieldName == null || strFieldName.isEmpty() == true )
+    					strFieldName = DataSetMetaData.getColumnLabel( i );
+
+    				int  intFieldType = this.getJavaSQLColumnType( DataSetMetaData.getColumnType( i ), Logger, Lang );
+
+    				if ( intFieldType == 1111 || ( strFieldName == null || strFieldName.isEmpty() ) ) { //JDK other field type
+
+    					return false;
+
+    				}
+
+    			}
+            
+    		}
+    		else {
+    			
+    			return false;
+    			
+    		}
+    		
+    	}
+    	catch ( Exception Ex ) {
+    		
+    		if ( Logger != null )
+				Logger.LogException( "-1015", Ex.getMessage(), Ex );
+    		
+    		return false;
+    		
+    	}
+    	
+    	return true;
+    	
+    }
+    
     public CResultSetResult ExecutePlainCallableStatement( Connection DBConnection, String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	CResultSetResult Result = new CResultSetResult( -1, -1, "" ); 
@@ -1320,6 +1367,8 @@ public abstract class CAbstractDBEngine {
     		
     		Result.intCode = 1; //CallStatement.getInt( "IdValid" );
     		Result.Result = CallStatement.getResultSet();
+    		if ( this.IsValidResult( Result.Result, Logger, Lang ) == false ) 
+    			Result.Result = null;
     		Result.lngAffectedRows = 0;
 
     		if ( Lang != null )   
@@ -2103,6 +2152,7 @@ public abstract class CAbstractDBEngine {
 			}
 			
 			boolean bContainsOutParams = MemoryRowSet.ContainsFieldsScopeOut();
+			boolean bIsValidResultSet = true;
 			
 			for ( int intIndexCall = 0; intIndexCall < intMaxCalls; intIndexCall++ ) {
 				
@@ -2163,6 +2213,14 @@ public abstract class CAbstractDBEngine {
 					
 					ResultSet CallableStatementResultSet = NamedCallableStatement.getResultSet();
 
+					if ( bIsValidResultSet == false || this.IsValidResult( CallableStatementResultSet, Logger, Lang) == false ) {
+						
+						bIsValidResultSet = false;
+						
+						CallableStatementResultSet = null;
+						
+					}
+					
 					if ( CallableStatementResultSet == null && bContainsOutParams ) {
 						
 						CallableStatementResultSet = this.BuildCachedRowSetFromFieldsScopeOut( MemoryRowSet, NamedCallableStatement, Logger, Lang );

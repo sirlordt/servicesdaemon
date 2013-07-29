@@ -3,12 +3,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <DATAPACKET dpversion="1.1">
     <METADATA>
-        <FIELDS/>
-        <PARAMS rowcount="2"/>
+        <FIELDS>
+            <FIELD attrname="idvalid" fieldtype="i4"/>
+            <FIELD attrname="iduser" fieldtype="i4"/>
+            <FIELD attrname="idgroup" fieldtype="i4"/>
+            <FIELD attrname="lastaccessdate" fieldtype="date"/>
+            <FIELD attrname="lastaccesstime" fieldtype="time"/>
+        </FIELDS>
+        <PARAMS rowcount="1"/>
     </METADATA>
     <ROWDATA>
-        <ROW AffectedRows="1" Code="1" Description="Éxito al ejecutar la instrucción SQL"/>
-        <ROW AffectedRows="1" Code="1" Description="Éxito al ejecutar la instrucción SQL"/>
+        <ROW idgroup="1" iduser="1" idvalid="1" lastaccessdate="20130729" lastaccesstime="143133"/>
     </ROWDATA>
     <ERRORS errorcount="0">
         <ERROR Code="0" Description=""/>
@@ -33,22 +38,4 @@
     <ERRORS errorcount="0">
         <ERROR Code="0" Description=""/>
     </ERRORS>
-</DATAPACKET>
-
-<!-- Output from call service System.Execute.SQL -->
-
-<?xml version="1.0" encoding="UTF-8"?>
-<DATAPACKET dpversion="1.1">
-    <METADATA>
-        <FIELDS>
-            <FIELD attrname="AffectedRows" fieldtype="i8"/>
-            <FIELD attrname="Code" fieldtype="i4"/>
-            <FIELD attrname="Description" fieldtype="string" width="255"/>
-        </FIELDS>
-        <PARAMS rowcount="1"/>
-    </METADATA>
-    <ROWDATA>
-        <ROW AffectedRows="0" Code="1" Description="Éxito al ejecutar la sentencia SQL plana [ALTER SEQUENCE GEN_TBLGROUPS_ID RESTART WITH 5]"/>
-    </ROWDATA>
-    <ERRORS errorcount="0"/>
 </DATAPACKET>

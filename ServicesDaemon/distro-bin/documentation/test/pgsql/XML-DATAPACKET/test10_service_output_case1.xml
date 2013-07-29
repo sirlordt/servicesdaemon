@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DATAPACKET dpversion="1.1">
+    <METADATA>
+        <FIELDS>
+            <FIELD attrname="idgroup" fieldtype="i4"/>
+            <FIELD attrname="description" fieldtype="string" width="50"/>
+        </FIELDS>
+        <PARAMS rowcount="2"/>
+    </METADATA>
+    <ROWDATA>
+        <ROW description="Regular user group" idgroup="1"/>
+        <ROW description="test group2 modified" idgroup="2"/>
+    </ROWDATA>
+    <ERRORS errorcount="0">
+        <ERROR Code="0" Description=""/>
+    </ERRORS>
+</DATAPACKET>

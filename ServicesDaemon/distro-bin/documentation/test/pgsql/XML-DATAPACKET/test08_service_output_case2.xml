@@ -3,12 +3,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <DATAPACKET dpversion="1.1">
     <METADATA>
-        <FIELDS/>
+        <FIELDS>
+            <FIELD attrname="AffectedRows" fieldtype="i8"/>
+            <FIELD attrname="Code" fieldtype="i4"/>
+            <FIELD attrname="Description" fieldtype="string" width="255"/>
+        </FIELDS>
         <PARAMS rowcount="2"/>
     </METADATA>
     <ROWDATA>
-        <ROW AffectedRows="1" Code="1" Description="Éxito al ejecutar la instrucción SQL"/>
-        <ROW AffectedRows="1" Code="1" Description="Éxito al ejecutar la instrucción SQL"/>
+        <ROW AffectedRows="1" Code="1" Description="Éxito al ejecutar la sentencia SQL"/>
+        <ROW AffectedRows="1" Code="1" Description="Éxito al ejecutar la sentencia SQL"/>
     </ROWDATA>
     <ERRORS errorcount="0">
         <ERROR Code="0" Description=""/>
@@ -41,14 +45,17 @@
 <DATAPACKET dpversion="1.1">
     <METADATA>
         <FIELDS>
-            <FIELD attrname="AffectedRows" fieldtype="i8"/>
-            <FIELD attrname="Code" fieldtype="i4"/>
-            <FIELD attrname="Description" fieldtype="string" width="255"/>
+            <FIELD attrname="idgroup" fieldtype="i4"/>
+            <FIELD attrname="description" fieldtype="string" width="50"/>
         </FIELDS>
-        <PARAMS rowcount="1"/>
+        <PARAMS rowcount="2"/>
     </METADATA>
     <ROWDATA>
-        <ROW AffectedRows="0" Code="1" Description="Éxito al ejecutar la sentencia SQL plana [ALTER SEQUENCE GEN_TBLGROUPS_ID RESTART WITH 5]"/>
+        <ROW description="test group4 modified" idgroup="4"/>
+        <ROW description="test group5 modified" idgroup="5"/>
     </ROWDATA>
-    <ERRORS errorcount="0"/>
+    <ERRORS errorcount="0">
+        <ERROR Code="0" Description=""/>
+    </ERRORS>
 </DATAPACKET>
+

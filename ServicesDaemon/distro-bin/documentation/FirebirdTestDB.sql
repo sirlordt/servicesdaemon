@@ -34,12 +34,13 @@ set term ^ ;
 
 CREATE TRIGGER TBLUSERSDB_BI FOR tblUsersDB ACTIVE BEFORE INSERT
 as
+  declare Dummy int;
 begin
 
   if ( NEW.iduser is null ) then
      NEW.iduser = gen_id( GEN_TBLUSERSDB_ID, 1 );
   else
-     gen_id( GEN_TBLUSERSDB_ID, 1 );
+     Dummy = gen_id( GEN_TBLUSERSDB_ID, 1 );
      
 end ^
 
@@ -49,12 +50,13 @@ set term ^ ;
 
 CREATE TRIGGER TBLUSERSENG_BI FOR tblUsersEng ACTIVE BEFORE INSERT
 as
+  declare Dummy int;
 begin
 
   if ( NEW.iduser is null ) then
      NEW.iduser = gen_id( GEN_TBLUSERSENG_ID, 1 );
   else   
-     gen_id( GEN_TBLUSERSENG_ID, 1 );
+     Dummy = gen_id( GEN_TBLUSERSENG_ID, 1 );
 
 end ^
 
@@ -68,8 +70,6 @@ begin
 
   if ( NEW.idgroup is null ) then
      NEW.idgroup = gen_id( GEN_TBLGROUPS_ID, 1 );
-  else
-     gen_id( GEN_TBLGROUPS_ID, 1 );
      
 end ^
 
@@ -79,12 +79,13 @@ set term ^ ;
 
 CREATE TRIGGER TBLGENERICDATA_BI FOR tblGenericData ACTIVE BEFORE INSERT
 as
+  declare Dummy int;
 begin
 
   if ( NEW.id is null ) then
      NEW.id = gen_id( GEN_TBLGENERICDATA_ID, 1 );
   else   
-     gen_id( GEN_TBLGENERICDATA_ID, 1 );
+     Dummy = gen_id( GEN_TBLGENERICDATA_ID, 1 );
   
 end ^
 
@@ -94,12 +95,13 @@ set term ^ ;
 
 CREATE TRIGGER TBLBLOBDATA_BI FOR tblBlobData ACTIVE BEFORE INSERT
 as
+  declare Dummy int;
 begin
 
   if ( NEW.id is null ) then
      NEW.id = gen_id( GEN_TBLBLOBDATA_ID, 1 );
   else
-     gen_id( GEN_TBLBLOBDATA_ID, 1 );
+     Dummy = gen_id( GEN_TBLBLOBDATA_ID, 1 );
 
 end ^ 
 
