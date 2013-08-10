@@ -17,6 +17,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
+import java.util.LinkedHashMap;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.serial.SerialBlob;
@@ -522,21 +523,21 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 	}
 	
 	@Override
-	public ResultSet ExecuteDummySQL( Connection DBConnection, String strOptionalDummyQuery, CExtendedLogger Logger, CLanguage Lang ) {
+	public ResultSet ExecuteDummySQL( Connection DBConnection, String strOptionalDummySQL, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		ResultSet Result = null;
 		
 		try {
 		
-			if ( strOptionalDummyQuery.isEmpty() == true ) {
+			if ( strOptionalDummySQL != null && strOptionalDummySQL.isEmpty() == true ) {
 				
-				strOptionalDummyQuery = "SELECT * FROM information_schema.tables limit 1";
+				strOptionalDummySQL = "SELECT * FROM information_schema.tables limit 1";
 				
 			}
 			
 			Statement SQLStatement = DBConnection.createStatement();			
 			
-			Result = SQLStatement.executeQuery( strOptionalDummyQuery );
+			Result = SQLStatement.executeQuery( strOptionalDummySQL );
 			
 		}
 		catch ( Exception Ex ) {
@@ -856,6 +857,8 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 				
 			}
 
+			LinkedHashMap<String,Integer> NamedParams = NamedCallableStatement.getNamedParams();			
+			
 			for ( CMemoryFieldData Field: TmpMemoryRowSet.getFieldsData() ) {
 
 				String strFieldName =  Field.strName;
@@ -863,31 +866,33 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 				if ( strFieldName == null || strFieldName.isEmpty() )
 					strFieldName =  Field.strLabel;
 				
+				int intFieldIndex = NamedParams.get( strFieldName );
+				
     			switch ( this.getJavaSQLColumnType( Field.intSQLType, Logger, Lang ) ) {
     			
-					case Types.INTEGER: { Field.addData( NamedCallableStatement.getInt( strFieldName ) ); break; }
-					case Types.BIGINT: { Field.addData( NamedCallableStatement.getLong( strFieldName ) ); break; }
-					case Types.SMALLINT: { Field.addData( NamedCallableStatement.getShort( strFieldName ) ); break; }
+					case Types.INTEGER: { Field.addData( NamedCallableStatement.getInt( intFieldIndex ) ); break; }
+					case Types.BIGINT: { Field.addData( NamedCallableStatement.getLong( intFieldIndex ) ); break; }
+					case Types.SMALLINT: { Field.addData( NamedCallableStatement.getShort( intFieldIndex ) ); break; }
 					case Types.VARCHAR: 
-					case Types.CHAR: { Field.addData( NamedCallableStatement.getString( strFieldName ) ); break; }
-					case Types.BOOLEAN: { Field.addData( NamedCallableStatement.getBoolean( strFieldName ) ); break; }
+					case Types.CHAR: { Field.addData( NamedCallableStatement.getString( intFieldIndex ) ); break; }
+					case Types.BOOLEAN: { Field.addData( NamedCallableStatement.getBoolean( intFieldIndex ) ); break; }
 					case Types.BLOB: { 
 						
                                         //Reimplement for PostgreSQL
                                         //PostgreSQL Case ByteA type
-										java.sql.Blob BlobData = new SerialBlob( NamedCallableStatement.getBytes( strFieldName ) );
+										java.sql.Blob BlobData = new SerialBlob( NamedCallableStatement.getBytes( intFieldIndex ) );
 						                	
 						                Field.addData( BlobData );
 						                	
 						                break; 
 						             
 					                  }
-					case Types.DATE: { Field.addData( NamedCallableStatement.getDate( strFieldName ) ); break; }
-					case Types.TIME: { Field.addData( NamedCallableStatement.getTime( strFieldName ) ); break; }
-					case Types.TIMESTAMP: { Field.addData( NamedCallableStatement.getTimestamp( strFieldName ) ); break; }
+					case Types.DATE: { Field.addData( NamedCallableStatement.getDate( intFieldIndex ) ); break; }
+					case Types.TIME: { Field.addData( NamedCallableStatement.getTime( intFieldIndex ) ); break; }
+					case Types.TIMESTAMP: { Field.addData( NamedCallableStatement.getTimestamp( intFieldIndex ) ); break; }
 					case Types.FLOAT: 
-					case Types.DECIMAL: { Field.addData( NamedCallableStatement.getFloat( strFieldName ) ); break; }
-					case Types.DOUBLE: { Field.addData( NamedCallableStatement.getDouble( strFieldName ) ); break; }
+					case Types.DECIMAL: { Field.addData( NamedCallableStatement.getFloat( intFieldIndex ) ); break; }
+					case Types.DOUBLE: { Field.addData( NamedCallableStatement.getDouble( intFieldIndex ) ); break; }
 
 				}
 				
@@ -981,6 +986,7 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 					                     break; 
 					                    
 				                      }
+				case Types.NUMERIC:
 				case Types.FLOAT: 
 				case Types.DECIMAL: {  strResult = Float.toString( Resultset.getFloat( intColumnIndex ) ); break; }
 				case Types.DOUBLE: {  break; }
@@ -1047,6 +1053,7 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 					                     break; 
 					                    
 				                      }
+				case Types.NUMERIC:
 				case Types.FLOAT: 
 				case Types.DECIMAL: {  strResult = Float.toString( Resultset.getFloat( strFieldName ) ); break; }
 				case Types.DOUBLE: {  break; }
@@ -1089,12 +1096,19 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 				case Types.DATE: { Result = Resultset.getDate( strFieldName ); break; }
 				case Types.TIME: { Result = Resultset.getTime( strFieldName ); break; }
 				case Types.TIMESTAMP: { Result = Resultset.getTimestamp( strFieldName ); break; }
+				case Types.NUMERIC:
 				case Types.FLOAT: 
 				case Types.DECIMAL: { Result = Resultset.getFloat( strFieldName ); break; }
 				case Types.DOUBLE: { Result = Resultset.getDouble( strFieldName ); break; }
 	
 			}
     	
+    		if ( Resultset.wasNull() ) {
+    			
+    			Result = null;
+    			
+    		}
+			
 	    }
 	    catch ( Exception Ex ) {
 		   
@@ -1131,12 +1145,19 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 				case Types.DATE: { Result = Resultset.getDate( intColumnIndex ); break; }
 				case Types.TIME: { Result = Resultset.getTime( intColumnIndex ); break; }
 				case Types.TIMESTAMP: { Result = Resultset.getTimestamp( intColumnIndex ); break; }
+				case Types.NUMERIC:
 				case Types.FLOAT: 
 				case Types.DECIMAL: { Result = Resultset.getFloat( intColumnIndex ); break; }
 				case Types.DOUBLE: { Result = Resultset.getDouble( intColumnIndex ); break; }
 	
 			}
     	
+    		if ( Resultset.wasNull() ) {
+    			
+    			Result = null;
+    			
+    		}
+			
 	    }
 	    catch ( Exception Ex ) {
 		   

@@ -345,6 +345,8 @@ public class CSystemStartSession extends CAbstractService {
 	    	ServiceSession.setAttribute( strSecurityToken, ConfigDBConnection ); 
 
             */
+			ServiceLogger.LogInfo( "0x1001", ServiceLang.Translate( "Success start session with session key [%s]", ConfigDBConnection.strSessionKey ) );        
+
 	    	Response.setContentType( ResponseFormat.getContentType() );
 	    	Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
@@ -413,7 +415,9 @@ public class CSystemStartSession extends CAbstractService {
 		
 		try {
 
-	    	Response.setContentType( ResponseFormat.getContentType() );
+			ServiceLogger.LogInfo( "-0x1001", ServiceLang.Translate( "Failed start session with session key: [%s], cause: [%s]", ConfigDBConnection.strSessionKey, "failed" ) );        
+	    	
+			Response.setContentType( ResponseFormat.getContentType() );
 	    	Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
 	    	if ( StartSessionRowSet == null || ( AddFieldToResponseFailed.size() == 0 && AddFieldToResponseAny.size() == 0 ) ) {
@@ -467,6 +471,8 @@ public class CSystemStartSession extends CAbstractService {
 		
 		try {
 
+			ServiceLogger.LogInfo( "-0x1002", ServiceLang.Translate( "Failed start session with session key: [%s], cause: [%s]", ConfigDBConnection.strSessionKey, "disabled" ) );        
+			
 	    	Response.setContentType( ResponseFormat.getContentType() );
 	    	Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
@@ -521,7 +527,9 @@ public class CSystemStartSession extends CAbstractService {
 		
 		try {
 
-	    	Response.setContentType( ResponseFormat.getContentType() );
+			ServiceLogger.LogInfo( "-0x1003", ServiceLang.Translate( "Failed start session with session key: [%s], cause: [%s]", ConfigDBConnection.strSessionKey, "not found" ) );        
+
+			Response.setContentType( ResponseFormat.getContentType() );
 	    	Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
 	    	if ( StartSessionRowSet == null || ( AddFieldToResponseNotFound.size() == 0 && AddFieldToResponseAny.size() == 0 ) ) {

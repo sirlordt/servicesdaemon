@@ -45,6 +45,7 @@
 <entry key="The [%s] attribute value [%s] is invalid, must be positive integer or zero, for the node [%s] at relative index [%s], ignoring the node">El atributo [%s] con el valor de [%s] es inválido, debe ser un entero positivo o cero, para el nodo [%s] en la posición relativa [%s], ignorando el nodo</entry>
 <entry key="The [%s] attribute cannot empty string">El atributo [%s] no puede ser una cadena vacia</entry>
 <entry key="The [%s] attribute is empty string, for the node [%s] at relative index [%s]">El atributo [%s] es una cadena vacia, para el nodo [%s] en la posición relativa [%s]</entry>
+<entry key="The [%s] attribute is empty string">El atributo [%s] es una cadena vacia</entry>
 <entry key="The [%s] attribute value [%s] must be only one of the next values: [%s,%s]">El atributo [%s] con el valor de [%s] debe ser solo uno de los siguientes valores: [%s,%s]</entry>
 <entry key="The [%s] attribute value [%s] must be only one of the next values: [%s,%s,%s]">El atributo [%s] con el valor de [%s] debe ser solo uno de los siguientes valores: [%s,%s,%s]</entry>
 <entry key="The [%s] attribute value [%s] must be only one of the next values: %s, for the node [%s] at relative index [%s]">El atributo [%s] con el valor de [%s] debe ser solo uno de los siguientes valores: %s, para el nodo [%s] en la posición relativa [%s]</entry>

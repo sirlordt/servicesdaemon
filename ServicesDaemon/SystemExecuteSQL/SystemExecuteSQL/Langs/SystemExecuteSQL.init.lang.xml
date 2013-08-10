@@ -4,9 +4,11 @@
 <comment>Language file messages translations</comment>
 <entry key="Allow execute SQL statement using a transaction id">Permite ejecutar una instrucción SQL en la base de datos usando id de transacción</entry>
 <entry key="Transaction id obtained with a start transaction service call">Identificador de transacción obtenido con una llamada al servicio de inicio de transacción</entry>
+<entry key="Commit all pending operations in context of current transaction, example: 1">Aplicar todas las operaciones pendientes en el contexto de la transacción actual</entry>
 <entry key="Response format name, example: XML-DATAPACKET, CSV, JSON">Nombre del formato de respuesta, ejemplo: XML-DATAPACKET, CSV, JSON</entry>
 <entry key="Response format version, example: 1.1">Versión del formato de respuesta, ejemplo: 1.1</entry>
 <entry key="SQL statement">Instrucción SQL</entry>
+
 
 <entry key="Reading XML node filter: [%s]">Leyendo nodo XML del filtro: [%s]</entry>
 

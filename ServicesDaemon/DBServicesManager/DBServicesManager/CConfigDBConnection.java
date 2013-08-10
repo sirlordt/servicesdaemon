@@ -22,6 +22,8 @@ public class CConfigDBConnection {
 	public String strAddressType;
 	public int intPort;
 	public String strDatabase;
+	public boolean bAutoCommit;
+	public String strDummySQL;	
 	public String strAuthType;
 	public String strSessionUser;
 	public String strSessionPassword;
@@ -42,6 +44,7 @@ public class CConfigDBConnection {
 		strAddressType = "ipv4";
 		intPort = 45068;
 		strDatabase = "";
+		strDummySQL = "";
 		strAuthType = "database";
 		strSessionUser = "";
 		strSessionPassword = "";
@@ -64,6 +67,8 @@ public class CConfigDBConnection {
 		strAddressType = ConfigDBConnection.strAddressType;
 		intPort = ConfigDBConnection.intPort;
 		strDatabase = ConfigDBConnection.strDatabase;
+		bAutoCommit = ConfigDBConnection.bAutoCommit;
+		strDummySQL = ConfigDBConnection.strDummySQL;
 		strAuthType = ConfigDBConnection.strAuthType;
 		strSessionUser = ConfigDBConnection.strSessionUser;
 		strSessionPassword = ConfigDBConnection.strSessionPassword;
@@ -87,6 +92,8 @@ public class CConfigDBConnection {
 		DBEngineConfigConnection.strAddressType = this.strAddressType;
 		DBEngineConfigConnection.intPort = this.intPort;
 		DBEngineConfigConnection.strDatabase = this.strDatabase;
+		DBEngineConfigConnection.bAutoCommit = this.bAutoCommit;
+		DBEngineConfigConnection.strDummySQL = this.strDummySQL;
 		DBEngineConfigConnection.strAuthType = this.strAuthType;
 		
 		if ( bUseSessionUser == true || this.strTransactionUser.isEmpty() == true ) {

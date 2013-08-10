@@ -130,6 +130,10 @@ public class CSystemExecuteSQL extends CAbstractService {
 
 				ServiceInputParameters.add( InputParameter ); 	
 
+				InputParameter = new CInputServiceParameter( ConstantsSystemExecuteSQL._Commit, false, ConstantsSystemExecuteSQL._Commit_Type, ConstantsSystemExecuteSQL._Commit_Length, TParameterScope.IN, ServiceLang.Translate( "Commit all pending operations in context of current transaction, example: 1" ) );
+
+				ServiceInputParameters.add( InputParameter ); 	
+
 				InputParameter = new CInputServiceParameter( ConstantsServicesTags._RequestServiceName, true, ConstantsServicesTags._RequestServiceNameType, ConstantsServicesTags._RequestServiceNameLength, TParameterScope.IN, ServiceLang.Translate( "Service Name" ) );
 
 				ServiceInputParameters.add( InputParameter );
@@ -518,6 +522,14 @@ public class CSystemExecuteSQL extends CAbstractService {
 
 													intResultCode = 1;
 
+													String strCommit = ( String ) Request.getParameter( ConstantsSystemExecuteSQL._Commit );
+													
+													if ( LocalConfigDBConnection.bAutoCommit == false && strCommit != null && strCommit.equals( "1" ) ) {
+														
+														DBEngine.commit( DBConnection, ServiceLogger, ServiceLang );
+														
+													}
+													
 												}	
 
 											}
@@ -527,6 +539,14 @@ public class CSystemExecuteSQL extends CAbstractService {
 
 													intResultCode = 1;
 
+													String strCommit = ( String ) Request.getParameter( ConstantsSystemExecuteSQL._Commit );
+													
+													if ( LocalConfigDBConnection.bAutoCommit == false && strCommit != null && strCommit.equals( "1" ) ) {
+														
+														DBEngine.commit( DBConnection, ServiceLogger, ServiceLang );
+														
+													}
+													
 												}
 												else {
 													

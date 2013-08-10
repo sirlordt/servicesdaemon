@@ -54,7 +54,6 @@ import CommonClasses.CMemoryRowSet;
 import CommonClasses.CResultSetResult;
 import ExtendedLogger.CExtendedLogger;
 
-
 public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
 	public CXMLDataPacketResponseFormat() {
@@ -696,7 +695,12 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 							               break; 
 							             
 						                 }
-						case Types.BOOLEAN: {  break; }
+						case Types.BOOLEAN: { 
+							
+							                   XML_Field.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeBoolean );
+						                       break; 
+						                       
+					                        }
 						case Types.BLOB: { 	
 							
 					                        XML_Field.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeBlob );
@@ -722,7 +726,8 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 							                     break; 
 							                    
 						                      }
-						case Types.FLOAT: 
+						case Types.FLOAT:
+						case Types.NUMERIC:	
 						case Types.DECIMAL: {  XML_Field.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeFloat ); break; }
 						case Types.DOUBLE: {  break; }
 
@@ -766,8 +771,12 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
               java.sql.ResultSetMetaData DataSetMetaData = SQLDataSet.getMetaData();
 
-              while ( SQLDataSet.next() == true ) {
+              boolean bOnFirstRow = SQLDataSet.getRow() == 1;
+              
+              while ( bOnFirstRow == true || SQLDataSet.next() == true ) {
 
+            	  bOnFirstRow = false;
+            	  
             	  intRowCount += 1;
             	  
             	  Element XML_ROW = XMLDocument.createElement( XMLDataPacketTags._Row );
@@ -927,7 +936,12 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 							               break; 
 							             
 						                 }
-						case Types.BOOLEAN: {  break; }
+						case Types.BOOLEAN: { 
+							
+			                                   XML_Field.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeBoolean );
+		                                       break; 
+		                       
+	                                        }
 						case Types.BLOB: { 	
 							
 					                        XML_Field.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeBlob );
@@ -953,7 +967,8 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 							                     break; 
 							                    
 						                      }
-						case Types.FLOAT: 
+						case Types.FLOAT:
+						case Types.NUMERIC:	
 						case Types.DECIMAL: {  XML_Field.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeFloat ); break; }
 						case Types.DOUBLE: {  break; }
 
@@ -1029,7 +1044,12 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 					    							break; 
 					
 					    						 }
-	    						case Types.BOOLEAN: {  break; }
+	    						case Types.BOOLEAN: { 
+	    							
+	    							                   XML_ROW.setAttribute( strFieldName, Boolean.toString( (Boolean) FieldData ) );
+				                                       break; 
+				                       
+			                                        }
 	    						case Types.BLOB: { 	
 	
 					    							Blob BinaryBLOBData = (Blob) FieldData;
@@ -1058,7 +1078,8 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 	    							                      break; 
 	
 	    						                      }
-	    						case Types.FLOAT: 
+	    						case Types.FLOAT:
+	    						case Types.NUMERIC:
 	    						case Types.DECIMAL: {  XML_ROW.setAttribute( strFieldName, Float.toString( (Float) FieldData ) ); break; }
 	    						case Types.DOUBLE: {  break; }
 

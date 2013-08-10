@@ -226,6 +226,7 @@ public class CMemoryRowSet {
 								case Types.DATE: { ResultRowset.updateDate( intIndexColumn, (java.sql.Date) FieldData  ); break; }
 								case Types.TIME: { ResultRowset.updateTime( intIndexColumn, (Time) FieldData ); break; }
 								case Types.TIMESTAMP: { ResultRowset.updateTimestamp( intIndexColumn, (Timestamp)FieldData ); break; }
+								case Types.NUMERIC:
 								case Types.FLOAT: 
 								case Types.DECIMAL: { ResultRowset.updateFloat( intIndexColumn, (Float) FieldData ); break; }
 								case Types.DOUBLE: { ResultRowset.updateDouble( intIndexColumn, (Double) FieldData ); break; }

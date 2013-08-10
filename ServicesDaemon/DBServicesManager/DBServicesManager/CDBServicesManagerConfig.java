@@ -729,7 +729,7 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
         
         try {
 
-			String strAttributesOrder[] = { ConfigXMLTagsDBServicesManager._Name, ConfigXMLTagsDBServicesManager._Driver, ConfigXMLTagsDBServicesManager._Engine, ConfigXMLTagsDBServicesManager._Engine_Version, ConfigXMLTagsServicesDaemon._IP, ConfigXMLTagsServicesDaemon._Port, ConfigXMLTagsDBServicesManager._Database, ConfigXMLTagsDBServicesManager._Auth_Type, ConfigXMLTagsDBServicesManager._SessionUser, ConfigXMLTagsDBServicesManager._SessionPassword, ConfigXMLTagsDBServicesManager._TransactionUser, ConfigXMLTagsDBServicesManager._TransactionPassword, ConfigXMLTagsDBServicesManager._Date_Format, ConfigXMLTagsDBServicesManager._Time_Format, ConfigXMLTagsDBServicesManager._Date_Time_Format };
+			String strAttributesOrder[] = { ConfigXMLTagsDBServicesManager._Name, ConfigXMLTagsDBServicesManager._Driver, ConfigXMLTagsDBServicesManager._Engine, ConfigXMLTagsDBServicesManager._Engine_Version, ConfigXMLTagsServicesDaemon._IP, ConfigXMLTagsServicesDaemon._Port, ConfigXMLTagsDBServicesManager._Database, ConfigXMLTagsDBServicesManager._Auto_Commit, ConfigXMLTagsDBServicesManager._Dummy_SQL, ConfigXMLTagsDBServicesManager._Auth_Type, ConfigXMLTagsDBServicesManager._SessionUser, ConfigXMLTagsDBServicesManager._SessionPassword, ConfigXMLTagsDBServicesManager._TransactionUser, ConfigXMLTagsDBServicesManager._TransactionPassword, ConfigXMLTagsDBServicesManager._Date_Format, ConfigXMLTagsDBServicesManager._Time_Format, ConfigXMLTagsDBServicesManager._Date_Time_Format };
 
 			NodeList ConfigConnectionsList = ConfigSectionNode.getChildNodes();
 	          
@@ -753,6 +753,8 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 						String strAddressType = "";
 						int intPort = -1;
 						String strDatabase = "";
+						boolean bAutoCommit = false;
+						String strDummySQL = "";
 						String strAuthType = "";
 						String strSessionUser = "";
 						String strSessionPassword = "";
@@ -889,6 +891,34 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 										}
 										
 									}
+									else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsDBServicesManager._Auto_Commit ) ) {
+
+										if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
+											
+											bAutoCommit = NodeAttribute.getNodeValue().equals( "1" );
+										
+										}
+										else {
+											
+											Logger.LogWarning( "-1", Lang.Translate( "The [%s] attribute is empty string", ConfigXMLTagsDBServicesManager._Auto_Commit ) );
+											
+										}
+										
+									}
+									else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsDBServicesManager._Dummy_SQL ) ) {
+
+										if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
+											
+											strDummySQL = NodeAttribute.getNodeValue();
+										
+										}
+										else {
+											
+											Logger.LogWarning( "-1", Lang.Translate( "The [%s] attribute is empty string", ConfigXMLTagsDBServicesManager._Dummy_SQL ) );
+											
+										}
+										
+									}
 									else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsDBServicesManager._Auth_Type ) ) {
 
 										if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
@@ -951,6 +981,11 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 											strTransactionUser = NodeAttribute.getNodeValue();
 										
 										}
+										else {
+											
+											Logger.LogWarning( "-1", Lang.Translate( "The [%s] attribute is empty string", ConfigXMLTagsDBServicesManager._TransactionUser ) );
+											
+										}
 										
 									}
 									else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsDBServicesManager._TransactionPassword ) ) {
@@ -959,6 +994,11 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 											
 											strTransactionPassword = NodeAttribute.getNodeValue();
 										
+										}
+										else {
+											
+											Logger.LogWarning( "-1", Lang.Translate( "The [%s] attribute is empty string", ConfigXMLTagsDBServicesManager._TransactionPassword ) );
+											
 										}
 										
 									}
@@ -1072,6 +1112,8 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 	                                	DBConnection.strAddressType = strAddressType;
 	                                	DBConnection.intPort = intPort;
 	                                	DBConnection.strDatabase = strDatabase;
+	                                	DBConnection.bAutoCommit = bAutoCommit;
+	                                	DBConnection.strDummySQL = strDummySQL;
 	                                	DBConnection.strAuthType = strAuthType;
 	                                	DBConnection.strSessionUser = strSessionUser;
 	                                	DBConnection.strSessionPassword = strSessionPassword;
@@ -1083,7 +1125,7 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 	
 	                                	this.ConfiguredDBConnections.add( DBConnection );
 	
-	                                	Logger.LogMessage( "1", Lang.Translate( "Connection database defined and added. Name: [%s], Driver: [%s], Engine: [%s], Engine_Version: [%s], IP: [%s], Address_Type: [%s], Port: [%s], Database: [%s], SessionUser: [%s], SessionPassword: [%s], TransactionUser: [%s], TransactionPassword: [%s], DateFormat: [%s], TimeFormat: [%s], DateTimeFormat: [%s]", strName, strDriver, strEngine, strEngineVersion, strIP, strAddressType, Integer.toString( intPort ), strDatabase, strSessionUser, strSessionPassword, strTransactionUser, strTransactionPassword, strDateFormat, strTimeFormat, strDateTimeFormat ) );
+	                                	Logger.LogMessage( "1", Lang.Translate( "Connection database defined and added. Name: [%s], Driver: [%s], Engine: [%s], Engine_Version: [%s], IP: [%s], Address_Type: [%s], Port: [%s], Database: [%s], AutoCommit: [%s], DummySQL: [%s], SessionUser: [%s], SessionPassword: [%s], TransactionUser: [%s], TransactionPassword: [%s], DateFormat: [%s], TimeFormat: [%s], DateTimeFormat: [%s]", strName, strDriver, strEngine, strEngineVersion, strIP, strAddressType, Integer.toString( intPort ), strDatabase, bAutoCommit==true?"true":"false", strDummySQL, strSessionUser, strSessionPassword, strTransactionUser, strTransactionPassword, strDateFormat, strTimeFormat, strDateTimeFormat ) );
 
                                 	}
                                 	else {

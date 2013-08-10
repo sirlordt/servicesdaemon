@@ -14,6 +14,10 @@ import java.sql.Types;
 
 public interface ConstantsSystemExecuteSQL {
 
+	public static final String _Commit            = "Commit";
+	public static final String _Commit_Type       = "Integer";
+	public static final String _Commit_Length     = "0";
+
 	public static final String _Request_SQL           = "SQL";
 	public static final String _Request_SQL_Type       = "VarChar";
 	public static final String _Request_SQL_Length     = "10240";

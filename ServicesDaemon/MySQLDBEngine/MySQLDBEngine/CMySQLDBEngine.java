@@ -82,21 +82,21 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
 	}
 	
 	@Override
-	public ResultSet ExecuteDummySQL( Connection DBConnection, String strOptionalDummyQuery, CExtendedLogger Logger, CLanguage Lang ) {
+	public ResultSet ExecuteDummySQL( Connection DBConnection, String strOptionalDummySQL, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		ResultSet Result = null;
 		
 		try {
 		
-			if ( strOptionalDummyQuery.isEmpty() == true ) {
+			if ( strOptionalDummySQL != null && strOptionalDummySQL.isEmpty() == true ) {
 				
-				strOptionalDummyQuery = "SHOW TABLES";
+				strOptionalDummySQL = "SHOW TABLES";
 				
 			}
 			
 			Statement SQLStatement = DBConnection.createStatement();			
 			
-			Result = SQLStatement.executeQuery( strOptionalDummyQuery );
+			Result = SQLStatement.executeQuery( strOptionalDummySQL );
 			
 		}
 		catch ( Exception Ex ) {
@@ -128,23 +128,26 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
 
     			Result.Result = SQLStatement.getGeneratedKeys(); //Save the generated keys
 
-    			if ( Result.Result != null )
-    			     Result.SQLStatement = SQLStatement;
+				if ( Result.Result != null && ( this.IsValidResult( Result.Result, Logger, Lang ) == false ) ) 
+					Result.Result = null;
+
+				if ( Result.Result != null )
+    				Result.SQLStatement = SQLStatement;
     			
     		}
     		
     		if ( Lang != null )   
-    			Result.strDescription = Lang.Translate( "Sucess to execute the SQL statement [%s]", strSQL );
+    			Result.strDescription = Lang.Translate( "Sucess to execute the plain SQL statement [%s]", strSQL );
     		else
-    			Result.strDescription = String.format( "Sucess to execute the SQL statement [%s]", strSQL );
+    			Result.strDescription = String.format( "Sucess to execute the plain SQL statement [%s]", strSQL );
     	
     	}
     	catch ( Exception Ex ) {
     		
     		if ( Lang != null )   
-    		    Result.strDescription = Lang.Translate( "Error to execute the next SQL statement [%s]", strSQL );
+    		    Result.strDescription = Lang.Translate( "Error to execute the plain SQL statement [%s]", strSQL );
     		else
-    		    Result.strDescription = String.format( "Error to execute the next SQL statement [%s]", strSQL ) ;
+    		    Result.strDescription = String.format( "Error to execute the plain SQL statement [%s]", strSQL ) ;
 
     		if ( Logger != null )
 				Logger.LogException( "-1015", Ex.getMessage(), Ex );
@@ -216,6 +219,8 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
 				
 			}
 			
+			boolean bIsValidResultSet = true;
+			
 			for ( int intIndexCall = 0; intIndexCall < intMaxCalls; intIndexCall++ ) {
 				
 				i = NamedParams.entrySet().iterator();
@@ -281,6 +286,14 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
 					
 					}  	
 						
+					if ( GeneratedKeys != null && ( bIsValidResultSet == false || this.IsValidResult( GeneratedKeys, Logger, Lang) == false ) ) {
+						
+						bIsValidResultSet = false;
+						
+						GeneratedKeys = null;
+						
+					}
+
 					if ( GeneratedKeys != null ) {
 
 						Result.add( new CResultSetResult( intAffectedRows, 1, Lang.Translate( "Sucess to execute the SQL statement" ), NamedPreparedStatement, GeneratedKeys ) ); //Return back the generated keys

@@ -214,6 +214,23 @@ public class CNamedPreparedStatement implements PreparedStatement {
 		ps = db.prepareStatement( strParsedQuery.toString(), strColumnNames );
 
 	}
+	
+	public CNamedPreparedStatement( Connection db, LinkedHashMap<String, Integer> strParsedParams, String strParsedQuery, int intResultType, int intResultSetConcurrency ) throws SQLException {
+
+		params = new LinkedHashMap<String, Integer>( strParsedParams );
+		
+		ps = db.prepareStatement( strParsedQuery.toString(), intResultType, intResultSetConcurrency );
+
+	}
+	
+	public CNamedPreparedStatement( Connection db, LinkedHashMap<String, Integer> strParsedParams, String strParsedQuery, int intResultType, int intResultSetConcurrency, int intResultSetHoldability ) throws SQLException {
+
+		params = new LinkedHashMap<String, Integer>( strParsedParams );
+		
+		ps = db.prepareStatement( strParsedQuery.toString(), intResultType, intResultSetConcurrency, intResultSetHoldability );
+
+	}
+	
 	/* 
 
      Usage Input: ParseStatement( "Select * From tblPersonas Where IdPersona1=<param>ParamValue1</param> And IdPersona2=<param>P

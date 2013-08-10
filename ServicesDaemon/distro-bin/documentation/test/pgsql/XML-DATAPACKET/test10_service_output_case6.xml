@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DATAPACKET dpversion="1.1">
+    <METADATA>
+        <FIELDS>
+            <FIELD attrname="result" fieldtype="i4"/>
+        </FIELDS>
+        <PARAMS rowcount="2"/>
+    </METADATA>
+    <ROWDATA>
+        <ROW result="33"/>
+        <ROW result="66"/>
+    </ROWDATA>
+    <ERRORS errorcount="0">
+        <ERROR Code="0" Description=""/>
+    </ERRORS>
+</DATAPACKET>

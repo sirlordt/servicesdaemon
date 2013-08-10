@@ -38,6 +38,7 @@ public interface XMLDataPacketTags {
 	public final static String _FieldTypeBigInt                = "i8";
 	public final static String _FieldTypeString                = "string";
 	public final static String _FieldTypeStringWidth           = "width";
+	public final static String _FieldTypeBoolean               = "boolean";
 	public final static String _FieldTypeDate                  = "date";
 	public final static String _FieldTypeTime                  = "time";
 	public final static String _FieldTypeDateTime              = "datetime";

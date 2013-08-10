@@ -19,6 +19,8 @@ public interface ConstantsAbstractDBEngine {
 	public static final String _TRUNCATE = "truncate";
 	public static final String _CALL = "call";
 	public static final String _CALL1 = "{call";
+	public static final String _CALL_FUNCTION = "call_function";
+	public static final String _CALL_FUNCTION1 = "{call_function";
 	public static final String _CREATE = "create";
 	public static final String _ALTER = "alter";
 	public static final String _MODIFY = "modify";

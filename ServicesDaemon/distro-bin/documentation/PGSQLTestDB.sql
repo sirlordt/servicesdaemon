@@ -187,7 +187,28 @@ BEGIN
 	
 END;
 $$ LANGUAGE plpgsql;
- 
+
+create Function SPGETVALUE ( ID int ) RETURNS int AS $$
+DECLARE
+BEGIN
+    
+	RETURN 33 * ID;
+    
+END; 
+$$ LANGUAGE plpgsql;
+
+create Function SPGETVALUES ( ID int ) RETURNS SETOF int AS $$
+DECLARE
+BEGIN
+    
+    RETURN NEXT 33 * ID;
+    RETURN NEXT 66 * ID;
+    
+    RETURN;
+    
+END; 
+$$ LANGUAGE plpgsql;
+
 /** Insert basic data **/
 
 insert into tblGroups( idgroup, description ) values( null, 'Regular user group' );

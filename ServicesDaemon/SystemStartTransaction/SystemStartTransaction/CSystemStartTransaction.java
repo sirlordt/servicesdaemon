@@ -190,11 +190,11 @@ public class CSystemStartTransaction extends CAbstractService {
 
 								if ( DBConnection != null ) {
 
-									DBEngine.setAutoCommit( DBConnection, false, ServiceLogger, ServiceLang );  //Disable auto commit VERY VERY IMPORTANT!!!!
+									DBEngine.setAutoCommit( DBConnection, LocalConfigDBConnection.bAutoCommit, ServiceLogger, ServiceLang );  //Auto commit VERY VERY IMPORTANT!!!!
 
-									ResultSet DummyResultSet =  DBEngine.ExecuteDummySQL( DBConnection, "", ServiceLogger, ServiceLang );
+									ResultSet DummyResultSet =  DBEngine.ExecuteDummySQL( DBConnection, LocalConfigDBConnection.strDummySQL, ServiceLogger, ServiceLang );
 
-									if ( DummyResultSet != null &&  DummyResultSet.next() == true ) {
+									if ( DummyResultSet != null /*&&  DummyResultSet.next() == true*/ ) {
 
 										Random Generator1 = new Random( Calendar.getInstance().getTimeInMillis() );
 

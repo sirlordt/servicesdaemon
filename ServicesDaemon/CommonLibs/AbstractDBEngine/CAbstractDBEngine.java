@@ -164,7 +164,7 @@ public abstract class CAbstractDBEngine {
 
 				strSQL = strSQL.toLowerCase();
 				
-				if ( strSQL.indexOf( ConstantsAbstractDBEngine._CALL ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._CALL1 ) == 0 ) { 
+				if ( strSQL.indexOf( ConstantsAbstractDBEngine._CALL ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._CALL1 ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._CALL_FUNCTION ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._CALL_FUNCTION1 ) == 0 ) { 
 
 					Result = SQLStatementType.Call;
 					
@@ -209,6 +209,37 @@ public abstract class CAbstractDBEngine {
 		
 	}
     
+    public String RemoveCallFunction( String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+		try {
+			
+			if ( strSQL.indexOf( ConstantsAbstractDBEngine._CALL_FUNCTION ) == 0  ) {
+
+				String strTmp = strSQL.substring( ConstantsAbstractDBEngine._CALL_FUNCTION.length() ).trim(); //strSQL.replace( ConstantsAbstractDBEngine._CALL_FUNCTION, ConstantsAbstractDBEngine._CALL); //( ConstantsAbstractDBEngine._CALL_FUNCTION.length() );
+
+				return strTmp;
+
+			}
+			else if ( strSQL.indexOf( ConstantsAbstractDBEngine._CALL_FUNCTION1 ) == 0 ) {
+
+				String strTmp = "{" + strSQL.substring( ConstantsAbstractDBEngine._CALL_FUNCTION1.length() ).trim(); //strSQL.replace( ConstantsAbstractDBEngine._CALL_FUNCTION1, ConstantsAbstractDBEngine._CALL1 );
+
+				return strTmp;
+
+			}
+			
+		}
+		catch ( Exception Ex ) {
+			
+			if ( Logger != null )
+				Logger.LogException( "-1015", Ex.getMessage(), Ex );
+			
+		}
+    	
+    	return strSQL;
+    	
+    }
+	
 	public boolean isModifySQLStatement( SQLStatementType SQLType ) {
 		
 		return SQLType == SQLStatementType.Insert || SQLType == SQLStatementType.Update || SQLType == SQLStatementType.Delete;
@@ -1355,6 +1386,8 @@ public abstract class CAbstractDBEngine {
     	
     	try {
     	
+    		strSQL = this.RemoveCallFunction(strSQL, Logger, Lang );
+    		
     		CallableStatement CallStatement = DBConnection.prepareCall( strSQL );
 
 			/*CallStatement.registerOutParameter( 1, Types.INTEGER );
@@ -1696,6 +1729,8 @@ public abstract class CAbstractDBEngine {
 				
 			}
 
+			LinkedHashMap<String,Integer> NamedParams = NamedCallableStatement.getNamedParams();
+			
 			for ( CMemoryFieldData Field: TmpMemoryRowSet.getFieldsData() ) {
 
 				String strFieldName =  Field.strName;
@@ -1703,35 +1738,29 @@ public abstract class CAbstractDBEngine {
 				if ( strFieldName == null || strFieldName.isEmpty() )
 					strFieldName =  Field.strLabel;
 				
+				int intFieldIndex = NamedParams.get( strFieldName );
+				
     			switch ( this.getJavaSQLColumnType( Field.intSQLType, Logger, Lang ) ) {
     			
-					case Types.INTEGER: { Field.addData( NamedCallableStatement.getInt( strFieldName ) ); break; }
-					case Types.BIGINT: { Field.addData( NamedCallableStatement.getLong( strFieldName ) ); break; }
-					case Types.SMALLINT: { Field.addData( NamedCallableStatement.getShort( strFieldName ) ); break; }
+					case Types.INTEGER: { Field.addData( NamedCallableStatement.getInt( intFieldIndex ) ); break; }
+					case Types.BIGINT: { Field.addData( NamedCallableStatement.getLong( intFieldIndex ) ); break; }
+					case Types.SMALLINT: { Field.addData( NamedCallableStatement.getShort( intFieldIndex ) ); break; }
 					case Types.VARCHAR: 
-					case Types.CHAR: { Field.addData( NamedCallableStatement.getString( strFieldName ) ); break; }
-					case Types.BOOLEAN: { Field.addData( NamedCallableStatement.getBoolean( strFieldName ) ); break; }
+					case Types.CHAR: { Field.addData( NamedCallableStatement.getString( intFieldIndex ) ); break; }
+					case Types.BOOLEAN: { Field.addData( NamedCallableStatement.getBoolean( intFieldIndex ) ); break; }
 					case Types.BLOB: { 
 						
-						                /*if ( intBlobType == 1 ) {  //Reimplement in PostgreSQL
-						                
-											java.sql.Blob BlobData = new SerialBlob( NamedCallableStatement.getBytes( strFieldName ) );
-						                	
-						                    Field.addData( BlobData );
-						                	
-						                }
-						                else*/ 
-						                Field.addData( NamedCallableStatement.getBlob( strFieldName ) );
+						                Field.addData( NamedCallableStatement.getBlob( intFieldIndex ) );
 						                	
 						                break; 
 						             
 					                  }
-					case Types.DATE: { Field.addData( NamedCallableStatement.getDate( strFieldName ) ); break; }
-					case Types.TIME: { Field.addData( NamedCallableStatement.getTime( strFieldName ) ); break; }
-					case Types.TIMESTAMP: { Field.addData( NamedCallableStatement.getTimestamp( strFieldName ) ); break; }
+					case Types.DATE: { Field.addData( NamedCallableStatement.getDate( intFieldIndex ) ); break; }
+					case Types.TIME: { Field.addData( NamedCallableStatement.getTime( intFieldIndex ) ); break; }
+					case Types.TIMESTAMP: { Field.addData( NamedCallableStatement.getTimestamp( intFieldIndex ) ); break; }
 					case Types.FLOAT: 
-					case Types.DECIMAL: { Field.addData( NamedCallableStatement.getFloat( strFieldName ) ); break; }
-					case Types.DOUBLE: { Field.addData( NamedCallableStatement.getDouble( strFieldName ) ); break; }
+					case Types.DECIMAL: { Field.addData( NamedCallableStatement.getFloat( intFieldIndex ) ); break; }
+					case Types.DOUBLE: { Field.addData( NamedCallableStatement.getDouble( intFieldIndex ) ); break; }
 
 				}
 				
@@ -2092,13 +2121,15 @@ public abstract class CAbstractDBEngine {
     	return ExecuteCommonComplexSQL( DBConnection, Request, intMacrosTypes, strMacrosNames, strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, strSQL, bLogParsedSQL, Logger, Lang );
     	
     }
-    
+   
     public ArrayList<CResultSetResult> ExecuteComplexCallableStatement( Connection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	ArrayList<CResultSetResult> Result = new ArrayList<CResultSetResult>();
 
     	try {
     	
+    		strSQL = this.RemoveCallFunction( strSQL, Logger, Lang );
+    		
     		HashMap<String,String> Delimiters = new HashMap<String,String>();
 
     		Delimiters.put( ConfigXMLTagsServicesDaemon._StartMacroTag, ConfigXMLTagsServicesDaemon._EndMacroTag );
@@ -2464,7 +2495,7 @@ public abstract class CAbstractDBEngine {
 									break; 
 					             
 				                 }
-				case Types.BOOLEAN: {  break; }
+				case Types.BOOLEAN: { strResult = Boolean.toString( Resultset.getBoolean( strFieldName ) ); break; }
 				//case -2: //PostgreSQL ByteA  now managed for CPGSQLDBEngine Class method getJavaSQLColumnType to convert to Types.BLOB constant value
 				//case -4: //Firebird Blob now managed for CFirebirdDBEngine Class method getJavaSQLColumnType to convert to Types.BLOB constant value
 				case Types.BLOB: { 	
@@ -2499,7 +2530,8 @@ public abstract class CAbstractDBEngine {
 					                     break; 
 					                    
 				                      }
-				case Types.FLOAT: 
+				case Types.FLOAT:
+				case Types.NUMERIC:
 				case Types.DECIMAL: {  strResult = Float.toString( Resultset.getFloat( strFieldName ) ); break; }
 				case Types.DOUBLE: {  break; }
 	
@@ -2543,12 +2575,19 @@ public abstract class CAbstractDBEngine {
 				case Types.DATE: { Result = Resultset.getDate( strFieldName ); break; }
 				case Types.TIME: { Result = Resultset.getTime( strFieldName ); break; }
 				case Types.TIMESTAMP: { Result = Resultset.getTimestamp( strFieldName ); break; }
+				case Types.NUMERIC:
 				case Types.FLOAT: 
 				case Types.DECIMAL: { Result = Resultset.getFloat( strFieldName ); break; }
 				case Types.DOUBLE: { Result = Resultset.getDouble( strFieldName ); break; }
 	
 			}
     	
+    		if ( Resultset.wasNull() ) {
+    			
+    			Result = null;
+    			
+    		}
+			
 	    }
 	    catch ( Exception Ex ) {
 		   
@@ -2587,12 +2626,19 @@ public abstract class CAbstractDBEngine {
 				case Types.DATE: { Result = Resultset.getDate( intColumnIndex ); break; }
 				case Types.TIME: { Result = Resultset.getTime( intColumnIndex ); break; }
 				case Types.TIMESTAMP: { Result = Resultset.getTimestamp( intColumnIndex ); break; }
+				case Types.NUMERIC:
 				case Types.FLOAT: 
 				case Types.DECIMAL: { Result = Resultset.getFloat( intColumnIndex ); break; }
 				case Types.DOUBLE: { Result = Resultset.getDouble( intColumnIndex ); break; }
 	
 			}
     	
+    		if ( Resultset.wasNull() ) {
+    			
+    			Result = null;
+    			
+    		}
+			
 	    }
 	    catch ( Exception Ex ) {
 		   

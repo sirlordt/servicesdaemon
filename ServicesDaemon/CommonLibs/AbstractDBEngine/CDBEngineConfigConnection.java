@@ -10,6 +10,8 @@ public class CDBEngineConfigConnection {
 	public String strAddressType;
 	public int intPort;
 	public String strDatabase;
+	public boolean bAutoCommit;
+	public String strDummySQL;	
 	public String strAuthType;
 	public String strUser;
 	public String strPassword;

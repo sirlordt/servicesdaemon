@@ -41,6 +41,8 @@ public interface ConfigXMLTagsDBServicesManager {
 	public static final String _Engine = "Engine";
 	public static final String _Engine_Version = "Engine_Version";
 	public static final String _Database = "Database";
+	public static final String _Auto_Commit = "Auto_Commit";
+	public static final String _Dummy_SQL = "Dummy_SQL";
 	public static final String _Auth_Type = "Auth_Type";
 	public static final String _Auth_Type_Engine = "engine";
 	public static final String _Auth_Type_Database = "database";

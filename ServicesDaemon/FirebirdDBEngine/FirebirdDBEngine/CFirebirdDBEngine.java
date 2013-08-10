@@ -73,7 +73,7 @@ public class CFirebirdDBEngine extends CAbstractDBEngine {
 		
 		try {
 		
-			if ( strOptionalDummySQL.isEmpty() == true ) {
+			if ( strOptionalDummySQL != null && strOptionalDummySQL.isEmpty() == true ) {
 				
 				strOptionalDummySQL = "SELECT DISTINCT RDB$RELATION_NAME FROM RDB$RELATION_FIELDS";
 				

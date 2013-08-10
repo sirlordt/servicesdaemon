@@ -101,7 +101,7 @@ public class NamesSQLTypes {
 	
 	public static boolean IsFloatCompatible( int intSQLType1, int intSQLType2 ) {
 		
-		int Compatibles[] = { Types.FLOAT, Types.DECIMAL, Types.DOUBLE };
+		int Compatibles[] = { Types.FLOAT, Types.DECIMAL, Types.NUMERIC, Types.DOUBLE };
 
 		return IsCompatible( intSQLType1, intSQLType2, Compatibles );
 		
@@ -183,10 +183,15 @@ public class NamesSQLTypes {
 			intResult = Types.BLOB;
 
 		}
-		else if ( strSQLName.equals( NamesSQLTypes._FLOAT ) || strSQLName.equals( NamesSQLTypes._NUMERIC ) || strSQLName.equals( NamesSQLTypes._CURRENCY ) || strSQLName.equals( NamesSQLTypes._MONEY ) ) {
+		else if ( strSQLName.equals( NamesSQLTypes._FLOAT ) || strSQLName.equals( NamesSQLTypes._CURRENCY ) || strSQLName.equals( NamesSQLTypes._MONEY ) ) {
 
 			intResult = Types.FLOAT;
 
+		}
+		else if ( strSQLName.equals( NamesSQLTypes._NUMERIC ) ) {
+			
+			intResult = Types.NUMERIC;
+			
 		}
 		else if ( strSQLName.equals( NamesSQLTypes._DECIMAL ) ) {
 
@@ -226,6 +231,7 @@ public class NamesSQLTypes {
 			case Types.TIMESTAMP:
 			case Types.FLOAT: 
 			case Types.DECIMAL: 
+			case Types.NUMERIC:
 			case Types.DOUBLE: { bResult = true; break; }
 
 	    }
@@ -253,6 +259,7 @@ public class NamesSQLTypes {
 			case Types.FLOAT: { strResult = NamesSQLTypes._FLOAT; break; } 
 			case Types.DECIMAL: { strResult = NamesSQLTypes._DECIMAL; break; }
 			case Types.DOUBLE:  { strResult = NamesSQLTypes._DOUBLE; break; }
+			case Types.NUMERIC: { strResult = NamesSQLTypes._NUMERIC; break; }
 
 	    }
 		
