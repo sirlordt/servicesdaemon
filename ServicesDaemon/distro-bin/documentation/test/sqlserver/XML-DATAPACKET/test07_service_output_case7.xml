@@ -3,13 +3,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <DATAPACKET dpversion="1.1">
     <METADATA>
-        <FIELDS/>
-        <PARAMS rowcount="1"/>
+        <FIELDS>
+            <FIELD attrname="GENERATED_KEYS" fieldtype="r8"/>
+        </FIELDS>
+        <PARAMS rowcount="2"/>
     </METADATA>
     <ROWDATA>
-        <ROW AffectedRows="1" Code="1" Description="Éxito al ejecutar la instrucción SQL plana [Insert Into tblGroups(IdGroup,Description) Values(2,'test group2')]"/>
+        <ROW GENERATED_KEYS="2.0"/>
+        <ROW GENERATED_KEYS="3.0"/>
     </ROWDATA>
-    <ERRORS errorcount="0"/>
+    <ERRORS errorcount="0">
+        <ERROR Code="0" Description=""/>
+    </ERRORS>
 </DATAPACKET>
 
 <!-- Output from call service System.Commit.Transaction -->

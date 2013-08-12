@@ -189,7 +189,7 @@ public abstract class CAbstractDBEngine {
 					Result = SQLStatementType.Delete;
 					
 				}
-				else if ( strSQL.indexOf( ConstantsAbstractDBEngine._CREATE ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._ALTER ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._MODIFY ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._DROP ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._SHOW ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._DESCRIBE ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._SET ) == 0 ) {
+				else if ( strSQL.indexOf( ConstantsAbstractDBEngine._CREATE ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._ALTER ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._MODIFY ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._DROP ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._SHOW ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._DESCRIBE ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._SET ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._GO ) == 0) {
 					
 					Result = SQLStatementType.DDL;
 					

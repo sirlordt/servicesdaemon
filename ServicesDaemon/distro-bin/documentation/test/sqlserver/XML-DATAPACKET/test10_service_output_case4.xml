@@ -3,13 +3,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <DATAPACKET dpversion="1.1">
     <METADATA>
-        <FIELDS/>
+        <FIELDS>
+            <FIELD attrname="IdValid" fieldtype="i4"/>
+            <FIELD attrname="IdUser" fieldtype="i4"/>
+            <FIELD attrname="IdGroup" fieldtype="i4"/>
+            <FIELD attrname="LastAccessDate" fieldtype="date"/>
+            <FIELD attrname="LastAccessTime" fieldtype="time"/>
+        </FIELDS>
         <PARAMS rowcount="1"/>
     </METADATA>
     <ROWDATA>
-        <ROW AffectedRows="1" Code="1" Description="Éxito al ejecutar la instrucción SQL plana [Insert Into tblGroups(IdGroup,Description) Values(2,'test group2')]"/>
+        <ROW IdGroup="1" IdUser="1" IdValid="1" LastAccessDate="20130812" LastAccessTime="101948"/>
     </ROWDATA>
-    <ERRORS errorcount="0"/>
+    <ERRORS errorcount="0">
+        <ERROR Code="0" Description=""/>
+    </ERRORS>
 </DATAPACKET>
 
 <!-- Output from call service System.Commit.Transaction -->

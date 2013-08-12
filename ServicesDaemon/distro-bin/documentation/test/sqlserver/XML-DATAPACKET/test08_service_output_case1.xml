@@ -3,16 +3,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <DATAPACKET dpversion="1.1">
     <METADATA>
-        <FIELDS/>
-        <PARAMS rowcount="2"/>
+        <FIELDS>
+            <FIELD attrname="AffectedRows" fieldtype="i8"/>
+            <FIELD attrname="Code" fieldtype="i4"/>
+            <FIELD attrname="Description" fieldtype="string" width="255"/>
+        </FIELDS>
+        <PARAMS rowcount="1"/>
     </METADATA>
     <ROWDATA>
-        <ROW AffectedRows="1" Code="1" Description="Éxito al ejecutar la instrucción SQL"/>
-        <ROW AffectedRows="1" Code="1" Description="Éxito al ejecutar la instrucción SQL"/>
+        <ROW AffectedRows="1" Code="1" Description="Éxito al ejecutar la sentencia SQL plana [Update tblGroups Set Description='test group2 modified' Where IdGroup=2]"/>
     </ROWDATA>
-    <ERRORS errorcount="0">
-        <ERROR Code="0" Description=""/>
-    </ERRORS>
+    <ERRORS errorcount="0"/>
 </DATAPACKET>
 
 <!-- Output from call service System.Commit.Transaction -->
@@ -28,7 +29,7 @@
         <PARAMS rowcount="1"/>
     </METADATA>
     <ROWDATA>
-        <ROW Code="1" Description="Transacción aplicada con éxito para el id: [9190353927525735764]" TransactionID="9190353927525735764"/>
+        <ROW Code="1" Description="Transacción aplicada con éxito para el id: [1165870246238905030]" TransactionID="1165870246238905030"/>
     </ROWDATA>
     <ERRORS errorcount="0">
         <ERROR Code="0" Description=""/>
@@ -41,14 +42,15 @@
 <DATAPACKET dpversion="1.1">
     <METADATA>
         <FIELDS>
-            <FIELD attrname="AffectedRows" fieldtype="i8"/>
-            <FIELD attrname="Code" fieldtype="i4"/>
-            <FIELD attrname="Description" fieldtype="string" width="255"/>
+            <FIELD attrname="idgroup" fieldtype="i4"/>
+            <FIELD attrname="description" fieldtype="string" width="50"/>
         </FIELDS>
         <PARAMS rowcount="1"/>
     </METADATA>
     <ROWDATA>
-        <ROW AffectedRows="0" Code="1" Description="Éxito al ejecutar la sentencia SQL plana [ALTER SEQUENCE GEN_TBLGROUPS_ID RESTART WITH 5]"/>
+        <ROW description="test group2 modified" idgroup="2"/>
     </ROWDATA>
-    <ERRORS errorcount="0"/>
+    <ERRORS errorcount="0">
+        <ERROR Code="0" Description=""/>
+    </ERRORS>
 </DATAPACKET>

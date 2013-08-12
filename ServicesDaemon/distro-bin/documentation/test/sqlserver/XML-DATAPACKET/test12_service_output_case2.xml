@@ -3,11 +3,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <DATAPACKET dpversion="1.1">
     <METADATA>
-        <FIELDS/>
+        <FIELDS>
+            <FIELD attrname="AffectedRows" fieldtype="i8"/>
+            <FIELD attrname="Code" fieldtype="i4"/>
+            <FIELD attrname="Description" fieldtype="string" width="255"/>
+        </FIELDS>
         <PARAMS rowcount="1"/>
     </METADATA>
     <ROWDATA>
-        <ROW AffectedRows="1" Code="1" Description="Éxito al ejecutar la instrucción SQL plana [Insert Into tblGroups(IdGroup,Description) Values(2,'test group2')]"/>
+        <ROW AffectedRows="0" Code="1" Description="Éxito al ejecutar la sentencia SQL plana [DROP PROCEDURE [dbo].[SPGETGROUPS1]]"/>
     </ROWDATA>
     <ERRORS errorcount="0"/>
 </DATAPACKET>

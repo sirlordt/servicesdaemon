@@ -28,5 +28,6 @@ public interface ConstantsAbstractDBEngine {
 	public static final String _SHOW = "show";
 	public static final String _DESCRIBE = "describe";
 	public static final String _SET = "set";
+	public static final String _GO = "go";
 
 }

@@ -3,12 +3,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <DATAPACKET dpversion="1.1">
     <METADATA>
-        <FIELDS/>
+        <FIELDS>
+            <FIELD attrname="AffectedRows" fieldtype="i8"/>
+            <FIELD attrname="Code" fieldtype="i4"/>
+            <FIELD attrname="Description" fieldtype="string" width="255"/>
+        </FIELDS>
         <PARAMS rowcount="2"/>
     </METADATA>
     <ROWDATA>
-        <ROW AffectedRows="1" Code="1" Description="Éxito al ejecutar la instrucción SQL"/>
-        <ROW AffectedRows="1" Code="1" Description="Éxito al ejecutar la instrucción SQL"/>
+        <ROW AffectedRows="1" Code="1" Description="Éxito al ejecutar la sentencia SQL"/>
+        <ROW AffectedRows="1" Code="1" Description="Éxito al ejecutar la sentencia SQL"/>
     </ROWDATA>
     <ERRORS errorcount="0">
         <ERROR Code="0" Description=""/>
@@ -28,7 +32,7 @@
         <PARAMS rowcount="1"/>
     </METADATA>
     <ROWDATA>
-        <ROW Code="1" Description="Transacción aplicada con éxito para el id: [9190353927525735764]" TransactionID="9190353927525735764"/>
+        <ROW Code="1" Description="Transacción aplicada con éxito para el id: [1165870246238905030]" TransactionID="1165870246238905030"/>
     </ROWDATA>
     <ERRORS errorcount="0">
         <ERROR Code="0" Description=""/>
@@ -48,7 +52,7 @@
         <PARAMS rowcount="1"/>
     </METADATA>
     <ROWDATA>
-        <ROW AffectedRows="0" Code="1" Description="Éxito al ejecutar la sentencia SQL plana [ALTER SEQUENCE GEN_TBLGROUPS_ID RESTART WITH 5]"/>
+        <ROW AffectedRows="-1" Code="1" Description="Éxito al ejecutar la sentencia SQL plana [ALTER SEQUENCE GEN_TBLGROUPS_ID RESTART WITH 5]"/>
     </ROWDATA>
     <ERRORS errorcount="0"/>
 </DATAPACKET>

@@ -349,7 +349,7 @@ TransactionID=1568342447065610717
 
 Nota 2: El anterior caso pudo ser manejado como una llamada plana sin parametrización, sin embargo para las pruebas con MySQL ilustra el uso de variables de tipo OUT
 
-Solo para postgresql que tiene el concepto de llamada a funciones
+Postgresql que tiene el concepto de llamada a funciones
 
 Prueba 10 Caso 5 (Ejecutar un procedimiento almacenado parametrizado con retorno de un solo valor, estilo funcion, sobre DB6), para ver la salida del servicio vea el archivo test10_service_output_case5.xml
 

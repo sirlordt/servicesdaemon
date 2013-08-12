@@ -3,12 +3,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <DATAPACKET dpversion="1.1">
     <METADATA>
-        <FIELDS/>
+        <FIELDS>
+            <FIELD attrname="AffectedRows" fieldtype="i8"/>
+            <FIELD attrname="Code" fieldtype="i4"/>
+            <FIELD attrname="Description" fieldtype="string" width="255"/>
+        </FIELDS>
         <PARAMS rowcount="2"/>
     </METADATA>
     <ROWDATA>
-        <ROW AffectedRows="1" Code="1" Description="Éxito al ejecutar la instrucción SQL"/>
-        <ROW AffectedRows="1" Code="1" Description="Éxito al ejecutar la instrucción SQL"/>
+        <ROW AffectedRows="1" Code="1" Description="Éxito al ejecutar la sentencia SQL"/>
+        <ROW AffectedRows="0" Code="1" Description="Éxito al ejecutar la sentencia SQL"/>
     </ROWDATA>
     <ERRORS errorcount="0">
         <ERROR Code="0" Description=""/>
@@ -28,7 +32,7 @@
         <PARAMS rowcount="1"/>
     </METADATA>
     <ROWDATA>
-        <ROW Code="1" Description="Transacción aplicada con éxito para el id: [9190353927525735764]" TransactionID="9190353927525735764"/>
+        <ROW Code="1" Description="Transacción aplicada con éxito para el id: [1165870246238905030]" TransactionID="1165870246238905030"/>
     </ROWDATA>
     <ERRORS errorcount="0">
         <ERROR Code="0" Description=""/>
@@ -41,14 +45,18 @@
 <DATAPACKET dpversion="1.1">
     <METADATA>
         <FIELDS>
-            <FIELD attrname="AffectedRows" fieldtype="i8"/>
-            <FIELD attrname="Code" fieldtype="i4"/>
-            <FIELD attrname="Description" fieldtype="string" width="255"/>
+            <FIELD attrname="id" fieldtype="i4"/>
+            <FIELD attrname="data1" fieldtype="string" width="100"/>
+            <FIELD attrname="data2" fieldtype="string" width="100"/>
         </FIELDS>
-        <PARAMS rowcount="1"/>
+        <PARAMS rowcount="3"/>
     </METADATA>
     <ROWDATA>
-        <ROW AffectedRows="0" Code="1" Description="Éxito al ejecutar la sentencia SQL plana [ALTER SEQUENCE GEN_TBLGROUPS_ID RESTART WITH 5]"/>
+        <ROW data1="DataB1" data2="DataB2" id="2"/>
+        <ROW data1="Data Test Id:1000" data2="" id="1000"/>
+        <ROW data1="" data2="Data Test Id:Auto" id="7"/>
     </ROWDATA>
-    <ERRORS errorcount="0"/>
+    <ERRORS errorcount="0">
+        <ERROR Code="0" Description=""/>
+    </ERRORS>
 </DATAPACKET>

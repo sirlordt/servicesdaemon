@@ -158,7 +158,7 @@ Nota 2: Para evitar errores de duplicación de llave primaria el IdGroup, (prueb
 ServiceName=System.Execute.SQL
 SecurityTokenID=8082223615663676309
 TransactionID=9190353927525735764
-SQL=ALTER SEQUENCE GEN_TBLGROUPS_ID RESTART WITH 5
+SQL=ALTER SEQUENCE GEN_TBLGROUPS_ID RESTART WITH 6
 
 Prueba 7 Caso 4 (Ejecutar una inserción parametrizada, sobre DB7), para ver la salida del servicio vea el archivo test07_service_output_case4.xml
 
@@ -175,7 +175,7 @@ ServiceName=System.Commit.Transaction
 SecurityTokenID=8082223615663676309
 TransactionID=9190353927525735764
 
-Nota 2: el isql-fb obviamente no mostratará la info del campo blob, solo que se insertó una fila en la tabla, tendrá que consultar usando el ServicesDaemon para verificar la data insertada de la siguiente manera o usando in manager como ibexpert para el caso de firebird y verificar si la imágen es correcta en el visor de blob
+Nota 2: Consulta usando el ServicesDaemon para verificar la data insertada de la siguiente manera o usando in manager como ibexpert para el caso de firebird y verificar si la imágen es correcta en el visor de blob
 
 ServiceName=System.Execute.SQL
 SecurityTokenID=8082223615663676309
@@ -183,18 +183,6 @@ TransactionID=9190353927525735764
 SQL=Select * From tblBlobData Where Id=1
 
 Para verificar que le base64 devuelto es la imágen válida usa la otra utilidad llamada Base64Decode, copias y pegas el la cadena del base64 y luego haces click en el boton que dice "Decode", deberías ver la una imagen con fondo negro con letras que dicen navy seal (Si usaste el el mismo base64 de la parte superior), es para windows pero funciona bien con wine en linux.
-
-Nota 3: para fines documentativos esto fue lo que me mostra el isl-fb "tal cual", algo similar sino igual debería mostrasele a usted.
-
-SQL> select * from tblBlobdata;
-
-          ID          BLOBDATA 
-============ ================= 
-           1              84:0 
-==============================================================================
-BLOBDATA:  
-BLOB display set to subtype 1. This BLOB: subtype = 0
-==============================================================================
 
 Nota 4: La característica de enviar blob se debe usar con cuidado solo la he probado para archivo de 100kb, que codificado en base64 es un poco más de 100kb casi 123kb, no se que pasé si envia por lo menos un archivo de 1mb por ejemplo, si algún valiente desea hacer la prueba pues la hace y me avisa como le fue.
 
@@ -207,6 +195,33 @@ SQL=Insert Into tblGenericData(Id,Data1,Data2) Values([paramvalue]Id[/paramvalue
 Id=[array datatype="integer"] [value]1000[/value] [value]NULL[/value] [/array]
 Data1=[array datatype="varchar"] [value]Data Test Id:1000[/value] [value]NULL[/value] [/array]
 Data2=[array datatype="varchar"] [value]NULL[/value] [value]Data Test Id:Auto[/value] [/array]
+
+Nota 1: La inserción no se materializa en la tabla hasta aplicar un commit llamando al servicios System.Commit.Transaction de la siguiente manera
+
+ServiceName=System.Commit.Transaction
+SecurityTokenID=8082223615663676309
+TransactionID=9190353927525735764
+
+Prueba 7 Caso 6 (Ejecutar una inserción plana, sobre una tabla cuya clave principal tiene el identity (Autoincrement de mysql), sobre DB7), para ver la salida del servicio vea el archivo test07_service_output_case6.xml
+
+ServiceName=System.Execute.SQL
+SecurityTokenID=8082223615663676309
+TransactionID=9190353927525735764
+SQL=Insert Into tblAuto(Value) Values('test value 1')
+
+Nota 1: La inserción no se materializa en la tabla hasta aplicar un commit llamando al servicios System.Commit.Transaction de la siguiente manera
+
+ServiceName=System.Commit.Transaction
+SecurityTokenID=8082223615663676309
+TransactionID=9190353927525735764
+
+Prueba 7 Caso 7 (Ejecutar una inserción parametrizada, sobre una tabla cuya clave principal tiene el identity (Autoincrement de mysql), sobre DB7), para ver la salida del servicio vea el archivo test07_service_output_case7.xml
+
+ServiceName=System.Execute.SQL
+SecurityTokenID=8082223615663676309
+TransactionID=9190353927525735764
+SQL=Insert Into tblAuto(Value) Values([paramvalue]Value[/paramvalue])
+Value=[array datatype="varchar"] [value]Test 1[/value] [value]Test 2[/value] [/array]
 
 Nota 1: La inserción no se materializa en la tabla hasta aplicar un commit llamando al servicios System.Commit.Transaction de la siguiente manera
 
@@ -309,7 +324,7 @@ Prueba 10 Caso 1 (Ejecutar un procedimiento almacenado con retorno de informaci�
 ServiceName=System.Execute.SQL
 SecurityTokenID=8082223615663676309
 TransactionID=9190353927525735764
-SQL=Call spGetGroups([paramvalue]IdGroup[/paramvalue])
+SQL={Call spGetGroups([paramvalue]IdGroup[/paramvalue])}
 IdGroup=[array datatype="integer"] [value]1[/value] [value]2[/value] [/array]
 
 Prueba 10 Case 2 (Ejecutar un procedimiento almacenado plano con retorno de información, sobre DB7), para ver la salida del servicio vea el archivo test10_service_output_case2.xml
@@ -317,14 +332,14 @@ Prueba 10 Case 2 (Ejecutar un procedimiento almacenado plano con retorno de info
 ServiceName=System.Execute.SQL
 SecurityTokenID=8082223615663676309
 TransactionID=9190353927525735764
-SQL=Call spGetGroups(1)
+SQL={Call spGetGroups(1)}
 
 Prueba 10 Case 3 (Ejecutar un procedimiento almacenado plano sin retorno de información, sobre DB7), para ver la salida del servicio vea el archivo test10_service_output_case3.xml
 
 ServiceName=System.Execute.SQL
 SecurityTokenID=8082223615663676309
 TransactionID=9190353927525735764
-SQL=Call spSetGroups(NULL,'Test Callable statement')
+SQL={Call spSetGroups(NULL,'Test Callable statement')}
 
 Nota 1: El procedimiento almacenado lleva a cabo una inserción que no se materializa en la tabla hasta aplicar un commit llamando al servicios System.Commit.Transaction de la siguiente manera
 
@@ -337,7 +352,7 @@ Prueba 10 Case 4 (Ejecutar un procedimiento almacenado plano con retorno de info
 ServiceName=System.Execute.SQL
 SecurityTokenID=8082223615663676309
 TransactionID=9190353927525735764
-SQL=Call spCheckDBUser([paramvalue]User[/paramvalue],[paramvalue]Password[/paramvalue])
+SQL={Call spCheckDBUser([paramvalue]User[/paramvalue],[paramvalue]Password[/paramvalue])}
 User=[array scope="in" datatype="varchar"] [value]test1[/value] [/array]
 Password=[array scope="in" datatype="varchar"] [value]123qwerty[/value] [/array]
 
@@ -347,7 +362,26 @@ ServiceName=System.Commit.Transaction
 SecurityTokenID=8082223615663676309
 TransactionID=9190353927525735764
 
-Nota 2: El anterior caso pudo ser manejado como una llamada plana sin parametrización, sin embargo para las pruebas con MySQL ilustra el uso de variables de tipo OUT
+Nota 2: El anterior caso pudo ser manejado como una llamada plana sin parametrización, sin embargo para las pruebas ilustra el uso de variables de tipo OUT
+
+SQL Server que tiene el concepto de llamada a funciones
+
+Prueba 10 Caso 5 (Ejecutar un procedimiento almacenado parametrizado con retorno de un solo valor, estilo funcion, sobre DB6), para ver la salida del servicio vea el archivo test10_service_output_case5.xml
+
+ServiceName=System.Execute.SQL
+SecurityTokenID=8082223615663676309
+TransactionID=9190353927525735764
+SQL={call_function [paramvalue]Result[/paramvalue] = call spGetValue([paramvalue]ID[/paramvalue])}
+ID=[array scope="in" datatype="integer"] [value]1[/value] [/array]
+Result=[array scope="out" datatype="integer"] [/array]
+
+Prueba 10 Caso 6 (Ejecutar un procedimiento almacenado parametrizado con retorno de un solo valor, sobre DB6), para ver la salida del servicio vea el archivo test10_service_output_case6.xml
+
+ServiceName=System.Execute.SQL
+SecurityTokenID=8082223615663676309
+TransactionID=9190353927525735764
+SQL={call spGetValues([paramvalue]ID[/paramvalue])}
+ID=[array scope="in" datatype="integer"] [value]1[/value] [/array]
 
 Prueba de llamadas a DDL 
 
@@ -382,7 +416,7 @@ Prueba 11 Caso 3 (Ejecutar un DROP plano, no paramétrizado, sobre DB7), para ve
 ServiceName=System.Execute.SQL
 SecurityTokenID=8082223615663676309
 TransactionID=9190353927525735764
-SQL=ALTER TABLE TBLTESTTABLE1 DROP DATA3
+SQL=ALTER TABLE TBLTESTTABLE1 DROP COLUMN DATA3
 
 Nota 1: La instrucción DDL lleva a cabo la eliminación de un campo DATA3 en la tabla que no se materializa hasta aplicar un commit llamando al servicios System.Commit.Transaction de la siguiente manera
 
@@ -395,7 +429,7 @@ Prueba 12 Caso 1 (Ejecutar un Create plano, no parametrizado, sobre DB7), para v
 ServiceName=System.Execute.SQL
 SecurityTokenID=8082223615663676309
 TransactionID=9190353927525735764
-SQL=create or alter procedure SPGETGROUP1 ( FORIDGROUP integer) returns ( IDGROUP integer, DESCRIPTION varchar(50)) as begin  /* Procedure Text */ For Select A.IdGroup, A.Description from tblGroups A Where :ForIdGroup Is Null Or A.IdGroup = :ForIdGroup Into :IdGroup, :Description Do Begin Suspend; End end
+SQL=CREATE PROCEDURE [dbo].[SPGETGROUPS1] @FORIDGROUP integer  AS BEGIN SET NOCOUNT ON; /* Insert statements for procedure here */ Select A.IdGroup, A.Description from tblGroups A Where @ForIdGroup Is Null Or A.IdGroup = @ForIdGroup END
 
 Nota 1: La instrucción DDL lleva a cabo la creación de un procedimiento almacenado SPGETGROUP1 que no se materializa hasta aplicar un commit llamando al servicios System.Commit.Transaction de la siguiente manera
 
@@ -408,7 +442,7 @@ Prueba 12 Caso 2 (Ejecutar un DROP plano, no parametrizado, sobre DB7), para ver
 ServiceName=System.Execute.SQL
 SecurityTokenID=8082223615663676309
 TransactionID=9190353927525735764
-SQL=DROP PROCEDURE SPGETGROUP1
+SQL=DROP PROCEDURE [dbo].[SPGETGROUPS1]
 
 Nota 1: La instrucción DDL lleva a cabo la eliminación de un procedimiento almacenado SPGETGROUP1 que no se materializa hasta aplicar un commit llamando al servicios System.Commit.Transaction de la siguiente manera
 
@@ -428,5 +462,3 @@ Nota 1: La instrucción DDL lleva a cabo el establecimiento de la secuencia GEN_
 ServiceName=System.Commit.Transaction
 SecurityTokenID=8082223615663676309
 TransactionID=9190353927525735764
-
-Nota: las instrucciones Show tables y Describle table no funcionan en el Firebird
