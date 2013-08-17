@@ -216,6 +216,8 @@ public class CSystemEndSession extends CAbstractService {
 											DBEngine.rollback( DBConnection, ServiceLogger, ServiceLang );
 
 											DBEngine.close( DBConnection, ServiceLogger, ServiceLang );
+											
+											ServiceLogger.LogInfo( "0x1504", ServiceLang.Translate( "Success rollback and end transaction with SessionKey: [%s], SecurityTokenID: [%s], TransactionID: [%s], Database: [%s]", LocalConfigDBConnection.strSessionKey, strSecurityTokenID, strCurrentTransactionID, LocalConfigDBConnection.strName ) );        
 
 										}
 										catch ( Exception Ex ) {
@@ -263,12 +265,14 @@ public class CSystemEndSession extends CAbstractService {
 
 								if ( bResult == true ) {
 
+									ServiceLogger.LogInfo( "0x1002", ServiceLang.Translate( "Success end session with SessionKey: [%s], SecurityTokenID: [%s], Database: [%s]", LocalConfigDBConnection.strSessionKey, strSecurityTokenID, LocalConfigDBConnection.strName ) );        
+
 									Response.setContentType( ResponseFormat.getContentType() );
 									Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
 									String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", 1, ServiceLang.Translate( "Success end session for security token id: [%s]", strSecurityTokenID ), false, strResponseFormatVersion, LocalConfigDBConnection.strDateTimeFormat, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 									Response.getWriter().print( strResponseBuffer );
-
+									
 									intResultCode = 1;
 
 								}

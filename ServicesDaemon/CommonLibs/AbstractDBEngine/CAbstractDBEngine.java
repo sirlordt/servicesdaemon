@@ -1245,8 +1245,26 @@ public abstract class CAbstractDBEngine {
     	
     		Statement SQLStatement = DBConnection.createStatement();
     		
+            if ( Logger != null ) { //Trace how much time in execute sql, useful for trace expensive query 
+            	
+        		if ( Lang != null )   
+				   Logger.LogInfo( "0x2001", Lang.Translate( "Init plain SQL statement" ) );
+        		else
+ 				   Logger.LogInfo( "0x2001", "Init plain SQL statement" );
+        			
+            }	
+    		
     		ResultSet ResultQuery = SQLStatement.executeQuery( strSQL );
     		
+            if ( Logger != null ) { //Trace how much time in execute sql, useful for trace expensive query
+            	
+        		if ( Lang != null )   
+				   Logger.LogInfo( "0x2002", Lang.Translate( "End plain SQL statement" ) );
+        		else
+ 				   Logger.LogInfo( "0x2002", "End plain SQL statement" );
+        			
+            }	
+
     		Result.intCode = 1;
     		Result.Result = ResultQuery;
 
@@ -1281,7 +1299,26 @@ public abstract class CAbstractDBEngine {
     	
     		Statement SQLStatement = DBConnection.createStatement();
 
+            if ( Logger != null ) {
+            	
+        		if ( Lang != null )   
+				   Logger.LogInfo( "0x2003", Lang.Translate( "Init plain SQL statement" ) );
+        		else
+ 				   Logger.LogInfo( "0x2003", "Init plain SQL statement" );
+        			
+            }
+            
     		Result.lngAffectedRows = SQLStatement.executeUpdate( strSQL );
+
+            if ( Logger != null ) {
+            	
+        		if ( Lang != null )   
+				   Logger.LogInfo( "0x2004", Lang.Translate( "End plain SQL statement" ) );
+        		else
+ 				   Logger.LogInfo( "0x2004", "End plain SQL statement" );
+        			
+            }
+            
     		Result.intCode = 1;
 
     		if ( Lang != null )   
@@ -1896,8 +1933,26 @@ public abstract class CAbstractDBEngine {
 						
 					}
 					
+		            if ( Logger != null ) { //Trace how much time in execute sql, useful for trace expensive query
+		            	
+		        		if ( Lang != null )   
+						   Logger.LogInfo( "0x2005", Lang.Translate( "Init complex SQL statement" ) );
+		        		else
+		 				   Logger.LogInfo( "0x2005", "Init complex SQL statement" );
+		        			
+		            }
+					
 					ResultSet QueryResult = NamedPreparedStatement.executeQuery();
 				
+		            if ( Logger != null ) { //Trace how much time in execute sql, useful for trace expensive query
+		            	
+		        		if ( Lang != null )   
+						   Logger.LogInfo( "0x2006", Lang.Translate( "End complex SQL statement" ) );
+		        		else
+		 				   Logger.LogInfo( "0x2006", "End complex SQL statement" );
+		        			
+		            }
+		            
 					if ( QueryResult != null ) {
 						
 						Result.add( new CResultSetResult( -1, 1, Lang.Translate( "Sucess to execute the SQL statement" ), NamedPreparedStatement, QueryResult ) );
@@ -2050,8 +2105,26 @@ public abstract class CAbstractDBEngine {
 
 						}
 
+			            if ( Logger != null ) {
+			            	
+			        		if ( Lang != null )   
+							   Logger.LogInfo( "0x2007", Lang.Translate( "Init complex SQL statement" ) );
+			        		else
+			 				   Logger.LogInfo( "0x2007", "Init complex SQL statement" );
+			        			
+			            }
+						
 						int intAffectedRows = NamedPreparedStatement.executeUpdate();
 
+			            if ( Logger != null ) {
+			            	
+			        		if ( Lang != null )   
+							   Logger.LogInfo( "0x2008", Lang.Translate( "End complex SQL statement" ) );
+			        		else
+			 				   Logger.LogInfo( "0x2008", "End complex SQL statement" );
+			        			
+			            }
+			            
 						Result.add( new CResultSetResult( intAffectedRows, 1, Lang.Translate( "Sucess to execute the SQL statement" ) ) );
 
 						NamedPreparedStatement.close(); //Close immediately to prevent resource leak in database driver

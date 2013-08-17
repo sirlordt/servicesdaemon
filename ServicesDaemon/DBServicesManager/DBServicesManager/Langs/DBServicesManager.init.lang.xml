@@ -31,13 +31,6 @@
 <entry key="Using default response format: [$s] min version: [%s]">Usando el como formato de respuesa por defecto: [%s] versión mínima: [%s]</entry>
 <entry key="Count of responses formats registered: [%s]">Cantidad de formatos de respuestas registrados: [%s]></entry>
 
-<entry key="The parameter name [%s] is not part of the input parameters of the service">El parámetro de nombre [%s] no es parte de los parámetros de entrada del servicio</entry>
-<entry key="The paramete name [%s] position [%s] has the value [%s] is invalid">El parámetro [%s] en la posición [%s] tiene el valor de [%s] es inválido</entry>
-<entry key="The parameter [%s] has the value [%s] is invalid">El parámetro [%s] tiene el valor de [%s] es inválido</entry>
-<entry key="The parameter [%s] is multivalued">El parámetro [%s] tiene múltiples valores</entry>
-<entry key="The following parameters %s are required for service and were not sent">Los siguientes parámetros %s son requeridos por el servicio y no fueron enviados</entry>
-<entry key="Service [%s] expected [%s] parameters however were sent [%s]">El servicio [%s] espera [%s] sin embargo se enviaron [%s]</entry>
-
 <entry key="[%s] from [%s] = [%s] not found">[%s] usando [%s] = [%s] no fue encontrado</entry>
 <entry key="Added [%s] [%s] = [%s] and [%s] = [%s]">Agregado [%s] [%s] = [%s] y [%s] = [%s]</entry>
 <entry key="Removed [%s] by [%s] = [%s]">Eliminado [%s] por [%s] = [%s]</entry>

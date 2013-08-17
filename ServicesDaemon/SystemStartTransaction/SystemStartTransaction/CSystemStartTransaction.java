@@ -211,6 +211,8 @@ public class CSystemStartTransaction extends CAbstractService {
 
 										DBConnectionsManager.addDBConnection( strSecurityTokenID, strTransactionID, DBConnection, LocalConfigDBConnection, ServiceLogger, ServiceLang );
 
+										ServiceLogger.LogInfo( "0x1501", ServiceLang.Translate( "Success start transaction with SessionKey: [%s], SecurityTokenID: [%s], TransactionID: [%s], Database: [%s]", LocalConfigDBConnection.strSessionKey, strSecurityTokenID, strTransactionID, LocalConfigDBConnection.strName ) );        
+										
 										Response.setContentType( ResponseFormat.getContentType() );
 										Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 

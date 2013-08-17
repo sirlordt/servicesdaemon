@@ -205,6 +205,8 @@ public class CSystemRollbackTransaction extends CAbstractService {
 
 											DBEngine.rollback( DBConnection, ServiceLogger, ServiceLang );
 
+											ServiceLogger.LogInfo( "0x1503", ServiceLang.Translate( "Success rollback transaction with SessionKey: [%s], SecurityTokenID: [%s], TransactionID: [%s], Database: [%s]", LocalConfigDBConnection.strSessionKey, strSecurityTokenID, strTransactionID, LocalConfigDBConnection.strName ) );        
+											
 											Response.setContentType( ResponseFormat.getContentType() );
 											Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 

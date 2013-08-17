@@ -47,8 +47,8 @@
 <entry key="Failed start session">Inicio de sesión fallida</entry>
 <entry key="Start session failed, disabled account">Inicio de sesión fallida, cuenta deshabilitada</entry>
 <entry key="Start session failed, account not found">Inicio de sesión fallida, cuenta no encontrada</entry>
-<entry key="Failed start session with session key: [%s], cause: [%s]">Inicio de sesión fallido con la llave de sesión: [%s], causa: [%s]</entry>
-<entry key="Success start session with session key [%s]">Inicio de sesión exitoso con la llave de sesión [%s]</entry>
+<entry key="Failed start session with SessionKey: [%s], Database: [%s], Cause: [%s]">Inicio de sesión fallido SessionKey: [%s], Database: [%s], Causa: [%s]</entry>
+<entry key="Success start session with SessionKey: [%s], SecurityTokenID: [%s], Database: [%s]">Inicio de sesión exitoso SessionKey: [%s], SecurityTokenID: [%s], Database: [%s]</entry>
 <entry key="Field name [%s] not found in result from SQL [%s]">El campo de nombre [%s] no fue encontrado en el resultado del SQL</entry>
 <entry key="Failed to start session in database name: [%s], see the log file for more details">Inicio de sesión fallido, vea el archivo de registro para más detalles</entry>
 <entry key="No rows found in result from SQL [%s]">No hay filas de respuesta en el resultado del SQL: [$s]</entry>

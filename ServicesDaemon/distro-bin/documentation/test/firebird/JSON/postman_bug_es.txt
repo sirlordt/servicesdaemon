@@ -1,0 +1,23 @@
+El postman que estoy usando tiene un problema al formatear números largos les coloca ceros al final ya hice el reporte del problema
+
+Un número que debe ser 7191496595968127639 lo coloca como 7191496595968128000, usa el modo raw para ver la cifra correcta
+
+Mode Raw:
+
+[{"IDVALID":1,"IDUSER":1,"IDGROUP":1,"LASTACCESSDATE":"2013-08-16","LASTACCESSTIME":"10:59:04","SecurityTokenID":7191496595968127639,"Code":1,"Description":"Inicio de sesión exitoso"}]
+
+Mode Pretty:
+
+[
+{
+"IDVALID": 1,
+"IDUSER": 1,
+"IDGROUP": 1,
+"LASTACCESSDATE": "2013-08-16",
+"LASTACCESSTIME": "10:59:04",
+"SecurityTokenID": 7191496595968128000,  <--- Aquí está el problema
+"Code": 1,
+"Description": "Inicio de sesión exitoso"
+}
+]
+

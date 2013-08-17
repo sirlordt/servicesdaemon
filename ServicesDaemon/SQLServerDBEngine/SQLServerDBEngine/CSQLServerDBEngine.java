@@ -162,8 +162,27 @@ public class CSQLServerDBEngine extends CAbstractDBEngine {
     	
     		Statement SQLStatement = DBConnection.createStatement( ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY );
 
-    		Result.lngAffectedRows = SQLStatement.executeUpdate( strSQL , Statement.RETURN_GENERATED_KEYS );
-    		Result.intCode = 1;
+            if ( Logger != null ) { //Trace how much time in execute sql, useful for trace expensive query
+            	
+        		if ( Lang != null )   
+				   Logger.LogInfo( "0x2003", Lang.Translate( "Init plain SQL statement" ) );
+        		else
+ 				   Logger.LogInfo( "0x2003", "Init plain SQL statement" );
+        			
+            }
+
+            Result.lngAffectedRows = SQLStatement.executeUpdate( strSQL , Statement.RETURN_GENERATED_KEYS );
+    		
+            if ( Logger != null ) { //Trace how much time in execute sql, useful for trace expensive query
+            	
+        		if ( Lang != null )   
+				   Logger.LogInfo( "0x2004", Lang.Translate( "End plain SQL statement" ) );
+        		else
+ 				   Logger.LogInfo( "0x2004", "End plain SQL statement" );
+        			
+            }
+            
+            Result.intCode = 1;
 
     		if ( Result.lngAffectedRows > 0 ) {
 
@@ -317,8 +336,26 @@ public class CSQLServerDBEngine extends CAbstractDBEngine {
 						
 					}
 					
+		            if ( Logger != null ) { //Trace how much time in execute sql, useful for trace expensive query
+		            	
+		        		if ( Lang != null )   
+						   Logger.LogInfo( "0x2005", Lang.Translate( "Init complex SQL statement" ) );
+		        		else
+		 				   Logger.LogInfo( "0x2005", "Init complex SQL statement" );
+		        			
+		            }
+					
 					int intAffectedRows = NamedPreparedStatement.executeUpdate();
 				
+		            if ( Logger != null ) { //Trace how much time in execute sql, useful for trace expensive query
+		            	
+		        		if ( Lang != null )   
+						   Logger.LogInfo( "0x2006", Lang.Translate( "End complex SQL statement" ) );
+		        		else
+		 				   Logger.LogInfo( "0x2006", "End complex SQL statement" );
+		        			
+		            }
+					
 					ResultSet GeneratedKeys = null;
 					
 					if ( intAffectedRows > 0 ) {

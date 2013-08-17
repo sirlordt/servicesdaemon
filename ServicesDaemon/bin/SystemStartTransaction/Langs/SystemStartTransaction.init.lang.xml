@@ -20,7 +20,7 @@
 <entry key="Trying to connect with the next URL: [%s] and user: [%s]">Intentado establecer conexión con el siguiente URL: [%s] y usuario: [%s]</entry>
 <entry key="Database connection is invalid">La conexión a la base de datos es inválida</entry>
 
-<entry key=""></entry>
+<entry key="Success start transaction with SessionKey: [%s], SecurityTokenID: [%s], TransactionID: [%s], Database: [%s]">Transacción iniciada correctamente con SessionKey: [%s], SecurityTokenID: [%s], TransactionID: [%s], Database: [%s]</entry>
 <entry key=""></entry>
 <entry key=""></entry>
 <entry key=""></entry>

@@ -1,0 +1,27 @@
+[
+    [
+        {
+            "IDUSER": 1,
+            "IDGROUP": 1,
+            "DISABLED": 0,
+            "USERNAME": "test1",
+            "PASSWD": "123qwerty",
+            "FIRSTNAME": "System user firstname",
+            "LASTNAME": "System user lastname",
+            "ACCESS_DATE": "2013-08-17",
+            "ACCESS_TIME": "12:15:14"
+        },
+        {
+            "IDUSER": 2,
+            "IDGROUP": 1,
+            "DISABLED": 0,
+            "USERNAME": "test2",
+            "PASSWD": "12345678",
+            "FIRSTNAME": null,
+            "LASTNAME": null,
+            "ACCESS_DATE": null,
+            "ACCESS_TIME": null
+        }
+    ],
+    []
+]

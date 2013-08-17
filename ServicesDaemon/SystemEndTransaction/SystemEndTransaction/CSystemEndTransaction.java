@@ -212,6 +212,8 @@ public class CSystemEndTransaction extends CAbstractService {
 
 											DBEngine.close( DBConnection, ServiceLogger, ServiceLang );
 
+											ServiceLogger.LogInfo( "0x1504", ServiceLang.Translate( "Success rollback and end transaction with SessionKey: [%s], SecurityTokenID: [%s], TransactionID: [%s], Database: [%s]", LocalConfigDBConnection.strSessionKey, strSecurityTokenID, strTransactionID, LocalConfigDBConnection.strName ) );        
+											
 											Response.setContentType( ResponseFormat.getContentType() );
 											Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 

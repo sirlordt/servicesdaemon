@@ -1,0 +1,783 @@
+[
+    {
+        "ServiceName": "System.Rollback.Transaction",
+        "AcessType": "Read",
+        "Description": "Permite revertir una transacción en la base de datos de un id de transacción",
+        "AuthorContact": "Tomás Rafael Moreno Poggio <sirlordt@gmail.com>",
+        "Author": "Tomás Moreno",
+        "AuthRequired": "Yes",
+        "ParamSetName": "default",
+        "InputParameters": [
+            {
+                "ParamName": "ResponseFormat",
+                "Description": "Nombre del formato de respuesta, ejemplo: XML-DATAPACKET, CSV, JSON",
+                "Width": "75",
+                "Type": "VarChar",
+                "Required": "No"
+            },
+            {
+                "ParamName": "ResponseFormatVersion",
+                "Description": "Versión del formato de respuesta, ejemplo: 1.1",
+                "Width": "15",
+                "Type": "VarChar",
+                "Required": "No"
+            },
+            {
+                "ParamName": "ServiceName",
+                "Description": "Nombre del servicio",
+                "Width": "255",
+                "Type": "VarChar",
+                "Required": "Yes"
+            },
+            {
+                "ParamName": "SecurityTokenID",
+                "Description": "Token de seguridad obtenido con una llamada al servicio de inicio de sesión",
+                "Width": "0",
+                "Type": "BigInt",
+                "Required": "Yes"
+            },
+            {
+                "ParamName": "TransactionID",
+                "Description": "Id de transacción obtenido con la llamada al servicio de inicio de transacciones",
+                "Width": "0",
+                "Type": "BigInt",
+                "Required": "Yes"
+            }
+        ]
+    },
+    {
+        "ServiceName": "System.End.Session",
+        "AcessType": "Read",
+        "Description": "Permite terminar una sesión en la base de datos de un token de seguridad, el token de seguridad será inválido para las siguientes llamadas a los servicios",
+        "AuthorContact": "Tomás Rafael Moreno Poggio <sirlordt@gmail.com>",
+        "Author": "Tomás Moreno",
+        "AuthRequired": "Yes",
+        "ParamSetName": "default",
+        "InputParameters": [
+            {
+                "ParamName": "ResponseFormat",
+                "Description": "Nombre del formato de respuesta, ejemplo: XML-DATAPACKET, CSV, JSON",
+                "Width": "75",
+                "Type": "VarChar",
+                "Required": "No"
+            },
+            {
+                "ParamName": "ResponseFormatVersion",
+                "Description": "Versión del formato de respuesta, ejemplo: 1.1",
+                "Width": "15",
+                "Type": "VarChar",
+                "Required": "No"
+            },
+            {
+                "ParamName": "ServiceName",
+                "Description": "Nombre del servicio",
+                "Width": "255",
+                "Type": "VarChar",
+                "Required": "Yes"
+            },
+            {
+                "ParamName": "SecurityTokenID",
+                "Description": "Token de seguridad obtenido con una llamada al servicio de inicio de sesión",
+                "Width": "0",
+                "Type": "BigInt",
+                "Required": "Yes"
+            }
+        ]
+    },
+    {
+        "ServiceName": "System.Execute.SQL",
+        "AcessType": "Read",
+        "Description": "Permite ejecutar una instrucción SQL en la base de datos usando id de transacción",
+        "AuthorContact": "Tomás Rafael Moreno Poggio <sirlordt@gmail.com>",
+        "Author": "Tomás Moreno",
+        "AuthRequired": "Yes",
+        "ParamSetName": "default",
+        "InputParameters": [
+            {
+                "ParamName": "ResponseFormat",
+                "Description": "Nombre del formato de respuesta, ejemplo: XML-DATAPACKET, CSV, JSON",
+                "Width": "75",
+                "Type": "VarChar",
+                "Required": "No"
+            },
+            {
+                "ParamName": "ResponseFormatVersion",
+                "Description": "Versión del formato de respuesta, ejemplo: 1.1",
+                "Width": "15",
+                "Type": "VarChar",
+                "Required": "No"
+            },
+            {
+                "ParamName": "Commit",
+                "Description": "Aplicar todas las operaciones pendientes en el contexto de la transacción actual",
+                "Width": "0",
+                "Type": "Integer",
+                "Required": "No"
+            },
+            {
+                "ParamName": "ServiceName",
+                "Description": "Nombre del servicio",
+                "Width": "255",
+                "Type": "VarChar",
+                "Required": "Yes"
+            },
+            {
+                "ParamName": "TransactionID",
+                "Description": "Identificador de transacción obtenido con una llamada al servicio de inicio de transacción",
+                "Width": "0",
+                "Type": "BigInt",
+                "Required": "Yes"
+            },
+            {
+                "ParamName": "SQL",
+                "Description": "Instrucción SQL",
+                "Width": "10240",
+                "Type": "VarChar",
+                "Required": "Yes"
+            }
+        ]
+    },
+    {
+        "ServiceName": "System.Start.Session",
+        "AcessType": "Read",
+        "Description": "Permite iniciar sesión y obtener un token de seguridad",
+        "AuthorContact": "Tomás Rafael Moreno Poggio <sirlordt@gmail.com>",
+        "Author": "Tomás Moreno",
+        "AuthRequired": "No",
+        "ParamSetName": "DB6",
+        "InputParameters": [
+            {
+                "ParamName": "username",
+                "Description": "Username",
+                "Width": "50",
+                "Type": "varchar",
+                "Required": "Yes"
+            },
+            {
+                "ParamName": "password",
+                "Description": "Password",
+                "Width": "50",
+                "Type": "varchar",
+                "Required": "Yes"
+            },
+            {
+                "ParamName": "ResponseFormat",
+                "Description": "Nombre del formato de respuesta, ejemplo: XML-DATAPACKET, CSV, JSON",
+                "Width": "75",
+                "Type": "VarChar",
+                "Required": "No"
+            },
+            {
+                "ParamName": "ResponseFormatVersion",
+                "Description": "Versión del formato de respuesta, ejemplo: 1.1",
+                "Width": "15",
+                "Type": "VarChar",
+                "Required": "No"
+            },
+            {
+                "ParamName": "ServiceName",
+                "Description": "Service name",
+                "Width": "255",
+                "Type": "VarChar",
+                "Required": "Yes"
+            },
+            {
+                "ParamName": "DBConnection",
+                "Description": "Database connection name",
+                "Width": "150",
+                "Type": "varchar",
+                "Required": "Yes"
+            }
+        ]
+    },
+    {
+        "ServiceName": "System.Start.Session",
+        "AcessType": "Read",
+        "Description": "Permite iniciar sesión y obtener un token de seguridad",
+        "AuthorContact": "Tomás Rafael Moreno Poggio <sirlordt@gmail.com>",
+        "Author": "Tomás Moreno",
+        "AuthRequired": "No",
+        "ParamSetName": "DB7",
+        "InputParameters": [
+            {
+                "ParamName": "username",
+                "Description": "Username",
+                "Width": "50",
+                "Type": "varchar",
+                "Required": "Yes"
+            },
+            {
+                "ParamName": "password",
+                "Description": "Password",
+                "Width": "50",
+                "Type": "varchar",
+                "Required": "Yes"
+            },
+            {
+                "ParamName": "IdValid",
+                "Description": "Out param",
+                "Width": "0",
+                "Type": "integer",
+                "Required": "No"
+            },
+            {
+                "ParamName": "IdUser",
+                "Description": "Out param",
+                "Width": "0",
+                "Type": "integer",
+                "Required": "No"
+            },
+            {
+                "ParamName": "IdGroup",
+                "Description": "Out param",
+                "Width": "0",
+                "Type": "integer",
+                "Required": "No"
+            },
+            {
+                "ParamName": "LastAccessDate",
+                "Description": "Out param",
+                "Width": "0",
+                "Type": "date",
+                "Required": "No"
+            },
+            {
+                "ParamName": "LastAccessTime",
+                "Description": "Out param",
+                "Width": "0",
+                "Type": "time",
+                "Required": "No"
+            },
+            {
+                "ParamName": "ResponseFormat",
+                "Description": "Nombre del formato de respuesta, ejemplo: XML-DATAPACKET, CSV, JSON",
+                "Width": "75",
+                "Type": "VarChar",
+                "Required": "No"
+            },
+            {
+                "ParamName": "ResponseFormatVersion",
+                "Description": "Versión del formato de respuesta, ejemplo: 1.1",
+                "Width": "15",
+                "Type": "VarChar",
+                "Required": "No"
+            },
+            {
+                "ParamName": "ServiceName",
+                "Description": "Service name",
+                "Width": "255",
+                "Type": "VarChar",
+                "Required": "Yes"
+            },
+            {
+                "ParamName": "DBConnection",
+                "Description": "Database connection name",
+                "Width": "150",
+                "Type": "varchar",
+                "Required": "Yes"
+            }
+        ]
+    },
+    {
+        "ServiceName": "System.Start.Session",
+        "AcessType": "Read",
+        "Description": "Permite iniciar sesión y obtener un token de seguridad",
+        "AuthorContact": "Tomás Rafael Moreno Poggio <sirlordt@gmail.com>",
+        "Author": "Tomás Moreno",
+        "AuthRequired": "No",
+        "ParamSetName": "DB1",
+        "InputParameters": [
+            {
+                "ParamName": "username",
+                "Description": "Username",
+                "Width": "50",
+                "Type": "varchar",
+                "Required": "Yes"
+            },
+            {
+                "ParamName": "password",
+                "Description": "Password",
+                "Width": "50",
+                "Type": "varchar",
+                "Required": "Yes"
+            },
+            {
+                "ParamName": "ResponseFormat",
+                "Description": "Nombre del formato de respuesta, ejemplo: XML-DATAPACKET, CSV, JSON",
+                "Width": "75",
+                "Type": "VarChar",
+                "Required": "No"
+            },
+            {
+                "ParamName": "ResponseFormatVersion",
+                "Description": "Versión del formato de respuesta, ejemplo: 1.1",
+                "Width": "15",
+                "Type": "VarChar",
+                "Required": "No"
+            },
+            {
+                "ParamName": "ServiceName",
+                "Description": "Service name",
+                "Width": "255",
+                "Type": "VarChar",
+                "Required": "Yes"
+            },
+            {
+                "ParamName": "DBConnection",
+                "Description": "Database connection name",
+                "Width": "150",
+                "Type": "varchar",
+                "Required": "Yes"
+            }
+        ]
+    },
+    {
+        "ServiceName": "System.Start.Session",
+        "AcessType": "Read",
+        "Description": "Permite iniciar sesión y obtener un token de seguridad",
+        "AuthorContact": "Tomás Rafael Moreno Poggio <sirlordt@gmail.com>",
+        "Author": "Tomás Moreno",
+        "AuthRequired": "No",
+        "ParamSetName": "DB2",
+        "InputParameters": [
+            {
+                "ParamName": "username",
+                "Description": "Username",
+                "Width": "50",
+                "Type": "varchar",
+                "Required": "Yes"
+            },
+            {
+                "ParamName": "password",
+                "Description": "Password",
+                "Width": "50",
+                "Type": "varchar",
+                "Required": "Yes"
+            },
+            {
+                "ParamName": "ResponseFormat",
+                "Description": "Nombre del formato de respuesta, ejemplo: XML-DATAPACKET, CSV, JSON",
+                "Width": "75",
+                "Type": "VarChar",
+                "Required": "No"
+            },
+            {
+                "ParamName": "ResponseFormatVersion",
+                "Description": "Versión del formato de respuesta, ejemplo: 1.1",
+                "Width": "15",
+                "Type": "VarChar",
+                "Required": "No"
+            },
+            {
+                "ParamName": "ServiceName",
+                "Description": "Service name",
+                "Width": "255",
+                "Type": "VarChar",
+                "Required": "Yes"
+            },
+            {
+                "ParamName": "DBConnection",
+                "Description": "Database connection name",
+                "Width": "150",
+                "Type": "varchar",
+                "Required": "Yes"
+            }
+        ]
+    },
+    {
+        "ServiceName": "System.Start.Session",
+        "AcessType": "Read",
+        "Description": "Permite iniciar sesión y obtener un token de seguridad",
+        "AuthorContact": "Tomás Rafael Moreno Poggio <sirlordt@gmail.com>",
+        "Author": "Tomás Moreno",
+        "AuthRequired": "No",
+        "ParamSetName": "DB3",
+        "InputParameters": [
+            {
+                "ParamName": "username",
+                "Description": "Username",
+                "Width": "50",
+                "Type": "varchar",
+                "Required": "Yes"
+            },
+            {
+                "ParamName": "password",
+                "Description": "Password",
+                "Width": "50",
+                "Type": "varchar",
+                "Required": "Yes"
+            },
+            {
+                "ParamName": "ResponseFormat",
+                "Description": "Nombre del formato de respuesta, ejemplo: XML-DATAPACKET, CSV, JSON",
+                "Width": "75",
+                "Type": "VarChar",
+                "Required": "No"
+            },
+            {
+                "ParamName": "ResponseFormatVersion",
+                "Description": "Versión del formato de respuesta, ejemplo: 1.1",
+                "Width": "15",
+                "Type": "VarChar",
+                "Required": "No"
+            },
+            {
+                "ParamName": "ServiceName",
+                "Description": "Service name",
+                "Width": "255",
+                "Type": "VarChar",
+                "Required": "Yes"
+            },
+            {
+                "ParamName": "DBConnection",
+                "Description": "Database connection name",
+                "Width": "150",
+                "Type": "varchar",
+                "Required": "Yes"
+            }
+        ]
+    },
+    {
+        "ServiceName": "System.Start.Session",
+        "AcessType": "Read",
+        "Description": "Permite iniciar sesión y obtener un token de seguridad",
+        "AuthorContact": "Tomás Rafael Moreno Poggio <sirlordt@gmail.com>",
+        "Author": "Tomás Moreno",
+        "AuthRequired": "No",
+        "ParamSetName": "DB4",
+        "InputParameters": [
+            {
+                "ParamName": "username",
+                "Description": "Username",
+                "Width": "50",
+                "Type": "varchar",
+                "Required": "Yes"
+            },
+            {
+                "ParamName": "password",
+                "Description": "Password",
+                "Width": "50",
+                "Type": "varchar",
+                "Required": "Yes"
+            },
+            {
+                "ParamName": "IdValid",
+                "Description": "Out param",
+                "Width": "0",
+                "Type": "integer",
+                "Required": "No"
+            },
+            {
+                "ParamName": "IdUser",
+                "Description": "Out param",
+                "Width": "0",
+                "Type": "integer",
+                "Required": "No"
+            },
+            {
+                "ParamName": "IdGroup",
+                "Description": "Out param",
+                "Width": "0",
+                "Type": "integer",
+                "Required": "No"
+            },
+            {
+                "ParamName": "LastAccessDate",
+                "Description": "Out param",
+                "Width": "0",
+                "Type": "date",
+                "Required": "No"
+            },
+            {
+                "ParamName": "LastAccessTime",
+                "Description": "Out param",
+                "Width": "0",
+                "Type": "time",
+                "Required": "No"
+            },
+            {
+                "ParamName": "ResponseFormat",
+                "Description": "Nombre del formato de respuesta, ejemplo: XML-DATAPACKET, CSV, JSON",
+                "Width": "75",
+                "Type": "VarChar",
+                "Required": "No"
+            },
+            {
+                "ParamName": "ResponseFormatVersion",
+                "Description": "Versión del formato de respuesta, ejemplo: 1.1",
+                "Width": "15",
+                "Type": "VarChar",
+                "Required": "No"
+            },
+            {
+                "ParamName": "ServiceName",
+                "Description": "Service name",
+                "Width": "255",
+                "Type": "VarChar",
+                "Required": "Yes"
+            },
+            {
+                "ParamName": "DBConnection",
+                "Description": "Database connection name",
+                "Width": "150",
+                "Type": "varchar",
+                "Required": "Yes"
+            }
+        ]
+    },
+    {
+        "ServiceName": "System.Start.Session",
+        "AcessType": "Read",
+        "Description": "Permite iniciar sesión y obtener un token de seguridad",
+        "AuthorContact": "Tomás Rafael Moreno Poggio <sirlordt@gmail.com>",
+        "Author": "Tomás Moreno",
+        "AuthRequired": "No",
+        "ParamSetName": "DB5",
+        "InputParameters": [
+            {
+                "ParamName": "username",
+                "Description": "Username",
+                "Width": "50",
+                "Type": "varchar",
+                "Required": "Yes"
+            },
+            {
+                "ParamName": "password",
+                "Description": "Password",
+                "Width": "50",
+                "Type": "varchar",
+                "Required": "Yes"
+            },
+            {
+                "ParamName": "ResponseFormat",
+                "Description": "Nombre del formato de respuesta, ejemplo: XML-DATAPACKET, CSV, JSON",
+                "Width": "75",
+                "Type": "VarChar",
+                "Required": "No"
+            },
+            {
+                "ParamName": "ResponseFormatVersion",
+                "Description": "Versión del formato de respuesta, ejemplo: 1.1",
+                "Width": "15",
+                "Type": "VarChar",
+                "Required": "No"
+            },
+            {
+                "ParamName": "ServiceName",
+                "Description": "Service name",
+                "Width": "255",
+                "Type": "VarChar",
+                "Required": "Yes"
+            },
+            {
+                "ParamName": "DBConnection",
+                "Description": "Database connection name",
+                "Width": "150",
+                "Type": "varchar",
+                "Required": "Yes"
+            }
+        ]
+    },
+    {
+        "ServiceName": "System.Commit.Transaction",
+        "AcessType": "Read",
+        "Description": "Permite aplicar una transacción en la base de datos de un id de transacción",
+        "AuthorContact": "Tomás Rafael Moreno Poggio <sirlordt@gmail.com>",
+        "Author": "Tomás Moreno",
+        "AuthRequired": "Yes",
+        "ParamSetName": "default",
+        "InputParameters": [
+            {
+                "ParamName": "ResponseFormat",
+                "Description": "Nombre del formato de respuesta, ejemplo: XML-DATAPACKET, CSV, JSON",
+                "Width": "75",
+                "Type": "VarChar",
+                "Required": "No"
+            },
+            {
+                "ParamName": "ResponseFormatVersion",
+                "Description": "Versión del formato de respuesta, ejemplo: 1.1",
+                "Width": "15",
+                "Type": "VarChar",
+                "Required": "No"
+            },
+            {
+                "ParamName": "ServiceName",
+                "Description": "Nombre del servicio",
+                "Width": "255",
+                "Type": "VarChar",
+                "Required": "Yes"
+            },
+            {
+                "ParamName": "SecurityTokenID",
+                "Description": "Token de seguridad obtenido con una llamada al servicio de inicio de sesión",
+                "Width": "0",
+                "Type": "BigInt",
+                "Required": "Yes"
+            },
+            {
+                "ParamName": "TransactionID",
+                "Description": "Id de transacción obtenido con la llamada al servicio de inicio de transacciones",
+                "Width": "0",
+                "Type": "BigInt",
+                "Required": "Yes"
+            }
+        ]
+    },
+    {
+        "ServiceName": "System.Ping",
+        "AcessType": "Read",
+        "Description": "Permite saber si el servidor responde correctamente, con fines de monitorización",
+        "AuthorContact": "Tomás Rafael Moreno Poggio <sirlordt@gmail.com>",
+        "Author": "Tomás Moreno",
+        "AuthRequired": "No",
+        "ParamSetName": "default",
+        "InputParameters": [
+            {
+                "ParamName": "ResponseFormat",
+                "Description": "Nombre del formato de respuesta, ejemplo: XML-DATAPACKET, CSV, JSON",
+                "Width": "75",
+                "Type": "VarChar",
+                "Required": "No"
+            },
+            {
+                "ParamName": "ResponseFormatVersion",
+                "Description": "Versión del formato de respuesta, ejemplo: 1.1",
+                "Width": "15",
+                "Type": "VarChar",
+                "Required": "No"
+            },
+            {
+                "ParamName": "ServiceName",
+                "Description": "Nombre del servicio",
+                "Width": "255",
+                "Type": "VarChar",
+                "Required": "Yes"
+            },
+            {
+                "ParamName": "Ping",
+                "Description": "Número entero enviado como parámetro y devuelto aumentado en 1",
+                "Width": "0",
+                "Type": "BigInt",
+                "Required": "Yes"
+            }
+        ]
+    },
+    {
+        "ServiceName": "System.Enum.Services",
+        "AcessType": "Read",
+        "Description": "Permite enumerar todos los servicios registrados",
+        "AuthorContact": "Tomás Rafael Moreno Poggio <sirlordt@gmail.com>",
+        "Author": "Tomás Moreno",
+        "AuthRequired": "No",
+        "ParamSetName": "default",
+        "InputParameters": [
+            {
+                "ParamName": "ResponseFormat",
+                "Description": "Nombre del formato de respuesta, ejemplo: XML-DATAPACKET, CSV, JSON",
+                "Width": "75",
+                "Type": "VarChar",
+                "Required": "No"
+            },
+            {
+                "ParamName": "ResponseFormatVersion",
+                "Description": "Versión del formato de respuesta, ejemplo: 1.1",
+                "Width": "15",
+                "Type": "VarChar",
+                "Required": "No"
+            },
+            {
+                "ParamName": "ServiceName",
+                "Description": "Nombre del servicio",
+                "Width": "255",
+                "Type": "VarChar",
+                "Required": "Yes"
+            }
+        ]
+    },
+    {
+        "ServiceName": "System.Start.Transaction",
+        "AcessType": "Read",
+        "Description": "Permite iniciar una transacción en la base de datos y obtener un id de transacción",
+        "AuthorContact": "Tomás Rafael Moreno Poggio <sirlordt@gmail.com>",
+        "Author": "Tomás Moreno",
+        "AuthRequired": "Yes",
+        "ParamSetName": "default",
+        "InputParameters": [
+            {
+                "ParamName": "ResponseFormat",
+                "Description": "Nombre del formato de respuesta, ejemplo: XML-DATAPACKET, CSV, JSON",
+                "Width": "75",
+                "Type": "VarChar",
+                "Required": "No"
+            },
+            {
+                "ParamName": "ResponseFormatVersion",
+                "Description": "Versión del formato de respuesta, ejemplo: 1.1",
+                "Width": "15",
+                "Type": "VarChar",
+                "Required": "No"
+            },
+            {
+                "ParamName": "ServiceName",
+                "Description": "Nombre del servicio",
+                "Width": "255",
+                "Type": "VarChar",
+                "Required": "Yes"
+            },
+            {
+                "ParamName": "SecurityTokenID",
+                "Description": "Token de seguridad obtenido con una llamada al servicio de inicio de sesión",
+                "Width": "0",
+                "Type": "BigInt",
+                "Required": "Yes"
+            }
+        ]
+    },
+    {
+        "ServiceName": "System.End.Transaction",
+        "AcessType": "Read",
+        "Description": "Permite revertir y terminar una transacción en la base de datos de un id de transacción, el id de transacción será inválido para las siguientes llamadas a los servicios",
+        "AuthorContact": "Tomás Rafael Moreno Poggio <sirlordt@gmail.com>",
+        "Author": "Tomás Moreno",
+        "AuthRequired": "Yes",
+        "ParamSetName": "default",
+        "InputParameters": [
+            {
+                "ParamName": "ResponseFormat",
+                "Description": "Nombre del formato de respuesta, ejemplo: XML-DATAPACKET, CSV, JSON",
+                "Width": "75",
+                "Type": "VarChar",
+                "Required": "No"
+            },
+            {
+                "ParamName": "ResponseFormatVersion",
+                "Description": "Versión del formato de respuesta, ejemplo: 1.1",
+                "Width": "15",
+                "Type": "VarChar",
+                "Required": "No"
+            },
+            {
+                "ParamName": "ServiceName",
+                "Description": "Nombre del servicio",
+                "Width": "255",
+                "Type": "VarChar",
+                "Required": "Yes"
+            },
+            {
+                "ParamName": "SecurityTokenID",
+                "Description": "Token de seguridad obtenido con una llamada al servicio de inicio de sesión",
+                "Width": "0",
+                "Type": "BigInt",
+                "Required": "Yes"
+            },
+            {
+                "ParamName": "TransactionID",
+                "Description": "Id de transacción obtenido con la llamada al servicio de inicio de transacciones",
+                "Width": "0",
+                "Type": "BigInt",
+                "Required": "Yes"
+            }
+        ]
+    }
+]

@@ -14,7 +14,7 @@ public interface JavaXMLWebRowSetTags {
 
 	public static final String _ResponseFormat_JAVA_XML_WEBROWSET   = "JAVA-XML-WEBROWSET";
 
-	public final static String _XML_StructSecurityToken              = "SecurityToken";
+	public final static String _XML_StructSecurityTokenID            = "SecurityTokenID";
 	public final static String _XML_StructTransactionID              = "TransactionID";
 	public final static String _XML_StructCode                       = "Code";
 	public final static String _XML_StructDescription                = "Description";

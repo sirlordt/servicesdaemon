@@ -1,0 +1,9 @@
+[ { "Code" : 1,
+    "Description" : "Inicio de sesión exitoso",
+    "IDGROUP" : 1,
+    "IDUSER" : 1,
+    "IDVALID" : 1,
+    "LASTACCESSDATE" : null,
+    "LASTACCESSTIME" : null,
+    "SecurityTokenID" : 5200954554030646366
+  } ]

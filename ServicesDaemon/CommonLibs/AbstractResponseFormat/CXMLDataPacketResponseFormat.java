@@ -798,67 +798,6 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
             			  XML_ROW.setAttribute( strFieldName, strFieldValue );
             			  
-            			  /*switch ( intFieldType ) {
-		    			
-							case Types.INTEGER: { XML_ROW.setAttribute( strFieldName, Integer.toString( SQLDataSet.getInt( strFieldName ) ) ); break; }
-							case Types.BIGINT: { XML_ROW.setAttribute( strFieldName, Long.toString( SQLDataSet.getLong( strFieldName ) ) ); break; }
-							case Types.SMALLINT: { XML_ROW.setAttribute( strFieldName, Short.toString( SQLDataSet.getShort( strFieldName ) ) ); break; }
-							case Types.VARCHAR: 
-							case Types.CHAR: {  
-								
-												XML_ROW.setAttribute( strFieldName, SQLDataSet.getString( strFieldName ) );
-												break; 
-								             
-							                 }
-							case Types.BOOLEAN: {  break; }
-							case -2: //PostgreSQL ByteA
-							case -4: //Firebird Blob
-							case Types.BLOB: { 	
-								
-								                if ( intBlobType == 1 ) { //GetBinaryStream PostgreSQL Cases
-								                	
-							                        String strBase64Coded = new String( Base64.encode( SQLDataSet.getBytes( strFieldName ) ) );
-							        				
-							                        XML_ROW.setAttribute( strFieldName, strBase64Coded );//Formated in base64
-							                        
-								                }
-								                else {
-
-								                	Blob BinaryBLOBData = SQLDataSet.getBlob( strFieldName );
-
-								                	String strBase64Coded = new String( Base64.encode( BinaryBLOBData.getBytes( 1, (int) BinaryBLOBData.length() ) ) );
-
-								                	XML_ROW.setAttribute( strFieldName, strBase64Coded );//Formated in base64
-								                
-								                }
-								                
-											    break; 
-					
-											 }
-							case Types.DATE: {
-								               
-					                            XML_ROW.setAttribute( strFieldName, DFormatter.format( SQLDataSet.getDate( strFieldName ) ) );
-												break; 
-								             
-							                 }
-							case Types.TIME: {  
-								
-			                                    XML_ROW.setAttribute( strFieldName, TFormatter.format( SQLDataSet.getTime( strFieldName ) ) );
-												break; 
-								               
-							                 }
-							case Types.TIMESTAMP: {  
-								
-			                                         XML_ROW.setAttribute( strFieldName, DTFormatter.format( SQLDataSet.getTimestamp( strFieldName ) ) );
-								                     break; 
-								                    
-							                      }
-							case Types.FLOAT: 
-							case Types.DECIMAL: {  XML_ROW.setAttribute( strFieldName, Float.toString( SQLDataSet.getFloat( strFieldName ) ) ); break; }
-							case Types.DOUBLE: {  break; }
-	
-            			  }*/
-
             		  }
             		  else {
 
@@ -914,7 +853,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
                for ( int i = 0; i < MemoryRowSet.getFieldsCount(); i++ ) {
             	   
             	   CMemoryFieldData Field = MemoryRowSet.getFieldByIndex( i );
-            	   
+
             	   String strFieldName   = Field.strName;
             	   int intFieldType      = Field.intSQLType;
             	   int intFieldLength    = Field.intLength;
@@ -923,7 +862,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
             	   XML_Field.setAttribute( XMLDataPacketTags._AttrName, strFieldName );
 
-	    			switch ( intFieldType ) {
+	    		   switch ( intFieldType ) {
 	    			
 						case Types.INTEGER: { XML_Field.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeInteger ); break; }
 						case Types.BIGINT: { XML_Field.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeBigInt ); break; }
@@ -972,7 +911,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 						case Types.DECIMAL: {  XML_Field.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeFloat ); break; }
 						case Types.DOUBLE: {  break; }
 
-					}
+				   }
 
             	   XML_FieldsSection.item( 0 ).appendChild( XML_Field );
 
@@ -1020,15 +959,16 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 			    		CMemoryFieldData Field = MemoryRowSet.getFieldByIndex( intIndexColumn - 1 );
 						
 			    		Object FieldData = null; 
+			    		String strFieldName = null;
+    					int intFieldType = 0;
 			    				
 			    		if ( Field != null ) {
 			    			
+				    		strFieldName = Field.strName;
+	    					intFieldType = Field.intSQLType;
 			    			FieldData = Field.getData( intRowIndex );
 			    		
 			    		}
-
-			    		String strFieldName = Field.strName;//DataSetMetaData.getColumnName( i );
-    					int intFieldType = Field.intSQLType; //DataSetMetaData.getColumnTypeName( i );
 
     					if  ( FieldData != null ) {
     					
@@ -1086,7 +1026,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     						}
     	    			
     					}
-    					else {
+    					else if ( strFieldName != null ) {
 
     						XML_ROW.setAttribute( strFieldName, "" );
     						
@@ -1396,13 +1336,13 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     }
     
     @Override
-	public String FormatResultSet( ResultSet ResultSet, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+	public String FormatResultSet( ResultSet SQLDataSet, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 
     	String strResult = "";
     	
         try {
 
-	        ResultSetMetaData DataSetMetaData = ResultSet.getMetaData();
+	        ResultSetMetaData DataSetMetaData = SQLDataSet.getMetaData();
 	
 	        Document XMLDocument = this.BuildBasicResponseXMLStruct( strVersion, Logger, Lang );
 	
@@ -1411,7 +1351,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 	
 	        XMLDocument = BuildXMLMetaData( XMLDocument, DataSetMetaData, DBEngine, arrIncludedFields, arrExcludedFields, Logger, Lang );
 	
-	        XMLDocument = AddXMLToRowDataSection( XMLDocument, ResultSet, DBEngine, arrIncludedFields, arrExcludedFields, Logger, Lang );
+	        XMLDocument = AddXMLToRowDataSection( XMLDocument, SQLDataSet, DBEngine, arrIncludedFields, arrExcludedFields, Logger, Lang );
 
             strResult = this.ConvertXMLDocumentToString( XMLDocument, this.getCharacterEncoding(), Logger, Lang );
 
@@ -1429,15 +1369,15 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 		
 	}
     
-    public String FormatResultsSets( ArrayList<ResultSet> ResultsSetsList, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+    public String FormatResultsSets( ArrayList<ResultSet> SQLDataSetList, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	String strResult = "";
     	
         try {
 
-        	if ( ResultsSetsList.size() > 0 ) {
+        	if ( SQLDataSetList.size() > 0 ) {
 
-        		ResultSet ResultSetMetaData = ResultsSetsList.get( 0 );
+        		ResultSet ResultSetMetaData = SQLDataSetList.get( 0 );
 	        	
 		        ResultSetMetaData DataSetMetaData = ResultSetMetaData.getMetaData();
 		
@@ -1448,9 +1388,9 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 		
 		        XMLDocument = BuildXMLMetaData( XMLDocument, DataSetMetaData, DBEngine, arrIncludedFields, arrExcludedFields, Logger, Lang );
 		
-		        for ( ResultSet ResultSetToAdd: ResultsSetsList ) {    
+		        for ( ResultSet SQLDataSetToAdd: SQLDataSetList ) {    
 		        
-		           XMLDocument = AddXMLToRowDataSection( XMLDocument, ResultSetToAdd, DBEngine, arrIncludedFields, arrExcludedFields, Logger, Lang );
+		           XMLDocument = AddXMLToRowDataSection( XMLDocument, SQLDataSetToAdd, DBEngine, arrIncludedFields, arrExcludedFields, Logger, Lang );
 		        
 		        }
 		        
@@ -1473,7 +1413,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     }
 
     @Override
-    public String FormatResultSet( CResultSetResult ResultSetResult, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+    public String FormatResultSet( CResultSetResult SQLDataSetResult, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	String strResult = "";
     	
@@ -1481,16 +1421,16 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
         	Document XMLDocument = null;
         	
-        	if ( ResultSetResult.Result != null ) {
+        	if ( SQLDataSetResult.Result != null ) {
 
             	XMLDocument = this.BuildBasicResponseXMLStruct( strVersion, Logger, Lang );
 
         		ArrayList<String> arrIncludedFields = new ArrayList<String>();
         		ArrayList<String> arrExcludedFields = new ArrayList<String>();
 
-        		XMLDocument = BuildXMLMetaData( XMLDocument, ResultSetResult.Result.getMetaData(), DBEngine, arrIncludedFields, arrExcludedFields, Logger, Lang );
+        		XMLDocument = BuildXMLMetaData( XMLDocument, SQLDataSetResult.Result.getMetaData(), DBEngine, arrIncludedFields, arrExcludedFields, Logger, Lang );
 
-        		XMLDocument = AddXMLToRowDataSection( XMLDocument, ResultSetResult.Result, DBEngine, arrIncludedFields, arrExcludedFields, Logger, Lang );
+        		XMLDocument = AddXMLToRowDataSection( XMLDocument, SQLDataSetResult.Result, DBEngine, arrIncludedFields, arrExcludedFields, Logger, Lang );
 
         	}
         	else {
@@ -1505,11 +1445,11 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
         		
         		LinkedHashMap<String,String> FieldValues = new LinkedHashMap<String,String>();
         		
-        		FieldValues.put( XMLDataPacketTags._XML_StructAffectedRows, Long.toString( ResultSetResult.lngAffectedRows ) );
-        		FieldValues.put( XMLDataPacketTags._XML_StructCode, Integer.toString( ResultSetResult.intCode ) );
-        		FieldValues.put( XMLDataPacketTags._XML_StructDescription, ResultSetResult.strDescription );
+        		FieldValues.put( XMLDataPacketTags._XML_StructAffectedRows, Long.toString( SQLDataSetResult.lngAffectedRows ) );
+        		FieldValues.put( XMLDataPacketTags._XML_StructCode, Integer.toString( SQLDataSetResult.intCode ) );
+        		FieldValues.put( XMLDataPacketTags._XML_StructDescription, SQLDataSetResult.strDescription );
         		
-        		if ( ResultSetResult.intCode >= 0 )
+        		if ( SQLDataSetResult.intCode >= 0 )
         			XMLDocument = AddXMLSimpleMessage( XMLDocument, FieldValues, strVersion, false, Logger, Lang );
         		else
         			XMLDocument = AddXMLSimpleMessage( XMLDocument, FieldValues, strVersion, true, Logger, Lang );
@@ -1532,51 +1472,51 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	
     }
 
-    public String FormatResultsSets( ArrayList<CResultSetResult> ResultsSetsList, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
+    public String FormatResultsSets( ArrayList<CResultSetResult> SQLDataSetResultList, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
     	
     	String strResult = "";
     	
         try {
 
-        	if ( ResultsSetsList.size() > 0 ) {
+        	if ( SQLDataSetResultList.size() > 0 ) {
 
-        		ResultSet ResultSetMetaData = CResultSetResult.getFirstResultSetNotNull( ResultsSetsList );
+        		ResultSet SQLDataSet = CResultSetResult.getFirstResultSetNotNull( SQLDataSetResultList );
         		
     			Document XMLDocument = null; 
 
     			boolean bNodeErrorAdded = false;
     			
-        		if ( ResultSetMetaData != null ) {
+        		if ( SQLDataSet != null ) {
 		        
         			XMLDocument = this.BuildBasicResponseXMLStruct( strVersion, false, Logger, Lang );
         			
-        			ResultSetMetaData DataSetMetaData = ResultSetMetaData.getMetaData();
+        			ResultSetMetaData SQLDataSetMetaData = SQLDataSet.getMetaData();
 
         			ArrayList<String> arrIncludedFields = new ArrayList<String>();
         			ArrayList<String> arrExcludedFields = new ArrayList<String>();
 
-        			XMLDocument = this.BuildXMLMetaData( XMLDocument, DataSetMetaData, DBEngine, arrIncludedFields, arrExcludedFields, Logger, Lang );
+        			XMLDocument = this.BuildXMLMetaData( XMLDocument, SQLDataSetMetaData, DBEngine, arrIncludedFields, arrExcludedFields, Logger, Lang );
 
             		LinkedHashMap<String,String> FieldValues = new LinkedHashMap<String,String>();
         			
-        			for ( CResultSetResult ResultSetResultToAdd: ResultsSetsList ) { 
+        			for ( CResultSetResult SQLDataSetResultToAdd: SQLDataSetResultList ) { 
         				
         				//String strTmp = "";
 
-        				if ( ResultSetResultToAdd.Result != null ) {   
+        				if ( SQLDataSetResultToAdd.Result != null ) {   
 
         					//strTmp = this.ConvertXMLDocumentToString( XMLDocument, this.getCharacterEncoding() );
         				
-        					XMLDocument = AddXMLToRowDataSection( XMLDocument, ResultSetResultToAdd.Result, DBEngine, arrIncludedFields, arrExcludedFields, Logger, Lang );
+        					XMLDocument = AddXMLToRowDataSection( XMLDocument, SQLDataSetResultToAdd.Result, DBEngine, arrIncludedFields, arrExcludedFields, Logger, Lang );
 
         					//strTmp = this.ConvertXMLDocumentToString( XMLDocument, this.getCharacterEncoding() );
         					
         				}
         				else {
         					              
-                    		FieldValues.put( XMLDataPacketTags._XML_StructAffectedRows, Long.toString( ResultSetResultToAdd.lngAffectedRows ) );
-                    		FieldValues.put( XMLDataPacketTags._XML_StructCode, Integer.toString( ResultSetResultToAdd.intCode ) );
-                    		FieldValues.put( XMLDataPacketTags._XML_StructDescription, ResultSetResultToAdd.strDescription );
+                    		FieldValues.put( XMLDataPacketTags._XML_StructAffectedRows, Long.toString( SQLDataSetResultToAdd.lngAffectedRows ) );
+                    		FieldValues.put( XMLDataPacketTags._XML_StructCode, Integer.toString( SQLDataSetResultToAdd.intCode ) );
+                    		FieldValues.put( XMLDataPacketTags._XML_StructDescription, SQLDataSetResultToAdd.strDescription );
 
         					XMLDocument = AddXMLToErrorSection( XMLDocument, FieldValues, strVersion, true );
         					
@@ -1599,7 +1539,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
             		
             		LinkedHashMap<String,String> FieldValues = new LinkedHashMap<String,String>();
         			
-        			for ( CResultSetResult ResultSetResultToAdd: ResultsSetsList ) {    
+        			for ( CResultSetResult ResultSetResultToAdd: SQLDataSetResultList ) {    
 
                 		FieldValues.put( XMLDataPacketTags._XML_StructAffectedRows, Long.toString( ResultSetResultToAdd.lngAffectedRows ) );
                 		FieldValues.put( XMLDataPacketTags._XML_StructCode, Integer.toString( ResultSetResultToAdd.intCode ) );
@@ -1676,21 +1616,21 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     }
     
     @Override
-    public String FormatMemoryRowSets( ArrayList<CMemoryRowSet> MemoryRowSets, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+    public String FormatMemoryRowSets( ArrayList<CMemoryRowSet> MemoryRowSetList, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	String strResult = "";
 
         try {
 
-        	if ( MemoryRowSets.size() > 0 ) {
+        	if ( MemoryRowSetList.size() > 0 ) {
         	
 		        Document XMLDocument = this.BuildBasicResponseXMLStruct( strVersion, Logger, Lang );
 		
-		        CMemoryRowSet FirstMemoryRowSet = MemoryRowSets.get( 0 );
+		        CMemoryRowSet FirstMemoryRowSet = MemoryRowSetList.get( 0 );
 
         		XMLDocument = BuildXMLMetaData( XMLDocument, FirstMemoryRowSet, Logger, Lang );
 		
-		        for ( CMemoryRowSet MemoryRowSetToAdd: MemoryRowSets ) {   
+		        for ( CMemoryRowSet MemoryRowSetToAdd: MemoryRowSetList ) {   
         		
 		        	XMLDocument = AddXMLToRowDataSection( XMLDocument, MemoryRowSetToAdd, Logger, Lang );
 		        
@@ -1715,9 +1655,9 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     }
     
     @Override
-    public String FormatSimpleMessage( String strSecurityToken, String strTransactionID, int intCode, String strDescription, boolean bAttachToError, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+    public String FormatSimpleMessage( String strSecurityTokenID, String strTransactionID, int intCode, String strDescription, boolean bAttachToError, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
     	
-    	return BuildXMLSimpleMessage( strSecurityToken, strTransactionID, intCode, strDescription, bAttachToError, strVersion, Logger, Lang );
+    	return BuildXMLSimpleMessage( strSecurityTokenID, strTransactionID, intCode, strDescription, bAttachToError, strVersion, Logger, Lang );
     	
     }
 

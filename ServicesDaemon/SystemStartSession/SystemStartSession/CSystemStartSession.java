@@ -345,7 +345,7 @@ public class CSystemStartSession extends CAbstractService {
 	    	ServiceSession.setAttribute( strSecurityToken, ConfigDBConnection ); 
 
             */
-			ServiceLogger.LogInfo( "0x1001", ServiceLang.Translate( "Success start session with session key [%s]", ConfigDBConnection.strSessionKey ) );        
+			ServiceLogger.LogInfo( "0x1001", ServiceLang.Translate( "Success start session with SessionKey: [%s], SecurityTokenID: [%s], Database: [%s]", ConfigDBConnection.strSessionKey, strSecurityTokenID, ConfigDBConnection.strName ) );        
 
 	    	Response.setContentType( ResponseFormat.getContentType() );
 	    	Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
@@ -415,7 +415,7 @@ public class CSystemStartSession extends CAbstractService {
 		
 		try {
 
-			ServiceLogger.LogInfo( "-0x1001", ServiceLang.Translate( "Failed start session with session key: [%s], cause: [%s]", ConfigDBConnection.strSessionKey, "failed" ) );        
+			ServiceLogger.LogInfo( "-0x1001", ServiceLang.Translate( "Failed start session with SessionKey: [%s], Database: [%s], Cause: [%s]", ConfigDBConnection.strSessionKey, ConfigDBConnection.strName, "failed" ) );        
 	    	
 			Response.setContentType( ResponseFormat.getContentType() );
 	    	Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
@@ -471,7 +471,7 @@ public class CSystemStartSession extends CAbstractService {
 		
 		try {
 
-			ServiceLogger.LogInfo( "-0x1002", ServiceLang.Translate( "Failed start session with session key: [%s], cause: [%s]", ConfigDBConnection.strSessionKey, "disabled" ) );        
+			ServiceLogger.LogInfo( "-0x1002", ServiceLang.Translate( "Failed start session with SessionKey: [%s], Database: [%s], Cause: [%s]", ConfigDBConnection.strSessionKey, ConfigDBConnection.strName, "disabled" ) );        
 			
 	    	Response.setContentType( ResponseFormat.getContentType() );
 	    	Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
@@ -527,7 +527,7 @@ public class CSystemStartSession extends CAbstractService {
 		
 		try {
 
-			ServiceLogger.LogInfo( "-0x1003", ServiceLang.Translate( "Failed start session with session key: [%s], cause: [%s]", ConfigDBConnection.strSessionKey, "not found" ) );        
+			ServiceLogger.LogInfo( "-0x1003", ServiceLang.Translate( "Failed start session with SessionKey: [%s], Database: [%s], Cause: [%s]", ConfigDBConnection.strSessionKey, ConfigDBConnection.strName, "not found" ) );        
 
 			Response.setContentType( ResponseFormat.getContentType() );
 	    	Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );

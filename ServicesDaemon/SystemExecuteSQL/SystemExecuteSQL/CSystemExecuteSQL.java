@@ -213,7 +213,26 @@ public class CSystemExecuteSQL extends CAbstractService {
 					Response.setContentType( ResponseFormat.getContentType() );
 					Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
+		            if ( ServiceLogger != null ) { //Trace how much time in format data
+		            	
+		        		if ( ServiceLang != null )   
+		        			ServiceLogger.LogInfo( "0x2501", ServiceLang.Translate( "Init response format data set" ) );
+		        		else
+		        			ServiceLogger.LogInfo( "0x2501", "Init response format data set" );
+		        			
+		            }	
+					
 					String strResponseBuffer = ResponseFormat.FormatResultSet( ResultSetResult, DBEngine, strResponseFormatVersion, ConfigDBConnection!=null?ConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_DateTime_Format ), ConfigDBConnection!=null?ConfigDBConnection.strDateFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Date_Format ), ConfigDBConnection!=null?ConfigDBConnection.strTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
+
+		            if ( ServiceLogger != null ) { //Trace how much time in format data
+		            	
+		        		if ( ServiceLang != null )   
+		        			ServiceLogger.LogInfo( "0x2502", ServiceLang.Translate( "End response format data set" ) );
+		        		else
+		        			ServiceLogger.LogInfo( "0x2502", "End response format data set" );
+		        			
+		            }
+		            
 					Response.getWriter().print( strResponseBuffer );
 
 					bResult = true;
@@ -266,9 +285,27 @@ public class CSystemExecuteSQL extends CAbstractService {
 					Response.setContentType( ResponseFormat.getContentType() );
 					Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 					
-					String strResponseBuffer = ResponseFormat.FormatResultSet( ResultSetResult, DBEngine, strResponseFormatVersion, ConfigDBConnection!=null?ConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_DateTime_Format ), ConfigDBConnection!=null?ConfigDBConnection.strDateFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Date_Format ), ConfigDBConnection!=null?ConfigDBConnection.strTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
+		            if ( ServiceLogger != null ) { //Trace how much time in format data
+		            	
+		        		if ( ServiceLang != null )   
+		        			ServiceLogger.LogInfo( "0x2501", ServiceLang.Translate( "Init response format data set" ) );
+		        		else
+		        			ServiceLogger.LogInfo( "0x2501", "Init response format data set" );
+		        			
+		            }	
 
-					Response.getWriter().print( strResponseBuffer );
+		            String strResponseBuffer = ResponseFormat.FormatResultSet( ResultSetResult, DBEngine, strResponseFormatVersion, ConfigDBConnection!=null?ConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_DateTime_Format ), ConfigDBConnection!=null?ConfigDBConnection.strDateFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Date_Format ), ConfigDBConnection!=null?ConfigDBConnection.strTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
+
+		            if ( ServiceLogger != null ) { //Trace how much time in format data
+		            	
+		        		if ( ServiceLang != null )   
+		        			ServiceLogger.LogInfo( "0x2502", ServiceLang.Translate( "End response format data set" ) );
+		        		else
+		        			ServiceLogger.LogInfo( "0x2502", "End response format data set" );
+		        			
+		            }
+
+		            Response.getWriter().print( strResponseBuffer );
 
 					DBEngine.CloseResultSetResultStatement(ResultSetResult, ServiceLogger, ServiceLang );
 					
@@ -339,8 +376,27 @@ public class CSystemExecuteSQL extends CAbstractService {
 					Response.setContentType( ResponseFormat.getContentType() );
 					Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
+		            if ( ServiceLogger != null ) { //Trace how much time in format data
+		            	
+		        		if ( ServiceLang != null )   
+		        			ServiceLogger.LogInfo( "0x2501", ServiceLang.Translate( "Init response format data set" ) );
+		        		else
+		        			ServiceLogger.LogInfo( "0x2501", "Init response format data set" );
+		        			
+		            }	
+					
 					String strResponseBuffer = ResponseFormat.FormatResultsSets( ResultsSets, DBEngine, strResponseFormatVersion, ConfigDBConnection!=null?ConfigDBConnection.strTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Time_Format ), ConfigDBConnection!=null?ConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_DateTime_Format ), ConfigDBConnection!=null?ConfigDBConnection.strDateFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Date_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang, 1 );
-					Response.getWriter().print( strResponseBuffer );
+
+		            if ( ServiceLogger != null ) { //Trace how much time in format data
+		            	
+		        		if ( ServiceLang != null )   
+		        			ServiceLogger.LogInfo( "0x2502", ServiceLang.Translate( "End response format data set" ) );
+		        		else
+		        			ServiceLogger.LogInfo( "0x2502", "End response format data set" );
+		        			
+		            }
+
+		            Response.getWriter().print( strResponseBuffer );
 
 					bResult = true;
 					
@@ -384,36 +440,27 @@ public class CSystemExecuteSQL extends CAbstractService {
 					Response.setContentType( ResponseFormat.getContentType() );
 					Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-					/*CMemoryRowSet MemoryRowSet = new CMemoryRowSet( false );
-					
-		    		MemoryRowSet.addField( ConstantsSystemExecuteSQL._ResponseAffectedRows, ConstantsSystemExecuteSQL._ResponseAffectedRowsTypeID, ConstantsSystemExecuteSQL._ResponseAffectedRowsType, 0, "" );
-		    		MemoryRowSet.addField( ConstantsServicesTags._Code, ConstantsServicesTags._CodeTypeID, ConstantsServicesTags._CodeType, 0, "" );
-		    		MemoryRowSet.addField( ConstantsServicesTags._Description, ConstantsServicesTags._DescriptionTypeID, ConstantsServicesTags._DescriptionType, ConstantsServicesTags._DescriptionLength, ConstantsServicesTags._Description );
-
-		    		for ( Long intAffectedRows: AffectedRows ) {
-		    			
-		    			MemoryRowSet.addData( ConstantsSystemExecuteSQL._ResponseAffectedRows, intAffectedRows );
-		    			   
-		    			if ( intAffectedRows >= 0 ) {
-		    			
-		    				MemoryRowSet.addData( ConstantsServicesTags._Code, 1000 );
-		    				MemoryRowSet.addData( ConstantsServicesTags._Description, ServiceLang.Translate( "Success execute the modify sql" ) );
-		    			
-		    			}
-		    			else {
-		    				
-		    				MemoryRowSet.addData( ConstantsServicesTags._Code, -1000 );
-		    				MemoryRowSet.addData( ConstantsServicesTags._Description, ServiceLang.Translate( "Fail to execute the modify sql, see the log file for more details" ) );
-		    				
-		    			}
-		    			
-		    		}
-		    		
-		    		String strResponseBuffer = ResponseFormat.FormatMemoryRowSet( MemoryRowSet, strResponseFormatVersion );*/
+		            if ( ServiceLogger != null ) { //Trace how much time in format data
+		            	
+		        		if ( ServiceLang != null )   
+		        			ServiceLogger.LogInfo( "0x2501", ServiceLang.Translate( "Init response format data set" ) );
+		        		else
+		        			ServiceLogger.LogInfo( "0x2501", "Init response format data set" );
+		        			
+		            }	
 					
 					String strResponseBuffer = ResponseFormat.FormatResultsSets( ResultSetsResults, DBEngine, strResponseFormatVersion, ConfigDBConnection!=null?ConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_DateTime_Format ), ConfigDBConnection!=null?ConfigDBConnection.strDateFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Date_Format ), ConfigDBConnection!=null?ConfigDBConnection.strTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang, 0 );
 		    		
-					Response.getWriter().print( strResponseBuffer );
+		            if ( ServiceLogger != null ) { //Trace how much time in format data
+		            	
+		        		if ( ServiceLang != null )   
+		        			ServiceLogger.LogInfo( "0x2502", ServiceLang.Translate( "End response format data set" ) );
+		        		else
+		        			ServiceLogger.LogInfo( "0x2502", "End response format data set" );
+		        			
+		            }
+
+		            Response.getWriter().print( strResponseBuffer );
 
 					DBEngine.CloseResultSetResultStatement( ResultSetsResults, ServiceLogger, ServiceLang );
 					
@@ -527,6 +574,13 @@ public class CSystemExecuteSQL extends CAbstractService {
 													if ( LocalConfigDBConnection.bAutoCommit == false && strCommit != null && strCommit.equals( "1" ) ) {
 														
 														DBEngine.commit( DBConnection, ServiceLogger, ServiceLang );
+
+														ServiceLogger.LogInfo( "0x1502", ServiceLang.Translate( "Success commit transaction with SessionKey: [%s], SecurityTokenID: [%s], TransactionID: [%s], Database: [%s]", LocalConfigDBConnection.strSessionKey, strSecurityTokenID, strTransactionID, LocalConfigDBConnection.strName ) );        
+														
+													}
+													else if ( LocalConfigDBConnection.bAutoCommit == true ) {
+														
+														ServiceLogger.LogInfo( "0x1502", ServiceLang.Translate( "Success commit transaction with SessionKey: [%s], SecurityTokenID: [%s], TransactionID: [%s], Database: [%s]", LocalConfigDBConnection.strSessionKey, strSecurityTokenID, strTransactionID, LocalConfigDBConnection.strName ) );        
 														
 													}
 													

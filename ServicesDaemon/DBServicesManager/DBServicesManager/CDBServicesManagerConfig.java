@@ -102,11 +102,11 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 		strJavaXML_WebRowSet_CharSet = DefaultConstantsDBServicesManager.strDefaultChasetXML;
 		strJavaXML_WebRowSet_ContentType = DefaultConstantsDBServicesManager.strDefaultContentTypeXML;
 
-		strJSON_ContentType = DefaultConstantsDBServicesManager.strDefaultChasetJSON;
-		strJSON_CharSet = DefaultConstantsDBServicesManager.strDefaultContentTypeJSON;
+		strJSON_ContentType = DefaultConstantsDBServicesManager.strDefaultContentTypeJSON;
+		strJSON_CharSet = DefaultConstantsDBServicesManager.strDefaultChasetJSON;
 		
-		strCSV_ContentType = DefaultConstantsDBServicesManager.strDefaultChasetCSV;
-		strCSV_CharSet = DefaultConstantsDBServicesManager.strDefaultContentTypeCSV;
+		strCSV_ContentType = DefaultConstantsDBServicesManager.strDefaultContentTypeCSV;
+		strCSV_CharSet = DefaultConstantsDBServicesManager.strDefaultChasetCSV;
 
 		ConfiguredDBConnections = new ArrayList<CConfigDBConnection>();
 		
