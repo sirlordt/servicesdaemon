@@ -33,6 +33,9 @@ public interface ConfigXMLTagsDBServicesManager {
 	public static final String _BuiltinResponseFormat = "BuiltinResponseFormat";
 	public static final String _Content_Type = "Content_Type";
 	public static final String _Char_Set = "Char_Set";
+	public static final String _Fields_Quote = "Fields_Quote";
+	public static final String _Separator_Symbol = "Separator_Symbol";
+	public static final String _Show_Headers = "Show_Headers";
 	
 	public static final String _DBConnections = "DBConnections";
 	public static final String _DBConnection = "DBConnection";

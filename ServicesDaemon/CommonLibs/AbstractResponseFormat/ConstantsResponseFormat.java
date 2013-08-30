@@ -13,5 +13,8 @@ public interface ConstantsResponseFormat {
 	
 	public static String _CSV_CharSet = "CSV_CharSet";
 	public static String _CSV_ContentType = "CSV_ContentType";
+	public static String _CSV_FieldsQuote = "CSV_FieldsQuote";
+	public static String _CSV_SeparatorSymbol = "CSV_SeparatorSymbol";
+	public static String _CSV_ShowHeaders = "CSV_ShowHeaders";
 	
 }

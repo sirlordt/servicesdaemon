@@ -101,20 +101,20 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
 	        
             	JSONObject JSONService = new JSONObject();
 
-            	JSONService.put( XMLDataPacketTags._XML_StructServiceName , Service.getServiceName() );
+            	JSONService.put( JSONTags._JSON_StructServiceName , Service.getServiceName() );
 
-            	JSONService.put( XMLDataPacketTags._XML_StructAccessType , strServiceType );
+            	JSONService.put( JSONTags._JSON_StructAccessType , strServiceType );
 
-            	JSONService.put( XMLDataPacketTags._XML_StructDescription , Service.getServiceDescription() );
+            	JSONService.put( JSONTags._JSON_StructDescription , Service.getServiceDescription() );
 
-            	JSONService.put( XMLDataPacketTags._XML_StructAuthorContact , Service.getServiceAuthorContact() );
+            	JSONService.put( JSONTags._JSON_StructAuthorContact , Service.getServiceAuthorContact() );
         		
-            	JSONService.put( XMLDataPacketTags._XML_StructAuthor , Service.getServiceAuthor() );
+            	JSONService.put( JSONTags._JSON_StructAuthor , Service.getServiceAuthor() );
 
         		if ( Service.getAuthRequired() == true )  
-            		JSONService.put( XMLDataPacketTags._XML_StructAuthRequired , "Yes" );
+            		JSONService.put( JSONTags._JSON_StructAuthRequired , "Yes" );
             	else
-            		JSONService.put( XMLDataPacketTags._XML_StructAuthRequired , "No" );
+            		JSONService.put( JSONTags._JSON_StructAuthRequired , "No" );
 
             	JSONArray JSONServiceInputParameters = new JSONArray(); 
         		
@@ -122,21 +122,21 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
             	
     			String strKey = GroupIPSEntry.getKey();
             	
-            	JSONService.put( XMLDataPacketTags._XML_StructParamSetName, strKey ); 
+            	JSONService.put( JSONTags._JSON_StructParamSetName, strKey ); 
     			
             	for ( CInputServiceParameter InputServiceParameter : GroupIPSEntry.getValue() ) {
             		
             		JSONObject JSONServiceInputParameter = new JSONObject(); 
             		
-            		JSONServiceInputParameter.put( XMLDataPacketTags._XML_StructParamName, InputServiceParameter.getParameterName() );
+            		JSONServiceInputParameter.put( JSONTags._JSON_StructParamName, InputServiceParameter.getParameterName() );
 
-            		JSONServiceInputParameter.put( XMLDataPacketTags._XML_StructDescription, InputServiceParameter.getParameterDescription() );
+            		JSONServiceInputParameter.put( JSONTags._JSON_StructDescription, InputServiceParameter.getParameterDescription() );
             		
-            		JSONServiceInputParameter.put( XMLDataPacketTags._XML_StructTypeWidth, InputServiceParameter.getParameterDataTypeWidth() );
+            		JSONServiceInputParameter.put( JSONTags._JSON_StructTypeWidth, InputServiceParameter.getParameterDataTypeWidth() );
 
-            		JSONServiceInputParameter.put( XMLDataPacketTags._XML_StructType, InputServiceParameter.getParameterDataType() );
+            		JSONServiceInputParameter.put( JSONTags._JSON_StructType, InputServiceParameter.getParameterDataType() );
 
-            		JSONServiceInputParameter.put( XMLDataPacketTags._XML_StructRequired, InputServiceParameter.getParameterRequired()?"Yes":"No" );
+            		JSONServiceInputParameter.put( JSONTags._JSON_StructRequired, InputServiceParameter.getParameterRequired()?"Yes":"No" );
 
             		JSONServiceInputParameters.put( JSONServiceInputParameter );
             		
@@ -452,9 +452,9 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
 					JSONDocumentRoot.put( JSONDocumentData );
 					JSONDocumentRoot.put( JSONDocumentErrors );
 
-					JSONDocumentData.put( JavaXMLWebRowSetTags._XML_StructSQLOperationAffectedRows, SQLDataSetResult.lngAffectedRows );
-					JSONDocumentData.put( JavaXMLWebRowSetTags._XML_StructSQLOperationCode, SQLDataSetResult.intCode );
-					JSONDocumentData.put( JavaXMLWebRowSetTags._XML_StructSQLOperationDescription, SQLDataSetResult.strDescription );
+					JSONDocumentData.put( JSONTags._JSON_StructAffectedRows, SQLDataSetResult.lngAffectedRows );
+					JSONDocumentData.put( JSONTags._JSON_StructCode, SQLDataSetResult.intCode );
+					JSONDocumentData.put( JSONTags._JSON_StructDescription, SQLDataSetResult.strDescription );
 
 					strResult = JSONDocumentRoot.toString();
 					
@@ -532,9 +532,9 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
 
 								JSONObject JSONError = new JSONObject(); 
 								
-								JSONError.put( JavaXMLWebRowSetTags._XML_StructSQLOperationAffectedRows, SQLDataSetResultToAdd.lngAffectedRows );
-								JSONError.put( JavaXMLWebRowSetTags._XML_StructSQLOperationCode, SQLDataSetResultToAdd.intCode );
-								JSONError.put( JavaXMLWebRowSetTags._XML_StructSQLOperationDescription, SQLDataSetResultToAdd.strDescription );
+								JSONError.put( JSONTags._JSON_StructAffectedRows, SQLDataSetResultToAdd.lngAffectedRows );
+								JSONError.put( JSONTags._JSON_StructCode, SQLDataSetResultToAdd.intCode );
+								JSONError.put( JSONTags._JSON_StructDescription, SQLDataSetResultToAdd.strDescription );
 								
 								JSONDocumentErrors.put( JSONError );
 
@@ -549,15 +549,15 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
 
 						CMemoryRowSet MemoryRowSet = new CMemoryRowSet( false );
 
-						MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructSQLOperationAffectedRows, Types.BIGINT, NamesSQLTypes._BIGINT, 0, JavaXMLWebRowSetTags._XML_StructSQLOperationAffectedRows );
-						MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructSQLOperationCode, Types.INTEGER, NamesSQLTypes._INTEGER, 0, JavaXMLWebRowSetTags._XML_StructSQLOperationCode );
-						MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructSQLOperationDescription, Types.VARCHAR, NamesSQLTypes._VARCHAR, JavaXMLWebRowSetTags._XML_StructSQLOperationDescriptionLength, JavaXMLWebRowSetTags._XML_StructSQLOperationDescription );
+						MemoryRowSet.addField( JSONTags._JSON_StructAffectedRows, Types.BIGINT, NamesSQLTypes._BIGINT, 0, JSONTags._JSON_StructAffectedRows );
+						MemoryRowSet.addField( JSONTags._JSON_StructCode, Types.INTEGER, NamesSQLTypes._INTEGER, 0, JSONTags._JSON_StructCode );
+						MemoryRowSet.addField( JSONTags._JSON_StructDescription, Types.VARCHAR, NamesSQLTypes._VARCHAR, JSONTags._JSON_StructDescriptionLength, JSONTags._JSON_StructDescription );
 
 						for ( CResultSetResult SQLDataSetResultToAdd: SQLDataSetResultList ) {    
 
-							MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructSQLOperationAffectedRows,- SQLDataSetResultToAdd.lngAffectedRows );
-							MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructSQLOperationCode, SQLDataSetResultToAdd.intCode );
-							MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructSQLOperationDescription, SQLDataSetResultToAdd.strDescription );
+							MemoryRowSet.addData( JSONTags._JSON_StructAffectedRows,- SQLDataSetResultToAdd.lngAffectedRows );
+							MemoryRowSet.addData( JSONTags._JSON_StructCode, SQLDataSetResultToAdd.intCode );
+							MemoryRowSet.addData( JSONTags._JSON_StructDescription, SQLDataSetResultToAdd.strDescription );
 
 						}
 

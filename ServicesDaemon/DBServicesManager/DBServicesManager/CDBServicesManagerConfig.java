@@ -55,6 +55,9 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 	
 	public String strCSV_ContentType;
 	public String strCSV_CharSet;
+	public boolean bCSV_FieldQuoted;
+	public String strCSV_SeparatorSymbol;
+	public boolean bCSV_ShowHeaders;
 	
 	public List<CConfigDBConnection> ConfiguredDBConnections;
 
@@ -107,6 +110,9 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 		
 		strCSV_ContentType = DefaultConstantsDBServicesManager.strDefaultContentTypeCSV;
 		strCSV_CharSet = DefaultConstantsDBServicesManager.strDefaultChasetCSV;
+		bCSV_FieldQuoted = DefaultConstantsDBServicesManager.bDefaultFieldsQuoteCSV;
+		strCSV_SeparatorSymbol = DefaultConstantsDBServicesManager.strDefaultSeparatorSymbolCSV;
+		bCSV_ShowHeaders = DefaultConstantsDBServicesManager.bDefaultShowHeadersCSV;
 
 		ConfiguredDBConnections = new ArrayList<CConfigDBConnection>();
 		
@@ -504,7 +510,7 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
         
         try {
         	
-			String strAttributesOrder[] = { ConfigXMLTagsDBServicesManager._Name, ConfigXMLTagsDBServicesManager._Char_Set, ConfigXMLTagsDBServicesManager._Content_Type };
+			String strAttributesOrder[] = { ConfigXMLTagsDBServicesManager._Name, ConfigXMLTagsDBServicesManager._Char_Set, ConfigXMLTagsDBServicesManager._Content_Type, ConfigXMLTagsDBServicesManager._Fields_Quote, ConfigXMLTagsDBServicesManager._Separator_Symbol, ConfigXMLTagsDBServicesManager._Show_Headers };
 
 			NodeList ConfigBuiltinResponsesList = ConfigSectionNode.getChildNodes();
 	          
@@ -581,6 +587,11 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 											}
 
 										}
+										else {
+											
+											Logger.LogWarning( "-1", Lang.Translate( "The [%s] attribute is unknown for the node [%s]", NodeAttribute.getNodeName(), ConfigBuiltinResponseFormatNode.getNodeName() ) );
+											
+										}
 
 									}
 									else if ( strBuitinResponseName.equals( ConfigXMLTagsDBServicesManager._ResponseFormat_JAVA_XML_WEBROWSET ) ) {
@@ -617,6 +628,11 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 											}
 
 										}
+										else {
+											
+											Logger.LogWarning( "-1", Lang.Translate( "The [%s] attribute is unknown for the node [%s]", NodeAttribute.getNodeName(), ConfigBuiltinResponseFormatNode.getNodeName() ) );
+											
+										}
 
 									}
 									else if ( strBuitinResponseName.equals( ConfigXMLTagsDBServicesManager._ResponseFormat_JSON ) ) {
@@ -626,7 +642,7 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 											if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
 
 												this.strJSON_CharSet = NodeAttribute.getNodeValue().toUpperCase();
-												Logger.LogMessage( "1", Lang.Translate( "Runtime config value [%s] changed to: [%s]", "strJavaXML_WebRowSet_CharSet", this.strJSON_CharSet ) );
+												Logger.LogMessage( "1", Lang.Translate( "Runtime config value [%s] changed to: [%s]", "strJSON_CharSet", this.strJSON_CharSet ) );
 
 											}
 											else {
@@ -642,7 +658,7 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 											if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
 
 												this.strJSON_ContentType = NodeAttribute.getNodeValue();
-												Logger.LogMessage( "1", Lang.Translate( "Runtime config value [%s] changed to: [%s]", "strJavaXML_WebRowSet_ContentType", this.strJSON_ContentType ) );
+												Logger.LogMessage( "1", Lang.Translate( "Runtime config value [%s] changed to: [%s]", "strJSON_ContentType", this.strJSON_ContentType ) );
 
 											}
 											else {
@@ -653,6 +669,11 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 											}
 
 										}
+										else {
+											
+											Logger.LogWarning( "-1", Lang.Translate( "The [%s] attribute is unknown for the node [%s]", NodeAttribute.getNodeName(), ConfigBuiltinResponseFormatNode.getNodeName() ) );
+											
+										}
 
 									}
 									else if ( strBuitinResponseName.equals( ConfigXMLTagsDBServicesManager._ResponseFormat_CSV ) ) {
@@ -662,7 +683,7 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 											if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
 
 												this.strCSV_CharSet = NodeAttribute.getNodeValue().toUpperCase();
-												Logger.LogMessage( "1", Lang.Translate( "Runtime config value [%s] changed to: [%s]", "strJavaXML_WebRowSet_CharSet", this.strCSV_CharSet ) );
+												Logger.LogMessage( "1", Lang.Translate( "Runtime config value [%s] changed to: [%s]", "strCSV_CharSet", this.strCSV_CharSet ) );
 
 											}
 											else {
@@ -678,7 +699,7 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 											if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
 
 												this.strCSV_ContentType = NodeAttribute.getNodeValue();
-												Logger.LogMessage( "1", Lang.Translate( "Runtime config value [%s] changed to: [%s]", "strJavaXML_WebRowSet_ContentType", this.strCSV_ContentType ) );
+												Logger.LogMessage( "1", Lang.Translate( "Runtime config value [%s] changed to: [%s]", "strCSV_ContentType", this.strCSV_ContentType ) );
 
 											}
 											else {
@@ -689,11 +710,64 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 											}
 
 										}
+										else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsDBServicesManager._Fields_Quote ) ) {
+
+											if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
+
+												this.bCSV_FieldQuoted = NodeAttribute.getNodeValue().equals( "true" );
+												Logger.LogMessage( "1", Lang.Translate( "Runtime config value [%s] changed to: [%s]", "bCSV_FieldQuoted", Boolean.toString( this.bCSV_FieldQuoted ) ) );
+
+											}
+											else {
+
+												Logger.LogError( "-1010", Lang.Translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConfigXMLTagsDBServicesManager._Fields_Quote, Boolean.toString( DefaultConstantsDBServicesManager.bDefaultFieldsQuoteCSV ) ) );
+												break; //stop the parse another attributes
+
+											}
+
+										}
+										else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsDBServicesManager._Separator_Symbol ) ) {
+
+											if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
+
+												this.strCSV_SeparatorSymbol = NodeAttribute.getNodeValue();
+												Logger.LogMessage( "1", Lang.Translate( "Runtime config value [%s] changed to: [%s]", "strCSV_SeparatorSymbol", this.strCSV_SeparatorSymbol ) );
+
+											}
+											else {
+
+												Logger.LogError( "-1010", Lang.Translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConfigXMLTagsDBServicesManager._Separator_Symbol, DefaultConstantsDBServicesManager.strDefaultSeparatorSymbolCSV ) );
+												break; //stop the parse another attributes
+
+											}
+
+										}
+										else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsDBServicesManager._Show_Headers ) ) {
+
+											if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
+
+												this.bCSV_ShowHeaders = NodeAttribute.getNodeValue().equals( "true" );
+												Logger.LogMessage( "1", Lang.Translate( "Runtime config value [%s] changed to: [%s]", "bCSV_ShowHeaders", Boolean.toString( this.bCSV_ShowHeaders ) ) );
+
+											}
+											else {
+
+												Logger.LogError( "-1010", Lang.Translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConfigXMLTagsDBServicesManager._Show_Headers, Boolean.toString( DefaultConstantsDBServicesManager.bDefaultShowHeadersCSV ) ) );
+												break; //stop the parse another attributes
+
+											}
+
+										}
+										else {
+											
+											Logger.LogWarning( "-1", Lang.Translate( "The [%s] attribute is unknown for the node [%s]", NodeAttribute.getNodeName(), ConfigBuiltinResponseFormatNode.getNodeName() ) );
+											
+										}
 
 									}
 
 								}
-								else if ( intAttributesIndex == 0 ) {
+								else if ( intAttributesIndex == 0 ) { //Only the name attribute is obligatory 
 									
 							    	Logger.LogError( "-1001", Lang.Translate( "The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node", ConfigXMLTagsDBServicesManager._Name, ConfigXMLTagsDBServicesManager._BuiltinResponseFormat, Integer.toString( intConfigBuiltinResponseFormatIndex ) ) );
 							    	break;
@@ -1243,6 +1317,12 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 			return this.strCSV_CharSet;  
 		else if ( strConfigKey.equals( "CSV_ContentType" ) )
 			return this.strCSV_ContentType;  
+		else if ( strConfigKey.equals( "CSV_FieldsQuote" ) )
+			return Boolean.toString( this.bCSV_FieldQuoted );  
+		else if ( strConfigKey.equals( "CSV_SeparatorSymbol" ) )
+			return this.strCSV_SeparatorSymbol;  
+		else if ( strConfigKey.equals( "CSV_ShowHeaders" ) )
+			return Boolean.toString( this.bCSV_ShowHeaders );  
 		else if ( strConfigKey.equals( "Global_DateTime_Format" ) )
 			return this.strGlobalDateTimeFormat;  
 		else if ( strConfigKey.equals( "Global_Date_Format" ) )

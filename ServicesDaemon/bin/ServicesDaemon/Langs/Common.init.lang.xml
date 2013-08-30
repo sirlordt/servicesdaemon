@@ -55,6 +55,8 @@
 <entry key="The [%s] attribute value [%s] is no valid date and time format, using the default value [%s]">El atributo [%s] con el valor de [%s] no es un formato de fecha y tiempo válido, usando el valor por defecto [%s]</entry>
 <entry key="The [%s] attribute value [%s] is no valid date format, using the default value [%s]">El atributo [%s] con el valor de [%s] no es un formato de fecha válido, usando el valor por defecto [%s]</entry>
 <entry key="The [%s] attribute value [%s] is no valid time format, using the default value [%s]">El atributo [%s] con el valor de [%s] no es un formato de hora válido, usando el valor por defecto [%s]</entry>
+<entry key="The [%s] attribute is unknown for the node [%s]">El atributo [%s] es desconocido para el nodo [%s]</entry>
+<entry key="The [%s] attribute is unknown">El atributo [%s] es desconocido</entry>
 
 <entry key="Loading classes from path: [%s]">Cargando clases de la ruta: [%s]</entry>
 <entry key="Jar count files found: [%s]">Cantidad de archivos jar encontrados: [%s]</entry>

@@ -51,7 +51,7 @@ public interface XMLDataPacketTags {
 
 	public final static String _InputParameters                = "InputParameters";
 
-	public final static String _XML_StructSecurityToken          = "SecurityToken";
+	public final static String _XML_StructSecurityTokenID        = "SecurityTokenID";
 	public final static String _XML_StructTransactionID          = "TransactionID";
 	public final static String _XML_StructAffectedRows           = "AffectedRows";
 	public final static String _XML_StructCode                   = "Code";

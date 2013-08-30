@@ -41,6 +41,9 @@ public abstract class DefaultConstantsDBServicesManager {
 	
 	public static final String strDefaultChasetCSV = "UTF-8";
 	public static final String strDefaultContentTypeCSV = "text/plain";
+	public static final boolean bDefaultFieldsQuoteCSV = true;
+	public static final String strDefaultSeparatorSymbolCSV = ";";
+	public static final boolean bDefaultShowHeadersCSV = true;
 	
 	public static final String strDefaultVersionAny = "any";
 	

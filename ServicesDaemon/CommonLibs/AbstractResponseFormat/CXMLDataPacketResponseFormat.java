@@ -230,7 +230,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
                if ( strSecurityToken != null && strSecurityToken.trim().isEmpty() == false ) {
 
                   Element XML_FieldSecurityToken = XMLDocument.createElement( XMLDataPacketTags._Field );
-                  XML_FieldSecurityToken.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XML_StructSecurityToken );
+                  XML_FieldSecurityToken.setAttribute( XMLDataPacketTags._AttrName, XMLDataPacketTags._XML_StructSecurityTokenID );
                   XML_FieldSecurityToken.setAttribute( XMLDataPacketTags._FieldType, XMLDataPacketTags._FieldTypeBigInt );
 
                   XML_FieldsSection.item( 0 ).appendChild( XML_FieldSecurityToken );
@@ -285,7 +285,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
                if ( strSecurityToken != null && strSecurityToken.trim().equals("") == false ) {
 
-                  XML_ROW.setAttribute( XMLDataPacketTags._XML_StructSecurityToken, strSecurityToken );
+                  XML_ROW.setAttribute( XMLDataPacketTags._XML_StructSecurityTokenID, strSecurityToken );
                  
                }
 
@@ -318,7 +318,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
                   if ( strSecurityToken != null && strSecurityToken.trim().equals( "" ) == false ) {
 
-                     ((Element) XML_ErrorSection.item( 0 )).setAttribute( XMLDataPacketTags._XML_StructSecurityToken, strSecurityToken );
+                     ((Element) XML_ErrorSection.item( 0 )).setAttribute( XMLDataPacketTags._XML_StructSecurityTokenID, strSecurityToken );
 
                   }
 

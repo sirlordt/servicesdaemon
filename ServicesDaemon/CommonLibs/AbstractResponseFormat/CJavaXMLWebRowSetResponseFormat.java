@@ -6,7 +6,6 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 import javax.sql.RowSetMetaData;
@@ -69,7 +68,7 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 	
 	}
 
-    public void DescribeService( CAbstractService Service, CachedRowSet CachedRowset ) {
+    public void DescribeService( CAbstractService Service, CachedRowSet CachedRowset, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	if ( Service.getHiddenService() == false ) {
     		
@@ -84,7 +83,7 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 
 	        Iterator< Entry< String, ArrayList< CInputServiceParameter > > > It = GroupsInputParametersService.entrySet().iterator();
 
-	        OwnerConfig.Logger.LogMessage( "1", OwnerConfig.Lang.Translate( "Service [%s] input params count: [%s]", Service.getServiceName(), Integer.toString( GroupsInputParametersService.size() ) ) );
+	        Logger.LogMessage( "1", Lang.Translate( "Service [%s] input params count: [%s]", Service.getServiceName(), Integer.toString( GroupsInputParametersService.size() ) ) );
 	        
             while ( It.hasNext() ) {
 	        
@@ -134,7 +133,7 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
             	}
             	catch ( Exception Ex ) {
             		
-                	OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+                	Logger.LogException( "-1010", Ex.getMessage(), Ex );
             		
             	}
             	
@@ -247,7 +246,7 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 					CAbstractService Service = RegisteredServices.get( strServName );
 
 					if ( Service != null )
-						this.DescribeService( Service, CachedRowset );
+						this.DescribeService( Service, CachedRowset, Logger, Lang );
 
 				}
 
@@ -443,52 +442,56 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 
 				CMemoryRowSet MemoryRowSet = new CMemoryRowSet( false );
 
+				ResultSet SQLDataSet = null;
+				
 				if ( SQLDataSetResult != null ) {
 
 					MemoryRowSet.cloneOnlyMetaData( SQLDataSetResult.Result, DBEngine, null, Logger, Lang );
-					MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructSQLOperationAffectedRows, Types.BIGINT, NamesSQLTypes._BIGINT, 0, JavaXMLWebRowSetTags._XML_StructSQLOperationAffectedRows );
-					MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructSQLOperationCode, Types.INTEGER, NamesSQLTypes._INTEGER, 0, JavaXMLWebRowSetTags._XML_StructSQLOperationCode );
-					MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructSQLOperationDescription, Types.VARCHAR, NamesSQLTypes._VARCHAR, JavaXMLWebRowSetTags._XML_StructSQLOperationDescriptionLength, JavaXMLWebRowSetTags._XML_StructSQLOperationDescription );
+					MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructAffectedRows, Types.BIGINT, NamesSQLTypes._BIGINT, 0, JavaXMLWebRowSetTags._XML_StructAffectedRows );
+					MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructCode, Types.INTEGER, NamesSQLTypes._INTEGER, 0, JavaXMLWebRowSetTags._XML_StructCode );
+					MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructDescription, Types.VARCHAR, NamesSQLTypes._VARCHAR, JavaXMLWebRowSetTags._XML_StructDescriptionLength, JavaXMLWebRowSetTags._XML_StructDescription );
+					 
+					if ( SQLDataSetResult.Result != null ) {   
 
-					LinkedHashMap<String,Object> DefaultFieldValues = new LinkedHashMap<String,Object>();
+						//LinkedHashMap<String,Object> DefaultFieldValues = new LinkedHashMap<String,Object>();
 
-					if ( SQLDataSetResult.Result != null && SQLDataSetResult.intCode >= 0 ) {   
+						//DefaultFieldValues.clear();
 
-						DefaultFieldValues.clear();
+						//DefaultFieldValues.put( JavaXMLWebRowSetTags._XML_StructSQLOperationAffectedRows, SQLDataSetResult.lngAffectedRows );
+						//DefaultFieldValues.put( JavaXMLWebRowSetTags._XML_StructSQLOperationCode, SQLDataSetResult.intCode );
+						//DefaultFieldValues.put( JavaXMLWebRowSetTags._XML_StructSQLOperationDescription, SQLDataSetResult.strDescription );
 
-						DefaultFieldValues.put( JavaXMLWebRowSetTags._XML_StructSQLOperationAffectedRows, SQLDataSetResult.lngAffectedRows );
-						DefaultFieldValues.put( JavaXMLWebRowSetTags._XML_StructSQLOperationCode, SQLDataSetResult.intCode );
-						DefaultFieldValues.put( JavaXMLWebRowSetTags._XML_StructSQLOperationDescription, SQLDataSetResult.strDescription );
-
-						MemoryRowSet.addRowData( SQLDataSetResult.Result, DBEngine, Logger, Lang );
-						MemoryRowSet.NormalizeRowCount( DefaultFieldValues ); //add values to code and description field values
+						//MemoryRowSet.addRowData( SQLDataSetResult.Result, DBEngine, Logger, Lang );
+						//MemoryRowSet.NormalizeRowCount( DefaultFieldValues ); //add values to code and description field values
+						SQLDataSet = SQLDataSetResult.Result;
 
 					}
 					else {
 
-						MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructSQLOperationAffectedRows, SQLDataSetResult.lngAffectedRows );
-						MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructSQLOperationCode, SQLDataSetResult.intCode );
-						MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructSQLOperationDescription, SQLDataSetResult.strDescription );
-						MemoryRowSet.NormalizeRowCount(); //add null to another fields values
+						MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructAffectedRows, SQLDataSetResult.lngAffectedRows );
+						MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructCode, SQLDataSetResult.intCode );
+						MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructDescription, SQLDataSetResult.strDescription );
+						//MemoryRowSet.NormalizeRowCount(); //add null to another fields values
 
 					}
 
 				}
 				else {
 
-					MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructSQLOperationAffectedRows, Types.BIGINT, NamesSQLTypes._BIGINT, 0, JavaXMLWebRowSetTags._XML_StructSQLOperationAffectedRows );
-					MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructSQLOperationCode, Types.INTEGER, NamesSQLTypes._INTEGER, 0, JavaXMLWebRowSetTags._XML_StructSQLOperationCode );
-					MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructSQLOperationDescription, Types.VARCHAR, NamesSQLTypes._VARCHAR, JavaXMLWebRowSetTags._XML_StructSQLOperationDescriptionLength, JavaXMLWebRowSetTags._XML_StructSQLOperationDescription );
+					MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructAffectedRows, Types.BIGINT, NamesSQLTypes._BIGINT, 0, JavaXMLWebRowSetTags._XML_StructAffectedRows );
+					MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructCode, Types.INTEGER, NamesSQLTypes._INTEGER, 0, JavaXMLWebRowSetTags._XML_StructCode );
+					MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructDescription, Types.VARCHAR, NamesSQLTypes._VARCHAR, JavaXMLWebRowSetTags._XML_StructDescriptionLength, JavaXMLWebRowSetTags._XML_StructDescription );
 
 				}
 
-				CachedRowSet CachedRowset = MemoryRowSet.createCachedRowSet();
+				if ( SQLDataSet == null )   
+				   SQLDataSet = MemoryRowSet.createCachedRowSet();
 
 				WebRowSet wrs = new WebRowSetImpl();
 
 				StringWriter sw = new StringWriter();
 
-				wrs.writeXml( CachedRowset, sw );
+				wrs.writeXml( SQLDataSet, sw );
 
 				strResult = sw.toString();
 
@@ -548,49 +551,49 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 					if ( SQLDataSet != null ) {
 
 						MemoryRowSet.cloneOnlyMetaData( SQLDataSet, DBEngine, null, Logger, Lang );
-						MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructSQLOperationAffectedRows, Types.BIGINT, NamesSQLTypes._BIGINT, 0, JavaXMLWebRowSetTags._XML_StructSQLOperationAffectedRows );
+						/*MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructSQLOperationAffectedRows, Types.BIGINT, NamesSQLTypes._BIGINT, 0, JavaXMLWebRowSetTags._XML_StructSQLOperationAffectedRows );
 						MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructSQLOperationCode, Types.INTEGER, NamesSQLTypes._INTEGER, 0, JavaXMLWebRowSetTags._XML_StructSQLOperationCode );
 						MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructSQLOperationDescription, Types.VARCHAR, NamesSQLTypes._VARCHAR, JavaXMLWebRowSetTags._XML_StructSQLOperationDescriptionLength, JavaXMLWebRowSetTags._XML_StructSQLOperationDescription );
 
-						LinkedHashMap<String,Object> DefaultFieldValues = new LinkedHashMap<String,Object>();
+						LinkedHashMap<String,Object> DefaultFieldValues = new LinkedHashMap<String,Object>();*/
 
 						for ( CResultSetResult SQLDataSetResultToAdd: SQLDataSetResultList ) {    
 
-							if ( SQLDataSetResultToAdd.Result != null && SQLDataSetResultToAdd.intCode >= 0 ) {   
+							if ( SQLDataSetResultToAdd.Result != null ) {   
 
-								DefaultFieldValues.clear();
+								/*DefaultFieldValues.clear();
 
 								DefaultFieldValues.put( JavaXMLWebRowSetTags._XML_StructSQLOperationAffectedRows, SQLDataSetResultToAdd.lngAffectedRows );
 								DefaultFieldValues.put( JavaXMLWebRowSetTags._XML_StructSQLOperationCode, SQLDataSetResultToAdd.intCode );
-								DefaultFieldValues.put( JavaXMLWebRowSetTags._XML_StructSQLOperationDescription, SQLDataSetResultToAdd.strDescription );
+								DefaultFieldValues.put( JavaXMLWebRowSetTags._XML_StructSQLOperationDescription, SQLDataSetResultToAdd.strDescription );*/
 
 								MemoryRowSet.addRowData( SQLDataSet, DBEngine, Logger, Lang );
-								MemoryRowSet.NormalizeRowCount( DefaultFieldValues ); //add default values to code and description field values
+								//MemoryRowSet.NormalizeRowCount( DefaultFieldValues ); //add default values to code and description field values
 
 							}
-							else {
+							/*else {
 
 								MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructSQLOperationAffectedRows, SQLDataSetResultToAdd.lngAffectedRows );
 								MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructSQLOperationCode, SQLDataSetResultToAdd.intCode );
 								MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructSQLOperationDescription, SQLDataSetResultToAdd.strDescription );
 								MemoryRowSet.NormalizeRowCount(); //add default values to another fields values
 
-							}
+							}*/
 
 						}
 
 					}
 					else {
 
-						MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructSQLOperationAffectedRows, Types.BIGINT, NamesSQLTypes._BIGINT, 0, JavaXMLWebRowSetTags._XML_StructSQLOperationAffectedRows );
-						MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructSQLOperationCode, Types.INTEGER, NamesSQLTypes._INTEGER, 0, JavaXMLWebRowSetTags._XML_StructSQLOperationCode );
-						MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructSQLOperationDescription, Types.VARCHAR, NamesSQLTypes._VARCHAR, JavaXMLWebRowSetTags._XML_StructSQLOperationDescriptionLength, JavaXMLWebRowSetTags._XML_StructSQLOperationDescription );
+						MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructAffectedRows, Types.BIGINT, NamesSQLTypes._BIGINT, 0, JavaXMLWebRowSetTags._XML_StructAffectedRows );
+						MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructCode, Types.INTEGER, NamesSQLTypes._INTEGER, 0, JavaXMLWebRowSetTags._XML_StructCode );
+						MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructDescription, Types.VARCHAR, NamesSQLTypes._VARCHAR, JavaXMLWebRowSetTags._XML_StructDescriptionLength, JavaXMLWebRowSetTags._XML_StructDescription );
 
 						for ( CResultSetResult SQLDataSetResultToAdd: SQLDataSetResultList ) {    
 
-							MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructSQLOperationAffectedRows,- SQLDataSetResultToAdd.lngAffectedRows );
-							MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructSQLOperationCode, SQLDataSetResultToAdd.intCode );
-							MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructSQLOperationDescription, SQLDataSetResultToAdd.strDescription );
+							MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructAffectedRows,- SQLDataSetResultToAdd.lngAffectedRows );
+							MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructCode, SQLDataSetResultToAdd.intCode );
+							MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructDescription, SQLDataSetResultToAdd.strDescription );
 
 						}
 

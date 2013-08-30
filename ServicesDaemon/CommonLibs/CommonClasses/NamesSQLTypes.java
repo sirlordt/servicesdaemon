@@ -91,6 +91,12 @@ public class NamesSQLTypes {
 		
 	}
 	
+	public static boolean IsString( int intSQLType ) {
+		
+		return intSQLType == Types.VARCHAR || intSQLType == Types.CHAR;
+		
+	} 
+	
 	public static boolean IsIntegerCompatible( int intSQLType1, int intSQLType2 ) {
 		
 		int Compatibles[] = { Types.BIGINT, Types.INTEGER, Types.SMALLINT };
