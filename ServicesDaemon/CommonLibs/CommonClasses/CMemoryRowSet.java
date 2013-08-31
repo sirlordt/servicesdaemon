@@ -1513,7 +1513,7 @@ public class CMemoryRowSet {
 				if ( strResult.isEmpty() == false )
 					strResult = strResult + strFieldSeparator + "\'" + MemoryField.FieldValueToString( intIndexRow, true, strDateFormat, strTimeFormat, strDateTimeFormat, bUseLastRowIfRowNotExits, Logger, Lang ) + "\'";
 				else
-					strResult =  strFieldSeparator + "\'" + MemoryField.FieldValueToString( intIndexRow, true, strDateFormat, strTimeFormat, strDateTimeFormat, bUseLastRowIfRowNotExits, Logger, Lang ) + "\'";
+					strResult =  "\'" + MemoryField.FieldValueToString( intIndexRow, true, strDateFormat, strTimeFormat, strDateTimeFormat, bUseLastRowIfRowNotExits, Logger, Lang ) + "\'";
 
 			}
 			else {
@@ -1521,7 +1521,7 @@ public class CMemoryRowSet {
 				if ( strResult.isEmpty() == false )
 					strResult = strResult + strFieldSeparator + MemoryField.FieldValueToString( intIndexRow, true, strDateFormat, strTimeFormat, strDateTimeFormat, bUseLastRowIfRowNotExits, Logger, Lang );
 				else
-					strResult =  strFieldSeparator + MemoryField.FieldValueToString( intIndexRow, true, strDateFormat, strTimeFormat, strDateTimeFormat, bUseLastRowIfRowNotExits, Logger, Lang );
+					strResult =  MemoryField.FieldValueToString( intIndexRow, true, strDateFormat, strTimeFormat, strDateTimeFormat, bUseLastRowIfRowNotExits, Logger, Lang );
 				
 			}
 			

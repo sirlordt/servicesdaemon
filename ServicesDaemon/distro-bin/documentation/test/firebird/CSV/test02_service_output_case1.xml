@@ -1,0 +1,3 @@
+IDVALID;IDUSER;IDGROUP;LASTACCESSDATE;LASTACCESSTIME;SecurityTokenID;Code;Description
+integer;integer;integer;date;time;bigint;integer;varchar(255)
+1;1;1;null;null;5173168628737987051;1;Inicio de sesión exitoso

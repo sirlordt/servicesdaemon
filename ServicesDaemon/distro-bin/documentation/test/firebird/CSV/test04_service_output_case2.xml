@@ -1,0 +1,3 @@
+IDUSER;IDGROUP;DISABLED;USERNAME;PASSWD;FIRSTNAME;LASTNAME;ACCESS_DATE;ACCESS_TIME
+integer;integer;smallint;varchar(50);varchar(50);varchar(50);varchar(50);date;time
+1;1;0;test1;123qwerty;System user firstname;System user lastname;31/08/2013;10:10:14

@@ -2513,21 +2513,21 @@ public abstract class CAbstractDBEngine {
 								 }
 				case Types.DATE: {
 					               
-					                SimpleDateFormat DFormatter = new SimpleDateFormat("yyyyMMdd");
+					                SimpleDateFormat DFormatter = new SimpleDateFormat( strDateFormat );
 					                strResult = DFormatter.format( Resultset.getDate( intColumnIndex ) );
 									break; 
 					             
 				                 }
 				case Types.TIME: {  
 					
-		                            SimpleDateFormat TFormatter = new SimpleDateFormat("HHmmss");
+		                            SimpleDateFormat TFormatter = new SimpleDateFormat( strTimeFormat );
 					                strResult = TFormatter.format( Resultset.getTime( intColumnIndex ) );
 									break; 
 					               
 				                 }
 				case Types.TIMESTAMP: {  
 					
-		                                 SimpleDateFormat DTFormatter = new SimpleDateFormat("yyyyMMdd HHmmss");
+		                                 SimpleDateFormat DTFormatter = new SimpleDateFormat( strDateTimeFormat );
 					                     strResult = DTFormatter.format( Resultset.getTimestamp( intColumnIndex ) );
 					                     break; 
 					                    
@@ -2538,6 +2538,12 @@ public abstract class CAbstractDBEngine {
 	
 		    }
 	   
+		    if ( Resultset.wasNull() ) {
+		    	
+		    	strResult = "null";
+		    	
+		    }
+		    
 	    }
 	    catch ( Exception Ex ) {
 		   
@@ -2584,21 +2590,21 @@ public abstract class CAbstractDBEngine {
 								 }
 				case Types.DATE: {
 					               
-					                SimpleDateFormat DFormatter = new SimpleDateFormat("yyyyMMdd");
+					                SimpleDateFormat DFormatter = new SimpleDateFormat( strDateFormat );
 					                strResult = DFormatter.format( Resultset.getDate( strFieldName ) );
 									break; 
 					             
 				                 }
 				case Types.TIME: {  
 					
-		                            SimpleDateFormat TFormatter = new SimpleDateFormat("HHmmss");
+		                            SimpleDateFormat TFormatter = new SimpleDateFormat( strTimeFormat );
 					                strResult = TFormatter.format( Resultset.getTime( strFieldName ) );
 									break; 
 					               
 				                 }
 				case Types.TIMESTAMP: {  
 					
-		                                 SimpleDateFormat DTFormatter = new SimpleDateFormat("yyyyMMdd HHmmss");
+		                                 SimpleDateFormat DTFormatter = new SimpleDateFormat( strDateTimeFormat );
 					                     strResult = DTFormatter.format( Resultset.getTimestamp( strFieldName ) );
 					                     break; 
 					                    
@@ -2608,6 +2614,12 @@ public abstract class CAbstractDBEngine {
 				case Types.DECIMAL: {  strResult = Float.toString( Resultset.getFloat( strFieldName ) ); break; }
 				case Types.DOUBLE: {  break; }
 	
+		    }
+		    
+		    if ( Resultset.wasNull() ) {
+		    	
+		    	strResult = "null";
+		    	
 		    }
 	   
 	    }

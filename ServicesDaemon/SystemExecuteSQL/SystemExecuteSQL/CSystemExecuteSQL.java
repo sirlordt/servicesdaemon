@@ -385,7 +385,7 @@ public class CSystemExecuteSQL extends CAbstractService {
 		        			
 		            }	
 					
-					String strResponseBuffer = ResponseFormat.FormatResultsSets( ResultsSets, DBEngine, strResponseFormatVersion, ConfigDBConnection!=null?ConfigDBConnection.strTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Time_Format ), ConfigDBConnection!=null?ConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_DateTime_Format ), ConfigDBConnection!=null?ConfigDBConnection.strDateFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Date_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang, 1 );
+					String strResponseBuffer = ResponseFormat.FormatResultsSets( ResultsSets, DBEngine, strResponseFormatVersion, ConfigDBConnection!=null?ConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_DateTime_Format ), ConfigDBConnection!=null?ConfigDBConnection.strDateFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Date_Format ), ConfigDBConnection!=null?ConfigDBConnection.strTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang, 1 );
 
 		            if ( ServiceLogger != null ) { //Trace how much time in format data
 		            	

@@ -35,7 +35,7 @@ public interface CSVTags {
 	public final static int    _CSV_StructParamDescriptionLength        = 255;
 	
 	public final static String _FieldTypeInteger                        = "integer";
-	public final static String _FieldTypeBigInt                         = "long";
+	public final static String _FieldTypeBigInt                         = "bigint";
 	public final static String _FieldTypeString                         = "varchar";
 
 }

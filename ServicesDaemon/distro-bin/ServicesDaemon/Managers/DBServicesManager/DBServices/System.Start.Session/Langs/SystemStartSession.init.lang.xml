@@ -8,7 +8,7 @@
 <entry key="Response format version, example: 1.1">Versión del formato de respuesta, ejemplo: 1.1</entry>
 <entry key="The [%s] attribute value [%s] is invalid, name not found in databases conections from manager config file, for the section [%s] at relative index [%s], ignoring the section">El [%s] atributo con el valor de [%s] es inválido, el nombre de la conexión a base de datos no fue encontrado en archivo de configuración del DBManager, para la sección [%s] en la posición relativa [%s], ignorando la sección></entry>
 <entry key="The [%s] attribute value [%s] is invalid, name duplicated config file, for the section [%s] at relative index [%s], ignoring the section">El [%s] atributo con el valor de [%s] es inválido, el nombre se encuentra duplicado en el archivo de configuración, para la sección [%s] en la posición relativa [%s], ignorando la sección></entry>
-<entry key="Added input parameter strName: [%s] bRequiered: [%s] strDataType: [%s] strScope: [%s] intLength: [%s] strDescription: [%s]">Agregado el parámetro de entrada strName: [%s] bRequiered: [%s] strType: [%s] strSubType: [%s] intLength: [%s] strDescription: [%s]</entry>
+<entry key="Added input parameter strName: [%s] bRequired: [%s] strDataType: [%s] strScope: [%s] intLength: [%s] strDescription: [%s]">Agregado el parámetro de entrada strName: [%s] bRequiered: [%s] strType: [%s] strSubType: [%s] intLength: [%s] strDescription: [%s]</entry>
 <entry key="Cannot add the input parameter some values ​​are missing or invalid, for the node [%s] at relative index [%s]">No puedo agregar el parámetro de entrada algunos valores faltan o son inválidos, para el nodo [%s] en la posición relativa [%s]</entry>
 <entry key="No valid input parameters defined, for the node [%s] at relative index [%s]">No hay parámetros de entrada válidos definidos, para el nodo [%s] en la posición relativa [%s]</entry>
 <entry key="At least one required parameter must be defined, for the node [%s] at relative index [%s]">Al menos un parámetro requerido debe ser definido, para el nodo [%s] en la posición relativa [%s]</entry>
@@ -16,6 +16,11 @@
 <entry key="Failed to add the DBConnection, for the section [%s] at relative index [%s], ignoring the section">Falló al agregar la DBCOnnection, para la sección [%s] en la posición relativa [%s], ignorando la sección</entry>
 <entry key="The list of DBConections is empty">La lista de DBConnections no contiene ningún elemento</entry>
 <entry key="DBConections count registered: [%s]">Cantidad de DBConnetions registradas: [%s]</entry>
+<entry key="Added after check SQL success [%s]">Agregado SQL [%s] para un chequeo exitoso</entry>
+<entry key="Added after check SQL failed [%s]">Agregado SQL [%s] para un chequeo fallido</entry>
+<entry key="Added after check SQL disabled [%s]">Agregado SQL [%s] para un chequeo deshabilitado</entry>
+<entry key="Added after check SQL not found [%s]">Agregado SQL [%s] para un chequeo no encontrado</entry>
+<entry key="Added after check SQL [%s] for any">Agregado SQL [%s] para un chequeo cualquiera</entry>
 <entry key="Added field [%s] for response success">Campo [%s] agregado para la respuesta satisfactoria</entry>
 <entry key="Added field [%s] for response failed">Campo [%s] agregado para la respuesta fallida</entry>
 <entry key="Added field [%s] for response disabled">Campo [%s] agregado para la respuesta deshabilitada</entry>
@@ -23,7 +28,7 @@
 <entry key="Added field [%s] for any response">Campo [%s] agregado para cualquier tipo de respuesta</entry>
 <entry key="The [%s] parameter is required for service and was not sent or its contents is empty">El parámetro [%s] es requerido por el servicio y no fue enviado o su contenido está vacío</entry>
 <entry key="The batabase connection name [%s] not found">La conexión de base de datos con nombre [%s] no fue encontrada</entry>
-<entry key="The database engine name [%s] version [%s] not found">El motor de base de datos de nombre [%s] no fue econtrado</entry>
+<entry key="The database engine name [%s] version [%s] not found">El motor de base de datos de nombre [%s] no fue encontrado</entry>
 <entry key="Database connection established to next URL: [%s] and user: [%s]">Conexión a base de datos establecida al siguiente URL: [%s] y usuario: [%s]</entry>
 <entry key="Trying to connect with the next URL: [%s] and user: [%s]">Intentado establecer conexión con el siguiente URL: [%s] y usuario: [%s]</entry>
 <entry key="Failed to connect to database name: [%s]">Falló al conectarse a la base de datos de nombre: [%s]</entry>
@@ -42,6 +47,8 @@
 <entry key="Failed start session">Inicio de sesión fallida</entry>
 <entry key="Start session failed, disabled account">Inicio de sesión fallida, cuenta deshabilitada</entry>
 <entry key="Start session failed, account not found">Inicio de sesión fallida, cuenta no encontrada</entry>
+<entry key="Failed start session with SessionKey: [%s], Database: [%s], Cause: [%s]">Inicio de sesión fallido SessionKey: [%s], Database: [%s], Causa: [%s]</entry>
+<entry key="Success start session with SessionKey: [%s], SecurityTokenID: [%s], Database: [%s]">Inicio de sesión exitoso SessionKey: [%s], SecurityTokenID: [%s], Database: [%s]</entry>
 <entry key="Field name [%s] not found in result from SQL [%s]">El campo de nombre [%s] no fue encontrado en el resultado del SQL</entry>
 <entry key="Failed to start session in database name: [%s], see the log file for more details">Inicio de sesión fallido, vea el archivo de registro para más detalles</entry>
 <entry key="No rows found in result from SQL [%s]">No hay filas de respuesta en el resultado del SQL: [$s]</entry>

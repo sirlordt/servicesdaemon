@@ -4,30 +4,44 @@
 <comment>Language file messages translations</comment>
 <entry key="Allow execute SQL statement using a transaction id">Permite ejecutar una instrucción SQL en la base de datos usando id de transacción</entry>
 <entry key="Transaction id obtained with a start transaction service call">Identificador de transacción obtenido con una llamada al servicio de inicio de transacción</entry>
+<entry key="Commit all pending operations in context of current transaction, example: 1">Aplicar todas las operaciones pendientes en el contexto de la transacción actual</entry>
 <entry key="Response format name, example: XML-DATAPACKET, CSV, JSON">Nombre del formato de respuesta, ejemplo: XML-DATAPACKET, CSV, JSON</entry>
 <entry key="Response format version, example: 1.1">Versión del formato de respuesta, ejemplo: 1.1</entry>
 <entry key="SQL statement">Instrucción SQL</entry>
 
+
 <entry key="Reading XML node filter: [%s]">Leyendo nodo XML del filtro: [%s]</entry>
 
 <entry key="The database connection semaphore not found for transaction id: [%s]">El semáforo para la conexión de base de datos no fue encontrado para el id de transacción: [%s]</entry>
-<entry key="Failed to execute SQL statement for transaction id: [%s], see the log file for more details">Error al ejecutar la instrucción SQL para la transacción id: [%s]</entry>
+<entry key="Failed to execute SQL statement for transaction id: [%s], see the log file for more details">Error al ejecutar la instrucción SQL para la transacción id: [%s], vea el archivo de registro para más detalles</entry>
 <entry key="The database engine name [%s] version [%s] not found">El motor de base de datos de nombre [%s] no fue econtrado</entry>
 <entry key="Cannot locate in session the database connection config for the security token: [%s]">No puedo localizar en la sesión la configuración de conexión a la base de datos para el token de seguridad: [%s]</entry>
-<entry key="No found transaction for id: [%s]">No se encontró la trasacción para el id: [%s]</entry>
+<entry key="No found transaction for id: [%s]">No se encontró la transacción para el id: [%s]</entry>
+<entry key="No found transaction for id: [%s], see the log file for more details">No se encontró la transacción para el id: [%s], vea el archivo de registro para más detalles</entry>
 <entry key="Duplicate filters name [%s], for the section [%s]">Filtros con nombre [%s] duplicado, para la seción [%s]</entry>
 <entry key="Cannot add filters name [%s], the filters list is empty, for the section [%s]">No puedo agregar los filtros de nombre [%s], la lista de filtros se encuentra vacía, para la sección [%s]</entry>
 <entry key="Count of registered filters [%s], for filters name [%s] section [%s]">Cantidad de filtros registrados [%s], para el nombre de filtros [%s] sección [%s]</entry>
-<entry key="The SQL statement is null for transaction id: [%s]">La instrucción SQL es nula para la transacción id: [%s]</entry>
+<entry key="The SQL statement is null for transaction id: [%s]">La sentencia SQL es nula para la transacción id: [%s]</entry>
 <entry key="The SQL statement [%s] is blocked or not allowed by filter for transaction id: [%s]">La instrucción SQL: [%s] es bloqueda o no permitida por los filtros para la transacción id: [%s]</entry>
+<entry key="Success commit transaction with SessionKey: [%s], SecurityTokenID: [%s], TransactionID: [%s], Database: [%s]">Transacción aplicada con éxito con SessionKey: [%s], SecurityTokenID: [%s], TransactionID: [%s], Database: [%s]</entry>
 
 <entry key="Unkown Macro type [%s], field name [%s], field value [%s]">Tipo del macro desconocido [%s], nombre del campo [%s], valor del campo [%s]</entry>
 <entry key="Unkown SQL field type [%s], field name [%s], field value [%s]">Tipo SQL del campo desconocido [%s], nombre del campo [%s], valor del campo [%s]</entry>
-<entry key="Executing the next SQL statment [%s] index call [%s]">Ejecutando la siguiente instrucción SQL [%s] índice de la llamada [%s]</entry>
-<entry key="Sucess to execute the SQL statement">Éxito al ejecutar la instrucción SQL</entry>
-<entry key="Error to execute the SQL statement, see the log file for more details">Error al ejecutar la instrucción SQL, vea el archivo de registro para más detalles</entry>
-<entry key="Success execute the modify sql">Éxito al ejecutar el SQL de modificación</entry>
-<entry key="Fail to execute the modify sql, see the log file for more details">Falló al ejecutar el SQL de modificación, vea el archivo de registro para más detalles</entry>
+<entry key="Executing the next SQL statement [%s] index call [%s]">Ejecutando la siguiente sentencia SQL [%s] índice de la llamada [%s]</entry>
+<entry key="Sucess to execute the SQL statement">Éxito al ejecutar la sentencia SQL</entry>
+<entry key="Error to execute the SQL statement, see the log file for more details">Error al ejecutar la sentencia SQL, vea el archivo de registro para más detalles</entry>
+<entry key="Error to execute the next SQL statement, no valid params names found for service call">Error al ejecutar la sentencia SQL, no fueron encontrados nombres de parámetros válidos en la llamada al servicio</entry>
+<entry key="Error to execute the next SQL statement [%s] index call [%s]">Error al ejecutar la siguiente sentencia SQL [%s] índice de llamada [%s]</entry>
+<entry key="Sucess to execute the plain query SQL statement [%s]">Éxito al ejecutar la sentencia de consulta plana SQL [%s]</entry>
+<entry key="Error to execute the plain query SQL statement [%s]">Error al ejecutar la sentencia de consulta plana SQL [%s]</entry>
+<entry key="Sucess to execute the plain SQL statement [%s]">Éxito al ejecutar la sentencia SQL plana [%s]</entry>
+<entry key="Error to execute the plain SQL statement [%s]">Error al ejecutar la sentencia SQL plana [%s]</entry>
+<entry key="Init plain SQL statement">Iniciando sentencia SQL plana</entry>
+<entry key="End plain SQL statement">Sentencia SQL plana finalizada</entry>
+<entry key="Init complex SQL statement">Iniciando sentencia SQL compleja</entry>
+<entry key="End complex SQL statement">Sentencia SQL compleja finalizada</entry>
+<entry key="Init response format data set">Iniciando formateado de respuesta para el conjunto de datos</entry>
+<entry key="End response format data set">Formateado de respuesta para el conjunto de datos finalizada</entry>
 <entry key=""></entry>
 <entry key=""></entry>
 <entry key=""></entry>

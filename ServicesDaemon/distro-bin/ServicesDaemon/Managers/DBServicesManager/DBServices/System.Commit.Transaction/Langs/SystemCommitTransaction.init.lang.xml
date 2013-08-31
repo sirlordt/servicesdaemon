@@ -18,13 +18,13 @@
 <entry key="Cannot close database connection">No puedo cerrar la conexión a la base de datos</entry>
 <entry key="Database connection is invalid">La conexión a la base de datos es inválida</entry>
 
-<entry key="Success commit transaction for id: [%s]">Trasacción aplicada con éxito para el id: [%s]</entry>
+<entry key="Success commit transaction for id: [%s]">Transacción aplicada con éxito para el id: [%s]</entry>
 <entry key="The database connection semaphore not found for transaction id: [%s]">El semáforo para la conexión de base de datos no fue encontrado para el id de transacción: [%s]</entry>
 <entry key="Failed to commit transaction for id: [%s], see the log file for more details">Error al aplicar la transacción para el id: [%s]</entry>
 <entry key="The database engine name [%s] version [%s] not found">El motor de base de datos de nombre [%s] no fue econtrado</entry>
 <entry key="Cannot locate in session the database connection config for the security token: [%s]">No puedo localizar en la sesión la configuración de conexión a la base de datos para el token de seguridad: [%s]</entry>
 <entry key="No found database connection from transaction id: [%s]">No se encontró la conexión a la base de datos para trasacción id: [%s]</entry>
-<entry key=""></entry>
+<entry key="Success commit transaction with SessionKey: [%s], SecurityTokenID: [%s], TransactionID: [%s], Database: [%s]">Transacción aplicada con éxito con SessionKey: [%s], SecurityTokenID: [%s], TransactionID: [%s], Database: [%s]</entry>
 <entry key=""></entry>
 <entry key=""></entry>
 <entry key=""></entry>

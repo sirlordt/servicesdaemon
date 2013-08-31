@@ -23,7 +23,8 @@
 <entry key="The database engine name [%s] version [%s] not found">El motor de base de datos de nombre [%s] no fue econtrado</entry>
 <entry key="Cannot locate in session the database connection config for the security token id: [%s]">No puedo localizar en la sesión la configuración de conexión a la base de datos para el token de seguridad id: [%s]</entry>
 <entry key="No found transaction for security token id: [%s]">No se encontró la trasacción para el token de seguridad id: [%s]</entry>
-<entry key=""></entry>
+<entry key="Success end session with SessionKey: [%s], SecurityTokenID: [%s], Database: [%s]">Finalización de sesión exitoso SessionKey: [%s], SecurityTokenID: [%s], Database: [%s]</entry>
+<entry key="Success rollback and end transaction with SessionKey: [%s], SecurityTokenID: [%s], TransactionID: [%s], Database: [%s]">Trasacción revertida y terminada con éxito con SessionKey: [%s], SecurityTokenID: [%s], TransactionID: [%s], Database: [%s]</entry>
 <entry key=""></entry>
 <entry key=""></entry>
 <entry key=""></entry>

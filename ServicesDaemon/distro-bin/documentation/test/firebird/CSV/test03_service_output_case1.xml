@@ -1,0 +1,3 @@
+TransactionID;Code;Description
+bigint;integer;varchar(255)
+2356093044631317727;1;Transacción iniciada correctamente en la base de datos de nombre: [DB1]

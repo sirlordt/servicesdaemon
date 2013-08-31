@@ -60,7 +60,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 	
 	}
 
-    public void DescribeService( CAbstractService Service, ArrayList<String> strResponseBuffer, boolean bFieldsQuote, String strSeparatorSymbol, CExtendedLogger Logger, CLanguage Lang ) {
+    public void DescribeService( CAbstractService Service, StringBuilder strResponseBuffer, boolean bFieldsQuote, String strSeparatorSymbol, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	if ( Service.getHiddenService() == false ) {
     		
@@ -202,6 +202,9 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
                     		
     				    }
             			
+    				    strResponseBuffer.append( strRowData.toString() );
+    				    strResponseBuffer.append( "\r\n" );
+    				    
             		}
             	
             	}
@@ -228,7 +231,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 			
 				String strShowHeaders = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_ShowHeaders );
 				
-				ArrayList<String> strResponseBuffer = new ArrayList<String>();
+				StringBuilder strResponseBuffer = new StringBuilder();
 				
 				String strSeparatorSymbol = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_SeparatorSymbol );
 
@@ -299,7 +302,8 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 				    	
 				    }
 				    
-				    strResponseBuffer.add( strHeaders.toString() );
+				    strResponseBuffer.append( strHeaders.toString() );
+				    strResponseBuffer.append( "\r\n" );
 
 				};
 				
@@ -345,7 +349,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 	}
 
 	
-	public void FormatCSVHeaders( ResultSet SQLDataSet, CAbstractDBEngine DBEngine, ArrayList<String> strResponseBuffer, boolean bFieldsQuote, String strSeparatorSymbol, CExtendedLogger Logger, CLanguage Lang  ) {
+	public void FormatCSVHeaders( ResultSet SQLDataSet, CAbstractDBEngine DBEngine, StringBuilder strResponseBuffer, boolean bFieldsQuote, String strSeparatorSymbol, CExtendedLogger Logger, CLanguage Lang  ) {
 
 		try {
 		
@@ -354,7 +358,9 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 		    StringBuffer strFieldsName = new StringBuffer();
 		    StringBuffer strFieldsType = new StringBuffer();
 		    
-			for ( int i = 1; i <= DataSetMetaData.getColumnCount(); i++ ) {
+		    int intColumnCount = DataSetMetaData.getColumnCount();
+		    
+			for ( int i = 1; i <= intColumnCount; i++ ) {
 
 				int intFieldType = DBEngine.getJavaSQLColumnType( DataSetMetaData.getColumnType( i ), Logger, Lang );
 				
@@ -363,7 +369,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 
             	String strFieldLength = null;
             	
-            	if ( DataSetMetaData.getColumnDisplaySize( i ) > 0 ) {
+            	if ( NamesSQLTypes.IsString( intFieldType ) ) { // DataSetMetaData.getColumnDisplaySize( i ) > 0 ) {
             		
             		strFieldLength = Integer.toString( DataSetMetaData.getColumnDisplaySize( i ) );
             		
@@ -375,23 +381,29 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 			    if ( bFieldsQuote ) {
 			    	
 			    	strFieldsName.append( "\"" + strFieldName + "\"" );
-            		strFieldsType.append( "\"" + strFieldType + strFieldLength != null?"(" + strFieldLength + ")":"" + "\"" );
+            		strFieldsType.append( "\"" + new String( strFieldType + strFieldLength != null?"(" + strFieldLength + ")":"" + "\"" ) );
 			    	
 			    }
 			    else {
 			    	
 			    	strFieldsName.append( strFieldName );
-            		strFieldsType.append( strFieldType + strFieldLength != null?"(" + strFieldLength + ")":"" );
+            		strFieldsType.append( strFieldType + new String( strFieldLength != null?"(" + strFieldLength + ")":"" ) );
 			    	
 			    }
 
-		    	strFieldsName.append( strSeparatorSymbol );
-		    	strFieldsType.append( strSeparatorSymbol );
+			    if ( i < intColumnCount ) {
+		    	 
+			    	strFieldsName.append( strSeparatorSymbol );
+		    	    strFieldsType.append( strSeparatorSymbol );
+		    	    
+			    }   
 		    	
 			}
 			
-	    	strResponseBuffer.add( strFieldsName.toString() );
-	    	strResponseBuffer.add( strFieldsType.toString() );
+	    	strResponseBuffer.append( strFieldsName.toString() );
+	    	strResponseBuffer.append( "\r\n" );
+	    	strResponseBuffer.append( strFieldsType.toString() );
+	    	strResponseBuffer.append( "\r\n" );
 	    	
 		}
 		catch ( Exception Ex ) {
@@ -405,14 +417,16 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 		
 	}
 	
-	public void FormatCSVHeaders( CMemoryRowSet MemoryRowSet, ArrayList<String> strResponseBuffer, boolean bFieldsQuote, String strSeparatorSymbol, CExtendedLogger Logger, CLanguage Lang  ) {
+	public void FormatCSVHeaders( CMemoryRowSet MemoryRowSet, StringBuilder strResponseBuffer, boolean bFieldsQuote, String strSeparatorSymbol, CExtendedLogger Logger, CLanguage Lang  ) {
 		
 		try {
 			
 		    StringBuffer strFieldsName = new StringBuffer();
 		    StringBuffer strFieldsType = new StringBuffer();
 			
-            for ( int i = 0; i < MemoryRowSet.getFieldsCount(); i++ ) {
+		    int intColumnCount = MemoryRowSet.getFieldsCount();
+		    
+            for ( int i = 0; i < intColumnCount; i++ ) {
          	   
             	CMemoryFieldData Field = MemoryRowSet.getFieldByIndex( i );
 
@@ -420,7 +434,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
             	String strFieldType = Field.strSQLTypeName;
             	String strFieldLength = null;
             	
-            	if ( Field.intLength > 0 ) {
+            	if ( NamesSQLTypes.IsString( Field.intSQLType ) ) {
             		
             		strFieldLength = Integer.toString( Field.intLength );
             		
@@ -429,23 +443,29 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
             	if ( bFieldsQuote ) {
 
             		strFieldsName.append( "\"" + strFieldName + "\"" );
-            		strFieldsType.append( "\"" + strFieldType + strFieldLength != null?"(" + strFieldLength + ")":"" + "\"" );
+            		strFieldsType.append( "\"" + strFieldType + new String( strFieldLength != null?"(" + strFieldLength + ")":"" + "\"" ) );
 
             	}
             	else {
 
             		strFieldsName.append( strFieldName );
-            		strFieldsType.append( strFieldType + strFieldLength != null?"(" + strFieldLength + ")":"" );
+            		strFieldsType.append( strFieldType + new String( strFieldLength != null?"(" + strFieldLength + ")":"" ) );
 
             	}
 
-            	strFieldsName.append( strSeparatorSymbol );
-            	strFieldsType.append( strSeparatorSymbol );
+			    if ( i + 1 < intColumnCount ) {
+			    	 
+			    	strFieldsName.append( strSeparatorSymbol );
+		    	    strFieldsType.append( strSeparatorSymbol );
+		    	    
+			    }   
             
             }  
             
-	    	strResponseBuffer.add( strFieldsName.toString() );
-	    	strResponseBuffer.add( strFieldsType.toString() );
+	    	strResponseBuffer.append( strFieldsName.toString() );
+	    	strResponseBuffer.append( "\r\n" );
+	    	strResponseBuffer.append( strFieldsType.toString() );
+	    	strResponseBuffer.append( "\r\n" );
 			
 		}
 		catch ( Exception Ex ) {
@@ -459,17 +479,19 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 	
 	}
 
-	public void FormatCSVRowData( ResultSet SQLDataSet, CAbstractDBEngine DBEngine, ArrayList<String> strResponseBuffer, boolean bFieldsQuote, String strSeparatorSymbol, String strDateFormat, String strTimeFormat, String strDateTimeFormat, CExtendedLogger Logger, CLanguage Lang  ) {
+	public void FormatCSVRowData( ResultSet SQLDataSet, CAbstractDBEngine DBEngine, StringBuilder strResponseBuffer, boolean bFieldsQuote, String strSeparatorSymbol, String strDateFormat, String strTimeFormat, String strDateTimeFormat, CExtendedLogger Logger, CLanguage Lang  ) {
 		
 		try {
 			
 			java.sql.ResultSetMetaData DataSetMetaData = SQLDataSet.getMetaData();
 
+		    int intColumnCount = DataSetMetaData.getColumnCount();
+		    
 		    while ( SQLDataSet.next() == true ) {
 
 			    StringBuffer strRow = new StringBuffer();
 				
-		    	for ( int i = 1; i <= DataSetMetaData.getColumnCount(); i++ ) {
+			    for ( int i = 1; i <= intColumnCount; i++ ) {
 
 		    		String strFieldName = DataSetMetaData.getColumnName( i );
 
@@ -496,17 +518,28 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 		    			}
 
 		    		}
-		    		else if ( bFieldsQuote ) {
+		    		else {
+		    			
+		    			if ( bFieldsQuote ) {
+			    		
+		    				strRow.append( "\"null\"" );
 
-		    			strRow.append( "\"\"" );
+		    			}
+		    			else {
+		    				
+		    				strRow.append( "null" );
+		    				
+		    			}
 
 		    		}
 		    		
-		    		strRow.append( strSeparatorSymbol );
+		    		if ( i < intColumnCount )
+		    			strRow.append( strSeparatorSymbol );
 
 		    	}
 		    	
-		    	strResponseBuffer.add( strRow.toString() );
+		    	strResponseBuffer.append( strRow.toString() );
+		    	strResponseBuffer.append( "\r\n" );
 
 		    }  
 		
@@ -522,7 +555,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
         
 	}
 
-	public void FormatCSVRowData( CMemoryRowSet MemoryRowSet, ArrayList<String> strResponseBuffer, boolean bFieldsQuote, String strSeparatorSymbol, String strDateFormat, String strTimeFormat, String strDateTimeFormat, CExtendedLogger Logger, CLanguage Lang  ) {
+	public void FormatCSVRowData( CMemoryRowSet MemoryRowSet, StringBuilder strResponseBuffer, boolean bFieldsQuote, String strSeparatorSymbol, String strDateFormat, String strTimeFormat, String strDateTimeFormat, CExtendedLogger Logger, CLanguage Lang  ) {
 		
 		try {
 
@@ -532,7 +565,8 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 
 				String strRow = MemoryRowSet.RowToString( intRowIndex, bFieldsQuote, strSeparatorSymbol, strDateFormat, strTimeFormat, strDateTimeFormat, false, Logger, Lang );
 				
-				strResponseBuffer.add( strRow );
+				strResponseBuffer.append( strRow );
+		    	strResponseBuffer.append( "\r\n" );
 				
 			}	
 		
@@ -557,7 +591,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 
 			if ( Utilities.VersionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.VersionLessEquals( strVersion, this.strMaxVersion ) ) {
 
-				ArrayList<String> strResponseBuffer = new ArrayList<String>();
+				StringBuilder strResponseBuffer = new StringBuilder();
 				
 				String strShowHeaders = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_ShowHeaders );
 				String strSeparatorSymbol = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_SeparatorSymbol );
@@ -616,7 +650,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 
 			if ( Utilities.VersionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.VersionLessEquals( strVersion, this.strMaxVersion ) ) {
 
-				ArrayList<String> strResponseBuffer = new ArrayList<String>();
+				StringBuilder strResponseBuffer = new StringBuilder();
 				
 				String strShowHeaders = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_ShowHeaders );
 				String strSeparatorSymbol = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_SeparatorSymbol );
@@ -673,7 +707,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 		
 	}
 
-	public void FormatDefaultHeaders( ArrayList<String> strResponseBuffer, boolean bFieldsQuote, String strSeparatorSymbol ) {
+	public void FormatDefaultHeaders( StringBuilder strResponseBuffer, boolean bFieldsQuote, String strSeparatorSymbol ) {
 		
 		StringBuilder strFieldsName = new StringBuilder();
 		StringBuilder strFieldsType = new StringBuilder();
@@ -685,14 +719,12 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 			strFieldsName.append( "\"" + CSVTags._CSV_StructCode + "\"" );
 			strFieldsName.append( strSeparatorSymbol );
 			strFieldsName.append( "\"" + CSVTags._CSV_StructDescription + "\"" );
-			strFieldsName.append( strSeparatorSymbol );
 
 			strFieldsType.append( "\"" + CSVTags._FieldTypeBigInt  + "\"" );
-			strFieldsName.append( strSeparatorSymbol );
+			strFieldsType.append( strSeparatorSymbol );
 			strFieldsType.append( "\"" + CSVTags._FieldTypeInteger + "\"" );
-			strFieldsName.append( strSeparatorSymbol );
+			strFieldsType.append( strSeparatorSymbol );
 			strFieldsType.append( "\"" + CSVTags._FieldTypeString + "(" + CSVTags._CSV_StructDescriptionLength + ")\"" );
-			strFieldsName.append( strSeparatorSymbol );
 
 		}
 		else {
@@ -702,19 +734,19 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 			strFieldsName.append( CSVTags._CSV_StructCode );
 			strFieldsName.append( strSeparatorSymbol );
 			strFieldsName.append( CSVTags._CSV_StructDescription );
-			strFieldsName.append( strSeparatorSymbol );
 
 			strFieldsType.append( CSVTags._FieldTypeBigInt );
-			strFieldsName.append( strSeparatorSymbol );
+			strFieldsType.append( strSeparatorSymbol );
 			strFieldsType.append( CSVTags._FieldTypeInteger );
-			strFieldsName.append( strSeparatorSymbol );
+			strFieldsType.append( strSeparatorSymbol );
 			strFieldsType.append( CSVTags._FieldTypeString + "(" + CSVTags._CSV_StructDescriptionLength + ")" );
-			strFieldsName.append( strSeparatorSymbol );
 
 		}
 
-		strResponseBuffer.add( strFieldsName.toString() );
-		strResponseBuffer.add( strFieldsType.toString() );
+		strResponseBuffer.append( strFieldsName.toString() );
+    	strResponseBuffer.append( "\r\n" );
+		strResponseBuffer.append( strFieldsType.toString() );
+    	strResponseBuffer.append( "\r\n" );
 		
 	}
 	
@@ -727,7 +759,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
         	
 			if ( Utilities.VersionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.VersionLessEquals( strVersion, this.strMaxVersion ) ) {
 
-				ArrayList<String> strResponseBuffer = new ArrayList<String>();
+				StringBuilder strResponseBuffer = new StringBuilder();
 				
 				String strShowHeaders = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_ShowHeaders );
 				String strSeparatorSymbol = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_SeparatorSymbol );
@@ -839,7 +871,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
         	
 				if ( SQLDataSetResultList.size() > 0 ) {
 
-					ArrayList<String> strResponseBuffer = new ArrayList<String>();
+					StringBuilder strResponseBuffer = new StringBuilder();
 					
 					String strShowHeaders = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_ShowHeaders );
 					String strSeparatorSymbol = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_SeparatorSymbol );
@@ -898,7 +930,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 								
 							}
 
-							strResponseBuffer.add( strRowData.toString() );
+							strResponseBuffer.append( strRowData.toString() );
 							
 						}
 
@@ -954,7 +986,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 
 			if ( Utilities.VersionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.VersionLessEquals( strVersion, this.strMaxVersion ) ) {
 
-				ArrayList<String> strResponseBuffer = new ArrayList<String>();
+				StringBuilder strResponseBuffer = new StringBuilder();
 				
 				String strShowHeaders = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_ShowHeaders );
 				String strSeparatorSymbol = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_SeparatorSymbol );
@@ -1013,7 +1045,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 
 			if ( Utilities.VersionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.VersionLessEquals( strVersion, this.strMaxVersion ) ) {
 
-				ArrayList<String> strResponseBuffer = new ArrayList<String>();
+				StringBuilder strResponseBuffer = new StringBuilder();
 				
 				String strShowHeaders = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_ShowHeaders );
 				String strSeparatorSymbol = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_SeparatorSymbol );
@@ -1082,7 +1114,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 			
 				String strShowHeaders = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_ShowHeaders );
 				
-				ArrayList<String> strResponseBuffer = new ArrayList<String>();
+				StringBuilder strResponseBuffer = new StringBuilder();
 				
 				String strSeparatorSymbol = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_SeparatorSymbol );
 
@@ -1092,52 +1124,72 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 				
 				if ( strShowHeaders != null && strShowHeaders.equals( "true" ) ) {
 					
-				    StringBuffer strHeaders = new StringBuffer();
+				    StringBuffer strFieldsName = new StringBuffer();
+				    StringBuffer strFieldsType = new StringBuffer();
 				    
 				    if ( bFieldsQuote ) {
 
 				    	if ( strSecurityTokenID != null && strSecurityTokenID.isEmpty() == false ) {
 				    	
-				    		strHeaders.append( "\"" + CSVTags._CSV_StructSecurityTokenID + "\"" );
-				    	    strHeaders.append( strSeparatorSymbol );
+				    		strFieldsName.append( "\"" + CSVTags._CSV_StructSecurityTokenID + "\"" );
+				    	    strFieldsName.append( strSeparatorSymbol );
+				    	    strFieldsType.append( "\"" + CSVTags._FieldTypeBigInt + "\"" );
+				    	    strFieldsType.append( strSeparatorSymbol );
 				    	    
 				    	}
 				    	
 				    	if ( strTransactionID != null && strTransactionID.isEmpty() == false ) {
 
-				    		strHeaders.append( "\"" + CSVTags._CSV_StructTransactionID + "\"" );
-				    		strHeaders.append( strSeparatorSymbol );
+				    		strFieldsName.append( "\"" + CSVTags._CSV_StructTransactionID + "\"" );
+				    		strFieldsName.append( strSeparatorSymbol );
+				    	    strFieldsType.append( "\"" + CSVTags._FieldTypeBigInt + "\"" );
+				    	    strFieldsType.append( strSeparatorSymbol );
 				    		
 				    	}
 				    	
-				    	strHeaders.append( "\"" + CSVTags._CSV_StructCode + "\"" );
-				    	strHeaders.append( strSeparatorSymbol );
-				    	strHeaders.append( "\"" + CSVTags._CSV_StructDescription + "\"" );
+				    	strFieldsName.append( "\"" + CSVTags._CSV_StructCode + "\"" );
+				    	strFieldsName.append( strSeparatorSymbol );
+				    	strFieldsName.append( "\"" + CSVTags._CSV_StructDescription + "\"" );
 				    	
+			    	    strFieldsType.append( "\"" + CSVTags._FieldTypeInteger + "\"" );
+			    	    strFieldsType.append( strSeparatorSymbol );
+			    	    strFieldsType.append( "\"" + CSVTags._FieldTypeString + "(" + CSVTags._CSV_StructDescriptionLength + ")\"" );
+			    	    
 				    }
 				    else {
 				    	
 				    	if ( strSecurityTokenID != null && strSecurityTokenID.isEmpty() == false ) {
 
-				    		strHeaders.append( CSVTags._CSV_StructSecurityTokenID );
-				    		strHeaders.append( strSeparatorSymbol );
+				    		strFieldsName.append( CSVTags._CSV_StructSecurityTokenID );
+				    		strFieldsName.append( strSeparatorSymbol );
+				    	    strFieldsType.append( CSVTags._FieldTypeBigInt );
+				    	    strFieldsType.append( strSeparatorSymbol );
 				    		
 				    	}
 				    	
 				    	if ( strTransactionID != null && strTransactionID.isEmpty() == false ) {
 				    	
-				    		strHeaders.append( CSVTags._CSV_StructTransactionID );
-				    		strHeaders.append( strSeparatorSymbol );
+				    		strFieldsName.append( CSVTags._CSV_StructTransactionID );
+				    		strFieldsName.append( strSeparatorSymbol );
+				    	    strFieldsType.append( CSVTags._FieldTypeBigInt );
+				    	    strFieldsType.append( strSeparatorSymbol );
 				    		
 				    	}	
 				    	
-				    	strHeaders.append( CSVTags._CSV_StructCode );
-				    	strHeaders.append( strSeparatorSymbol );
-				    	strHeaders.append( CSVTags._CSV_StructDescription );
+				    	strFieldsName.append( CSVTags._CSV_StructCode );
+				    	strFieldsName.append( strSeparatorSymbol );
+				    	strFieldsName.append( CSVTags._CSV_StructDescription );
+				    	
+			    	    strFieldsType.append( CSVTags._FieldTypeInteger );
+			    	    strFieldsType.append( strSeparatorSymbol );
+			    	    strFieldsType.append( CSVTags._FieldTypeString + "(" + CSVTags._CSV_StructDescriptionLength + ")" );
 				    	
 				    }
 				    
-				    strResponseBuffer.add( strHeaders.toString() );
+				    strResponseBuffer.append( strFieldsName.toString() );
+				    strResponseBuffer.append( "\r\n" );
+				    strResponseBuffer.append( strFieldsType.toString() );
+				    strResponseBuffer.append( "\r\n" );
 
 				};
 
@@ -1145,6 +1197,20 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 			    
 			    if ( bFieldsQuote ) {
 
+			    	if ( strSecurityTokenID != null && strSecurityTokenID.isEmpty() == false ) {
+
+			    		strRowData.append( "\"" + strSecurityTokenID + "\"" );
+				    	strRowData.append( "\"" + strSeparatorSymbol + "\"" );
+			    		
+			    	}
+			    	
+			    	if ( strTransactionID != null && strTransactionID.isEmpty() == false ) {
+
+			    		strRowData.append( "\"" + strTransactionID + "\"" );
+				    	strRowData.append( "\"" + strSeparatorSymbol + "\"" );
+			    	
+			    	}
+			    	
 			    	strRowData.append( "\"" + Integer.toString( intCode ) + "\"" );
 			    	strRowData.append( "\"" + strSeparatorSymbol + "\"" );
 			    	strRowData.append( "\"" + strDescription + "\"" );
@@ -1152,13 +1218,27 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 			    }	
 			    else {
 			    
+			    	if ( strSecurityTokenID != null && strSecurityTokenID.isEmpty() == false ) {
+
+			    		strRowData.append( strSecurityTokenID );
+				    	strRowData.append( strSeparatorSymbol );
+			    	}
+			    	
+			    	if ( strTransactionID != null && strTransactionID.isEmpty() == false ) {
+
+			    		strRowData.append( strTransactionID );
+				    	strRowData.append( strSeparatorSymbol );
+			    	
+			    	}
+			    	
 			    	strRowData.append( intCode );
 			    	strRowData.append( strSeparatorSymbol );
 			    	strRowData.append( strDescription );
 			    	
 			    }
 				
-			    strResponseBuffer.add( strRowData.toString() );
+			    strResponseBuffer.append( strRowData.toString() );
+			    strResponseBuffer.append( "\r\n" );
 
 			    strResult = strResponseBuffer.toString();
 			
