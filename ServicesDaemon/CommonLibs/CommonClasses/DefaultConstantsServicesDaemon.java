@@ -13,26 +13,13 @@ package CommonClasses;
 import java.io.File;
 
 public class DefaultConstantsServicesDaemon {
-
-	public static void InitDefaultConstants() {
-		
-		strDefaultLibsDir = "Libs" + File.separator;
-
-		strDefaultLangsDir = "Langs" + File.separator;
-
-		strDefaultLogsSystemDir = "Logs" + File.separator + "System" + File.separator;
-		strDefaultLogsAccessDir = "Logs" + File.separator + "Access" + File.separator;
-		
-	    strDefaultManagersDir = "Managers" + File.separator;
-		
-	}
 	
 	public static String strDefaultRunningPath = "";
 	
-	public static String strDefaultLibsDir = ""; //"Libs" + File.separator;
+	public static String strDefaultLibsDir = "Libs" + File.separator;
 	public static final String strDefaultLibsExt = ".jar";
 	
-	public static String strDefaultLangsDir = ""; //"Langs" + File.separator;
+	public static String strDefaultLangsDir = "Langs" + File.separator;
 	public static final String strDefaultLang = "init.lang";
 	public static final String strDefaultCommonLang = "Common.init.lang";
 
@@ -45,8 +32,8 @@ public class DefaultConstantsServicesDaemon {
 	public static final String strDefaultJettyLoggerName = "JettyLogger"; 
 	public static final String strDefaultJettyLoggerClassName = "org.eclipse.jetty.util.log"; 
 	public static final String strDefaultConfFile = strDefaultMainFile + ".conf";
-	public static String strDefaultLogsSystemDir = ""; //"Logs" + File.separator + "System" + File.separator;
-	public static String strDefaultLogsAccessDir = ""; //"Logs" + File.separator + "Access" + File.separator;
+	public static String strDefaultLogsSystemDir = "Logs" + File.separator + "System" + File.separator;
+	public static String strDefaultLogsAccessDir = "Logs" + File.separator + "Access" + File.separator;
 	public static final String strDefaultLogClassMethod = "*.*";
 	public static final boolean bDefaultLogExactMatch = false;
 	public static final boolean bDefaultLogMissingTranslations = false;
@@ -56,7 +43,7 @@ public class DefaultConstantsServicesDaemon {
 	
     public static final String strDefaultServletContext = "/*";
 
-    public static String strDefaultManagersDir = ""; //"Managers" + File.separator;
+    public static String strDefaultManagersDir = "Managers" + File.separator;
     public static final String strDefaultManagersExt = ".jar";
     public static final String strDefaultKeyStoreFile = strDefaultMainFile + ".keystore";
     public static final String strDefaultDefaultPassword = "12345678";

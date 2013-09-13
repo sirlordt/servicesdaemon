@@ -413,12 +413,8 @@ public class ServicesDaemon {
 
     public static void main(String[] args) throws Exception {
     	
-    	System.out.println( File.separator );
-	    	    
 		DefaultConstantsServicesDaemon.strDefaultRunningPath = getJarFolder();
 
-		DefaultConstantsServicesDaemon.InitDefaultConstants();
-		
 		System.out.println( "Running path: \"" + DefaultConstantsServicesDaemon.strDefaultRunningPath + "\"" );  
 		
 		InitArgs = new ArrayList<String>( Arrays.asList( args ) );
