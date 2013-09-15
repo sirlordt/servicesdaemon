@@ -78,4 +78,26 @@ Default_Response_Format_Version="1.1"
 El DBServicesManager responderá con el formato XML-DataPacket versión 1.1 por defecto.
 
 Puede cambiarlos en el archivo configuración por cualquier otro, incluso los que usted mismo implemente de la interface CAbstractResponseFormat para poder ser usados y colocados los archivos .jar dentro de la carpeta ResponseFormats que está ubicada en la carpeta DBServicesManagers.
-  
+
+Ejemplos en PHP usando al librería CURL
+
+Acceder usando https al localhost
+
+<?php
+    
+    //Using CURL php library
+    $ch = curl_init();
+    curl_setopt( $ch, CURLOPT_URL, "https://127.0.0.1:8181/DBServices" );
+    curl_setopt( $ch, CURLOPT_POST, 1 );
+    curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false ); //Warning read http://unitstep.net/blog/2009/05/05/using-curl-in-php-to-access-https-ssltls-protected-sites/
+    curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 2 );
+    curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+    curl_setopt( $ch, "ServiceName=System.Enum.Services&ResponseFormat=JAVA-XML-WEBROWSET&ResponseFormatVersion=1.0" );
+    
+    $result = curl_exec( $ch );
+
+    curl_close( $ch );
+
+    echo $result;
+    
+?>  
