@@ -248,60 +248,6 @@ public class CSystemStartSession extends CAbstractService {
 		
 	}
 	
-	public String UncryptString( String strCryptedPassword, CExtendedLogger Logger, CLanguage Lang ) {
-		
-		String strResult = strCryptedPassword;
-		
-		int intPassCryptedLength = ConfigXMLTagsDBServicesManager._Password_Crypted.length();
-		int intPassCryptedSepLength = ConfigXMLTagsDBServicesManager._Password_Crypted_Sep.length();
-		
-		if ( strCryptedPassword.length() > intPassCryptedLength && strResult.substring( 0, intPassCryptedLength ).equals( ConfigXMLTagsDBServicesManager._Password_Crypted ) ) {
-
-			strResult =  strResult.substring( intPassCryptedLength + intPassCryptedSepLength, strResult.length() );
-			
-			String strCryptKeys[] = { 
-					                  "xfzm29dp",
-					                  "6m3m7xa5",
-			                          "e48c4xyi",		                  
-			                          "6we7og02",		                  
-			                          "4m7gypao",		                  
-			                          "hy6z2m0x",		                  
-			                          "2zx6kynd",		                  
-			                          "1k9c0666",		                  
-			                          "q3f5i11j",		                  
-			                          "4y84x0j7"		                  
-			                        };
-
-			int intIndexPassSep = strResult.indexOf( ConfigXMLTagsDBServicesManager._Password_Crypted_Sep, 0 );
-			
-			String strCryptKeyIndex =  strResult.substring( 0, intIndexPassSep );
-			
-			int intCryptKeyIndex = Utilities.StrToInteger( strCryptKeyIndex );
-			
-			if ( intCryptKeyIndex > 0 && intCryptKeyIndex <= strCryptKeys.length ) {
-				
-				strResult =  strResult.substring( intIndexPassSep + intPassCryptedSepLength, strResult.length() );
-				
-				strResult = Utilities.UncryptString( strResult, DefaultConstantsSystemStartSession.strDefaultCryptAlgorithm, strCryptKeys[ intCryptKeyIndex ], Logger );
-				
-				
-			}
-			else {
-				
-		    	Logger.LogError( "-1001", Lang.Translate( "The crypt key index [%s] is not valid", strCryptKeyIndex ) );        
-				
-			}
-			
-		}
-		else {
-			
-	    	Logger.LogWarning( "-1", Lang.Translate( "Using clear text password" ) );        
-			
-		}
-		
-		return strResult;
-		
-	}
 	
 	public void SucessStartSession( CMemoryRowSet StartSessionRowSet, CConfigDBConnection ConfigDBConnection, String strCode, ArrayList<String> AddFieldToResponseSucess, ArrayList<String> AddFieldToResponseAny, HttpServletRequest Request, HttpServletResponse Response, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion ) {
 
@@ -719,10 +665,10 @@ public class CSystemStartSession extends CAbstractService {
 										LocalConfigDBConnection.strSessionKey = this.ReplaceMacrosNamesForValues( LocalConfigDBConnection.strSessionKey, Request.getRemoteAddr(), Request.getHeader( "X-Forwarded-For" ), LocalConfigDBConnection.strDatabase, LocalConfigDBConnection.strName, DateFormat.format( SystemDateTime ), TimeFormat.format( SystemDateTime ), DateTimeFormat.format( SystemDateTime ) );
 										LocalConfigDBConnection.strSessionUser = this.ReplaceInputParametersNamesForValues( LocalConfigDBConnection.strSessionUser, Request );
 										LocalConfigDBConnection.strSessionPassword = this.ReplaceInputParametersNamesForValues( LocalConfigDBConnection.strSessionPassword, Request );
-										LocalConfigDBConnection.strSessionPassword = this.UncryptString( LocalConfigDBConnection.strSessionPassword, ServiceLogger, ServiceLang );
+										LocalConfigDBConnection.strSessionPassword = Utilities.UncryptString( ConfigXMLTagsDBServicesManager._Password_Crypted, ConfigXMLTagsDBServicesManager._Password_Crypted_Sep, DefaultConstantsSystemStartSession.strDefaultCryptAlgorithm, LocalConfigDBConnection.strSessionPassword, ServiceLogger, ServiceLang );
 										LocalConfigDBConnection.strTransactionUser = this.ReplaceInputParametersNamesForValues( LocalConfigDBConnection.strTransactionUser, Request );
 										LocalConfigDBConnection.strTransactionPassword = this.ReplaceInputParametersNamesForValues( LocalConfigDBConnection.strTransactionPassword, Request );
-										LocalConfigDBConnection.strTransactionPassword = this.UncryptString( LocalConfigDBConnection.strTransactionPassword, ServiceLogger, ServiceLang );
+										LocalConfigDBConnection.strTransactionPassword = Utilities.UncryptString( ConfigXMLTagsDBServicesManager._Password_Crypted, ConfigXMLTagsDBServicesManager._Password_Crypted_Sep, DefaultConstantsSystemStartSession.strDefaultCryptAlgorithm, LocalConfigDBConnection.strTransactionPassword, ServiceLogger, ServiceLang );
 										LocalConfigDBConnection.strSessionKey = this.ReplaceInputParametersNamesForValues( LocalConfigDBConnection.strSessionKey, Request );
 
 										Connection DBConnection = DBEngine.getDBConnection( LocalConfigDBConnection.getDBEngineConfigConnection( true ), ServiceLogger, ServiceLang );

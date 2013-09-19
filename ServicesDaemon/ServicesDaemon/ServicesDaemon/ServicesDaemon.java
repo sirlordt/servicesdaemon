@@ -18,6 +18,8 @@ import java.util.Iterator;
 import java.util.ServiceLoader;
 import java.util.TimeZone;
 
+import net.maindataservices.Utilities;
+
 //import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.NCSARequestLog;
 import org.eclipse.jetty.server.Server;
@@ -59,7 +61,7 @@ public class ServicesDaemon {
     	
     }
 
-    public static boolean LoadServicesManagersInstances( CServicesDaemonConfig ServicesDaemonConfig, CExtendedLogger ServicesDaemonLogger ) {
+    public static boolean LoadServicesManagersInstances( CServicesDaemonConfig ServicesDaemonConfig, CExtendedLogger ServicesDaemonLogger, CLanguage ServicesDaemonLang ) {
     	
 		boolean bResult = false;
 
@@ -108,7 +110,7 @@ public class ServicesDaemon {
     	
     }
     
-    public static boolean AddConectorsToMainServer( Server MainServer, CServicesDaemonConfig ServicesDaemonConfig, CExtendedLogger ServicesDaemonLogger ) {
+    public static boolean AddConectorsToMainServer( Server MainServer, CServicesDaemonConfig ServicesDaemonConfig, CExtendedLogger ServicesDaemonLogger, CLanguage ServicesDaemonLang ) {
     	
     	boolean bResult = false;
     	
@@ -131,8 +133,8 @@ public class ServicesDaemon {
         	        SslContextFactory ContextFactory = SSL_Connector.getSslContextFactory();
         	        
         	        ContextFactory.setKeyStorePath( ServicesDaemonConfig.strKeyStoreFile );
-        	        ContextFactory.setKeyStorePassword( ServicesDaemonConfig.strKeyStorePassword );
-        	        ContextFactory.setKeyManagerPassword( ServicesDaemonConfig.strKeyManagerPassword );
+        	        ContextFactory.setKeyStorePassword( Utilities.UncryptString( ConfigXMLTagsServicesDaemon._Password_Crypted, ConfigXMLTagsServicesDaemon._Password_Crypted_Sep, DefaultConstantsServicesDaemon.strDefaultCryptAlgorithm, ServicesDaemonConfig.strKeyStorePassword, ServicesDaemonLogger, ServicesDaemonLang ) );
+        	        ContextFactory.setKeyManagerPassword( Utilities.UncryptString( ConfigXMLTagsServicesDaemon._Password_Crypted, ConfigXMLTagsServicesDaemon._Password_Crypted_Sep, DefaultConstantsServicesDaemon.strDefaultCryptAlgorithm, ServicesDaemonConfig.strKeyManagerPassword, ServicesDaemonLogger, ServicesDaemonLang ) );
         			
         	        MainServer.addConnector( SSL_Connector );
         	        
@@ -166,7 +168,7 @@ public class ServicesDaemon {
     	
     }
 
-    public static IPAccessHandler CreateIPAccessControl( CServicesDaemonConfig ServicesDaemonConfig, CExtendedLogger ServicesDaemonLogger ) {
+    public static IPAccessHandler CreateIPAccessControl( CServicesDaemonConfig ServicesDaemonConfig, CExtendedLogger ServicesDaemonLogger, CLanguage ServicesDaemonLang ) {
 
 		IPAccessHandler IPHandler = null;
     	
@@ -202,7 +204,7 @@ public class ServicesDaemon {
     	
     }
 
-    public static ServletContextHandler AddHandlersToMainServer( Server MainServer, IPAccessHandler IPHandler, CExtendedLogger ServicesDaemonLogger ) {
+    public static ServletContextHandler AddHandlersToMainServer( Server MainServer, IPAccessHandler IPHandler, CExtendedLogger ServicesDaemonLogger, CLanguage ServicesDaemonLang ) {
     	
     	ServletContextHandler ServletContext = null;
     	
@@ -277,7 +279,7 @@ public class ServicesDaemon {
 			
 		    ClassPathLoader.LoadClassFiles( DefaultConstantsServicesDaemon.strDefaultRunningPath + DefaultConstantsServicesDaemon.strDefaultManagersDir, DefaultConstantsServicesDaemon.strDefaultManagersExt, 2 );
 			
-			LoadServicesManagersInstances( ServicesDaemonConfig, ServicesDaemonLogger );
+			LoadServicesManagersInstances( ServicesDaemonConfig, ServicesDaemonLogger, ServicesDaemonLang );
 				
 			if ( RegisteredServicesManagers.size() == 0 ) {  
 			 
@@ -351,13 +353,13 @@ public class ServicesDaemon {
 			ServicesDaemonLogger.LogMessage( "1", ServicesDaemonLang.Translate( "Creating the main server" ) );        
         	Server MainServer = new Server();
         	
-        	if ( AddConectorsToMainServer( MainServer, ServicesDaemonConfig, ServicesDaemonLogger ) == true ) {
+        	if ( AddConectorsToMainServer( MainServer, ServicesDaemonConfig, ServicesDaemonLogger, ServicesDaemonLang ) == true ) {
         	
-            	IPAccessHandler IPHandler = CreateIPAccessControl( ServicesDaemonConfig, ServicesDaemonLogger );
+            	IPAccessHandler IPHandler = CreateIPAccessControl( ServicesDaemonConfig, ServicesDaemonLogger, ServicesDaemonLang );
 
-            	ServletContextHandler ServletContext = AddHandlersToMainServer( MainServer, IPHandler, ServicesDaemonLogger );
+            	ServletContextHandler ServletContext = AddHandlersToMainServer( MainServer, IPHandler, ServicesDaemonLogger, ServicesDaemonLang );
 			    	
-			    if ( AddServicesManagersToMainServer( MainServer, ServletContext, ServicesDaemonConfig, ServicesDaemonLogger, ServicesDaemonLang) == true ) {    
+			    if ( AddServicesManagersToMainServer( MainServer, ServletContext, ServicesDaemonConfig, ServicesDaemonLogger, ServicesDaemonLang ) == true ) {    
 				
 			    	//Hardcoded message
 					ServicesDaemonLogger.LogMessage( "1",  ServicesDaemonLang.Translate( "Daemon starting now" ) );        

@@ -442,11 +442,11 @@ public class CSystemStartSessionConfig extends CAbstractConfigLoader {
 							}
 							else {
 								
-								Logger.LogError( "-1003", Lang.Translate( "The [%s] attribute cannot empty string, for the node [%s] at relative index [%s]", ConfigXMLTagsSystemStartSession._SQL, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+								Logger.LogWarning( "-1", Lang.Translate( "The [%s] attribute is empty string, for the node [%s] at relative index [%s]", ConfigXMLTagsSystemStartSession._SQL, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 
-								bResult = false;
+								//bResult = false;
 								
-								break;
+								//break;
 								
 							}
 						

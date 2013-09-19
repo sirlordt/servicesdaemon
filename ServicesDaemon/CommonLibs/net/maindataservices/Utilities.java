@@ -553,7 +553,7 @@ public class Utilities {
      	
      }
  
-     public static int countSubString( String strToFind, String strSearch ) {
+    public static int countSubString( String strToFind, String strSearch ) {
 
     	 try {
 
@@ -575,5 +575,61 @@ public class Utilities {
     	 }
 
      }
+   
+	public static String UncryptString( String strPasswordCrypted, String strPasswordCryptedSep, String strDefaultCryptAlgorithm, String strCryptedPassword, CExtendedLogger Logger, CLanguage Lang ) {
+		
+		String strResult = strCryptedPassword;
+		
+		int intPassCryptedLength = strPasswordCrypted.length(); //ConfigXMLTagsDBServicesManager._Password_Crypted.length();
+		int intPassCryptedSepLength = strPasswordCryptedSep.length(); //ConfigXMLTagsDBServicesManager._Password_Crypted_Sep.length();
+		
+		if ( strCryptedPassword.length() > intPassCryptedLength && strResult.substring( 0, intPassCryptedLength ).equals( strPasswordCrypted) ) {
+
+			strResult =  strResult.substring( intPassCryptedLength + intPassCryptedSepLength, strResult.length() );
+			
+			String strCryptKeys[] = { 
+					                  "xfzm29dp",
+					                  "6m3m7xa5",
+			                          "e48c4xyi",		                  
+			                          "6we7og02",		                  
+			                          "4m7gypao",		                  
+			                          "hy6z2m0x",		                  
+			                          "2zx6kynd",		                  
+			                          "1k9c0666",		                  
+			                          "q3f5i11j",		                  
+			                          "4y84x0j7"		                  
+			                        };
+
+			int intIndexPassSep = strResult.indexOf( strPasswordCryptedSep, 0 );
+			
+			String strCryptKeyIndex =  strResult.substring( 0, intIndexPassSep );
+			
+			int intCryptKeyIndex = Utilities.StrToInteger( strCryptKeyIndex );
+			
+			if ( intCryptKeyIndex > 0 && intCryptKeyIndex <= strCryptKeys.length ) {
+				
+				strResult =  strResult.substring( intIndexPassSep + intPassCryptedSepLength, strResult.length() );
+				
+				//DefaultConstantsSystemStartSession.strDefaultCryptAlgorithm
+				strResult = Utilities.UncryptString( strResult, strDefaultCryptAlgorithm, strCryptKeys[ intCryptKeyIndex ], Logger );
+				
+				
+			}
+			else {
+				
+		    	Logger.LogError( "-1001", Lang.Translate( "The crypt key index [%s] is not valid", strCryptKeyIndex ) );        
+				
+			}
+			
+		}
+		else {
+			
+	    	Logger.LogWarning( "-1", Lang.Translate( "Using clear text password" ) );        
+			
+		}
+		
+		return strResult;
+		
+	}
     
 }

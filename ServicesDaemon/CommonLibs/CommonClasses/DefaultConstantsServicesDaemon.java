@@ -59,4 +59,6 @@ public class DefaultConstantsServicesDaemon {
 	public static final int intDefaultMinRequestHeaderSize = 1024;
 	public static final int intDefaultMaxRequestHeaderSize = 8192;
 	
+	public static final String strDefaultCryptAlgorithm = "DES";
+	
 }

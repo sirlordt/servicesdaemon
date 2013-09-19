@@ -151,6 +151,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
             DocumentBuilderFactory DocBuilderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder DocBuilder = DocBuilderFactory.newDocumentBuilder();
             XMLDocument = DocBuilder.newDocument();
+            //XMLDocument.
 
             Element DataPacketSection = XMLDocument.createElement( XMLDataPacketTags._DataPacket );
 

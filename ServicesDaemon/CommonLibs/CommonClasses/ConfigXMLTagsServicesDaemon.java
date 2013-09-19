@@ -50,4 +50,9 @@ public interface ConfigXMLTagsServicesDaemon {
 
 	public static final String _StartParamValue = "[paramvalue]";
 	public static final String _EndParamValue = "[/paramvalue]";
+	
+	public static final String _Password_Crypted = "crypted";
+	public static final String _Password_Crypted_Sep = ":";
+	
+	
 }
