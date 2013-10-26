@@ -436,7 +436,7 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 	}*/
 
     @Override
-    public boolean FormatResultSet( HttpServletResponse Response, CResultSetResult SQLDataSetResult, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang ) {
+    public boolean FormatResultSet( HttpServletResponse Response, CResultSetResult SQLDataSetResult, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	boolean bResult = false;
     	
@@ -488,8 +488,6 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 					//}
 
 					CWebRowSetImpl wrs = new CWebRowSetImpl(); //Create extended implementation of WebRowSet
-					
-					int intInternalFetchSize = Integer.parseInt( OwnerConfig.getConfigValue( "Internal_Fetch_Size" ) );
 					
 					wrs.setPageSize( intInternalFetchSize );
 
@@ -594,7 +592,7 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
     }
     
 	@Override
-	public boolean FormatResultsSets( HttpServletResponse Response, ArrayList<CResultSetResult> SQLDataSetResultList, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
+	public boolean FormatResultsSets( HttpServletResponse Response, ArrayList<CResultSetResult> SQLDataSetResultList, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
     	
     	boolean bResult = false;
     	
@@ -620,7 +618,7 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 
 						CWebRowSetImpl wrs = new CWebRowSetImpl(); //Create extended implementation of WebRowSet
 						
-						wrs.setPageSize( 25000 );
+						wrs.setPageSize( intInternalFetchSize );
 						
 						boolean bFirst = true;
 						

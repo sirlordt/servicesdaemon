@@ -5,6 +5,7 @@
 <entry key="Allow execute SQL statement using a transaction id">Permite ejecutar una instrucción SQL en la base de datos usando id de transacción</entry>
 <entry key="Transaction id obtained with a start transaction service call">Identificador de transacción obtenido con una llamada al servicio de inicio de transacción</entry>
 <entry key="Commit all pending operations in context of current transaction, example: 1">Aplicar todas las operaciones pendientes en el contexto de la transacción actual</entry>
+<entry key="Adjust the internal result set fetch size (Rows) for better performance for specific SQL consult, example: 25000">Ajusta el tamaño del resultado interno (Filas) para un mejor desempeño en una consulta SQL específica, ejemplo: 25000</entry>
 <entry key="Response format name, example: XML-DATAPACKET, CSV, JSON">Nombre del formato de respuesta, ejemplo: XML-DATAPACKET, CSV, JSON</entry>
 <entry key="Response format version, example: 1.1">Versión del formato de respuesta, ejemplo: 1.1</entry>
 <entry key="SQL statement">Instrucción SQL</entry>

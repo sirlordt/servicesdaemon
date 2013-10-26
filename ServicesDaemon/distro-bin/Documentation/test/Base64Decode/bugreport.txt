@@ -1,0 +1,128 @@
+date/time         : 2013-10-11, 09:56:31, 115ms
+computer name     : linux-desktop
+user name         : sirlordt <admin>
+operating system  : Windows XP x64 Service Pack 3 build 2600
+system language   : Spanish
+system up time    : 32 minutes 35 seconds
+program up time   : 32 minutes 23 seconds
+processors        : 2x Intel(R) Pentium(R) 4 CPU 2.40GHz
+physical memory   : 314/2000 MB (free/total)
+free disk space   : (C:) 3,73 GB (Z:) 3,73 GB
+display mode      : 1440x900, 32 bit
+process id        : $23
+allocated memory  : 11,85 MB
+executable        : Base64Decode.exe
+exec. date/time   : 2013-07-25 16:08
+version           : 1.0.0.0
+compiled with     : BCB 2006/07
+madExcept version : 3.0i beta 2
+callstack crc     : $4f6e37a8, $e379e0af, $e379e0af
+exception number  : 1
+exception class   : EJPEG
+exception message : JPEG error #68.
+
+main thread ($24):
+0051f023 +004f Base64Decode.exe Jpeg                        _16413
+005189ed +abd1 Base64Decode.exe madListModules              initialization
+0051fe63 +034b Base64Decode.exe Jpeg                        TJPEGImage.GetBitmap
+0051f96f +000b Base64Decode.exe Jpeg                        TJPEGImage.Draw
+0044707e +002a Base64Decode.exe Graphics          2634   +5 TCanvas.StretchDraw
+0045f7be +00fe Base64Decode.exe ExtCtrls          1931  +23 TImage.Paint
+004766ad +0061 Base64Decode.exe Controls          9818   +7 TGraphicControl.WMPaint
+0046e513 +02bb Base64Decode.exe Controls          5146  +83 TControl.WndProc
+0046e1a0 +0024 Base64Decode.exe Controls          5021   +5 TControl.Perform
+00472991 +018d Base64Decode.exe Controls          7434  +26 TWinControl.PaintControls
+0047279d +0131 Base64Decode.exe Controls          7387  +24 TWinControl.PaintHandler
+00472e34 +0048 Base64Decode.exe Controls          7560   +6 TWinControl.WMPaint
+004770d0 +0010 Base64Decode.exe Controls         10146   +2 TCustomControl.WMPaint
+0046e513 +02bb Base64Decode.exe Controls          5146  +83 TControl.WndProc
+0047250b +04fb Base64Decode.exe Controls          7304 +111 TWinControl.WndProc
+00471c34 +002c Base64Decode.exe Controls          7073   +3 TWinControl.MainWndProc
+00414430 +0014 Base64Decode.exe Classes          11583   +8 StdWndProc
+7e978d29 +0099 user32.dll                                   DispatchMessageA
+0045bd68 +00fc Base64Decode.exe Forms             8105  +23 TApplication.ProcessMessage
+0045bd8a +000a Base64Decode.exe Forms             8124   +1 TApplication.HandleMessage
+0045c07f +00b3 Base64Decode.exe Forms             8223  +20 TApplication.Run
+00401af5 +0089 Base64Decode.exe Base64Decode.cpp    21   +8 WinMain
+004e08e0 +014c Base64Decode.exe                             __startup
+7bc74868 +01d8 ntdll.dll                                    RtlCaptureStackBackTrace
+
+modules:
+00400000 Base64Decode.exe 1.0.0.0        Z:\home\sirlordt\Documentos\git\servicesdaemon\ServicesDaemon\distro-bin\Documentation\test\Base64Decode
+7b810000 KERNEL32.dll     5.1.2600.2180  C:\windows\system32
+7bc10000 ntdll.dll        5.1.2600.2180  C:\windows\system32
+7dc30000 usp10.dll                       C:\windows\system32
+7ddd0000 uxtheme.dll      10.0.0.0       C:\windows\system32
+7e0e0000 winex11.drv      10.0.0.0       C:\windows\system32
+7e240000 oleaut32.dll     6.0.6001.18000 C:\windows\system32
+7e320000 rpcrt4.dll       5.1.2600.2180  C:\windows\system32
+7e3a0000 ole32.dll        10.0.0.0       C:\windows\system32
+7e490000 imm32.dll        5.1.2600.2180  C:\windows\system32
+7e4c0000 winspool.drv     5.1.2600.2180  C:\windows\system32
+7e500000 shlwapi.dll      6.0.2800.1692  C:\windows\system32
+7e560000 shell32.dll      5.0.3900.6975  C:\windows\system32
+7e770000 comdlg32.dll     4.0.0.950      C:\windows\system32
+7e850000 gdi32.dll        10.0.0.0       C:\windows\system32
+7e910000 user32.dll       5.1.2600.2180  C:\windows\system32
+7ea50000 comctl32.dll     5.81.4704.1100 C:\windows\system32
+7eb40000 iphlpapi.dll     5.1.2600.2180  C:\windows\system32
+7eb70000 ws2_32.dll       5.1.2600.5512  C:\windows\system32
+7eba0000 wsock32.dll      4.0.0.0        C:\windows\system32
+7ebc0000 advapi32.dll     5.1.2600.2180  C:\windows\system32
+7eff0000 version.dll      5.1.2600.2180  C:\windows\system32
+
+processes:
+0e services.exe     normal
+12 winedevice.exe   normal
+1a plugplay.exe     normal
+21 explorer.exe     normal
+23 Base64Decode.exe normal Z:\home\sirlordt\Documentos\git\servicesdaemon\ServicesDaemon\distro-bin\Documentation\test\Base64Decode
+
+cpu registers:
+eax = 00723ac0
+ebx = 0033f540
+ecx = 00000000
+edx = 0051f023
+esi = 0068c77c
+edi = 00000001
+eip = 0051f023
+esp = 0033f3d0
+ebp = 0033f41c
+
+stack dump:
+0033f3d0  23 f0 51 00 de fa ed 0e - 01 00 00 00 07 00 00 00  #.Q.............
+0033f3e0  e4 f3 33 00 23 f0 51 00 - c0 3a 72 00 40 f5 33 00  ..3.#.Q..:r.@.3.
+0033f3f0  7c c7 68 00 01 00 00 00 - 1c f4 33 00 00 f4 33 00  |.h.......3...3.
+0033f400  48 f4 33 00 68 92 42 00 - 1c f4 33 00 40 f5 33 00  H.3.h.B...3.@.3.
+0033f410  00 00 00 00 44 00 00 00 - 00 50 c7 01 20 f7 33 00  ....D....P....3.
+0033f420  ed 89 51 00 7c c7 68 00 - 40 f5 33 00 22 f4 50 00  ..Q.|.h.@.3.".P.
+0033f430  01 00 00 00 90 fd ff ff - 40 f5 33 00 38 e3 50 00  ........@.3.8.P.
+0033f440  01 00 00 00 68 fe 51 00 - 54 f4 33 00 68 92 42 00  ....h.Q.T.3.h.B.
+0033f450  20 f7 33 00 60 f4 33 00 - e6 fe 51 00 20 f7 33 00  ..3.`.3...Q...3.
+0033f460  48 f7 33 00 68 92 42 00 - 20 f7 33 00 58 f7 33 00  H.3.h.B...3.X.3.
+0033f470  58 5f 6b 00 b0 a0 6d 00 - 00 00 00 00 00 00 00 00  X_k...m.........
+0033f480  00 00 00 00 00 00 00 00 - d4 ef 51 00 48 f0 51 00  ..........Q.H.Q.
+0033f490  4c f0 51 00 50 f0 51 00 - 54 f0 51 00 44 00 00 00  L.Q.P.Q.T.Q.D...
+0033f4a0  88 00 00 00 3f 00 00 00 - 00 00 00 00 00 00 00 00  ....?...........
+0033f4b0  00 00 00 00 00 00 00 00 - 00 00 00 00 00 00 00 00  ................
+0033f4c0  00 00 00 00 00 00 00 00 - 00 00 00 00 00 00 00 00  ................
+0033f4d0  00 00 00 00 00 00 00 00 - 00 00 00 00 00 00 00 00  ................
+0033f4e0  00 00 00 00 00 00 00 00 - 00 00 00 00 00 00 00 00  ................
+0033f4f0  00 00 00 00 00 00 00 00 - 00 00 00 00 00 00 00 00  ................
+0033f500  00 00 00 00 00 00 00 00 - 00 00 00 00 10 f2 51 00  ..............Q.
+
+disassembling:
+[...]
+00447071                +$3d2 ($447448)        ; Graphics.TCanvas.RequiredState
+00447076 2634           ecx, edi
+00447078                edx, ebx
+0044707a                eax, esi
+0044707c                esi, [eax]
+0044707e      >         dword ptr [esi+$14]
+00447081 2635           eax, ebx
+00447083                edx, [eax]
+00447085                dword ptr [edx+$c]
+00447088 2637           edi
+00447089                esi
+[...]
+

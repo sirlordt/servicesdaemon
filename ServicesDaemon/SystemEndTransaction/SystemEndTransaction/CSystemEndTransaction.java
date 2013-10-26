@@ -79,11 +79,11 @@ public class CSystemEndTransaction extends CAbstractService {
 	}
 
 	@Override
-	public boolean InitializeService( CServicesDaemonConfig ServicesDaemonConfig, CAbstractConfigLoader OnwerConfig ) { // Alternate manual contructor
+	public boolean InitializeService( CServicesDaemonConfig ServicesDaemonConfig, CAbstractConfigLoader OwnerConfig ) { // Alternate manual contructor
 		
 		boolean bResult = false; 
 
-		super.InitializeService( ServicesDaemonConfig, OnwerConfig );
+		super.InitializeService( ServicesDaemonConfig, OwnerConfig );
 		
 		try {
 		

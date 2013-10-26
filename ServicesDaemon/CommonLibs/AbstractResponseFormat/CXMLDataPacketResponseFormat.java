@@ -1723,7 +1723,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     }*/
 
     @Override
-    public boolean FormatResultSet( HttpServletResponse Response, CResultSetResult SQLDataSetResult, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang ) {
+    public boolean FormatResultSet( HttpServletResponse Response, CResultSetResult SQLDataSetResult, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	boolean bResult = false;
     	
@@ -1860,7 +1860,8 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	
     }
 
-    public boolean FormatResultsSets( HttpServletResponse Response, ArrayList<CResultSetResult> SQLDataSetResultList, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
+    @Override
+    public boolean FormatResultsSets( HttpServletResponse Response, ArrayList<CResultSetResult> SQLDataSetResultList, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
     	
     	boolean bResult = false;
     	
