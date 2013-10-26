@@ -182,7 +182,7 @@ public class CNamedCallableStatement implements CallableStatement {
 		this.strParsedStatement = strParsedQuery.toString();
 
 		// compile prepare Statement
-		cs = db.prepareCall( strParsedQuery.toString() );
+		cs = db.prepareCall( strParsedQuery.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY );
 		
 	}
 
@@ -192,7 +192,7 @@ public class CNamedCallableStatement implements CallableStatement {
 		
 		this.strParsedStatement = strParsedStatement;
 		
-		cs = db.prepareCall( strParsedStatement.toString() );
+		cs = db.prepareCall( strParsedStatement.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY );
 
 	}
 

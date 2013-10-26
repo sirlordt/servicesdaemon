@@ -42,7 +42,7 @@
 <entry key="End complex SQL statement">Sentencia SQL compleja finalizada</entry>
 <entry key="Init response format data set">Iniciando formateado de respuesta para el conjunto de datos</entry>
 <entry key="End response format data set">Formateado de respuesta para el conjunto de datos finalizada</entry>
-<entry key=""></entry>
+<entry key="The JDBC Driver [%s] ignoring fetch size value [%s], using JDBC driver default value [%s]">El controlador JDBC [%s] ignora el valor del tamaño de la entrega (Fetch) de [%s], se está usando el valor por defecto [%s] del controlador JDBC</entry>
 <entry key=""></entry>
 <entry key=""></entry>
 <entry key=""></entry>

@@ -22,6 +22,7 @@ import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import net.maindataservices.Utilities;
 
@@ -270,7 +271,9 @@ public class CSystemStartSession extends CAbstractService {
 	    	
 	    	CSessionInfoManager SessionInfoManager = CSessionInfoManager.getSessionInfoManager();
 	    	
-	    	SessionInfoManager.addSecurityTokenIDToName( ConfigDBConnection.strName, strSecurityTokenID, ServiceLogger, ServiceLang );
+			HttpSession ServiceSession = Request.getSession( true );
+	    	
+	    	SessionInfoManager.addSecurityTokenIDToName( ConfigDBConnection.strName, strSecurityTokenID, ServiceSession.getId(), ServiceLogger, ServiceLang );
 
 	    	SessionInfoManager.addConfigDBConnectionToSecurityTokenID( strSecurityTokenID, ConfigDBConnection, ServiceLogger, ServiceLang );
 	    	/*
@@ -621,10 +624,11 @@ public class CSystemStartSession extends CAbstractService {
 
 				if ( strPostDBConnection != null && strPostDBConnection.isEmpty() == false ) {
 
-					//HttpSession ServiceSession = Request.getSession( true );
+					HttpSession ServiceSession = Request.getSession( true );
+					
 					CSessionInfoManager SessionInfoManager = CSessionInfoManager.getSessionInfoManager();
 
-					String strSecurityTokenIDSessionStarted = SessionInfoManager.getSecurityTokenIDFromName( strPostDBConnection, ServiceLogger, ServiceLang ); //.getAttribute( strPostDBConnection );
+					String strSecurityTokenIDSessionStarted = SessionInfoManager.getSecurityTokenIDFromSessionIDAndName( ServiceSession.getId(), strPostDBConnection, ServiceLogger, ServiceLang ); //.getAttribute( strPostDBConnection );
 
 					if ( strSecurityTokenIDSessionStarted == null ) {  //No previous started session from post database name 
 

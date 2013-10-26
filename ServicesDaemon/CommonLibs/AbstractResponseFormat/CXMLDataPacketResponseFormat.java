@@ -10,6 +10,10 @@
  ******************************************************************************/
 package AbstractResponseFormat;
 
+import java.io.File;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.RandomAccessFile;
 import java.io.StringWriter;
 import java.sql.Blob;
 import java.sql.Date;
@@ -24,7 +28,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
+import java.util.UUID;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -36,6 +43,7 @@ import javax.xml.transform.stream.StreamResult;
 //import net.maindataservices.Base64;
 
 import net.maindataservices.Base64;
+import net.maindataservices.Utilities;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -659,7 +667,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
     }
 
-    public Document BuildXMLMetaData( Document XMLDocument, ResultSetMetaData DataSetMetaData, CAbstractDBEngine DBEngine, ArrayList<String> arrIncludedFields, ArrayList<String> arrExcludedFields, CExtendedLogger Logger, CLanguage Lang ) {
+    /*public Document BuildXMLMetaData( Document XMLDocument, ResultSetMetaData DataSetMetaData, CAbstractDBEngine DBEngine, ArrayList<String> arrIncludedFields, ArrayList<String> arrExcludedFields, CExtendedLogger Logger, CLanguage Lang ) {
 
         try {
 
@@ -754,9 +762,302 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
         
         return XMLDocument;
 
+    }*/
+    
+    public void PrintXMLHeader( PrintWriter TempResponseFormatedFileWriter, String strCharacterEncoding ) {
+    
+		TempResponseFormatedFileWriter.println( "<?xml version=\"1.0\" encoding=\"" + strCharacterEncoding + "\"?>" );
+    
+    }
+    
+    public void PrintXMLDataPacketSection( PrintWriter TempResponseFormatedFileWriter, String strVersion, boolean bOpen ) {
+
+		if ( bOpen )  
+			TempResponseFormatedFileWriter.println( "<" + XMLDataPacketTags._DataPacket + " " + XMLDataPacketTags._DPVersion + "=\"" + strVersion + "\">" );
+		else
+			TempResponseFormatedFileWriter.println( "</" + XMLDataPacketTags._DataPacket + ">" );
+    	
+    }
+    
+    public void PrintXMLRowDataSection( PrintWriter TempResponseFormatedFile, boolean bOpen ) {
+    	
+		if ( bOpen )  
+			TempResponseFormatedFile.println( "  <" + XMLDataPacketTags._RowData + ">" );
+		else
+			TempResponseFormatedFile.println( "  </" + XMLDataPacketTags._RowData + ">" );
+    	
     }
 
-    public Document AddXMLToRowDataSection( Document XMLDocument, ResultSet SQLDataSet, CAbstractDBEngine DBEngine, ArrayList<String> arrIncludedFields, ArrayList<String> arrExcludedFields, CExtendedLogger Logger, CLanguage Lang ) {
+    public boolean PrintXMLMetaDataSection( PrintWriter TempResponseFormatedFile, ResultSetMetaData DataSetMetaData, CAbstractDBEngine DBEngine, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+    	boolean bResult = false;
+    	
+    	try {
+
+    		TempResponseFormatedFile.println( "  <" + XMLDataPacketTags._MetaData + ">" );
+
+    		TempResponseFormatedFile.println( "    <" + XMLDataPacketTags._Fields + ">" );
+
+    		for ( int i = 1; i <= DataSetMetaData.getColumnCount(); i++ ) {
+
+    			String strFieldName   = DataSetMetaData.getColumnName( i );
+
+    			if ( strFieldName == null || strFieldName.isEmpty() == true )
+    				strFieldName = DataSetMetaData.getColumnLabel( i );
+
+    			int intFieldType   = DBEngine.getJavaSQLColumnType( DataSetMetaData.getColumnType( i ), Logger, Lang );
+    			int intFieldLength = DataSetMetaData.getColumnDisplaySize( i );
+
+    			String strFieldDef = "      <" + XMLDataPacketTags._Field + " XMLDataPacketTags._AttrName=\"" + strFieldName + "\" ";
+
+    			switch ( intFieldType ) {
+
+	    			case Types.INTEGER: { strFieldDef = strFieldDef + XMLDataPacketTags._FieldType + "=\"" + XMLDataPacketTags._FieldTypeInteger + "\"/>"; break; }
+	    			case Types.BIGINT: { strFieldDef = strFieldDef + XMLDataPacketTags._FieldType + "=\"" + XMLDataPacketTags._FieldTypeBigInt + "\"/>"; break; }
+	    			case Types.SMALLINT: { strFieldDef = strFieldDef + XMLDataPacketTags._FieldType + "=\"" + XMLDataPacketTags._FieldTypeShortInteger + "\"/>"; break; }
+	    			case Types.VARCHAR: 
+	    			case Types.CHAR: {  
+	
+	    				strFieldDef = strFieldDef + XMLDataPacketTags._FieldType + "=\"" + XMLDataPacketTags._FieldTypeString + "\" " + XMLDataPacketTags._FieldTypeStringWidth + "=\"" + Integer.toString( intFieldLength ) + "\"/>";
+	    				break; 
+	
+	    			}
+	    			case Types.BOOLEAN: { 
+	
+	    				strFieldDef = strFieldDef + XMLDataPacketTags._FieldType + "=\"" + XMLDataPacketTags._FieldTypeBoolean + "\"/>";
+	    				break; 
+	
+	    			}
+	    			case Types.BLOB: { 	
+	
+	    				strFieldDef = strFieldDef + XMLDataPacketTags._FieldType + "=\"" + XMLDataPacketTags._FieldTypeBlob + "\" " + XMLDataPacketTags._FieldSubType + "=\"" + XMLDataPacketTags._FieldTypeBlobSubTypeBinary + "\"/>";
+	    				break; 
+	
+	    			}
+	    			case Types.DATE: {
+	
+	    				strFieldDef = strFieldDef + XMLDataPacketTags._FieldType + "=\"" + XMLDataPacketTags._FieldTypeDate + "\"/>";
+	    				break; 
+	
+	    			}
+	    			case Types.TIME: {  
+	
+	    				strFieldDef = strFieldDef + XMLDataPacketTags._FieldType + "=\"" + XMLDataPacketTags._FieldTypeTime + "\"/>";
+	    				break; 
+	
+	    			}
+	    			case Types.TIMESTAMP: {  
+	
+	    				strFieldDef = strFieldDef + XMLDataPacketTags._FieldType + "=\"" +  XMLDataPacketTags._FieldTypeDateTime + "\"/>";
+	    				break; 
+	
+	    			}
+	    			case Types.FLOAT:
+	    			case Types.NUMERIC:	
+	    			case Types.DECIMAL: {  strFieldDef = strFieldDef + XMLDataPacketTags._FieldType + "=\"" + XMLDataPacketTags._FieldTypeFloat + "\"/>"; break; }
+	    			case Types.DOUBLE: {  break; }
+
+    			}
+    			
+        		TempResponseFormatedFile.println( strFieldDef );
+
+    		}
+
+    		TempResponseFormatedFile.println( "    </" + XMLDataPacketTags._Fields + ">" );
+    		
+    		TempResponseFormatedFile.println( "    <" + XMLDataPacketTags._Params + "/>                            " ); //" " + XMLDataPacketTags._RowCount + "=\"0\" />" );
+    		
+    		TempResponseFormatedFile.println( "  </" + XMLDataPacketTags._MetaData + ">" );
+    		
+    		//TempResponseFormatedFile.println( "  <" + XMLDataPacketTags._RowData + ">" );
+    		
+    		bResult = true;
+    		
+    	}
+    	catch ( Exception Ex ) {
+
+    		if ( Logger != null )
+    			Logger.LogException( "-1010", Ex.getMessage(), Ex );
+    		else if ( OwnerConfig != null && OwnerConfig.Logger != null )
+    			OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+
+    	}
+
+    	return bResult;
+    	
+    }
+    
+    public long PrintAddXMLToRowDataSection( String strTempDir, String strTempFile, PrintWriter TempResponseFormatedFileWriter, OutputStream TempStreamResponseFormatedFile, ResultSet SQLDataSet, CAbstractDBEngine DBEngine, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+    	long longRowCount = 0; 
+
+    	try {
+
+            //SimpleDateFormat DFormatter = new SimpleDateFormat("yyyyMMdd");
+            //SimpleDateFormat TFormatter = new SimpleDateFormat("HHmmss");
+            //SimpleDateFormat DTFormatter = new SimpleDateFormat("yyyyMMdd HHmmss");
+
+            java.sql.ResultSetMetaData DataSetMetaData = SQLDataSet.getMetaData();
+
+            while ( SQLDataSet.next() == true ) {
+
+            	longRowCount += 1;
+
+            	TempResponseFormatedFileWriter.print( "    <" + XMLDataPacketTags._Row + " " );  
+
+            	for ( int i = 1; i <= DataSetMetaData.getColumnCount(); i++ ) {
+
+            		String strFieldName = DataSetMetaData.getColumnName( i );
+
+            		if ( strFieldName == null || strFieldName.isEmpty() == true )
+            			strFieldName = DataSetMetaData.getColumnLabel( i );
+
+            		int intFieldType = DataSetMetaData.getColumnType( i );
+
+            		intFieldType = DBEngine.getJavaSQLColumnType( intFieldType, Logger, Lang );
+
+            		if ( SQLDataSet.getObject( i ) != null ) {
+
+            			if ( intFieldType != Types.BLOB ) {
+
+            				String strFieldValue = DBEngine.getFieldValueAsString( intFieldType, strFieldName, SQLDataSet, "yyyyMMdd", "HHmmss", "yyyyMMdd HHmmss", Logger, Lang );
+
+            				TempResponseFormatedFileWriter.print( strFieldName + "=\"" + strFieldValue + "\" " );
+
+            			}
+            			else {
+
+            				TempResponseFormatedFileWriter.print( strFieldName + "=\"" );
+            				TempResponseFormatedFileWriter.flush();
+            				DBEngine.writeBlobValueAsStringToFile( intFieldType, strFieldName, strTempDir, strTempFile, TempStreamResponseFormatedFile, SQLDataSet, "yyyyMMdd", "HHmmss", "yyyyMMdd HHmmss", Logger, Lang );
+            				TempResponseFormatedFileWriter.print( "\" " );
+
+            			}
+
+            		}
+            		else {
+
+            			TempResponseFormatedFileWriter.print( strFieldName + "=\"\" " );  
+
+            		}
+
+            	}
+
+            	TempResponseFormatedFileWriter.println( "/>" );  
+
+            }
+    		
+    		
+    	}
+    	catch ( Exception Ex ) {
+
+    		if ( Logger != null )
+    			Logger.LogException( "-1010", Ex.getMessage(), Ex );
+    		else if ( OwnerConfig != null && OwnerConfig.Logger != null )
+    			OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+
+    	}
+
+    	return longRowCount;
+    	   
+    }
+
+    public boolean PrintXMLErrorsSection( PrintWriter TempResponseFormatedFile, ArrayList<String> strErrorCodeDescription, String strVersion ) {
+    	
+    	boolean bResult = false;
+    	
+    	if ( strVersion.equals( "1.0" ) ) {
+    		
+        	if ( strErrorCodeDescription.size() == 0 )
+        		TempResponseFormatedFile.println( "  <" + XMLDataPacketTags._Error + " " + XMLDataPacketTags._XML_StructCode + "=\"0\" " + XMLDataPacketTags._XML_StructDescription + "=\"\" />" );
+        	else
+        		TempResponseFormatedFile.println( "  <" + XMLDataPacketTags._Error + " "+ strErrorCodeDescription.get( 0 ) + " />" );
+    		
+    	}
+    	else {
+    		
+        	if ( strErrorCodeDescription.size() == 0 ) {
+
+        		TempResponseFormatedFile.println( "  <" + XMLDataPacketTags._Errors + " " + XMLDataPacketTags._ErrorCount + "=\"0\" >" );
+        		TempResponseFormatedFile.println( "    <" + XMLDataPacketTags._Error + " " + XMLDataPacketTags._XML_StructCode + "=\"0\" " + XMLDataPacketTags._XML_StructDescription + "=\"\" />" );
+        		TempResponseFormatedFile.println( "  </" + XMLDataPacketTags._Errors + ">" );
+        		
+        	}	
+        	else {
+        	
+        		TempResponseFormatedFile.println( "  <" + XMLDataPacketTags._Errors + " " + XMLDataPacketTags._ErrorCount + "=\"" + Integer.toString( strErrorCodeDescription.size() ) + "\" >" );
+        		
+        		for ( int intIndex = 0; intIndex < strErrorCodeDescription.size(); intIndex++ ) {
+        		
+        			TempResponseFormatedFile.println( "    <" + XMLDataPacketTags._Error + " " + strErrorCodeDescription.get( intIndex ) + " />" );
+        			
+        		}
+        		
+        		TempResponseFormatedFile.println( "  </" + XMLDataPacketTags._Errors + ">" );
+        		
+        	}
+    		
+    	}
+    	
+    	return bResult;
+    	
+    }    
+    
+    public boolean PrintParamsSectionRowCount( String strTempFile, long lngRowCount, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+    	boolean bResult = false;
+
+		try {
+
+			RandomAccessFile TempFormatedResponseFile = new RandomAccessFile( strTempFile, "rw" );
+			
+	    	String strLine;
+	    	
+	    	long lngCursorPosition = TempFormatedResponseFile.getChannel().position();
+	    	
+	    	while ( ( strLine = TempFormatedResponseFile.readLine() ) != null ) {
+	    		
+	    		strLine = strLine.trim();
+	    		
+	    		if ( strLine.indexOf( "<" + XMLDataPacketTags._Params ) == 0 ) {
+	    			
+	    			TempFormatedResponseFile.getChannel().position( lngCursorPosition );
+	    			
+	    			if ( strLine.substring( strLine.length() - 2, strLine.length() ).equals( "/>" ) ) {
+	    				
+	    				strLine = strLine.substring( 0, strLine.length() - 2 );
+	    				
+	    			}
+	    			
+	    			strLine = "    " +  strLine + " " + XMLDataPacketTags._RowCount + "=\"" + Long.toString( lngRowCount ) + "\" />";
+	    			
+	    			TempFormatedResponseFile.writeBytes( strLine );
+	    			
+	    			break;
+	    			
+	    		}
+
+	    		lngCursorPosition = TempFormatedResponseFile.getChannel().position();
+	    		
+	    	}
+	    	
+	    	TempFormatedResponseFile.close();
+	    	
+		} 
+		catch ( Exception Ex ) {
+
+    		if ( Logger != null )
+    			Logger.LogException( "-1010", Ex.getMessage(), Ex );
+    		else if ( OwnerConfig != null && OwnerConfig.Logger != null )
+    			OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+			
+		}
+    	
+    	return bResult;
+    	
+    }
+    
+    /*public Document AddXMLToRowDataSection( Document XMLDocument, ResultSet SQLDataSet, CAbstractDBEngine DBEngine, ArrayList<String> arrIncludedFields, ArrayList<String> arrExcludedFields, CExtendedLogger Logger, CLanguage Lang ) {
 
         try {
 
@@ -766,9 +1067,9 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
            if ( XML_RowDataSection.getLength() > 0 ) {
 
-              /*SimpleDateFormat DFormatter = new SimpleDateFormat("yyyyMMdd");
-              SimpleDateFormat TFormatter = new SimpleDateFormat("HHmmss");
-              SimpleDateFormat DTFormatter = new SimpleDateFormat("yyyyMMdd HHmmss");*/
+              //SimpleDateFormat DFormatter = new SimpleDateFormat("yyyyMMdd");
+              //SimpleDateFormat TFormatter = new SimpleDateFormat("HHmmss");
+              //SimpleDateFormat DTFormatter = new SimpleDateFormat("yyyyMMdd HHmmss");
 
               java.sql.ResultSetMetaData DataSetMetaData = SQLDataSet.getMetaData();
 
@@ -841,7 +1142,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
         
         return XMLDocument;
 
-    }
+    }*/
     
     public Document BuildXMLMetaData( Document XMLDocument, CMemoryRowSet MemoryRowSet, CExtendedLogger Logger, CLanguage Lang ) {
     	
@@ -1336,12 +1637,12 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	
     }
     
-    @Override
-	public String FormatResultSet( ResultSet SQLDataSet, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+    /*Override
+	public boolean FormatResultSet( HttpServletResponse Response, ResultSet SQLDataSet, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 
-    	String strResult = "";
+    	boolean bResult = false;
     	
-        try {
+        /*try {
 
 	        ResultSetMetaData DataSetMetaData = SQLDataSet.getMetaData();
 	
@@ -1350,11 +1651,18 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 	        ArrayList<String> arrIncludedFields = new ArrayList<String>();
 	        ArrayList<String> arrExcludedFields = new ArrayList<String>();
 	
+	        String strTempDir = OwnerConfig.getConfigValue( "Temp_Dir" );
+	        
+	        String strTempResponseFormatedFilePath = strTempDir + UUID.randomUUID();
+	        
+	        FileOutputStream TempResponseFormatedFileStream = new FileOutputStream( strTempResponseFormatedFilePath );
+	        DataOutputStream TempResponseFormatedFileWriter = new DataOutputStream( TempResponseFormatedFileStream );
+	        
 	        XMLDocument = BuildXMLMetaData( XMLDocument, DataSetMetaData, DBEngine, arrIncludedFields, arrExcludedFields, Logger, Lang );
 	
 	        XMLDocument = AddXMLToRowDataSection( XMLDocument, SQLDataSet, DBEngine, arrIncludedFields, arrExcludedFields, Logger, Lang );
 
-            strResult = this.ConvertXMLDocumentToString( XMLDocument, this.getCharacterEncoding(), Logger, Lang );
+            //strResult = this.ConvertXMLDocumentToString( XMLDocument, this.getCharacterEncoding(), Logger, Lang );
 
         }
         catch ( Exception Ex ) {
@@ -1366,13 +1674,14 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
         }
 
-    	return strResult;
+    	return bResult;
 		
 	}
     
-    public String FormatResultsSets( ArrayList<ResultSet> SQLDataSetList, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+    Override
+    public boolean FormatResultsSets( HttpServletResponse Response, ArrayList<ResultSet> SQLDataSetList, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
     	
-    	String strResult = "";
+    	boolean bResult = false;
     	
         try {
 
@@ -1395,7 +1704,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 		        
 		        }
 		        
-	            strResult = this.ConvertXMLDocumentToString( XMLDocument, this.getCharacterEncoding(), Logger, Lang );
+	            //strResult = this.ConvertXMLDocumentToString( XMLDocument, this.getCharacterEncoding(), Logger, Lang );
 
         	}
 	            
@@ -1407,58 +1716,136 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
 				OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
 
-        }
+        }//
     	
-    	return strResult;
+    	return bResult;
     	
-    }
+    }*/
 
     @Override
-    public String FormatResultSet( CResultSetResult SQLDataSetResult, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+    public boolean FormatResultSet( HttpServletResponse Response, CResultSetResult SQLDataSetResult, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang ) {
     	
-    	String strResult = "";
+    	boolean bResult = false;
     	
         try {
 
-        	Document XMLDocument = null;
-        	
-        	if ( SQLDataSetResult.Result != null ) {
+        	if ( Utilities.VersionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.VersionLessEquals( strVersion, this.strMaxVersion ) ) {
 
-            	XMLDocument = this.BuildBasicResponseXMLStruct( strVersion, Logger, Lang );
+        		String strTempDir = OwnerConfig.getConfigValue( "Temp_Dir" );
 
-        		ArrayList<String> arrIncludedFields = new ArrayList<String>();
-        		ArrayList<String> arrExcludedFields = new ArrayList<String>();
+        		String strTempResponseFormatedFilePath = strTempDir + UUID.randomUUID() + ".formated_response";
 
-        		XMLDocument = BuildXMLMetaData( XMLDocument, SQLDataSetResult.Result.getMetaData(), DBEngine, arrIncludedFields, arrExcludedFields, Logger, Lang );
+        		ServletOutputStream OutStream = Response.getOutputStream(); //new FileOutputStream( strTempResponseFormatedFilePath ); 
 
-        		XMLDocument = AddXMLToRowDataSection( XMLDocument, SQLDataSetResult.Result, DBEngine, arrIncludedFields, arrExcludedFields, Logger, Lang );
+        		PrintWriter TempResponseFormatedFileWriter = new PrintWriter( OutStream ); // strTempResponseFormatedFilePath, this.getCharacterEncoding() );
 
+        		if ( SQLDataSetResult.Result != null && SQLDataSetResult.intCode >= 0 ) {
+
+        			this.PrintXMLHeader( TempResponseFormatedFileWriter, this.getCharacterEncoding() );
+
+        			this.PrintXMLDataPacketSection( TempResponseFormatedFileWriter, strVersion, true );
+
+        			//long lngRowCount = -1;
+
+        			if ( this.PrintXMLMetaDataSection( TempResponseFormatedFileWriter, SQLDataSetResult.Result.getMetaData(), DBEngine, Logger, Lang ) ) {
+
+        				this.PrintXMLRowDataSection( TempResponseFormatedFileWriter, true );
+        				//lngRowCount = 
+        				this.PrintAddXMLToRowDataSection( strTempDir, strTempResponseFormatedFilePath, TempResponseFormatedFileWriter, OutStream, SQLDataSetResult.Result, DBEngine, Logger, Lang );    	        	
+        				this.PrintXMLRowDataSection( TempResponseFormatedFileWriter, false );
+
+        				ArrayList<String> strErrorCodeDescription = new ArrayList<String>();
+
+        				this.PrintXMLErrorsSection( TempResponseFormatedFileWriter, strErrorCodeDescription, strVersion );
+
+        			}
+
+        			this.PrintXMLDataPacketSection( TempResponseFormatedFileWriter, strVersion, false );
+
+        			TempResponseFormatedFileWriter.close();
+
+        			TempResponseFormatedFileWriter = null;
+
+        			/*if ( lngRowCount >= 0 ) {
+
+        				this.PrintParamsSectionRowCount( strTempResponseFormatedFilePath, lngRowCount, Logger, Lang );
+
+        			}*/
+
+        			/*XMLDocument = this.BuildBasicResponseXMLStruct( strVersion, Logger, Lang );
+
+        		    ArrayList<String> arrIncludedFields = new ArrayList<String>();
+        		    ArrayList<String> arrExcludedFields = new ArrayList<String>();
+
+        		    XMLDocument = BuildXMLMetaData( XMLDocument, SQLDataSetResult.Result.getMetaData(), DBEngine, arrIncludedFields, arrExcludedFields, Logger, Lang );
+
+        		    XMLDocument = AddXMLToRowDataSection( XMLDocument, SQLDataSetResult.Result, DBEngine, arrIncludedFields, arrExcludedFields, Logger, Lang );*/
+
+        		}
+        		else {
+
+        			Document XMLDocument = null;
+
+        			ArrayList<CSimpleXMLFieldDefinition> FieldDefinitons = new ArrayList<CSimpleXMLFieldDefinition>();
+
+        			FieldDefinitons.add( new CSimpleXMLFieldDefinition( XMLDataPacketTags._XML_StructAffectedRows, XMLDataPacketTags._FieldTypeBigInt, "", "" ) );
+        			FieldDefinitons.add( new CSimpleXMLFieldDefinition( XMLDataPacketTags._XML_StructCode, XMLDataPacketTags._FieldTypeInteger, "", "" ) );
+        			FieldDefinitons.add( new CSimpleXMLFieldDefinition( XMLDataPacketTags._XML_StructDescription, XMLDataPacketTags._FieldTypeString, "", XMLDataPacketTags._XML_StructDescriptionLength ) );
+
+        			XMLDocument = this.BuildXMLFieldDefinedStruct( FieldDefinitons, strVersion, Logger, Lang );
+
+        			LinkedHashMap<String,String> FieldValues = new LinkedHashMap<String,String>();
+
+        			FieldValues.put( XMLDataPacketTags._XML_StructAffectedRows, Long.toString( SQLDataSetResult.lngAffectedRows ) );
+        			FieldValues.put( XMLDataPacketTags._XML_StructCode, Integer.toString( SQLDataSetResult.intCode ) );
+        			FieldValues.put( XMLDataPacketTags._XML_StructDescription, SQLDataSetResult.strDescription );
+
+        			if ( SQLDataSetResult.intCode >= 0 )
+        				XMLDocument = AddXMLSimpleMessage( XMLDocument, FieldValues, strVersion, false, Logger, Lang );
+        			else
+        				XMLDocument = AddXMLSimpleMessage( XMLDocument, FieldValues, strVersion, true, Logger, Lang );
+
+        			TempResponseFormatedFileWriter.print( this.ConvertXMLDocumentToString( XMLDocument, this.getCharacterEncoding(), Logger, Lang ) );
+
+        			TempResponseFormatedFileWriter.close();
+
+        			TempResponseFormatedFileWriter = null;
+
+        		}
+
+        		/****
+    			File TempResponseFormatedFile = new File( strTempResponseFormatedFilePath ); 
+
+    			this.CopyToResponseStream( Response, TempResponseFormatedFile, 10240, Logger, Lang );
+
+    			if ( bDeleteTempReponseFile )
+    				TempResponseFormatedFile.delete();
+        		****/
+        		
+        		//strResult = this.ConvertXMLDocumentToString( XMLDocument, this.getCharacterEncoding(), Logger, Lang );
+        		
         	}
         	else {
 
-        		ArrayList<CSimpleXMLFieldDefinition> FieldDefinitons = new ArrayList<CSimpleXMLFieldDefinition>();
-        		
-        		FieldDefinitons.add( new CSimpleXMLFieldDefinition( XMLDataPacketTags._XML_StructAffectedRows, XMLDataPacketTags._FieldTypeBigInt, "", "" ) );
-        		FieldDefinitons.add( new CSimpleXMLFieldDefinition( XMLDataPacketTags._XML_StructCode, XMLDataPacketTags._FieldTypeInteger, "", "" ) );
-        		FieldDefinitons.add( new CSimpleXMLFieldDefinition( XMLDataPacketTags._XML_StructDescription, XMLDataPacketTags._FieldTypeString, "", XMLDataPacketTags._XML_StructDescriptionLength ) );
-        		
-        		XMLDocument = this.BuildXMLFieldDefinedStruct( FieldDefinitons, strVersion, Logger, Lang );
-        		
-        		LinkedHashMap<String,String> FieldValues = new LinkedHashMap<String,String>();
-        		
-        		FieldValues.put( XMLDataPacketTags._XML_StructAffectedRows, Long.toString( SQLDataSetResult.lngAffectedRows ) );
-        		FieldValues.put( XMLDataPacketTags._XML_StructCode, Integer.toString( SQLDataSetResult.intCode ) );
-        		FieldValues.put( XMLDataPacketTags._XML_StructDescription, SQLDataSetResult.strDescription );
-        		
-        		if ( SQLDataSetResult.intCode >= 0 )
-        			XMLDocument = AddXMLSimpleMessage( XMLDocument, FieldValues, strVersion, false, Logger, Lang );
-        		else
-        			XMLDocument = AddXMLSimpleMessage( XMLDocument, FieldValues, strVersion, true, Logger, Lang );
+        		if ( Logger != null ) {
+
+        			if ( Lang != null )
+        				Logger.LogError( "-1015", Lang.Translate( "Format version [%s] not supported", strVersion ) );
+        			else
+        				Logger.LogError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
+
+        		}    
+        		else if ( OwnerConfig != null && OwnerConfig.Logger != null ) {
+
+        			if ( OwnerConfig.Lang != null )
+        				OwnerConfig.Logger.LogError( "-1015", OwnerConfig.Lang.Translate( "Format version [%s] not supported", strVersion ) );
+        			else
+        				OwnerConfig.Logger.LogError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
+
+        		}    
 
         	}
-
-        	strResult = this.ConvertXMLDocumentToString( XMLDocument, this.getCharacterEncoding(), Logger, Lang );
-	            
+	        
         }
         catch ( Exception Ex ) {
 
@@ -1469,110 +1856,163 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
         }
     	
-    	return strResult;
+    	return bResult;
     	
     }
 
-    public String FormatResultsSets( ArrayList<CResultSetResult> SQLDataSetResultList, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
+    public boolean FormatResultsSets( HttpServletResponse Response, ArrayList<CResultSetResult> SQLDataSetResultList, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
     	
-    	String strResult = "";
+    	boolean bResult = false;
     	
         try {
 
-        	if ( SQLDataSetResultList.size() > 0 ) {
+			if ( Utilities.VersionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.VersionLessEquals( strVersion, this.strMaxVersion ) ) {
 
-        		ResultSet SQLDataSet = CResultSetResult.getFirstResultSetNotNull( SQLDataSetResultList );
-        		
-    			Document XMLDocument = null; 
+				if ( SQLDataSetResultList.size() > 0 ) {
 
-    			boolean bNodeErrorAdded = false;
-    			
-        		if ( SQLDataSet != null ) {
-		        
-        			XMLDocument = this.BuildBasicResponseXMLStruct( strVersion, false, Logger, Lang );
-        			
-        			ResultSetMetaData SQLDataSetMetaData = SQLDataSet.getMetaData();
+					String strTempDir = OwnerConfig.getConfigValue( "Temp_Dir" );
 
-        			ArrayList<String> arrIncludedFields = new ArrayList<String>();
-        			ArrayList<String> arrExcludedFields = new ArrayList<String>();
+					String strTempResponseFormatedFilePath = strTempDir + UUID.randomUUID() + ".formated_response";
 
-        			XMLDocument = this.BuildXMLMetaData( XMLDocument, SQLDataSetMetaData, DBEngine, arrIncludedFields, arrExcludedFields, Logger, Lang );
+					ServletOutputStream OutStream = Response.getOutputStream(); //new FileOutputStream( strTempResponseFormatedFilePath ); 
 
-            		LinkedHashMap<String,String> FieldValues = new LinkedHashMap<String,String>();
-        			
-        			for ( CResultSetResult SQLDataSetResultToAdd: SQLDataSetResultList ) { 
-        				
-        				//String strTmp = "";
+					PrintWriter TempResponseFormatedFileWriter = new PrintWriter( OutStream ); // strTempResponseFormatedFilePath, this.getCharacterEncoding() );
 
-        				if ( SQLDataSetResultToAdd.Result != null ) {   
+					ResultSet SQLDataSet = CResultSetResult.getFirstResultSetNotNull( SQLDataSetResultList );
 
-        					//strTmp = this.ConvertXMLDocumentToString( XMLDocument, this.getCharacterEncoding() );
-        				
-        					XMLDocument = AddXMLToRowDataSection( XMLDocument, SQLDataSetResultToAdd.Result, DBEngine, arrIncludedFields, arrExcludedFields, Logger, Lang );
+					Document XMLDocument = null; 
 
-        					//strTmp = this.ConvertXMLDocumentToString( XMLDocument, this.getCharacterEncoding() );
-        					
-        				}
-        				else {
-        					              
-                    		FieldValues.put( XMLDataPacketTags._XML_StructAffectedRows, Long.toString( SQLDataSetResultToAdd.lngAffectedRows ) );
-                    		FieldValues.put( XMLDataPacketTags._XML_StructCode, Integer.toString( SQLDataSetResultToAdd.intCode ) );
-                    		FieldValues.put( XMLDataPacketTags._XML_StructDescription, SQLDataSetResultToAdd.strDescription );
+					boolean bNodeErrorAdded = false;
 
-        					XMLDocument = AddXMLToErrorSection( XMLDocument, FieldValues, strVersion, true );
-        					
-        					bNodeErrorAdded = true;
-        					
-        				}
+					if ( SQLDataSet != null ) {
 
-        			}
-		        
-        		}
-        		else {
-        			
-            		ArrayList<CSimpleXMLFieldDefinition> FieldDefinitons = new ArrayList<CSimpleXMLFieldDefinition>();
-            		
-            		FieldDefinitons.add( new CSimpleXMLFieldDefinition( XMLDataPacketTags._XML_StructAffectedRows, XMLDataPacketTags._FieldTypeBigInt, "", "" ) );
-            		FieldDefinitons.add( new CSimpleXMLFieldDefinition( XMLDataPacketTags._XML_StructCode, XMLDataPacketTags._FieldTypeInteger, "", "" ) );
-            		FieldDefinitons.add( new CSimpleXMLFieldDefinition( XMLDataPacketTags._XML_StructDescription, XMLDataPacketTags._FieldTypeString, "", XMLDataPacketTags._XML_StructDescriptionLength ) );
-            		
-            		XMLDocument = this.BuildXMLFieldDefinedStruct( FieldDefinitons, strVersion, Logger, Lang );
-            		
-            		LinkedHashMap<String,String> FieldValues = new LinkedHashMap<String,String>();
-        			
-        			for ( CResultSetResult ResultSetResultToAdd: SQLDataSetResultList ) {    
+						this.PrintXMLHeader( TempResponseFormatedFileWriter, this.getCharacterEncoding() );
 
-                		FieldValues.put( XMLDataPacketTags._XML_StructAffectedRows, Long.toString( ResultSetResultToAdd.lngAffectedRows ) );
-                		FieldValues.put( XMLDataPacketTags._XML_StructCode, Integer.toString( ResultSetResultToAdd.intCode ) );
-                		FieldValues.put( XMLDataPacketTags._XML_StructDescription, ResultSetResultToAdd.strDescription );
-        				
-        				if ( ResultSetResultToAdd.intCode >= 0 ) {
-        				
-        					XMLDocument = AddXMLSimpleMessage( XMLDocument, FieldValues, strVersion, false, Logger, Lang );
-        					
-        				}	
-        				else {
-        				
-        					XMLDocument = AddXMLSimpleMessage( XMLDocument, FieldValues, strVersion, true, Logger, Lang );
-        				 
-        					bNodeErrorAdded = true;
-        				
-        				}	
-        			
-        			}
-        			
-        		}
-		        
-        		if ( bNodeErrorAdded == false ) { //Add the default node error
-        			
-        		    XMLDocument = this.AddXMLToErrorSection( XMLDocument, 0, "", strVersion, false );
-        			
-        		}
-        		
-	            strResult = this.ConvertXMLDocumentToString( XMLDocument, this.getCharacterEncoding(), Logger, Lang );
+						this.PrintXMLDataPacketSection( TempResponseFormatedFileWriter, strVersion, true );
 
-        	}
-	            
+						long lngRowCount = -1;
+
+						if ( this.PrintXMLMetaDataSection( TempResponseFormatedFileWriter, SQLDataSet.getMetaData(), DBEngine, Logger, Lang ) ) {
+
+							ArrayList<String> strErrorCodeDescription = new ArrayList<String>();
+
+							this.PrintXMLRowDataSection( TempResponseFormatedFileWriter, true );
+
+							for ( CResultSetResult SQLDataSetResultToAdd: SQLDataSetResultList ) { 
+
+								if ( SQLDataSetResultToAdd.Result != null ) {   
+
+									if ( lngRowCount < 0 )
+										lngRowCount = 0;
+
+									lngRowCount += this.PrintAddXMLToRowDataSection( strTempDir, strTempResponseFormatedFilePath, TempResponseFormatedFileWriter, OutStream, SQLDataSetResultToAdd.Result, DBEngine, Logger, Lang );    	        	
+
+								}
+								else {
+
+									strErrorCodeDescription.add( XMLDataPacketTags._XML_StructAffectedRows + "=\"" + Long.toString( SQLDataSetResultToAdd.lngAffectedRows ) + "\" " + XMLDataPacketTags._XML_StructCode + "=\"" + Integer.toString( SQLDataSetResultToAdd.intCode ) + "\" " + XMLDataPacketTags._XML_StructDescription + "=\"" + SQLDataSetResultToAdd.strDescription + "\"" );
+
+								}
+
+							};
+
+							this.PrintXMLRowDataSection( TempResponseFormatedFileWriter, false );
+
+							this.PrintXMLErrorsSection( TempResponseFormatedFileWriter, strErrorCodeDescription, strVersion );
+
+						}
+
+						this.PrintXMLDataPacketSection( TempResponseFormatedFileWriter, strVersion, false );
+
+						TempResponseFormatedFileWriter.close();
+
+						TempResponseFormatedFileWriter = null;
+
+						//if ( lngRowCount >= 0 ) {
+
+							//this.PrintParamsSectionRowCount( strTempResponseFormatedFilePath, lngRowCount, Logger, Lang );
+
+						//}
+
+					}
+					else {
+
+						ArrayList<CSimpleXMLFieldDefinition> FieldDefinitons = new ArrayList<CSimpleXMLFieldDefinition>();
+
+						FieldDefinitons.add( new CSimpleXMLFieldDefinition( XMLDataPacketTags._XML_StructAffectedRows, XMLDataPacketTags._FieldTypeBigInt, "", "" ) );
+						FieldDefinitons.add( new CSimpleXMLFieldDefinition( XMLDataPacketTags._XML_StructCode, XMLDataPacketTags._FieldTypeInteger, "", "" ) );
+						FieldDefinitons.add( new CSimpleXMLFieldDefinition( XMLDataPacketTags._XML_StructDescription, XMLDataPacketTags._FieldTypeString, "", XMLDataPacketTags._XML_StructDescriptionLength ) );
+
+						XMLDocument = this.BuildXMLFieldDefinedStruct( FieldDefinitons, strVersion, Logger, Lang );
+
+						LinkedHashMap<String,String> FieldValues = new LinkedHashMap<String,String>();
+
+						for ( CResultSetResult ResultSetResultToAdd: SQLDataSetResultList ) {    
+
+							FieldValues.put( XMLDataPacketTags._XML_StructAffectedRows, Long.toString( ResultSetResultToAdd.lngAffectedRows ) );
+							FieldValues.put( XMLDataPacketTags._XML_StructCode, Integer.toString( ResultSetResultToAdd.intCode ) );
+							FieldValues.put( XMLDataPacketTags._XML_StructDescription, ResultSetResultToAdd.strDescription );
+
+							if ( ResultSetResultToAdd.intCode >= 0 ) {
+
+								XMLDocument = AddXMLSimpleMessage( XMLDocument, FieldValues, strVersion, false, Logger, Lang );
+
+							}	
+							else {
+
+								XMLDocument = AddXMLSimpleMessage( XMLDocument, FieldValues, strVersion, true, Logger, Lang );
+
+								bNodeErrorAdded = true;
+
+							}	
+
+						}
+
+						if ( bNodeErrorAdded == false ) { //Add the default node error
+
+							XMLDocument = this.AddXMLToErrorSection( XMLDocument, 0, "", strVersion, false );
+
+						}
+
+						TempResponseFormatedFileWriter.print( this.ConvertXMLDocumentToString( XMLDocument, this.getCharacterEncoding(), Logger, Lang ) );
+
+						TempResponseFormatedFileWriter.close();
+
+						TempResponseFormatedFileWriter = null;
+
+					}
+
+					File TempResponseFormatedFile = new File( strTempResponseFormatedFilePath ); 
+
+					this.CopyToResponseStream( Response, TempResponseFormatedFile, 10240, Logger, Lang );
+
+					if ( bDeleteTempReponseFile )
+						TempResponseFormatedFile.delete();
+
+				}
+
+			}
+			else {
+				
+				if ( Logger != null ) {
+					
+					if ( Lang != null )
+						Logger.LogError( "-1015", Lang.Translate( "Format version [%s] not supported", strVersion ) );
+					else
+						Logger.LogError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
+				    
+				}    
+				else if ( OwnerConfig != null && OwnerConfig.Logger != null ) {
+
+					if ( OwnerConfig.Lang != null )
+						OwnerConfig.Logger.LogError( "-1015", OwnerConfig.Lang.Translate( "Format version [%s] not supported", strVersion ) );
+					else
+						OwnerConfig.Logger.LogError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
+
+				}    
+				
+			}
+        	
         }
         catch ( Exception Ex ) {
 
@@ -1583,7 +2023,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
         }
     	
-    	return strResult;
+    	return bResult;
     	
     }
 
@@ -1616,7 +2056,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	
     }
     
-    @Override
+    /*Override
     public String FormatMemoryRowSets( ArrayList<CMemoryRowSet> MemoryRowSetList, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	String strResult = "";
@@ -1653,7 +2093,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
         
     	return strResult;
     	
-    }
+    }*/
     
     @Override
     public String FormatSimpleMessage( String strSecurityTokenID, String strTransactionID, int intCode, String strDescription, boolean bAttachToError, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {

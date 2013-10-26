@@ -1,12 +1,18 @@
 package AbstractResponseFormat;
 
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.UUID;
 import java.util.Map.Entry;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import net.maindataservices.Base64;
 import net.maindataservices.Utilities;
@@ -21,7 +27,6 @@ import CommonClasses.CLanguage;
 import CommonClasses.CMemoryFieldData;
 import CommonClasses.CMemoryRowSet;
 import CommonClasses.CResultSetResult;
-import CommonClasses.NamesSQLTypes;
 import ExtendedLogger.CExtendedLogger;
 
 public class CJSONResponseFormat extends CAbstractResponseFormat {
@@ -178,7 +183,60 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
 	
 	}
 
-	boolean FormatResultSetToJSONArray( ResultSet SQLDataSet, CAbstractDBEngine DBEngine, JSONArray JSONDocument, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+	public void PrintJSONHeader( PrintWriter TempResponseFormatedFileWriter, boolean bOpen ) {
+		
+		if ( bOpen )  
+			TempResponseFormatedFileWriter.println( "[" );
+		else
+			TempResponseFormatedFileWriter.println( "]" );
+		
+	}
+	
+	public void PrintJSONDataSection( PrintWriter TempResponseFormatedFileWriter, boolean bOpen, boolean bAddComma ) {
+		
+		if ( bOpen )  
+			TempResponseFormatedFileWriter.println( "  [" );
+		else if ( bAddComma == false )
+			TempResponseFormatedFileWriter.println( "  ]" );
+		else
+			TempResponseFormatedFileWriter.println( "  ]," );
+		
+	}
+	
+	/*public void PrintJSONErrorSection( PrintWriter TempResponseFormatedFileWriter, ArrayList<String> strErrorCodeDescription ) {
+
+		if ( strErrorCodeDescription.size() == 0 ) {
+			
+			TempResponseFormatedFileWriter.println( "  []" );
+			
+		}
+		else {
+			
+			TempResponseFormatedFileWriter.println( "  [" );
+			
+			for ( int I = 0; I < strErrorCodeDescription.size(); I++ ) {
+				
+				TempResponseFormatedFileWriter.println( "    {" );
+				
+				TempResponseFormatedFileWriter.println( "      " + strErrorCodeDescription.get( I ) );
+				
+				TempResponseFormatedFileWriter.println( "    }" );
+
+				if ( I < strErrorCodeDescription.size() - 1 ) {
+					
+					TempResponseFormatedFileWriter.println( "," );
+					
+				}
+				
+			}
+			
+			TempResponseFormatedFileWriter.println( "  ]" );
+			
+		}
+		
+	}*/
+	
+	public boolean FormatResultSetToJSONArray( String strTempDir, String strTempFile, PrintWriter TempResponseFormatedFileWriter, OutputStream TempStreamResponseFormatedFile, ResultSet SQLDataSet, CAbstractDBEngine DBEngine, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		boolean bResult = false;
 
@@ -186,17 +244,27 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
 
 			java.sql.ResultSetMetaData DataSetMetaData = SQLDataSet.getMetaData();
 
-			boolean bOnFirstRow = SQLDataSet.getRow() == 1;
+			int intColumnCount = DataSetMetaData.getColumnCount();
+			
+			boolean bIsFirst = true;
+			
+			while ( SQLDataSet.next() == true ) {
 
-			while ( bOnFirstRow == true || SQLDataSet.next() == true ) {
+				if ( bIsFirst ) {
 
-				bOnFirstRow = false;
-
-				bOnFirstRow = false;
-
-				JSONObject JSONResultSet = new JSONObject();
-
-				for ( int i = 1; i <= DataSetMetaData.getColumnCount(); i++ ) {
+					TempResponseFormatedFileWriter.println( "    {" );
+					
+					bIsFirst = false;
+					
+				}   
+				else {
+					
+			       TempResponseFormatedFileWriter.println( "," );
+				   TempResponseFormatedFileWriter.println( "    {" );
+					
+				}
+				
+				for ( int i = 1; i <= intColumnCount; i++ ) {
 
 					String strFieldName = DataSetMetaData.getColumnName( i );
 
@@ -209,34 +277,52 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
 
 					if ( SQLDataSet.getObject( i ) != null ) {
 
-						if ( intFieldType != Types.BLOB ) {   
+						if ( intFieldType == Types.VARCHAR || intFieldType == Types.CHAR || intFieldType == Types.NVARCHAR || intFieldType == Types.NCHAR ) {   
 						
-							Object FieldValue = DBEngine.getFieldValueAsObject(intFieldType, strFieldName, SQLDataSet, Logger, Lang );
-						
-							JSONResultSet.put( strFieldName, FieldValue );
+							TempResponseFormatedFileWriter.print( "      \"" + strFieldName + "\":\"" + DBEngine.getFieldValueAsString( intFieldType, strFieldName, SQLDataSet, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang ) + "\"" );
+							
+						}
+						else if ( intFieldType == Types.BLOB ) {
+							
+            				TempResponseFormatedFileWriter.print( "      \"" +  strFieldName + "\":\"" );
+            				TempResponseFormatedFileWriter.flush();
+            				DBEngine.writeBlobValueAsStringToFile( intFieldType, strFieldName, strTempDir, strTempFile, TempStreamResponseFormatedFile, SQLDataSet, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang  );
+            				TempResponseFormatedFileWriter.print( "\"" );
 							
 						}
 						else {
 							
-							String strFieldValue = DBEngine.getFieldValueAsString( intFieldType, strFieldName, SQLDataSet, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
-							
-							JSONResultSet.put( strFieldName, strFieldValue );
+							TempResponseFormatedFileWriter.print( "      \"" + strFieldName + "\":" + DBEngine.getFieldValueAsString( intFieldType, strFieldName, SQLDataSet, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang ) + "" );
 							
 						}
 
 					}
 					else {
 
-						JSONResultSet.putOpt( strFieldName, JSONObject.NULL );
+						TempResponseFormatedFileWriter.print( "      \"" + strFieldName + "\":null" );
 
+					}
+					
+					if ( i < intColumnCount ) {
+						
+						TempResponseFormatedFileWriter.println( "," );
+						
+					}
+					else {
+						
+						TempResponseFormatedFileWriter.println( "" );
+						
 					}
 
 				}
 
-				JSONDocument.put( JSONResultSet );
+				TempResponseFormatedFileWriter.print( "    }" );
+				//JSONDocument.put( JSONResultSet );
 
 			}
 
+			//TempResponseFormatedFileWriter.println( "" );
+			
 			bResult = true;
 			
 		}
@@ -328,10 +414,10 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
 		
 	}
 	
-	@Override
-	public String FormatResultSet( ResultSet SQLDataSet, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+	/*Override
+	public boolean FormatResultSet( HttpServletResponse Response, ResultSet SQLDataSet, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 
-		String strResult = "";
+		boolean bResult = false;
 		
         try {
 
@@ -354,16 +440,16 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
 
         }
 		
-		return strResult;
+		return bResult;
 	
 	}
 
-	@Override
-	public String FormatResultsSets( ArrayList<ResultSet> SQLDataSetList, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+	Override
+	public boolean FormatResultsSets( HttpServletResponse Response, ArrayList<ResultSet> SQLDataSetList, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 
-		String strResult = "";
+		boolean bResult = false;
 
-		try {
+		/*try {
 
 			if ( Utilities.VersionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.VersionLessEquals( strVersion, this.strMaxVersion ) ) {
 			
@@ -413,33 +499,51 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
 
 		}
 
-		return strResult;
+		return bResult;
 	
-	}
+	}*/
 
 	@Override
-	public String FormatResultSet( CResultSetResult SQLDataSetResult, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+	public boolean FormatResultSet( HttpServletResponse Response, CResultSetResult SQLDataSetResult, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang ) {
 
-    	String strResult = "";
+    	boolean bResult = false;
     	
         try {
 
 			if ( Utilities.VersionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.VersionLessEquals( strVersion, this.strMaxVersion ) ) {
 
+		        String strTempDir = OwnerConfig.getConfigValue( "Temp_Dir" );
+		        
+		        String strTempResponseFormatedFilePath = strTempDir + UUID.randomUUID() + ".formated_response";
+	    		
+	            ServletOutputStream OutStream = Response.getOutputStream(); //new FileOutputStream( strTempResponseFormatedFilePath ); 
+		        
+		        PrintWriter TempResponseFormatedFileWriter = new PrintWriter( OutStream ); // strTempResponseFormatedFilePath, this.getCharacterEncoding() );
+				
 				if ( SQLDataSetResult.Result != null && SQLDataSetResult.intCode >= 0 ) {
 
-					JSONArray JSONDocumentRoot = new JSONArray();
-
-					JSONArray JSONDocumentData = new JSONArray();
+        			this.PrintJSONHeader( TempResponseFormatedFileWriter, true );
+        			
+        			this.PrintJSONDataSection( TempResponseFormatedFileWriter, true, false );
 					
+					this.FormatResultSetToJSONArray( strTempDir, strTempResponseFormatedFilePath, TempResponseFormatedFileWriter, OutStream, SQLDataSetResult.Result, DBEngine, strDateTimeFormat, strDateFormat,  strTimeFormat, Logger, Lang ); 
+					
+					TempResponseFormatedFileWriter.println( "" );
+					
+        			this.PrintJSONDataSection( TempResponseFormatedFileWriter, false, true );
+
 					JSONArray JSONDocumentErrors = new JSONArray();
-
-					JSONDocumentRoot.put( JSONDocumentData );
-					JSONDocumentRoot.put( JSONDocumentErrors );
 					
-					if ( this.FormatResultSetToJSONArray( SQLDataSetResult.Result, DBEngine, JSONDocumentData, strDateTimeFormat, strDateFormat,  strTimeFormat, Logger, Lang ) ) 
-						strResult = JSONDocumentRoot.toString();
+    				TempResponseFormatedFileWriter.print( JSONDocumentErrors.toString( 2, 2 ) );
+        			
+    				TempResponseFormatedFileWriter.println();
+    				
+        			this.PrintJSONHeader( TempResponseFormatedFileWriter, false );
+        			
+        			TempResponseFormatedFileWriter.close();
 
+        			TempResponseFormatedFileWriter = null;
+        			
 				}
 				else {
 
@@ -447,20 +551,38 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
 
 					JSONObject JSONDocumentData = new JSONObject();
 					
-					JSONArray JSONDocumentErrors = new JSONArray();
-
-					JSONDocumentRoot.put( JSONDocumentData );
-					JSONDocumentRoot.put( JSONDocumentErrors );
-
 					JSONDocumentData.put( JSONTags._JSON_StructAffectedRows, SQLDataSetResult.lngAffectedRows );
 					JSONDocumentData.put( JSONTags._JSON_StructCode, SQLDataSetResult.intCode );
 					JSONDocumentData.put( JSONTags._JSON_StructDescription, SQLDataSetResult.strDescription );
 
-					strResult = JSONDocumentRoot.toString();
+					JSONDocumentRoot.put( JSONDocumentData );
+					
+					JSONArray JSONDocumentErrors = new JSONArray();
+					JSONDocumentRoot.put( JSONDocumentErrors );
+					
+					if ( SQLDataSetResult.intCode < 0 ) {
+						
+						JSONDocumentErrors.put( JSONDocumentData );
+						
+					}
+					
+        			TempResponseFormatedFileWriter.print( JSONDocumentRoot.toString() );
+
+        			TempResponseFormatedFileWriter.close();
+
+        			TempResponseFormatedFileWriter = null;
 					
 				}
-				
 
+    			/****
+    			 File TempResponseFormatedFile = new File( strTempResponseFormatedFilePath ); 
+
+    			this.CopyToResponseStream( Response, TempResponseFormatedFile, 10240, Logger, Lang );
+
+    			if ( bDeleteTempReponseFile )
+    				TempResponseFormatedFile.delete();
+    			****/
+				
 			}
 			else {
 				
@@ -493,14 +615,14 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
 
         }
     	
-    	return strResult;
+    	return bResult;
 	
 	}
 
 	@Override
-	public String FormatResultsSets( ArrayList<CResultSetResult> SQLDataSetResultList, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
+	public boolean FormatResultsSets( HttpServletResponse Response, ArrayList<CResultSetResult> SQLDataSetResultList, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
 
-    	String strResult = "";
+    	boolean bResult = false;
     	
         try {
 
@@ -508,24 +630,39 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
         	
 				if ( SQLDataSetResultList.size() > 0 ) {
 
+	    	        String strTempDir = OwnerConfig.getConfigValue( "Temp_Dir" );
+	    	        
+	    	        String strTempResponseFormatedFilePath = strTempDir + UUID.randomUUID() + ".formated_response";
+	        		
+	                ServletOutputStream OutStream = Response.getOutputStream(); //new FileOutputStream( strTempResponseFormatedFilePath ); 
+	    	        
+	    	        PrintWriter TempResponseFormatedFileWriter = new PrintWriter( OutStream ); // strTempResponseFormatedFilePath, this.getCharacterEncoding() );
+					
 					ResultSet SQLDataSet = CResultSetResult.getFirstResultSetNotNull( SQLDataSetResultList );
 				
 					if ( SQLDataSet != null ) {
 
-						JSONArray JSONDocumentRoot = new JSONArray();
-						
-						JSONArray JSONDocumentData = new JSONArray();
-						
+	        			this.PrintJSONHeader( TempResponseFormatedFileWriter, true );
+	        			
+	        			this.PrintJSONDataSection( TempResponseFormatedFileWriter, true, false );
+
 						JSONArray JSONDocumentErrors = new JSONArray();
 						
-						JSONDocumentRoot.put( JSONDocumentData );
-						JSONDocumentRoot.put( JSONDocumentErrors );
+						boolean bFirst = true;
 						
 						for ( CResultSetResult SQLDataSetResultToAdd: SQLDataSetResultList ) {    
 
+							if ( bFirst == false ) {
+								
+								TempResponseFormatedFileWriter.println( "," );
+								
+							}
+							
+							bFirst = false;
+							
 							if ( SQLDataSetResultToAdd.Result != null && SQLDataSetResultToAdd.intCode >= 0 ) {   
 
-								this.FormatResultSetToJSONArray( SQLDataSetResultToAdd.Result, DBEngine, JSONDocumentData, strDateTimeFormat, strDateFormat,  strTimeFormat, Logger, Lang );
+								this.FormatResultSetToJSONArray( strTempDir, strTempResponseFormatedFilePath, TempResponseFormatedFileWriter, OutStream, SQLDataSetResultToAdd.Result, DBEngine, strDateTimeFormat, strDateFormat,  strTimeFormat, Logger, Lang ); 
 								
 							}
 							else {
@@ -542,24 +679,22 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
 
 						}
 
-						strResult = JSONDocumentRoot.toString();
+						TempResponseFormatedFileWriter.println( "" );
+
+						this.PrintJSONDataSection( TempResponseFormatedFileWriter, false, true );
+
+	    				TempResponseFormatedFileWriter.print( JSONDocumentErrors.toString( 2, 2 ) );
+	        			
+						TempResponseFormatedFileWriter.println( "" );
+	    				
+	        			this.PrintJSONHeader( TempResponseFormatedFileWriter, false );
+						
+						TempResponseFormatedFileWriter.close();
+
+						TempResponseFormatedFileWriter = null;
 						
 					}
 					else {
-
-						CMemoryRowSet MemoryRowSet = new CMemoryRowSet( false );
-
-						MemoryRowSet.addField( JSONTags._JSON_StructAffectedRows, Types.BIGINT, NamesSQLTypes._BIGINT, 0, JSONTags._JSON_StructAffectedRows );
-						MemoryRowSet.addField( JSONTags._JSON_StructCode, Types.INTEGER, NamesSQLTypes._INTEGER, 0, JSONTags._JSON_StructCode );
-						MemoryRowSet.addField( JSONTags._JSON_StructDescription, Types.VARCHAR, NamesSQLTypes._VARCHAR, JSONTags._JSON_StructDescriptionLength, JSONTags._JSON_StructDescription );
-
-						for ( CResultSetResult SQLDataSetResultToAdd: SQLDataSetResultList ) {    
-
-							MemoryRowSet.addData( JSONTags._JSON_StructAffectedRows,- SQLDataSetResultToAdd.lngAffectedRows );
-							MemoryRowSet.addData( JSONTags._JSON_StructCode, SQLDataSetResultToAdd.intCode );
-							MemoryRowSet.addData( JSONTags._JSON_StructDescription, SQLDataSetResultToAdd.strDescription );
-
-						}
 
 						JSONArray JSONDocumentRoot = new JSONArray();
 
@@ -569,13 +704,42 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
 
 						JSONDocumentRoot.put( JSONDocumentData );
 						JSONDocumentRoot.put( JSONDocumentErrors );
+
+						for ( CResultSetResult SQLDataSetResultToAdd: SQLDataSetResultList ) {    
+
+							JSONObject JSONData = new JSONObject(); 
+							
+                        	JSONData.put( JSONTags._JSON_StructAffectedRows, SQLDataSetResultToAdd.lngAffectedRows );
+                        	JSONData.put( JSONTags._JSON_StructCode, SQLDataSetResultToAdd.intCode );
+                        	JSONData.put( JSONTags._JSON_StructDescription, SQLDataSetResultToAdd.strDescription );
+
+							JSONDocumentData.put( JSONData );
+
+							if ( SQLDataSetResultToAdd.intCode < 0 ) { 
+							
+    							JSONDocumentErrors.put( JSONData );
+							
+                            }
+							
+						}
 						
-						if ( this.FormatMemoryRowSetToJSONArray( MemoryRowSet, JSONDocumentData, Logger, Lang ) ) 
-							strResult = JSONDocumentRoot.toString();
+						TempResponseFormatedFileWriter.print( JSONDocumentRoot.toString() );
+
+						TempResponseFormatedFileWriter.close();
+
+						TempResponseFormatedFileWriter = null;
 						
 					}
 					
-				
+					/****
+		    		File TempResponseFormatedFile = new File( strTempResponseFormatedFilePath ); 
+		    		
+		    		this.CopyToResponseStream( Response, TempResponseFormatedFile, 10240, Logger, Lang );
+		    		
+		    		if ( bDeleteTempReponseFile )
+		    			TempResponseFormatedFile.delete();
+					******/
+					
 				}
 	        	
 			}
@@ -610,7 +774,7 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
 
         }
     	
-    	return strResult;
+    	return bResult;
 	
 	}
 	
@@ -664,7 +828,7 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
 	
 	}
 
-	@Override
+	/*Override
 	public String FormatMemoryRowSets( ArrayList<CMemoryRowSet> MemoryRowSetList, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 
 		String strResult = "";
@@ -717,7 +881,7 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
 
 		return strResult;
 	
-	}
+	}*/
 	
 	@Override
 	public String FormatSimpleMessage( String strSecurityTokenID, String strTransactionID, int intCode, String strDescription, boolean bAttachToError, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {

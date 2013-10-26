@@ -8,12 +8,16 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import javax.sql.RowSetMetaData;
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetMetaDataImpl;
 import javax.sql.rowset.WebRowSet;
 
 import net.maindataservices.Utilities;
+
+import WebRowSet.CWebRowSetImpl;
 
 import com.sun.rowset.CachedRowSetImpl;
 import com.sun.rowset.WebRowSetImpl;
@@ -288,12 +292,12 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 	
 	}
 
-	@Override
-	public String FormatResultSet( ResultSet SQLDataSet, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+	/*Override
+	public boolean FormatResultSet( HttpServletResponse Response, ResultSet SQLDataSet, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 
-		String strResult = "";
+		boolean bResult = false;
 
-		try {
+		/*try {
 
 			if ( Utilities.VersionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.VersionLessEquals( strVersion, this.strMaxVersion ) ) {
 
@@ -337,18 +341,18 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
 				OwnerConfig.Logger.LogException( "-1016", Ex.getMessage(), Ex );
 
-		}
+		}//
 
-		return strResult;
+		return bResult;
 		
 	}
 
-	@Override
-	public String FormatResultsSets( ArrayList<ResultSet> SQLDataSetList, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+	/*Override
+	public boolean FormatResultsSets( HttpServletResponse Response, ArrayList<ResultSet> SQLDataSetList, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 
-		String strResult = "";
+		boolean bResult = false;
 
-		try {
+		/*try {
 
 			if ( Utilities.VersionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.VersionLessEquals( strVersion, this.strMaxVersion ) ) {
 
@@ -425,33 +429,41 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
 				OwnerConfig.Logger.LogException( "-1016", Ex.getMessage(), Ex );
 
-		}
+		}//
 
-		return strResult;
+		return bResult;
 		
-	}
+	}*/
 
     @Override
-    public String FormatResultSet( CResultSetResult SQLDataSetResult, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+    public boolean FormatResultSet( HttpServletResponse Response, CResultSetResult SQLDataSetResult, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang ) {
     	
-    	String strResult = "";
+    	boolean bResult = false;
     	
         try {
         	
 			if ( Utilities.VersionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.VersionLessEquals( strVersion, this.strMaxVersion ) ) {
 
-				CMemoryRowSet MemoryRowSet = new CMemoryRowSet( false );
+        		//String strTempDir = OwnerConfig.getConfigValue( "Temp_Dir" );
 
-				ResultSet SQLDataSet = null;
+        		//String strTempResponseFormatedFilePath = strTempDir + UUID.randomUUID() + ".formated_response";
+
+        		ServletOutputStream OutStream =  Response.getOutputStream(); //new FileOutputStream( strTempResponseFormatedFilePath ); 
+
+        		//PrintWriter TempResponseFormatedFileWriter = new PrintWriter( TempFileOutStream ); // strTempResponseFormatedFilePath, this.getCharacterEncoding() );
+
+				//CMemoryRowSet MemoryRowSet = new CMemoryRowSet( false );
+
+				//ResultSet SQLDataSet = null;
 				
-				if ( SQLDataSetResult != null ) {
+				if ( SQLDataSetResult.Result != null && SQLDataSetResult.intCode >= 0 ) {
 
-					MemoryRowSet.cloneOnlyMetaData( SQLDataSetResult.Result, DBEngine, null, Logger, Lang );
+					/*MemoryRowSet.cloneOnlyMetaData( SQLDataSetResult.Result, DBEngine, null, Logger, Lang );
 					MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructAffectedRows, Types.BIGINT, NamesSQLTypes._BIGINT, 0, JavaXMLWebRowSetTags._XML_StructAffectedRows );
 					MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructCode, Types.INTEGER, NamesSQLTypes._INTEGER, 0, JavaXMLWebRowSetTags._XML_StructCode );
-					MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructDescription, Types.VARCHAR, NamesSQLTypes._VARCHAR, JavaXMLWebRowSetTags._XML_StructDescriptionLength, JavaXMLWebRowSetTags._XML_StructDescription );
+					MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructDescription, Types.VARCHAR, NamesSQLTypes._VARCHAR, JavaXMLWebRowSetTags._XML_StructDescriptionLength, JavaXMLWebRowSetTags._XML_StructDescription );*/
 					 
-					if ( SQLDataSetResult.Result != null ) {   
+					//if ( SQLDataSetResult.Result != null ) {   
 
 						//LinkedHashMap<String,Object> DefaultFieldValues = new LinkedHashMap<String,Object>();
 
@@ -463,28 +475,67 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 
 						//MemoryRowSet.addRowData( SQLDataSetResult.Result, DBEngine, Logger, Lang );
 						//MemoryRowSet.NormalizeRowCount( DefaultFieldValues ); //add values to code and description field values
-						SQLDataSet = SQLDataSetResult.Result;
+						//SQLDataSet = SQLDataSetResult.Result;
 
-					}
-					else {
+					//}
+					//else {
 
-						MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructAffectedRows, SQLDataSetResult.lngAffectedRows );
+						/*MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructAffectedRows, SQLDataSetResult.lngAffectedRows );
 						MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructCode, SQLDataSetResult.intCode );
-						MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructDescription, SQLDataSetResult.strDescription );
+						MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructDescription, SQLDataSetResult.strDescription );*/
 						//MemoryRowSet.NormalizeRowCount(); //add null to another fields values
 
-					}
+					//}
 
+					CWebRowSetImpl wrs = new CWebRowSetImpl(); //Create extended implementation of WebRowSet
+					
+					int intInternalFetchSize = Integer.parseInt( OwnerConfig.getConfigValue( "Internal_Fetch_Size" ) );
+					
+					wrs.setPageSize( intInternalFetchSize );
+
+					wrs.populate( SQLDataSetResult.Result, 1 );
+					
+					wrs.initWriteXML( OutStream ); //Only write the headers
+					
+					do {
+
+						wrs.WriteXMLPage( OutStream ); //Write the block
+
+					} while ( wrs.nextPage() );
+					
+					wrs.endWriteXML( OutStream ); //Write the end, </WebRowSet>
+					
+					wrs.close();
+					
 				}
 				else {
 
+					CMemoryRowSet MemoryRowSet = new CMemoryRowSet( false );
+					
 					MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructAffectedRows, Types.BIGINT, NamesSQLTypes._BIGINT, 0, JavaXMLWebRowSetTags._XML_StructAffectedRows );
 					MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructCode, Types.INTEGER, NamesSQLTypes._INTEGER, 0, JavaXMLWebRowSetTags._XML_StructCode );
 					MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructDescription, Types.VARCHAR, NamesSQLTypes._VARCHAR, JavaXMLWebRowSetTags._XML_StructDescriptionLength, JavaXMLWebRowSetTags._XML_StructDescription );
 
+					ResultSet SQLDataSet = MemoryRowSet.createCachedRowSet();
+					
+					CWebRowSetImpl wrs = new CWebRowSetImpl();
+
+					//StringWriter sw = new StringWriter();
+
+					wrs.writeXml( SQLDataSet, OutStream );
+
+        			//TempResponseFormatedFileWriter.print( sw.toString() );
+
+        			//TempResponseFormatedFileWriter.close();
+					
+					wrs.close();
+					
+					
 				}
 
-				if ( SQLDataSet == null )   
+				OutStream.close();
+				
+				/*if ( SQLDataSet == null )   
 				   SQLDataSet = MemoryRowSet.createCachedRowSet();
 
 				WebRowSet wrs = new WebRowSetImpl();
@@ -495,8 +546,17 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 
 				strResult = sw.toString();
 
-				wrs.close();
+				wrs.close();*/
 			
+    			/*
+				File TempResponseFormatedFile = new File( strTempResponseFormatedFilePath ); 
+
+    			this.CopyToResponseStream( Response, TempResponseFormatedFile, 10240, Logger, Lang );
+
+    			if ( bDeleteTempReponseFile )
+    				TempResponseFormatedFile.delete();
+    				*/
+				
 			}
 			else {
 				
@@ -529,14 +589,14 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 
         }
     	
-    	return strResult;
+    	return bResult;
     	
     }
     
 	@Override
-	public String FormatResultsSets( ArrayList<CResultSetResult> SQLDataSetResultList, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
+	public boolean FormatResultsSets( HttpServletResponse Response, ArrayList<CResultSetResult> SQLDataSetResultList, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
     	
-    	String strResult = "";
+    	boolean bResult = false;
     	
         try {
 
@@ -544,47 +604,61 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
         	
 				if ( SQLDataSetResultList.size() > 0 ) {
 
+	        		//String strTempDir = OwnerConfig.getConfigValue( "Temp_Dir" );
+
+	        		//String strTempResponseFormatedFilePath = strTempDir + UUID.randomUUID() + ".formated_response";
+
+	        		ServletOutputStream OutStream = Response.getOutputStream(); //new FileOutputStream( strTempResponseFormatedFilePath ); 
+					
 					ResultSet SQLDataSet = CResultSetResult.getFirstResultSetNotNull( SQLDataSetResultList );
 
-					CMemoryRowSet MemoryRowSet = new CMemoryRowSet( false );
+					//CMemoryRowSet MemoryRowSet = new CMemoryRowSet( false );
 
 					if ( SQLDataSet != null ) {
 
-						MemoryRowSet.cloneOnlyMetaData( SQLDataSet, DBEngine, null, Logger, Lang );
-						/*MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructSQLOperationAffectedRows, Types.BIGINT, NamesSQLTypes._BIGINT, 0, JavaXMLWebRowSetTags._XML_StructSQLOperationAffectedRows );
-						MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructSQLOperationCode, Types.INTEGER, NamesSQLTypes._INTEGER, 0, JavaXMLWebRowSetTags._XML_StructSQLOperationCode );
-						MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructSQLOperationDescription, Types.VARCHAR, NamesSQLTypes._VARCHAR, JavaXMLWebRowSetTags._XML_StructSQLOperationDescriptionLength, JavaXMLWebRowSetTags._XML_StructSQLOperationDescription );
+						//MemoryRowSet.cloneOnlyMetaData( SQLDataSet, DBEngine, null, Logger, Lang );
 
-						LinkedHashMap<String,Object> DefaultFieldValues = new LinkedHashMap<String,Object>();*/
-
+						CWebRowSetImpl wrs = new CWebRowSetImpl(); //Create extended implementation of WebRowSet
+						
+						wrs.setPageSize( 25000 );
+						
+						boolean bFirst = true;
+						
 						for ( CResultSetResult SQLDataSetResultToAdd: SQLDataSetResultList ) {    
 
 							if ( SQLDataSetResultToAdd.Result != null ) {   
 
-								/*DefaultFieldValues.clear();
+								wrs.populate( SQLDataSetResultToAdd.Result, 1 );
+								
+								if ( bFirst )
+									wrs.initWriteXML( OutStream ); //Only write the headers
+								else
+									wrs.initMergedWriteXML( OutStream ); //Internal init don't write to xml nothing
+								
+								bFirst = false;
+								
+								do {
 
-								DefaultFieldValues.put( JavaXMLWebRowSetTags._XML_StructSQLOperationAffectedRows, SQLDataSetResultToAdd.lngAffectedRows );
-								DefaultFieldValues.put( JavaXMLWebRowSetTags._XML_StructSQLOperationCode, SQLDataSetResultToAdd.intCode );
-								DefaultFieldValues.put( JavaXMLWebRowSetTags._XML_StructSQLOperationDescription, SQLDataSetResultToAdd.strDescription );*/
+									wrs.WriteXMLPage( OutStream ); //Write the block
 
-								MemoryRowSet.addRowData( SQLDataSet, DBEngine, Logger, Lang );
-								//MemoryRowSet.NormalizeRowCount( DefaultFieldValues ); //add default values to code and description field values
+								} while ( wrs.nextPage() );
+
+								//MemoryRowSet.addRowData( SQLDataSet, DBEngine, Logger, Lang );
+								////MemoryRowSet.NormalizeRowCount( DefaultFieldValues ); //add default values to code and description field values
 
 							}
-							/*else {
-
-								MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructSQLOperationAffectedRows, SQLDataSetResultToAdd.lngAffectedRows );
-								MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructSQLOperationCode, SQLDataSetResultToAdd.intCode );
-								MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructSQLOperationDescription, SQLDataSetResultToAdd.strDescription );
-								MemoryRowSet.NormalizeRowCount(); //add default values to another fields values
-
-							}*/
 
 						}
 
+						wrs.endWriteXML( OutStream ); //Write the end, </WebRowSet>
+						
+						wrs.close();
+						
 					}
 					else {
 
+						CMemoryRowSet MemoryRowSet = new CMemoryRowSet( false );
+						
 						MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructAffectedRows, Types.BIGINT, NamesSQLTypes._BIGINT, 0, JavaXMLWebRowSetTags._XML_StructAffectedRows );
 						MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructCode, Types.INTEGER, NamesSQLTypes._INTEGER, 0, JavaXMLWebRowSetTags._XML_StructCode );
 						MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructDescription, Types.VARCHAR, NamesSQLTypes._VARCHAR, JavaXMLWebRowSetTags._XML_StructDescriptionLength, JavaXMLWebRowSetTags._XML_StructDescription );
@@ -597,9 +671,17 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 
 						}
 
+						CachedRowSet CachedRowset = MemoryRowSet.createCachedRowSet();
+						
+						CWebRowSetImpl wrs = new CWebRowSetImpl();
+
+						wrs.writeXml( CachedRowset, OutStream );
+
+						wrs.close();
+						
 					}
 
-					CachedRowSet CachedRowset = MemoryRowSet.createCachedRowSet();
+					/*CachedRowSet CachedRowset = MemoryRowSet.createCachedRowSet();
 
 					WebRowSet wrs = new WebRowSetImpl();
 
@@ -609,8 +691,19 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 
 					strResult = sw.toString();
 
-					wrs.close();
+					wrs.close();*/
 
+					/*****
+					TempFileOutStream.close();
+					
+	    			File TempResponseFormatedFile = new File( strTempResponseFormatedFilePath ); 
+
+	    			this.CopyToResponseStream( Response, TempResponseFormatedFile, 10240, Logger, Lang );
+
+	    			if ( bDeleteTempReponseFile )
+	    				TempResponseFormatedFile.delete();
+					******/
+					
 				}
         	
 			}
@@ -645,7 +738,7 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 
         }
     	
-    	return strResult;
+    	return bResult;
 
 	}
 	
@@ -704,7 +797,7 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 
 	}
 
-	@Override
+	/*Override
 	public String FormatMemoryRowSets( ArrayList<CMemoryRowSet> MemoryRowSetList, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 
 		String strResult = "";
@@ -790,7 +883,7 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 
 		return strResult;
 	
-	}
+	}*/
 
 	@Override
 	public String FormatSimpleMessage( String strSecurityTokenID, String strTransactionID, int intCode, String strDescription, boolean bAttachToError, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {

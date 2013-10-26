@@ -318,7 +318,7 @@ public class CSQLServerDBEngine extends CAbstractDBEngine {
 					
 				}
 
-				CNamedPreparedStatement NamedPreparedStatement = new CNamedPreparedStatement( DBConnection, MainNamedPreparedStatement.getNamedParams(), MainNamedPreparedStatement.getParsedStatement(), Statement.RETURN_GENERATED_KEYS ); //, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY );
+				CNamedPreparedStatement NamedPreparedStatement = new CNamedPreparedStatement( DBConnection, MainNamedPreparedStatement.getNamedParams(), MainNamedPreparedStatement.getParsedStatement() ); //, Statement.RETURN_GENERATED_KEYS ); //, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY );
 				
 				while ( i.hasNext() ) {
 				       

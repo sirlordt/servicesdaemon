@@ -225,6 +225,28 @@ public class Utilities {
     	
     }
     
+    public static boolean CheckStringIsInteger( String strStringToTest, CExtendedLogger Logger ) {
+    	
+    	boolean bResult = false;
+    	
+    	try {
+    		
+           Integer.parseInt( strStringToTest );
+           
+           bResult = true;
+    	
+    	}
+    	catch ( Exception Ex ) {
+    		
+    		if ( Logger != null )   
+    	       Logger.LogException( "-1015", Ex.getMessage(), Ex );        
+    		
+    	}
+    	
+    	return bResult;
+    	
+    }
+    
 	public static int CompareVersions( String strVersion1, String strVersion2 ) {
 		
 		CVersionTokenizer Tokenizer1 = new CVersionTokenizer( strVersion1 );

@@ -10,9 +10,12 @@
  ******************************************************************************/
 package AbstractResponseFormat;
 
-import java.sql.ResultSet;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import javax.servlet.http.HttpServletResponse;
 
 import net.maindataservices.Utilities;
 
@@ -154,12 +157,57 @@ public abstract class CAbstractResponseFormat {
     public abstract String getContentType();
     public abstract String getCharacterEncoding();
     public abstract String EnumerateServices( HashMap<String,CAbstractService> RegisteredServices, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang );
-    public abstract String FormatResultSet( ResultSet SQLDataSet, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang );
-    public abstract String FormatResultsSets( ArrayList<ResultSet> SQLDataSetList, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang );
-    public abstract String FormatResultSet( CResultSetResult SQLDataSetResult, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang );
-    public abstract String FormatResultsSets( ArrayList<CResultSetResult> SQLDataSetResultList, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang, int intDummyParam );
+    //public abstract boolean FormatResultSet( HttpServletResponse Response, ResultSet SQLDataSet, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang );
+    //public abstract boolean FormatResultsSets( HttpServletResponse Response, ArrayList<ResultSet> SQLDataSetList, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang );
+    public abstract boolean FormatResultSet( HttpServletResponse Response, CResultSetResult SQLDataSetResult, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang );
+    public abstract boolean FormatResultsSets( HttpServletResponse Response, ArrayList<CResultSetResult> SQLDataSetResultList, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang, int intDummyParam );
     public abstract String FormatMemoryRowSet( CMemoryRowSet MemoryRowSet, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang );
-    public abstract String FormatMemoryRowSets( ArrayList<CMemoryRowSet> MemoryRowSetList, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang );
+    //public abstract String FormatMemoryRowSets( ArrayList<CMemoryRowSet> MemoryRowSetList, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang );
     public abstract String FormatSimpleMessage( String strSecurityTokenID, String strTransactionID, int intCode, String strDescription, boolean bAttachToError, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang );
 
+    public boolean CopyToResponseStream( HttpServletResponse Response, File TempResponseFormatedFile, int intChunkSize, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+    	boolean bResult = false;
+    	
+    	try {
+    		
+    		FileInputStream TempInputStream = new FileInputStream( TempResponseFormatedFile );
+
+    		Response.setContentLength( (int) TempResponseFormatedFile.length() );
+    		
+    		if ( intChunkSize == 0)
+    			intChunkSize = 10240; //10kb
+    		
+    		byte[] bytBuffer = new byte[ intChunkSize ];
+    		
+    		int intBytesReaded;
+    		
+    		while ( ( intBytesReaded = TempInputStream.read( bytBuffer ) ) != -1 ) {
+    			
+    			/*if ( lngBytesReaded < intChunkSize ) {
+    				
+    				bytBuffer = Arrays.copyOf( bytBuffer, (int) lngBytesReaded + 1 );
+    				
+    			}*/
+    			
+    			Response.getOutputStream().write( bytBuffer, 0, intBytesReaded );
+    			
+    		}
+    		
+    		TempInputStream.close();
+    		
+    	}
+    	catch ( Exception Ex ) {
+    		
+			if ( Logger != null )
+				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
+				OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+    		
+    	}
+    	
+    	return bResult;
+    	
+    }
+    
 }

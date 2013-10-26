@@ -25,6 +25,7 @@ public interface ConfigXMLTagsServicesDaemon {
 	public static final String _Request_Method_OnlyPOST = "OnlyPOST";
 	public static final String _Request_Method_ANY = "Any";
 	
+	
 	public static final String _Logger = "Logger";
 	public static final String _ClassName_MethodName = "ClassName_MethodName";
 	public static final String _Exact_Match = "Exact_Match";

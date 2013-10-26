@@ -35,6 +35,7 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 	public String strGlobalDateFormat;
 	public String strGlobalTimeFormat;
 	
+	public String strTempDir;
 	public String strDBServicesDir;
 	public String strDBDriversDir;
 	public String strDBEnginesDir;
@@ -42,6 +43,8 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 	public String strDefaultResponseFormat;
 	public String strDefaultResponseFormatVersion;
 	public String strResponseRequestMethod; //OnlyGET, OnlyPOST, Any
+	
+	public int intInternalFetchSize; //25000 default
 	
 	//Built in responses formats configs
 	public String strXML_DataPacket_ContentType;
@@ -85,6 +88,7 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 		strFirstLevelConfigSectionsOrder.add( ConfigXMLTagsDBServicesManager._DBConnections ); //3
 		bFirstLevelConfigSectionsMustExists.add( true );
 		
+		strTempDir = DefaultConstantsDBServicesManager.strDefaultRunningPath + DefaultConstantsDBServicesManager.strDefaultTempDir; //"Temp/";
 		strDBServicesDir = DefaultConstantsDBServicesManager.strDefaultRunningPath + DefaultConstantsDBServicesManager.strDefaultDBServicesDir; //"DBServices/"; 
 		strDBDriversDir = DefaultConstantsDBServicesManager.strDefaultRunningPath + DefaultConstantsDBServicesManager.strDefaultDBDriversDir; //"DBDrivers/";
 		strDBEnginesDir = DefaultConstantsDBServicesManager.strDefaultRunningPath + DefaultConstantsDBServicesManager.strDefaultDBEnginesDir; //"DBEnginess/";
@@ -98,6 +102,8 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 		strDefaultResponseFormatVersion = DefaultConstantsDBServicesManager.strDefaultResponseFormatVersion;
 
 		strResponseRequestMethod = ConfigXMLTagsServicesDaemon._Request_Method_ANY;
+		
+		intInternalFetchSize = DefaultConstantsDBServicesManager.intDefaultInternalFetchSize;
 		
 		strXML_DataPacket_CharSet = DefaultConstantsDBServicesManager.strDefaultChasetXML;
 		strXML_DataPacket_ContentType = DefaultConstantsDBServicesManager.strDefaultContentTypeXML;
@@ -146,7 +152,7 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 		   
 			if ( ConfigSectionNode.hasAttributes() == true ) {
 		
-				String strAttributesOrder[] = { ConfigXMLTagsDBServicesManager._Global_Date_Time_Format, ConfigXMLTagsDBServicesManager._Global_Date_Format, ConfigXMLTagsDBServicesManager._Global_Time_Format, ConfigXMLTagsDBServicesManager._DBServices_Dir, ConfigXMLTagsDBServicesManager._DBDrivers_Dir, ConfigXMLTagsDBServicesManager._DBEngines_Dir, ConfigXMLTagsDBServicesManager._Responses_Formats_Dir, ConfigXMLTagsDBServicesManager._Default_Response_Format, ConfigXMLTagsDBServicesManager._Default_Response_Format_Version, ConfigXMLTagsServicesDaemon._Response_Request_Method };
+				String strAttributesOrder[] = { ConfigXMLTagsDBServicesManager._Global_Date_Time_Format, ConfigXMLTagsDBServicesManager._Global_Date_Format, ConfigXMLTagsDBServicesManager._Global_Time_Format, ConfigXMLTagsDBServicesManager._Temp_Dir, ConfigXMLTagsDBServicesManager._DBServices_Dir, ConfigXMLTagsDBServicesManager._DBDrivers_Dir, ConfigXMLTagsDBServicesManager._DBEngines_Dir, ConfigXMLTagsDBServicesManager._Responses_Formats_Dir, ConfigXMLTagsDBServicesManager._Default_Response_Format, ConfigXMLTagsDBServicesManager._Default_Response_Format_Version, ConfigXMLTagsDBServicesManager._Internal_Fetch_Size, ConfigXMLTagsServicesDaemon._Response_Request_Method };
 
 				NamedNodeMap NodeAttributes = ConfigSectionNode.getAttributes();
 
@@ -236,6 +242,27 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 
 							}
 							
+						}
+						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsDBServicesManager._Temp_Dir ) ) {
+
+							this.strTempDir = NodeAttribute.getNodeValue();
+		
+					        if ( this.strTempDir != null && this.strTempDir.isEmpty() == false && new File( this.strTempDir ).isAbsolute() == false ) {
+
+					        	this.strTempDir = DefaultConstantsDBServicesManager.strDefaultRunningPath + this.strTempDir;
+						        	
+						    }
+
+					        Logger.LogMessage( "1", Lang.Translate( "Runtime config value [%s] changed to: [%s]", "strTempDir", this.strTempDir ) );
+				        
+					        if ( Utilities.CheckDir( this.strTempDir, Logger, Lang ) == false ) {
+						    	
+					        	bResult = false;
+					        	
+					        	break;
+						    	
+						    }
+						
 						}
 						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsDBServicesManager._DBServices_Dir ) ) {
 
@@ -329,8 +356,6 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 						    	
 						        Logger.LogMessage( "1", Lang.Translate( "Runtime config value [%s] changed to: [%s]", "strDefaultResponseFormat", this.strDefaultResponseFormat ) );
 
-						        break;
-						    	
 						    }
 					        else {
 					        	
@@ -347,8 +372,6 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 						    	
 						        Logger.LogMessage( "1", Lang.Translate( "Runtime config value [%s] changed to: [%s]", "strDefaultResponseFormatVersion", this.strDefaultResponseFormatVersion ) );
 
-						        break;
-						    	
 						    }
 					        else {
 					        	
@@ -398,6 +421,42 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 					        }
 					        
 						}
+						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsDBServicesManager._Internal_Fetch_Size ) ) {
+							
+					        if ( NodeAttribute.getNodeValue() != null && NodeAttribute.getNodeValue().isEmpty() == false ) {
+
+					        	if ( net.maindataservices.Utilities.CheckStringIsInteger( NodeAttribute.getNodeValue(), this.Logger ) ) {
+					        	
+					        		int intTempInternalFetchSize = Integer.parseInt( NodeAttribute.getNodeValue() );
+					        		
+					        		if ( intTempInternalFetchSize > 0 ) {
+					        		
+					        			this.intInternalFetchSize = intTempInternalFetchSize;
+
+					        			Logger.LogMessage( "1", Lang.Translate( "Runtime config value [%s] changed to: [%s]", "intInternalFetchSize", Integer.toString( this.intInternalFetchSize ) ) );
+
+					        		}
+					        		else {
+					        			
+								        Logger.LogWarning( "-1", Lang.Translate( "The [%s] attribute value [%s] is invalid, using the default value [%s]", "intInternalFetchSize", NodeAttribute.getNodeValue(), Integer.toString( this.intInternalFetchSize ) ) );
+					        			
+					        		}
+					        		
+					        	}
+					        	else {
+
+							        Logger.LogWarning( "-1", Lang.Translate( "The [%s] attribute value [%s] is invalid, using the default value [%s]", "intInternalFetchSize", NodeAttribute.getNodeValue(), Integer.toString( this.intInternalFetchSize ) ) );
+
+					        	}
+						    	
+						    }
+					        else {
+					        	
+						        Logger.LogWarning( "-1", Lang.Translate( "The [%s] attribute cannot empty string, using the default value [%s]", "intInternalFetchSize", Integer.toString( this.intInternalFetchSize ) ) );
+					        	
+					        }
+					        
+						}
 		            
 		            }
 		            else {
@@ -430,7 +489,20 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 						    }
 		            		
 		            	}
-		            	else if ( strAttributesOrder[ intAttributesIndex ].equals( ConfigXMLTagsDBServicesManager._DBDrivers_Dir) ) {
+		            	else if ( strAttributesOrder[ intAttributesIndex ].equals( ConfigXMLTagsDBServicesManager._Temp_Dir ) ) {
+		            		
+					        Logger.LogWarning( "-1", Lang.Translate( "The [%s] attribute not found, using the default value [%s]", ConfigXMLTagsDBServicesManager._Temp_Dir, this.strTempDir ) );
+
+					        if ( Utilities.CheckDir( this.strTempDir, Logger, Lang ) == false ) {
+						    	
+					        	bResult = false;
+					        	
+					        	break;
+						    	
+						    }
+		            		
+		            	}
+		            	else if ( strAttributesOrder[ intAttributesIndex ].equals( ConfigXMLTagsDBServicesManager._DBDrivers_Dir ) ) {
 		            		
 					        Logger.LogWarning( "-1", Lang.Translate( "The [%s] attribute not found, using the default value [%s]", ConfigXMLTagsDBServicesManager._DBDrivers_Dir, this.strDBDriversDir ) );
 
@@ -443,7 +515,7 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 						    }
 		            		
 		            	}
-		            	else if ( strAttributesOrder[ intAttributesIndex ].equals( ConfigXMLTagsDBServicesManager._DBEngines_Dir) ) {
+		            	else if ( strAttributesOrder[ intAttributesIndex ].equals( ConfigXMLTagsDBServicesManager._DBEngines_Dir ) ) {
 		            		
 					        Logger.LogWarning( "-1", Lang.Translate( "The [%s] attribute not found, using the default value [%s]", ConfigXMLTagsDBServicesManager._DBEngines_Dir, this.strDBEnginesDir ) );
 
@@ -482,6 +554,11 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 		            	else if ( strAttributesOrder[ intAttributesIndex ].equals( ConfigXMLTagsServicesDaemon._Response_Request_Method ) ) {
 		            		
 					        Logger.LogWarning( "-1", Lang.Translate( "The [%s] attribute not found, using the default value [%s]", ConfigXMLTagsServicesDaemon._Response_Request_Method, this.strResponseRequestMethod ) );
+		            		
+		            	}
+		            	else if ( strAttributesOrder[ intAttributesIndex ].equals( ConfigXMLTagsDBServicesManager._Internal_Fetch_Size ) ) {
+		            		
+					        Logger.LogWarning( "-1", Lang.Translate( "The [%s] attribute not found, using the default value [%s]", ConfigXMLTagsDBServicesManager._Internal_Fetch_Size, Integer.toString( this.intInternalFetchSize ) ) );
 		            		
 		            	}
 		            	
@@ -1329,6 +1406,10 @@ public class CDBServicesManagerConfig extends CAbstractConfigLoader {
 			return this.strGlobalDateFormat;  
 		else if ( strConfigKey.equals( "Global_Time_Format" ) )
 			return this.strGlobalTimeFormat;  
+		else if ( strConfigKey.equals( "Temp_Dir" ) )
+			return this.strTempDir;  
+		else if ( strConfigKey.equals( "Internal_Fetch_Size" ) )
+			return Integer.toString( this.intInternalFetchSize );  
 		else	
 			return "";
 		

@@ -23,6 +23,7 @@ public abstract class DefaultConstantsDBServicesManager {
 	public static final String strDefaultMainFileLog = strDefaultMainFile + ".log";
 	public static final String strDefaultLogsSystemDir = "Logs/";
 	
+	public static final String strDefaultTempDir = "Temp/"; 
 	public static final String strDefaultDBServicesDir = "DBServices/"; 
 	public static final String strDefaultDBDriversDir = "DBDrivers/";
 	public static final String strDefaultDBEnginesDir = "DBEngines/";
@@ -44,6 +45,8 @@ public abstract class DefaultConstantsDBServicesManager {
 	public static final boolean bDefaultFieldsQuoteCSV = true;
 	public static final String strDefaultSeparatorSymbolCSV = ";";
 	public static final boolean bDefaultShowHeadersCSV = true;
+	
+	public static final int intDefaultInternalFetchSize = 25000;
 	
 	public static final String strDefaultVersionAny = "any";
 	

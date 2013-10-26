@@ -277,7 +277,7 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
 					
 				}
 
-				CNamedPreparedStatement NamedPreparedStatement = new CNamedPreparedStatement( DBConnection, MainNamedPreparedStatement.getNamedParams(), MainNamedPreparedStatement.getParsedStatement(), Statement.RETURN_GENERATED_KEYS );
+				CNamedPreparedStatement NamedPreparedStatement = new CNamedPreparedStatement( DBConnection, MainNamedPreparedStatement.getNamedParams(), MainNamedPreparedStatement.getParsedStatement() ); //, Statement.RETURN_GENERATED_KEYS );
 				
 				while ( i.hasNext() ) {
 				       

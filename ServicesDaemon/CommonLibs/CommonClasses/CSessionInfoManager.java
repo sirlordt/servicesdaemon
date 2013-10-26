@@ -35,6 +35,10 @@ public class CSessionInfoManager {
 	
 	protected HashMap<String,String> NameFromSecurityTokenID = null; //SecurityTokenID => Name 
 
+	protected HashMap<String,String> SecurityTokenIDFromSessionID = null; //SessionID => SecurityTokenID 
+	 
+	protected HashMap<String,String> SessionIDFromSecurityTokenID = null; //SecurityTokenID => SessionID  
+
 	protected HashMap<String,CConfigDBConnection> ConfigDBConnectionFromSecurityTokenID = null; //SecurityTokenID => CConfigDBConnection 
 	
 	
@@ -44,11 +48,15 @@ public class CSessionInfoManager {
 	
 		NameFromSecurityTokenID = new HashMap<String,String>();
 		
+		SecurityTokenIDFromSessionID = new HashMap<String,String>();
+
+		SessionIDFromSecurityTokenID = new HashMap<String,String>();
+
 		ConfigDBConnectionFromSecurityTokenID = new HashMap<String,CConfigDBConnection>(); 
 		
 	}
 
-	public synchronized boolean addSecurityTokenIDToName( String strName, String strSecurityTokenID, CExtendedLogger Logger, CLanguage Lang ) {
+	public synchronized boolean addSecurityTokenIDToName( String strName, String strSecurityTokenID, String strSessionID, CExtendedLogger Logger, CLanguage Lang ) {
 
 		boolean bResult = false;
 		
@@ -57,7 +65,11 @@ public class CSessionInfoManager {
 			SecurityTokenIDFromName.put( strName, strSecurityTokenID ); 
 
 			NameFromSecurityTokenID.put( strSecurityTokenID, strName );
+			
+			SecurityTokenIDFromName.put( strSessionID, strSecurityTokenID );
 
+			SessionIDFromSecurityTokenID.put( strSecurityTokenID, strSessionID );
+			
 			if ( Logger != null && Lang != null ) {
 				
 				Logger.LogMessage( "1" , Lang.Translate( "Added [%s] = [%s] and [%s] = [%s]", "Name", strName, "SecurityTokenID", strSecurityTokenID ) );
@@ -117,6 +129,12 @@ public class CSessionInfoManager {
 			NameFromSecurityTokenID.remove( strSecurityTokenID );
 			
 			SecurityTokenIDFromName.remove( strName );
+			
+			String strSessionID = SessionIDFromSecurityTokenID.get( strSecurityTokenID  );
+			
+			SessionIDFromSecurityTokenID.remove( strSecurityTokenID );
+			
+			SecurityTokenIDFromSessionID.remove( strSessionID );
 			
 			if ( Logger != null && Lang != null ) {
 				
@@ -186,6 +204,39 @@ public class CSessionInfoManager {
 		}
 
 		return strSecurityTokenID;
+		
+	}
+
+	public String getSecurityTokenIDFromSessionID( String strSessionID, CExtendedLogger Logger, CLanguage Lang ) {
+		  
+		String strSecurityTokenID = SecurityTokenIDFromSessionID.get( strSessionID );
+		
+		if ( strSessionID == null && Logger != null && Lang != null ) {
+			
+			Logger.LogWarning( "-1" , Lang.Translate( "[%s] from [%s] = [%s] not found", "SecurityTokenID", "SessionID", strSessionID ) );
+			
+		}
+
+		return strSecurityTokenID;
+		
+	}
+
+	public String getSecurityTokenIDFromSessionIDAndName( String strSessionID, String strName, CExtendedLogger Logger, CLanguage Lang ) {
+		  
+		String strSecurityTokenID1 = SecurityTokenIDFromSessionID.get( strSessionID );
+		
+		String strSecurityTokenID2  = SecurityTokenIDFromName.get( strName );
+		
+		if ( ( strSessionID == null || strName == null ) && Logger != null && Lang != null ) {
+			
+			Logger.LogWarning( "-1" , Lang.Translate( "[%s] from [%s] = [%s] not found", "SecurityTokenID", "SessionID/Name", strSessionID ) );
+			
+		}
+
+		if ( strSecurityTokenID1 != null && strSecurityTokenID2 != null && strSecurityTokenID1.equals( strSecurityTokenID2 ) )
+		    return strSecurityTokenID1;
+		else
+			return null;
 		
 	}
 	

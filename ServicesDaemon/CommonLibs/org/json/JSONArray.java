@@ -889,6 +889,13 @@ public class JSONArray {
 		}
 	}
 
+	public String toString(int indentFactor, int indentStart) throws JSONException {
+		StringWriter sw = new StringWriter();
+		synchronized (sw.getBuffer()) {
+			return this.write(sw, indentFactor, indentStart).toString();
+		}
+	}
+	
 	/**
 	 * Write the contents of the JSONArray as JSON text to a writer. For
 	 * compactness, no whitespace is added.
@@ -920,6 +927,7 @@ public class JSONArray {
 		try {
 			boolean commanate = false;
 			int length = this.length();
+			JSONObject.indent(writer, indent);			
 			writer.write('[');
 
 			if (length == 1) {
@@ -945,6 +953,8 @@ public class JSONArray {
 				}
 				JSONObject.indent(writer, indent);
 			}
+			if ( length > 1 )
+			JSONObject.indent(writer, indent);			
 			writer.write(']');
 			return writer;
 		} catch (IOException e) {

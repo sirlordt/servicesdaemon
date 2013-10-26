@@ -1,11 +1,20 @@
 package AbstractResponseFormat;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.UUID;
 import java.util.Map.Entry;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import net.maindataservices.Utilities;
 
@@ -347,7 +356,6 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 		return strResult;
 	
 	}
-
 	
 	public void FormatCSVHeaders( ResultSet SQLDataSet, CAbstractDBEngine DBEngine, StringBuilder strResponseBuffer, boolean bFieldsQuote, String strSeparatorSymbol, CExtendedLogger Logger, CLanguage Lang  ) {
 
@@ -479,7 +487,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 	
 	}
 
-	public void FormatCSVRowData( ResultSet SQLDataSet, CAbstractDBEngine DBEngine, StringBuilder strResponseBuffer, boolean bFieldsQuote, String strSeparatorSymbol, String strDateFormat, String strTimeFormat, String strDateTimeFormat, CExtendedLogger Logger, CLanguage Lang  ) {
+	public void FormatCSVRowData( String strTempDir, String strTempFile, PrintWriter TempResponseFormatedFileWriter, OutputStream TempStreamResponseFormatedFile, ResultSet SQLDataSet, CAbstractDBEngine DBEngine, boolean bFieldsQuote, String strSeparatorSymbol, String strDateFormat, String strTimeFormat, String strDateTimeFormat, CExtendedLogger Logger, CLanguage Lang  ) {
 		
 		try {
 			
@@ -489,8 +497,6 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 		    
 		    while ( SQLDataSet.next() == true ) {
 
-			    StringBuffer strRow = new StringBuffer();
-				
 			    for ( int i = 1; i <= intColumnCount; i++ ) {
 
 		    		String strFieldName = DataSetMetaData.getColumnName( i );
@@ -504,42 +510,60 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 
 		    		if ( SQLDataSet.getObject( i ) != null ) {
 
-		    			String strFieldValue = DBEngine.getFieldValueAsString( intFieldType, strFieldName, SQLDataSet, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
+						if ( intFieldType == Types.BLOB ) {
+						
+			    			if ( bFieldsQuote ) {
 
-		    			if ( bFieldsQuote ) {
+	            				TempResponseFormatedFileWriter.print( "\"" );
+	            				TempResponseFormatedFileWriter.flush();
+			    				DBEngine.writeBlobValueAsStringToFile( intFieldType, strFieldName, strTempDir, strTempFile, TempStreamResponseFormatedFile, SQLDataSet, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang  );
+	            				TempResponseFormatedFileWriter.print( "\"" );
+			    			
+			    			}
+			    			else {
+			    				
+			    				DBEngine.writeBlobValueAsStringToFile( intFieldType, strFieldName, strTempDir, strTempFile, TempStreamResponseFormatedFile, SQLDataSet, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang  );
+			    				
+			    			}
+            				
+						}
+						else {
 
-		    				strRow.append( "\"" + strFieldValue + "\"" );
+			    			if ( bFieldsQuote ) {
 
-		    			}
-		    			else {
+			    				TempResponseFormatedFileWriter.print( "\"" + DBEngine.getFieldValueAsString( intFieldType, strFieldName, SQLDataSet, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang ) + "\"" );
+			    			
+			    			}
+			    			else {
+			    				
+			    				TempResponseFormatedFileWriter.print( DBEngine.getFieldValueAsString( intFieldType, strFieldName, SQLDataSet, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang ) );
 
-		    				strRow.append( strFieldValue );
-
-		    			}
+			    			}
+							
+						}
 
 		    		}
 		    		else {
 		    			
 		    			if ( bFieldsQuote ) {
 			    		
-		    				strRow.append( "\"null\"" );
+		    				TempResponseFormatedFileWriter.print( "\"null\"" );
 
 		    			}
 		    			else {
 		    				
-		    				strRow.append( "null" );
+		    				TempResponseFormatedFileWriter.print( "null" );
 		    				
 		    			}
 
 		    		}
 		    		
 		    		if ( i < intColumnCount )
-		    			strRow.append( strSeparatorSymbol );
+		    			TempResponseFormatedFileWriter.print( strSeparatorSymbol );
 
 		    	}
 		    	
-		    	strResponseBuffer.append( strRow.toString() );
-		    	strResponseBuffer.append( "\r\n" );
+			    TempResponseFormatedFileWriter.println( "" );
 
 		    }  
 		
@@ -582,12 +606,12 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 		
 	}
 	
-	@Override
-	public String FormatResultSet( ResultSet SQLDataSet, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+	/*Override
+	public boolean FormatResultSet( HttpServletResponse Response, ResultSet SQLDataSet, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 
-		String strResult = "";
+		boolean bResult = false;
 
-		try {
+		/*try {
 
 			if ( Utilities.VersionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.VersionLessEquals( strVersion, this.strMaxVersion ) ) {
 
@@ -636,17 +660,16 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 
 		}
 
-		return strResult;
+		return bResult;
 	
 	}
-
 	
-	@Override
-	public String FormatResultsSets( ArrayList<ResultSet> SQLDataSetList, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+	Override
+	public boolean FormatResultsSets( HttpServletResponse Response, ArrayList<ResultSet> SQLDataSetList, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 
-		String strResult = "";
+		boolean bResult = false;
 
-		try {
+		/*try {
 
 			if ( Utilities.VersionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.VersionLessEquals( strVersion, this.strMaxVersion ) ) {
 
@@ -701,11 +724,11 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
 				OwnerConfig.Logger.LogException( "-1016", Ex.getMessage(), Ex );
 
-		}
+		}//
 
-		return strResult;
+		return bResult;
 		
-	}
+	}*/
 
 	public void FormatDefaultHeaders( StringBuilder strResponseBuffer, boolean bFieldsQuote, String strSeparatorSymbol ) {
 		
@@ -751,15 +774,21 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 	}
 	
 	@Override
-	public String FormatResultSet( CResultSetResult SQLDataSetResult, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) { 
+	public boolean FormatResultSet( HttpServletResponse Response, CResultSetResult SQLDataSetResult, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang ) { 
 		
-    	String strResult = "";
+    	boolean bResult = false;
     	
         try {
         	
 			if ( Utilities.VersionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.VersionLessEquals( strVersion, this.strMaxVersion ) ) {
 
-				StringBuilder strResponseBuffer = new StringBuilder();
+		        String strTempDir = OwnerConfig.getConfigValue( "Temp_Dir" );
+		        
+		        String strTempResponseFormatedFilePath = strTempDir + UUID.randomUUID() + ".formated_response";
+	    		
+	            ServletOutputStream OutStream = Response.getOutputStream(); //new FileOutputStream( strTempResponseFormatedFilePath ); 
+		        
+		        PrintWriter TempResponseFormatedFileWriter = new PrintWriter( OutStream ); // strTempResponseFormatedFilePath, this.getCharacterEncoding() );
 				
 				String strShowHeaders = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_ShowHeaders );
 				String strSeparatorSymbol = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_SeparatorSymbol );
@@ -769,60 +798,77 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 				
 				strSeparatorSymbol = (strSeparatorSymbol != null && strSeparatorSymbol.isEmpty() == false)?strSeparatorSymbol:";";
 				
-				if ( SQLDataSetResult != null ) {
+				if ( SQLDataSetResult.Result != null && SQLDataSetResult.intCode >= 0 ) {   
 
-					if ( SQLDataSetResult.Result != null ) {   
+					if ( strShowHeaders != null && strShowHeaders.equals( "true" ) ) {
+					
+						StringBuilder strResponseBuffer = new StringBuilder();
 
-						if ( strShowHeaders != null && strShowHeaders.equals( "true" ) )
-							FormatCSVHeaders( SQLDataSetResult.Result, DBEngine, strResponseBuffer, bFieldsQuote, strSeparatorSymbol, Logger, Lang );
+						FormatCSVHeaders( SQLDataSetResult.Result, DBEngine, strResponseBuffer, bFieldsQuote, strSeparatorSymbol, Logger, Lang );
 
-						FormatCSVRowData( SQLDataSetResult.Result, DBEngine, strResponseBuffer, bFieldsQuote, strSeparatorSymbol, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
-						
+	        			TempResponseFormatedFileWriter.print( strResponseBuffer.toString() );
+	        			
+	        			strResponseBuffer = null;
+	        			
 					}
-					else {
+					
+					FormatCSVRowData( strTempDir, strTempResponseFormatedFilePath, TempResponseFormatedFileWriter, OutStream, SQLDataSetResult.Result, DBEngine, bFieldsQuote, strSeparatorSymbol, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
 
-						if ( strShowHeaders != null && strShowHeaders.equals( "true" ) ) {
+        			TempResponseFormatedFileWriter.close();
 
-							FormatDefaultHeaders( strResponseBuffer, bFieldsQuote, strSeparatorSymbol );
-						
-						}
-						
-						StringBuilder strRowData = new StringBuilder();
-						
-						if ( bFieldsQuote ) {
-
-							strRowData.append( "\"" + Long.toString( SQLDataSetResult.lngAffectedRows ) + "\"" );
-							strRowData.append( strSeparatorSymbol );
-							strRowData.append( "\"" + SQLDataSetResult.intCode + "\"" );
-							strRowData.append( strSeparatorSymbol );
-							strRowData.append( "\"" + SQLDataSetResult.strDescription + "\"" );
-														
-						}
-						else {
-							
-							strRowData.append( Long.toString( SQLDataSetResult.lngAffectedRows ) );
-							strRowData.append( strSeparatorSymbol );
-							strRowData.append( SQLDataSetResult.intCode );
-							strRowData.append( strSeparatorSymbol );
-							strRowData.append( SQLDataSetResult.strDescription );
-							
-						}
-						
-					}
-
+        			TempResponseFormatedFileWriter = null;
+					
 				}
 				else {
 
+					StringBuilder strResponseBuffer = new StringBuilder();
+					
 					if ( strShowHeaders != null && strShowHeaders.equals( "true" ) ) {
 
 						FormatDefaultHeaders( strResponseBuffer, bFieldsQuote, strSeparatorSymbol );
-					
+
 					}
 
+					if ( bFieldsQuote ) {
+
+						strResponseBuffer.append( "\"" + Long.toString( SQLDataSetResult.lngAffectedRows ) + "\"" );
+						strResponseBuffer.append( strSeparatorSymbol );
+						strResponseBuffer.append( "\"" + SQLDataSetResult.intCode + "\"" );
+						strResponseBuffer.append( strSeparatorSymbol );
+						strResponseBuffer.append( "\"" + SQLDataSetResult.strDescription + "\"" );
+
+					}
+					else {
+
+						strResponseBuffer.append( Long.toString( SQLDataSetResult.lngAffectedRows ) );
+						strResponseBuffer.append( strSeparatorSymbol );
+						strResponseBuffer.append( SQLDataSetResult.intCode );
+						strResponseBuffer.append( strSeparatorSymbol );
+						strResponseBuffer.append( SQLDataSetResult.strDescription );
+
+					}
+
+        			TempResponseFormatedFileWriter.print( strResponseBuffer.toString() );
+
+        			strResponseBuffer = null;
+        			
+        			TempResponseFormatedFileWriter.close();
+
+        			TempResponseFormatedFileWriter = null;
+					
 				}
 
-				strResult = strResponseBuffer.toString();
-			
+				/****
+    			File TempResponseFormatedFile = new File( strTempResponseFormatedFilePath ); 
+
+    			this.CopyToResponseStream( Response, TempResponseFormatedFile, 10240, Logger, Lang );
+
+    			if ( bDeleteTempReponseFile )
+    				TempResponseFormatedFile.delete();
+				****/
+				
+    			bResult = true;
+    			
 			}
 			else {
 				
@@ -855,15 +901,14 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 
         }
     	
-    	return strResult;
+    	return bResult;
 		
 	}
-
 	
 	@Override
-	public String FormatResultsSets( ArrayList<CResultSetResult> SQLDataSetResultList, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
+	public boolean FormatResultsSets( HttpServletResponse Response, ArrayList<CResultSetResult> SQLDataSetResultList, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
 		
-    	String strResult = "";
+    	boolean bResult = false;
     	
         try {
 
@@ -871,7 +916,13 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
         	
 				if ( SQLDataSetResultList.size() > 0 ) {
 
-					StringBuilder strResponseBuffer = new StringBuilder();
+			        String strTempDir = OwnerConfig.getConfigValue( "Temp_Dir" );
+			        
+			        String strTempResponseFormatedFilePath = strTempDir + UUID.randomUUID() + ".formated_response";
+		    		
+		            FileOutputStream TempFileOutStream = new FileOutputStream( strTempResponseFormatedFilePath ); 
+			        
+			        PrintWriter TempResponseFormatedFileWriter = new PrintWriter( TempFileOutStream ); // strTempResponseFormatedFilePath, this.getCharacterEncoding() );
 					
 					String strShowHeaders = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_ShowHeaders );
 					String strSeparatorSymbol = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_SeparatorSymbol );
@@ -885,22 +936,34 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 
 					if ( SQLDataSet != null ) {
 
+						StringBuilder strResponseBuffer = new StringBuilder();
+
 						if ( strShowHeaders != null && strShowHeaders.equals( "true" ) )
 							FormatCSVHeaders( SQLDataSet, DBEngine, strResponseBuffer, bFieldsQuote, strSeparatorSymbol, Logger, Lang );
 
+	        			TempResponseFormatedFileWriter.print( strResponseBuffer.toString() );
+	        			
+	        			strResponseBuffer = null;
+						
 						for ( CResultSetResult SQLDataSetResultToAdd: SQLDataSetResultList ) {    
 
 							if ( SQLDataSetResultToAdd.Result != null ) {   
 
-								FormatCSVRowData( SQLDataSetResultToAdd.Result, DBEngine, strResponseBuffer, bFieldsQuote, strSeparatorSymbol, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
+								FormatCSVRowData( strTempDir, strTempResponseFormatedFilePath, TempResponseFormatedFileWriter, TempFileOutStream, SQLDataSetResultToAdd.Result, DBEngine, bFieldsQuote, strSeparatorSymbol, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
 								
 							}
 
 						}
 
+	        			TempResponseFormatedFileWriter.close();
+
+	        			TempResponseFormatedFileWriter = null;
+						
 					}
 					else {
 
+						StringBuilder strResponseBuffer = new StringBuilder();
+						
 						if ( strShowHeaders != null && strShowHeaders.equals( "true" ) ) {
 
 							FormatDefaultHeaders( strResponseBuffer, bFieldsQuote, strSeparatorSymbol );
@@ -933,11 +996,26 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 							strResponseBuffer.append( strRowData.toString() );
 							
 						}
+						
+	        			TempResponseFormatedFileWriter.print( strResponseBuffer.toString() );
 
+						strResponseBuffer = null;
+						
+	        			TempResponseFormatedFileWriter.close();
+
+	        			TempResponseFormatedFileWriter = null;
+						
 					}
 
-					strResult = strResponseBuffer.toString();
+	    			File TempResponseFormatedFile = new File( strTempResponseFormatedFilePath ); 
 
+	    			this.CopyToResponseStream( Response, TempResponseFormatedFile, 10240, Logger, Lang );
+
+	    			if ( bDeleteTempReponseFile )
+	    				TempResponseFormatedFile.delete();
+
+	    			bResult = true;
+	    			
 				}
         	
 			}
@@ -972,10 +1050,9 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 
         }
     	
-    	return strResult;
+    	return bResult;
 		
 	}
-
 	
 	@Override
 	public String FormatMemoryRowSet( CMemoryRowSet MemoryRowSet, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
@@ -1034,9 +1111,8 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 		return strResult;
 		
 	}
-
 	
-	@Override
+	/*Override
 	public String FormatMemoryRowSets( ArrayList<CMemoryRowSet> MemoryRowSetList, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 
 		String strResult = "";
@@ -1100,8 +1176,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 
 		return strResult;
 	
-	}
-
+	}*/
 	
 	@Override
 	public String FormatSimpleMessage( String strSecurityTokenID, String strTransactionID, int intCode, String strDescription, boolean bAttachToError, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {

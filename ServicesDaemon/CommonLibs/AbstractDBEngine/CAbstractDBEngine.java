@@ -10,6 +10,8 @@
  ******************************************************************************/
 package AbstractDBEngine;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.Blob;
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -1237,13 +1239,13 @@ public abstract class CAbstractDBEngine {
 		
 	}
     
-    public CResultSetResult ExecutePlainQuerySQL( Connection DBConnection, String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    public CResultSetResult ExecutePlainQuerySQL( Connection DBConnection, String strSQL, int intInternaFetchSize, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	CResultSetResult Result = new CResultSetResult( -1, -1, "" ); 
     	
     	try {
     	
-    		Statement SQLStatement = DBConnection.createStatement();
+    		Statement SQLStatement = DBConnection.createStatement( ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY );
     		
             if ( Logger != null ) { //Trace how much time in execute sql, useful for trace expensive query 
             	
@@ -1254,7 +1256,15 @@ public abstract class CAbstractDBEngine {
         			
             }	
     		
-    		ResultSet ResultQuery = SQLStatement.executeQuery( strSQL );
+    		ResultSet QueryResult = SQLStatement.executeQuery( strSQL );
+    		
+    		QueryResult.setFetchSize( intInternaFetchSize );
+    		
+    		if ( QueryResult.getFetchSize() != intInternaFetchSize ) {
+    			
+				Logger.LogWarning( "-1", Lang.Translate(  "The JDBC Driver [%s] ignoring fetch size value [%s], using JDBC driver default value [%s]", DBConnection.getMetaData().getDriverName(), Integer.toString( intInternaFetchSize ), Integer.toString( QueryResult.getFetchSize() ) ) );
+    			
+    		}
     		
             if ( Logger != null ) { //Trace how much time in execute sql, useful for trace expensive query
             	
@@ -1266,7 +1276,7 @@ public abstract class CAbstractDBEngine {
             }	
 
     		Result.intCode = 1;
-    		Result.Result = ResultQuery;
+    		Result.Result = QueryResult;
 
     		if ( Lang != null )   
     			Result.strDescription = Lang.Translate( "Sucess to execute the plain query SQL statement [%s]", strSQL );
@@ -1297,7 +1307,7 @@ public abstract class CAbstractDBEngine {
     	
     	try {
     	
-    		Statement SQLStatement = DBConnection.createStatement();
+    		Statement SQLStatement = DBConnection.createStatement( ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY );
 
             if ( Logger != null ) {
             	
@@ -1417,7 +1427,7 @@ public abstract class CAbstractDBEngine {
     	
     }
     
-    public CResultSetResult ExecutePlainCallableStatement( Connection DBConnection, String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    public CResultSetResult ExecutePlainCallableStatement( Connection DBConnection, String strSQL, int intInternaFetchSize, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	CResultSetResult Result = new CResultSetResult( -1, -1, "" ); 
     	
@@ -1437,8 +1447,24 @@ public abstract class CAbstractDBEngine {
     		
     		Result.intCode = 1; //CallStatement.getInt( "IdValid" );
     		Result.Result = CallStatement.getResultSet();
-    		if ( this.IsValidResult( Result.Result, Logger, Lang ) == false ) 
+    		
+    		if ( this.IsValidResult( Result.Result, Logger, Lang ) == false ) {
+    		
     			Result.Result = null;
+    			
+    		}	
+    		else { 
+			
+    			Result.Result.setFetchSize( intInternaFetchSize );
+
+    			if ( Result.Result.getFetchSize() != intInternaFetchSize ) {
+
+    				Logger.LogWarning( "-1", Lang.Translate(  "The JDBC Driver [%s] ignoring fetch size value [%s], using JDBC driver default value [%s]", DBConnection.getMetaData().getDriverName(), Integer.toString( intInternaFetchSize ), Integer.toString( Result.Result.getFetchSize() ) ) );
+
+    			}
+
+    		}
+
     		Result.lngAffectedRows = 0;
 
     		if ( Lang != null )   
@@ -1820,7 +1846,7 @@ public abstract class CAbstractDBEngine {
 		
 	}
 	
-    public ArrayList<CResultSetResult> ExecuteComplexQueySQL( Connection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    public ArrayList<CResultSetResult> ExecuteComplexQueySQL( Connection DBConnection, int intInternaFetchSize, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	ArrayList<CResultSetResult> Result = new ArrayList<CResultSetResult>();
 
@@ -1944,6 +1970,14 @@ public abstract class CAbstractDBEngine {
 					
 					ResultSet QueryResult = NamedPreparedStatement.executeQuery();
 				
+					QueryResult.setFetchSize( intInternaFetchSize );
+		    		
+		    		if ( QueryResult.getFetchSize() != intInternaFetchSize ) {
+		    			
+						Logger.LogWarning( "-1", Lang.Translate(  "The JDBC Driver [%s] ignoring fetch size value [%s], using JDBC driver default value [%s]", DBConnection.getMetaData().getDriverName(), Integer.toString( intInternaFetchSize ), Integer.toString( QueryResult.getFetchSize() ) ) );
+		    			
+		    		}
+					
 		            if ( Logger != null ) { //Trace how much time in execute sql, useful for trace expensive query
 		            	
 		        		if ( Lang != null )   
@@ -1981,7 +2015,9 @@ public abstract class CAbstractDBEngine {
     	}
     	catch ( Exception Ex ) {
     		
-			if ( Logger != null )
+			Result.add( new CResultSetResult( -1, -1, Lang.Translate( "Error to execute the SQL statement, see the log file for more details" ) ) );
+
+    		if ( Logger != null )
 				Logger.LogException( "-1015", Ex.getMessage(), Ex ); 
     		
     	}
@@ -2195,7 +2231,7 @@ public abstract class CAbstractDBEngine {
     	
     }
    
-    public ArrayList<CResultSetResult> ExecuteComplexCallableStatement( Connection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    public ArrayList<CResultSetResult> ExecuteComplexCallableStatement( Connection DBConnection, int intInternaFetchSize, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	ArrayList<CResultSetResult> Result = new ArrayList<CResultSetResult>();
 
@@ -2316,12 +2352,23 @@ public abstract class CAbstractDBEngine {
 					NamedCallableStatement.execute();
 					
 					ResultSet CallableStatementResultSet = NamedCallableStatement.getResultSet();
-
+					
 					if ( bIsValidResultSet == false || this.IsValidResult( CallableStatementResultSet, Logger, Lang) == false ) {
 						
 						bIsValidResultSet = false;
 						
 						CallableStatementResultSet = null;
+						
+					}
+					else {
+						
+						CallableStatementResultSet.setFetchSize( intInternaFetchSize );
+			    		
+			    		if ( CallableStatementResultSet.getFetchSize() != intInternaFetchSize ) {
+			    			
+							Logger.LogWarning( "-1", Lang.Translate(  "The JDBC Driver [%s] ignoring fetch size value [%s], using JDBC driver default value [%s]", DBConnection.getMetaData().getDriverName(), Integer.toString( intInternaFetchSize ), Integer.toString( CallableStatementResultSet.getFetchSize() ) ) );
+			    			
+			    		}
 						
 					}
 					
@@ -2556,7 +2603,7 @@ public abstract class CAbstractDBEngine {
     	
     }
     
-    public String getFieldValueAsString( int intFieldType, String strFieldName, ResultSet Resultset, String strDateFormat, String strTimeFormat, String strDateTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+    public String getFieldValueAsString( int intFieldType, String strColumnName, ResultSet Resultset, String strDateFormat, String strTimeFormat, String strDateTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
     	
 	    String strResult = "";
 
@@ -2564,22 +2611,22 @@ public abstract class CAbstractDBEngine {
 	   
 		    switch ( this.getJavaSQLColumnType( intFieldType, Logger, Lang ) ) {
 			
-				case Types.INTEGER: { strResult = Integer.toString( Resultset.getInt( strFieldName ) ); break; }
-				case Types.BIGINT: { strResult = Long.toString( Resultset.getLong( strFieldName ) ); break; }
-				case Types.SMALLINT: { strResult = Short.toString( Resultset.getShort( strFieldName ) ); break; }
+				case Types.INTEGER: { strResult = Integer.toString( Resultset.getInt( strColumnName ) ); break; }
+				case Types.BIGINT: { strResult = Long.toString( Resultset.getLong( strColumnName ) ); break; }
+				case Types.SMALLINT: { strResult = Short.toString( Resultset.getShort( strColumnName ) ); break; }
 				case Types.VARCHAR: 
 				case Types.CHAR: {  
 					
-					                strResult = Resultset.getString( strFieldName );
+					                strResult = Resultset.getString( strColumnName );
 									break; 
 					             
 				                 }
-				case Types.BOOLEAN: { strResult = Boolean.toString( Resultset.getBoolean( strFieldName ) ); break; }
+				case Types.BOOLEAN: { strResult = Boolean.toString( Resultset.getBoolean( strColumnName ) ); break; }
 				//case -2: //PostgreSQL ByteA  now managed for CPGSQLDBEngine Class method getJavaSQLColumnType to convert to Types.BLOB constant value
 				//case -4: //Firebird Blob now managed for CFirebirdDBEngine Class method getJavaSQLColumnType to convert to Types.BLOB constant value
 				case Types.BLOB: { 	
 					
-					                Blob BinaryBLOBData = Resultset.getBlob( strFieldName );
+					                Blob BinaryBLOBData = Resultset.getBlob( strColumnName );
 		
 					                String strBase64Coded = new String( Base64.encode( BinaryBLOBData.getBytes( 1, (int) BinaryBLOBData.length() ) ) );
 		
@@ -2591,27 +2638,27 @@ public abstract class CAbstractDBEngine {
 				case Types.DATE: {
 					               
 					                SimpleDateFormat DFormatter = new SimpleDateFormat( strDateFormat );
-					                strResult = DFormatter.format( Resultset.getDate( strFieldName ) );
+					                strResult = DFormatter.format( Resultset.getDate( strColumnName ) );
 									break; 
 					             
 				                 }
 				case Types.TIME: {  
 					
 		                            SimpleDateFormat TFormatter = new SimpleDateFormat( strTimeFormat );
-					                strResult = TFormatter.format( Resultset.getTime( strFieldName ) );
+					                strResult = TFormatter.format( Resultset.getTime( strColumnName ) );
 									break; 
 					               
 				                 }
 				case Types.TIMESTAMP: {  
 					
 		                                 SimpleDateFormat DTFormatter = new SimpleDateFormat( strDateTimeFormat );
-					                     strResult = DTFormatter.format( Resultset.getTimestamp( strFieldName ) );
+					                     strResult = DTFormatter.format( Resultset.getTimestamp( strColumnName ) );
 					                     break; 
 					                    
 				                      }
 				case Types.FLOAT:
 				case Types.NUMERIC:
-				case Types.DECIMAL: {  strResult = Float.toString( Resultset.getFloat( strFieldName ) ); break; }
+				case Types.DECIMAL: {  strResult = Float.toString( Resultset.getFloat( strColumnName ) ); break; }
 				case Types.DOUBLE: {  break; }
 	
 		    }
@@ -2634,7 +2681,7 @@ public abstract class CAbstractDBEngine {
     	
     }
 
-    public Object getFieldValueAsObject( int intFieldType, String strFieldName, ResultSet Resultset, CExtendedLogger Logger, CLanguage Lang ) {
+    public Object getFieldValueAsObject( int intFieldType, String strColumnName, ResultSet Resultset, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	Object Result = null;
     	
@@ -2642,28 +2689,28 @@ public abstract class CAbstractDBEngine {
     	
 			switch ( this.getJavaSQLColumnType( intFieldType, Logger, Lang ) ) {
 			
-				case Types.INTEGER: { Result = Resultset.getInt( strFieldName ); break; }
-				case Types.BIGINT: { Result = Resultset.getLong( strFieldName ); break; }
-				case Types.SMALLINT: { Result = Resultset.getShort( strFieldName ); break; }
+				case Types.INTEGER: { Result = Resultset.getInt( strColumnName ); break; }
+				case Types.BIGINT: { Result = Resultset.getLong( strColumnName ); break; }
+				case Types.SMALLINT: { Result = Resultset.getShort( strColumnName ); break; }
 				case Types.VARCHAR: 
-				case Types.CHAR: { Result = Resultset.getString( strFieldName ); break; }
-				case Types.BOOLEAN: { Result = Resultset.getBoolean( strFieldName ); break; }
+				case Types.CHAR: { Result = Resultset.getString( strColumnName ); break; }
+				case Types.BOOLEAN: { Result = Resultset.getBoolean( strColumnName ); break; }
 				//case -2: //PostgreSQL ByteA  now managed for CPGSQLDBEngine Class method getJavaSQLColumnType to convert to Types.BLOB constant value
 				//case -4: //Firebird Blob now managed for CFirebirdDBEngine Class method getJavaSQLColumnType to convert to Types.BLOB constant value
 				case Types.BLOB: { 
 					
-					                Result = Resultset.getBlob( strFieldName );
+					                Result = Resultset.getBlob( strColumnName );
 	                                 
 					                break; 
 					                
 					              }
-				case Types.DATE: { Result = Resultset.getDate( strFieldName ); break; }
-				case Types.TIME: { Result = Resultset.getTime( strFieldName ); break; }
-				case Types.TIMESTAMP: { Result = Resultset.getTimestamp( strFieldName ); break; }
+				case Types.DATE: { Result = Resultset.getDate( strColumnName ); break; }
+				case Types.TIME: { Result = Resultset.getTime( strColumnName ); break; }
+				case Types.TIMESTAMP: { Result = Resultset.getTimestamp( strColumnName ); break; }
 				case Types.NUMERIC:
 				case Types.FLOAT: 
-				case Types.DECIMAL: { Result = Resultset.getFloat( strFieldName ); break; }
-				case Types.DOUBLE: { Result = Resultset.getDouble( strFieldName ); break; }
+				case Types.DECIMAL: { Result = Resultset.getFloat( strColumnName ); break; }
+				case Types.DOUBLE: { Result = Resultset.getDouble( strColumnName ); break; }
 	
 			}
     	
@@ -2733,6 +2780,78 @@ public abstract class CAbstractDBEngine {
 	    }
     	
     	return Result;
+    	
+    }
+    
+    public boolean writeBlobValueAsStringToFile( int intFieldType, int intColumnIndex, String strTempDir, String strTempFile, OutputStream BlobFileOutStream, ResultSet Resultset, String strDateFormat, String strTimeFormat, String strDateTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+    	boolean bResult = false;
+    	
+	    try {
+	 	   
+		    switch ( this.getJavaSQLColumnType( intFieldType, Logger, Lang ) ) {
+			
+				//case -2: //PostgreSQL ByteA  now managed for CPGSQLDBEngine Class method getJavaSQLColumnType to convert to Types.BLOB constant value
+				//case -4: //Firebird Blob now managed for CFirebirdDBEngine Class method getJavaSQLColumnType to convert to Types.BLOB constant value
+				case Types.BLOB: { 	
+					
+				                    InputStream BlobInStream = Resultset.getBinaryStream( intColumnIndex );
+					                
+					                Base64.encode( BlobInStream, BlobFileOutStream );
+				                    
+				                    bResult = true;
+					                
+								    break; 
+		
+								 }
+	
+		    }
+	   
+	    }
+	    catch ( Exception Ex ) {
+		   
+			if ( Logger != null )
+				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+		   
+	    }
+    	
+    	return bResult;
+    	
+    }
+    
+    public boolean writeBlobValueAsStringToFile( int intFieldType, String strColumnName, String strTempDir, String strTempFile, OutputStream BlobFileOutStream, ResultSet Resultset, String strDateFormat, String strTimeFormat, String strDateTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+    	boolean bResult = false;
+    	
+	    try {
+	 	   
+		    switch ( this.getJavaSQLColumnType( intFieldType, Logger, Lang ) ) {
+			
+				//case -2: //PostgreSQL ByteA  now managed for CPGSQLDBEngine Class method getJavaSQLColumnType to convert to Types.BLOB constant value
+				//case -4: //Firebird Blob now managed for CFirebirdDBEngine Class method getJavaSQLColumnType to convert to Types.BLOB constant value
+				case Types.BLOB: { 	
+					
+				                    InputStream BlobInStream = Resultset.getBinaryStream( strColumnName );
+					                
+					                Base64.encode( BlobInStream, BlobFileOutStream );
+				                    
+				                    bResult = true;
+					                
+								    break; 
+		
+								 }
+	
+		    }
+	   
+	    }
+	    catch ( Exception Ex ) {
+		   
+			if ( Logger != null )
+				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+		   
+	    }
+    	
+    	return bResult;
     	
     }
     

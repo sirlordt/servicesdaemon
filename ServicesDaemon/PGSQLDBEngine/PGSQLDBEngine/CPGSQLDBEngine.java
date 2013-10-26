@@ -1012,7 +1012,7 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
     }
     
     @Override
-    public String getFieldValueAsString( int intFieldType, String strFieldName, ResultSet Resultset, String strDateFormat, String strTimeFormat, String strDateTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+    public String getFieldValueAsString( int intFieldType, String strColumnName, ResultSet Resultset, String strDateFormat, String strTimeFormat, String strDateTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
     	
 	    String strResult = "";
 
@@ -1020,20 +1020,20 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 	   
 		    switch ( this.getJavaSQLColumnType( intFieldType, Logger, Lang ) ) {
 			
-				case Types.INTEGER: { strResult = Integer.toString( Resultset.getInt( strFieldName ) ); break; }
-				case Types.BIGINT: { strResult = Long.toString( Resultset.getLong( strFieldName ) ); break; }
-				case Types.SMALLINT: { strResult = Short.toString( Resultset.getShort( strFieldName ) ); break; }
+				case Types.INTEGER: { strResult = Integer.toString( Resultset.getInt( strColumnName ) ); break; }
+				case Types.BIGINT: { strResult = Long.toString( Resultset.getLong( strColumnName ) ); break; }
+				case Types.SMALLINT: { strResult = Short.toString( Resultset.getShort( strColumnName ) ); break; }
 				case Types.VARCHAR: 
 				case Types.CHAR: {  
 					
-					                strResult = Resultset.getString( strFieldName );
+					                strResult = Resultset.getString( strColumnName );
 									break; 
 					             
 				                 }
-				case Types.BOOLEAN: { strResult = Resultset.getBoolean( strFieldName )?"true":"false"; break; }
+				case Types.BOOLEAN: { strResult = Resultset.getBoolean( strColumnName )?"true":"false"; break; }
 				case Types.BLOB: { 	
 					
-					                strResult = new String( Base64.encode( Resultset.getBytes( strFieldName ) ) );
+					                strResult = new String( Base64.encode( Resultset.getBytes( strColumnName ) ) );
 					                
 								    break; 
 		
@@ -1041,27 +1041,27 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 				case Types.DATE: {
 					               
 					                SimpleDateFormat DFormatter = new SimpleDateFormat( strDateFormat );
-					                strResult = DFormatter.format( Resultset.getDate( strFieldName ) );
+					                strResult = DFormatter.format( Resultset.getDate( strColumnName ) );
 									break; 
 					             
 				                 }
 				case Types.TIME: {  
 					
 		                            SimpleDateFormat TFormatter = new SimpleDateFormat( strTimeFormat );
-					                strResult = TFormatter.format( Resultset.getTime( strFieldName ) );
+					                strResult = TFormatter.format( Resultset.getTime( strColumnName ) );
 									break; 
 					               
 				                 }
 				case Types.TIMESTAMP: {  
 					
 		                                 SimpleDateFormat DTFormatter = new SimpleDateFormat( strDateTimeFormat );
-					                     strResult = DTFormatter.format( Resultset.getTimestamp( strFieldName ) );
+					                     strResult = DTFormatter.format( Resultset.getTimestamp( strColumnName ) );
 					                     break; 
 					                    
 				                      }
 				case Types.NUMERIC:
 				case Types.FLOAT: 
-				case Types.DECIMAL: {  strResult = Float.toString( Resultset.getFloat( strFieldName ) ); break; }
+				case Types.DECIMAL: {  strResult = Float.toString( Resultset.getFloat( strColumnName ) ); break; }
 				case Types.DOUBLE: {  break; }
 	
 		    }
@@ -1084,7 +1084,7 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
     	
     }
 
-    public Object getFieldValueAsObject( int intFieldType, String strFieldName, ResultSet Resultset, CExtendedLogger Logger, CLanguage Lang ) {
+    public Object getFieldValueAsObject( int intFieldType, String strColumnName, ResultSet Resultset, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	Object Result = null;
     	
@@ -1092,26 +1092,26 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
     	
 			switch ( this.getJavaSQLColumnType( intFieldType, Logger, Lang ) ) {
 			
-				case Types.INTEGER: { Result = Resultset.getInt( strFieldName ); break; }
-				case Types.BIGINT: { Result = Resultset.getLong( strFieldName ); break; }
-				case Types.SMALLINT: { Result = Resultset.getShort( strFieldName ); break; }
+				case Types.INTEGER: { Result = Resultset.getInt( strColumnName ); break; }
+				case Types.BIGINT: { Result = Resultset.getLong( strColumnName ); break; }
+				case Types.SMALLINT: { Result = Resultset.getShort( strColumnName ); break; }
 				case Types.VARCHAR: 
-				case Types.CHAR: { Result = Resultset.getString( strFieldName ); break; }
-				case Types.BOOLEAN: { Result = Resultset.getBoolean( strFieldName ); break; }
+				case Types.CHAR: { Result = Resultset.getString( strColumnName ); break; }
+				case Types.BOOLEAN: { Result = Resultset.getBoolean( strColumnName ); break; }
 				case Types.BLOB: { 
 					
-						             Result = new SerialBlob( Resultset.getBytes( strFieldName ) );
+						             Result = new SerialBlob( Resultset.getBytes( strColumnName ) );
 	                                 
 					                 break; 
 					                
 					              }
-				case Types.DATE: { Result = Resultset.getDate( strFieldName ); break; }
-				case Types.TIME: { Result = Resultset.getTime( strFieldName ); break; }
-				case Types.TIMESTAMP: { Result = Resultset.getTimestamp( strFieldName ); break; }
+				case Types.DATE: { Result = Resultset.getDate( strColumnName ); break; }
+				case Types.TIME: { Result = Resultset.getTime( strColumnName ); break; }
+				case Types.TIMESTAMP: { Result = Resultset.getTimestamp( strColumnName ); break; }
 				case Types.NUMERIC:
 				case Types.FLOAT: 
-				case Types.DECIMAL: { Result = Resultset.getFloat( strFieldName ); break; }
-				case Types.DOUBLE: { Result = Resultset.getDouble( strFieldName ); break; }
+				case Types.DECIMAL: { Result = Resultset.getFloat( strColumnName ); break; }
+				case Types.DOUBLE: { Result = Resultset.getDouble( strColumnName ); break; }
 	
 			}
     	
@@ -1181,5 +1181,5 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
     	return Result;
     	
     }
-	
+    
 }

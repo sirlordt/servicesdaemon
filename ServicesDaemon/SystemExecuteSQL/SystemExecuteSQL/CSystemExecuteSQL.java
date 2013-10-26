@@ -206,7 +206,9 @@ public class CSystemExecuteSQL extends CAbstractService {
 
 			if ( SQLType == SQLStatementType.Select ) { //Select
 
-				CResultSetResult ResultSetResult = DBEngine.ExecutePlainQuerySQL( DBConnection, strSQL, ServiceLogger, ServiceLang ); //SQLStatement.executeQuery( strSQL );
+				int intInternalFetchSize = Integer.parseInt( OwnerConfig.getConfigValue( "Internal_Fetch_Size" ) );
+				
+				CResultSetResult ResultSetResult = DBEngine.ExecutePlainQuerySQL( DBConnection, strSQL, intInternalFetchSize, ServiceLogger, ServiceLang ); //SQLStatement.executeQuery( strSQL );
 
 				if ( ResultSetResult != null ) {
 
@@ -222,7 +224,7 @@ public class CSystemExecuteSQL extends CAbstractService {
 		        			
 		            }	
 					
-					String strResponseBuffer = ResponseFormat.FormatResultSet( ResultSetResult, DBEngine, strResponseFormatVersion, ConfigDBConnection!=null?ConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_DateTime_Format ), ConfigDBConnection!=null?ConfigDBConnection.strDateFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Date_Format ), ConfigDBConnection!=null?ConfigDBConnection.strTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
+					ResponseFormat.FormatResultSet( Response, ResultSetResult, DBEngine, strResponseFormatVersion, ConfigDBConnection!=null?ConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_DateTime_Format ), ConfigDBConnection!=null?ConfigDBConnection.strDateFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Date_Format ), ConfigDBConnection!=null?ConfigDBConnection.strTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Time_Format ), true, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 
 		            if ( ServiceLogger != null ) { //Trace how much time in format data
 		            	
@@ -233,7 +235,7 @@ public class CSystemExecuteSQL extends CAbstractService {
 		        			
 		            }
 		            
-					Response.getWriter().print( strResponseBuffer );
+					//Response.getWriter().print( "Hello" );
 
 					bResult = true;
 					
@@ -265,8 +267,13 @@ public class CSystemExecuteSQL extends CAbstractService {
 					ResultSetResult = DBEngine.ExecutePlainUpdateSQL( DBConnection, strSQL, ServiceLogger, ServiceLang );
 				else if ( SQLType == SQLStatementType.Delete )
 					ResultSetResult = DBEngine.ExecutePlainDeleteSQL( DBConnection, strSQL, ServiceLogger, ServiceLang );
-				else if ( SQLType == SQLStatementType.Call )
-					ResultSetResult = DBEngine.ExecutePlainCallableStatement( DBConnection, strSQL, ServiceLogger, ServiceLang );
+				else if ( SQLType == SQLStatementType.Call ) {
+				
+					int intInternalFetchSize = Integer.parseInt( OwnerConfig.getConfigValue( "Internal_Fetch_Size" ) );
+
+					ResultSetResult = DBEngine.ExecutePlainCallableStatement( DBConnection, strSQL, intInternalFetchSize, ServiceLogger, ServiceLang );
+				
+				}	
 				else if ( SQLType == SQLStatementType.DDL )
 					ResultSetResult = DBEngine.ExecutePlainDDLSQL( DBConnection, strSQL, ServiceLogger, ServiceLang );
 
@@ -294,7 +301,7 @@ public class CSystemExecuteSQL extends CAbstractService {
 		        			
 		            }	
 
-		            String strResponseBuffer = ResponseFormat.FormatResultSet( ResultSetResult, DBEngine, strResponseFormatVersion, ConfigDBConnection!=null?ConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_DateTime_Format ), ConfigDBConnection!=null?ConfigDBConnection.strDateFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Date_Format ), ConfigDBConnection!=null?ConfigDBConnection.strTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
+		            ResponseFormat.FormatResultSet( Response, ResultSetResult, DBEngine, strResponseFormatVersion, ConfigDBConnection!=null?ConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_DateTime_Format ), ConfigDBConnection!=null?ConfigDBConnection.strDateFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Date_Format ), ConfigDBConnection!=null?ConfigDBConnection.strTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Time_Format ), true, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 
 		            if ( ServiceLogger != null ) { //Trace how much time in format data
 		            	
@@ -305,9 +312,9 @@ public class CSystemExecuteSQL extends CAbstractService {
 		        			
 		            }
 
-		            Response.getWriter().print( strResponseBuffer );
+		            //Response.getWriter().print( strResponseBuffer );
 
-					DBEngine.CloseResultSetResultStatement(ResultSetResult, ServiceLogger, ServiceLang );
+					DBEngine.CloseResultSetResultStatement( ResultSetResult, ServiceLogger, ServiceLang );
 					
 					bResult = true;
 					
@@ -369,7 +376,9 @@ public class CSystemExecuteSQL extends CAbstractService {
 
 			if ( SQLType == SQLStatementType.Select ) { //Select
 
-				ArrayList<CResultSetResult> ResultsSets = DBEngine.ExecuteComplexQueySQL( DBConnection, Request, getMacrosTypes(), getMacrosNames(), getMacrosNames(), ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strSQL, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
+				int intInternalFetchSize = Integer.parseInt( OwnerConfig.getConfigValue( "Internal_Fetch_Size" ) );
+				
+				ArrayList<CResultSetResult> ResultsSets = DBEngine.ExecuteComplexQueySQL( DBConnection, intInternalFetchSize, Request, getMacrosTypes(), getMacrosNames(), getMacrosNames(), ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strSQL, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
 				
 				if ( ResultsSets != null && ResultsSets.size() > 0 ) {
 					
@@ -385,7 +394,7 @@ public class CSystemExecuteSQL extends CAbstractService {
 		        			
 		            }	
 					
-					String strResponseBuffer = ResponseFormat.FormatResultsSets( ResultsSets, DBEngine, strResponseFormatVersion, ConfigDBConnection!=null?ConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_DateTime_Format ), ConfigDBConnection!=null?ConfigDBConnection.strDateFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Date_Format ), ConfigDBConnection!=null?ConfigDBConnection.strTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang, 1 );
+					ResponseFormat.FormatResultsSets( Response, ResultsSets, DBEngine, strResponseFormatVersion, ConfigDBConnection!=null?ConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_DateTime_Format ), ConfigDBConnection!=null?ConfigDBConnection.strDateFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Date_Format ), ConfigDBConnection!=null?ConfigDBConnection.strTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Time_Format ), true, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang, 1 );
 
 		            if ( ServiceLogger != null ) { //Trace how much time in format data
 		            	
@@ -396,7 +405,7 @@ public class CSystemExecuteSQL extends CAbstractService {
 		        			
 		            }
 
-		            Response.getWriter().print( strResponseBuffer );
+		            //Response.getWriter().print( strResponseBuffer );
 
 					bResult = true;
 					
@@ -430,8 +439,13 @@ public class CSystemExecuteSQL extends CAbstractService {
 					ResultSetsResults = DBEngine.ExecuteComplexUpdateSQL( DBConnection, Request, getMacrosTypes(), getMacrosNames(), getMacrosNames(), ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strSQL, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
 				else if ( SQLType == SQLStatementType.Delete )
 					ResultSetsResults = DBEngine.ExecuteComplexDeleteSQL( DBConnection, Request, getMacrosTypes(), getMacrosNames(), getMacrosNames(), ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strSQL, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
-				else if ( SQLType == SQLStatementType.Call )
-					ResultSetsResults = DBEngine.ExecuteComplexCallableStatement( DBConnection, Request, getMacrosTypes(), getMacrosNames(), getMacrosNames(), ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strSQL, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
+				else if ( SQLType == SQLStatementType.Call ) {
+				
+					int intInternalFetchSize = Integer.parseInt( OwnerConfig.getConfigValue( "Internal_Fetch_Size" ) );
+
+					ResultSetsResults = DBEngine.ExecuteComplexCallableStatement( DBConnection, intInternalFetchSize, Request, getMacrosTypes(), getMacrosNames(), getMacrosNames(), ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strSQL, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
+
+				}	
 				else if ( SQLType == SQLStatementType.DDL )
 					ResultSetsResults = DBEngine.ExecuteComplexDDL( DBConnection, Request, getMacrosTypes(), getMacrosNames(), getMacrosNames(), ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strSQL, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
 
@@ -449,7 +463,7 @@ public class CSystemExecuteSQL extends CAbstractService {
 		        			
 		            }	
 					
-					String strResponseBuffer = ResponseFormat.FormatResultsSets( ResultSetsResults, DBEngine, strResponseFormatVersion, ConfigDBConnection!=null?ConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_DateTime_Format ), ConfigDBConnection!=null?ConfigDBConnection.strDateFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Date_Format ), ConfigDBConnection!=null?ConfigDBConnection.strTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang, 0 );
+					ResponseFormat.FormatResultsSets( Response, ResultSetsResults, DBEngine, strResponseFormatVersion, ConfigDBConnection!=null?ConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_DateTime_Format ), ConfigDBConnection!=null?ConfigDBConnection.strDateFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Date_Format ), ConfigDBConnection!=null?ConfigDBConnection.strTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemExecuteSQL._Global_Time_Format ), true, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang, 0 );
 		    		
 		            if ( ServiceLogger != null ) { //Trace how much time in format data
 		            	
@@ -460,7 +474,7 @@ public class CSystemExecuteSQL extends CAbstractService {
 		        			
 		            }
 
-		            Response.getWriter().print( strResponseBuffer );
+		            //Response.getWriter().print( strResponseBuffer );
 
 					DBEngine.CloseResultSetResultStatement( ResultSetsResults, ServiceLogger, ServiceLang );
 					
@@ -602,7 +616,7 @@ public class CSystemExecuteSQL extends CAbstractService {
 													}
 													
 												}
-												else {
+												/*else {
 													
 													Response.setContentType( ResponseFormat.getContentType() );
 													Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
@@ -610,7 +624,7 @@ public class CSystemExecuteSQL extends CAbstractService {
 													String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1006, ServiceLang.Translate( "Failed to execute SQL statement for transaction id: [%s], see the log file for more details", strSecurityTokenID ), true, strResponseFormatVersion, LocalConfigDBConnection.strDateTimeFormat, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 													Response.getWriter().print( strResponseBuffer );
 													
-												}
+												}*/
 
 											}
 

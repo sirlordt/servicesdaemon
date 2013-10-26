@@ -16,6 +16,7 @@ public interface ConfigXMLTagsDBServicesManager {
 	public static final String _Global_Date_Format = "Global_Date_Format";
 	public static final String _Global_Time_Format = "Global_Time_Format";
 	
+	public static final String _Temp_Dir = "Temp_Dir";
 	public static final String _DBServices_Dir = "DBServices_Dir";
 	public static final String _DBDrivers_Dir = "DBDrivers_Dir";
 	public static final String _DBEngines_Dir = "DBEngines_Dir";
@@ -24,6 +25,8 @@ public interface ConfigXMLTagsDBServicesManager {
 	public static final String _Default_Response_Format = "Default_Response_Format";
 	public static final String _Default_Response_Format_Version = "Default_Response_Format_Version";
 
+	public static final String _Internal_Fetch_Size = "Internal_Fetch_Size";
+	
 	public static final String _ResponseFormat_XML_DATAPACKET = "XML-DATAPACKET";
 	public static final String _ResponseFormat_JSON = "JSON";
 	public static final String _ResponseFormat_JAVA_XML_WEBROWSET = "JAVA-XML-WEBROWSET";
