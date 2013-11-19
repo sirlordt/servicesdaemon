@@ -653,5 +653,17 @@ public class Utilities {
 		return strResult;
 		
 	}
-    
+ 
+	public static String ReplaceToHTMLEntity( String strToFindAndReplace ) {
+		
+        strToFindAndReplace = strToFindAndReplace.replaceAll( "&", "&amp;" );
+        strToFindAndReplace = strToFindAndReplace.replaceAll( "<", "&lt;" );
+        strToFindAndReplace = strToFindAndReplace.replaceAll( ">", "&gt;" );
+        strToFindAndReplace = strToFindAndReplace.replaceAll( "\"", "&quot;" );
+        strToFindAndReplace = strToFindAndReplace.replaceAll( "\'", "&apos;" );
+		
+		return strToFindAndReplace;
+		
+	}
+	
 }

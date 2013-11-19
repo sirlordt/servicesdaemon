@@ -247,6 +247,7 @@ public class CMemoryRowSet {
 				}	
 	    		
 			    ResultRowset.moveToCurrentRow();
+			    ResultRowset.beforeFirst();
 				
 			}
 			catch ( Exception Ex ) {

@@ -2,6 +2,7 @@
 /AbstractResponseFormat
 /AbstractService
 /AbstractServicesManager
+/BPServicesManager
 /CommonClasses
 /CryptPasswordSD
 /DBServicesManager
@@ -25,3 +26,8 @@
 /WebRowSet
 /net
 /org
+/SystemObjectExists
+/Langs
+/SystemListObjects
+/SystemDescribeObject
+/SystemDatabaseInfo

@@ -808,7 +808,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     			int intFieldType   = DBEngine.getJavaSQLColumnType( DataSetMetaData.getColumnType( i ), Logger, Lang );
     			int intFieldLength = DataSetMetaData.getColumnDisplaySize( i );
 
-    			String strFieldDef = "      <" + XMLDataPacketTags._Field + " XMLDataPacketTags._AttrName=\"" + strFieldName + "\" ";
+    			String strFieldDef = "      <" + XMLDataPacketTags._Field + " " + XMLDataPacketTags._AttrName + "=\"" + strFieldName + "\" ";
 
     			switch ( intFieldType ) {
 

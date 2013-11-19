@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM  "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Language file messages translations</comment>
+
+<entry key="List all objects (table, view, procedure, function) in the database">Lista todos los objetos (tabla, vista, procedimiento almacenado, función) en la base de datos</entry>
+<entry key="Response format name, example: XML-DATAPACKET, CSV, JSON">Nombre del formato de respuesta, ejemplo: XML-DATAPACKET, CSV, JSON</entry>
+<entry key="Response format version, example: 1.1">Versión del formato de respuesta, ejemplo: 1.1</entry>
+<entry key="Security token obtained with a start session service call">Token de seguridad obtenido con una llamada al servicio de inicio de sesión</entry>
+<entry key="Type of object to list 1 = Table, 2 = View, 3 = Function, 4 = Stored Procedure">Tipo de objeto para ser listado 1 = Tabla, 2 = Vista, 3 = Función, 4 = Procedimiento almacenado</entry>
+
+<entry key="Database object type: [%s] is not supported">Tipo de objeto: [%s] de la base de datos no soportado</entry>
+<entry key="No object from type [%s] found">No fueron encontrados objetos del tipo: [%s]</entry>
+<entry key=""></entry>
+<entry key=""></entry>
+<entry key=""></entry>
+<entry key=""></entry>
+<entry key=""></entry>
+</properties>

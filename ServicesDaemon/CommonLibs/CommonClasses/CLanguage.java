@@ -57,7 +57,6 @@ public class CLanguage {
 		this.setLanguageFileName( strLanguageFileName );
 	
 	}
-
 	
 	public boolean setLanguageFileName( String strLanguageFileName ) {
 		

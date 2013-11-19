@@ -249,7 +249,6 @@ public class CSystemStartSession extends CAbstractService {
 		
 	}
 	
-	
 	public void SucessStartSession( CMemoryRowSet StartSessionRowSet, CConfigDBConnection ConfigDBConnection, String strCode, ArrayList<String> AddFieldToResponseSucess, ArrayList<String> AddFieldToResponseAny, HttpServletRequest Request, HttpServletResponse Response, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion ) {
 
 	    try {

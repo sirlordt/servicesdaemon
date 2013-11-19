@@ -349,58 +349,58 @@ public class CDBServicesManager extends CAbstractServicesManager {
     		try {
 
     			//DBConnectionsManager.Initialize( DBServicesManagerLogger, DBServicesManagerLang );
-    			
+
     			CClassPathLoader ClassPathLoader = new CClassPathLoader( DBServicesManagerLogger, DBServicesManagerLang );
 
     			//Load the databases drivers
     			ClassPathLoader.LoadClassFiles( DBServicesManagerConfig.strDBDriversDir, DefaultConstantsServicesDaemon.strDefaultLibsExt, 2 );
-    		
-               if ( ClassPathLoader.getCountClassLoaded() > 0 ) {
-            	   
-           		   //Load database engines class
-       			   ClassPathLoader.LoadClassFiles( DBServicesManagerConfig.strDBEnginesDir, DefaultConstantsServicesDaemon.strDefaultLibsExt, 2 );
 
-       			   if ( this.LoadAndRegisterDBEngines( ServicesDaemonConfig ) ) {
-            	   
-	           		   //Load responses formats class
-	       			   ClassPathLoader.LoadClassFiles( DBServicesManagerConfig.strResponsesFormatsDir, DefaultConstantsServicesDaemon.strDefaultLibsExt, 2 );
-	
-	       			   if ( this.LoadAndRegisterResponsesFormats( ServicesDaemonConfig ) == true ) {
-	            	      
-	       				   //Load DB services class
-	           			   ClassPathLoader.LoadClassFiles( DBServicesManagerConfig.strDBServicesDir, DefaultConstantsServicesDaemon.strDefaultLibsExt, 2 ); //Permit owner dir
-	
-	           			   if ( this.LoadAndRegisterDBServices( ServicesDaemonConfig ) == true ) {
-	            		   
-	                		   bResult = true;
-	                	   
-	                	   }
-	                	   else {
-	                		   
-	               			   DBServicesManagerLogger.LogError( "-1004", DBServicesManagerLang.Translate( "No databases services found in path [%s]", DBServicesManagerConfig.strDBServicesDir ) );
-	                		   
-	                	   }
-	                	   
-	            	   }
-	            	   else {
-	            		   
-	           			  DBServicesManagerLogger.LogError( "-1003", DBServicesManagerLang.Translate( "No responses formats drivers found in path [%s]", DBServicesManagerConfig.strResponsesFormatsDir ) );
-	            		   
-	            	   }
-       			   
-       			   }
-       			   else {
-       				   
-           			  DBServicesManagerLogger.LogError( "-1002", DBServicesManagerLang.Translate( "No databases engines found in path [%s]", DBServicesManagerConfig.strDBEnginesDir ) );
-       				   
-       			   }
-       			   
-               }
-               else {
-            	   
-       			  DBServicesManagerLogger.LogError( "-1001", DBServicesManagerLang.Translate( "No datatabase drivers found in path [%s]", DBServicesManagerConfig.strDBDriversDir ) );
-            	   
-               }
+    			if ( ClassPathLoader.getCountClassLoaded() > 0 ) {
+
+    				//Load database engines class
+    				ClassPathLoader.LoadClassFiles( DBServicesManagerConfig.strDBEnginesDir, DefaultConstantsServicesDaemon.strDefaultLibsExt, 2 );
+
+    				if ( this.LoadAndRegisterDBEngines( ServicesDaemonConfig ) ) {
+
+    					//Load responses formats class
+    					ClassPathLoader.LoadClassFiles( DBServicesManagerConfig.strResponsesFormatsDir, DefaultConstantsServicesDaemon.strDefaultLibsExt, 2 );
+
+    					if ( this.LoadAndRegisterResponsesFormats( ServicesDaemonConfig ) == true ) {
+
+    						//Load DB services class
+    						ClassPathLoader.LoadClassFiles( DBServicesManagerConfig.strDBServicesDir, DefaultConstantsServicesDaemon.strDefaultLibsExt, 2 ); //Permit owner dir
+
+    						if ( this.LoadAndRegisterDBServices( ServicesDaemonConfig ) == true ) {
+
+    							bResult = true;
+
+    						}
+    						else {
+
+    							DBServicesManagerLogger.LogError( "-1004", DBServicesManagerLang.Translate( "No databases services found in path [%s]", DBServicesManagerConfig.strDBServicesDir ) );
+
+    						}
+
+    					}
+    					else {
+
+    						DBServicesManagerLogger.LogError( "-1003", DBServicesManagerLang.Translate( "No responses formats drivers found in path [%s]", DBServicesManagerConfig.strResponsesFormatsDir ) );
+
+    					}
+
+    				}
+    				else {
+
+    					DBServicesManagerLogger.LogError( "-1002", DBServicesManagerLang.Translate( "No databases engines found in path [%s]", DBServicesManagerConfig.strDBEnginesDir ) );
+
+    				}
+
+    			}
+    			else {
+
+    				DBServicesManagerLogger.LogError( "-1001", DBServicesManagerLang.Translate( "No datatabase drivers found in path [%s]", DBServicesManagerConfig.strDBDriversDir ) );
+
+    			}
     			
     		}
     		catch ( Exception Ex ) {

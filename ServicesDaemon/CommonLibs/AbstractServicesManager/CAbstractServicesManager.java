@@ -10,6 +10,7 @@
  ******************************************************************************/
 package AbstractServicesManager;
 
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,7 +27,7 @@ public class CAbstractServicesManager extends HttpServlet {
 
 	protected String strContextPath;
     protected CServicesDaemonConfig ServicesDaemonConfig;
-	
+    
     public CAbstractServicesManager() { 
 
     	this.strContextPath = "/*";

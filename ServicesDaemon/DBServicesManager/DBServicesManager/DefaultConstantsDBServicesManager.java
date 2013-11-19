@@ -29,7 +29,7 @@ public abstract class DefaultConstantsDBServicesManager {
 	public static final String strDefaultDBEnginesDir = "DBEngines/";
 	public static final String strDefaultResponsesFormatsDir = "ResponsesFormats/";
 
-	public static final String strDefaultLoggerName = "DBServicesManageLogger"; 
+	public static final String strDefaultLoggerName = "DBServicesManagerLogger"; 
 
 	public static final String strDefaultResponseFormat = ConfigXMLTagsDBServicesManager._ResponseFormat_XML_DATAPACKET;
 	public static final String strDefaultResponseFormatVersion = "1.1";
