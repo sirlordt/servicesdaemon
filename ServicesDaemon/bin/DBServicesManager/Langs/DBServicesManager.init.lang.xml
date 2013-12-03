@@ -25,10 +25,10 @@
 <entry key="Adding to end of list the built in responses formats">Agregando al final de la lista los formatos de respuestas incorporados</entry>
 <entry key="Added built in response format [%s] min version: [%s] max version: [%s]">Agregando el formato de respuesta incorporado [%s] versión mínima: [%s] versión máxima: [%s]</entry>
 
-<entry key="The default response format [$s] version [%s] not found">El formato de respuesta por defecto [%s] versión [%s] no fue encontrado</entry>
-<entry key="The default response format [$s] found, but the version [%s] not found, using the min version [%s] available">El formato de respuesta por defecto [%s] fue encontrado, pero la versión [%s] no fue encontrada, usando la vesión mínima disponible [%s]</entry>
+<entry key="The default response format [%s] version [%s] not found">El formato de respuesta por defecto [%s] versión [%s] no fue encontrado</entry>
+<entry key="The default response format [%s] found, but the version [%s] not found, using the min version [%s] available">El formato de respuesta por defecto [%s] fue encontrado, pero la versión [%s] no fue encontrada, usando la vesión mínima disponible [%s]</entry>
 
-<entry key="Using default response format: [$s] min version: [%s]">Usando el como formato de respuesa por defecto: [%s] versión mínima: [%s]</entry>
+<entry key="Using default response format: [%s] min version: [%s]">Usando el como formato de respuesa por defecto: [%s] versión mínima: [%s]</entry>
 <entry key="Count of responses formats registered: [%s]">Cantidad de formatos de respuestas registrados: [%s]></entry>
 
 <entry key="[%s] from [%s] = [%s] not found">[%s] usando [%s] = [%s] no fue encontrado</entry>

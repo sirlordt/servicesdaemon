@@ -18,7 +18,6 @@
 	<classpathentry kind="src" path="MySQLDBEngine"/>
 	<classpathentry kind="src" path="PGSQLDBEngine"/>
 	<classpathentry kind="src" path="SQLServerDBEngine"/>
-	<classpathentry kind="src" path="BPServicesManager"/>
 	<classpathentry kind="src" path="SystemObjectExists"/>
 	<classpathentry kind="src" path="SystemListsObjects"/>
 	<classpathentry kind="src" path="SystemDescribeObject"/>

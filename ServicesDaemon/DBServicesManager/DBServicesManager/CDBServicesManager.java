@@ -239,7 +239,7 @@ public class CDBServicesManager extends CAbstractServicesManager {
 				
 				if ( CAbstractResponseFormat.getReponseFormatSearchCodeResult() == -2 ) { //Response format name not found 
 				
-					DBServicesManagerConfig.Logger.LogWarning( "1", DBServicesManagerConfig.Lang.Translate( "The default response format [$s] version [%s] not found", DBServicesManagerConfig.strDefaultResponseFormat, DBServicesManagerConfig.strDefaultResponseFormatVersion ) );
+					DBServicesManagerConfig.Logger.LogWarning( "1", DBServicesManagerConfig.Lang.Translate( "The default response format [%s] version [%s] not found", DBServicesManagerConfig.strDefaultResponseFormat, DBServicesManagerConfig.strDefaultResponseFormatVersion ) );
 					
 					DBServicesManagerConfig.strDefaultResponseFormat = DefaultConstantsDBServicesManager.strDefaultResponseFormat;
 					DBServicesManagerConfig.strDefaultResponseFormatVersion = DefaultConstantsDBServicesManager.strDefaultResponseFormatVersion;
@@ -247,7 +247,7 @@ public class CDBServicesManager extends CAbstractServicesManager {
 				}
 				else { //Response format name found but the version not match, use the response format with the min version available
 					
-					DBServicesManagerConfig.Logger.LogWarning( "1", DBServicesManagerConfig.Lang.Translate( "The default response format [$s] found, but the version [%s] not found, using the min version [%s] available", DBServicesManagerConfig.strDefaultResponseFormat, DBServicesManagerConfig.strDefaultResponseFormatVersion, CAbstractResponseFormat.getReponseFormatVersionSearchResult() ) );
+					DBServicesManagerConfig.Logger.LogWarning( "1", DBServicesManagerConfig.Lang.Translate( "The default response format [%s] found, but the version [%s] not found, using the min version [%s] available", DBServicesManagerConfig.strDefaultResponseFormat, DBServicesManagerConfig.strDefaultResponseFormatVersion, CAbstractResponseFormat.getReponseFormatVersionSearchResult() ) );
 					
 					DBServicesManagerConfig.strDefaultResponseFormatVersion = CAbstractResponseFormat.getReponseFormatVersionSearchResult();
 					
@@ -255,7 +255,7 @@ public class CDBServicesManager extends CAbstractServicesManager {
 				
 			}
 			
-			DBServicesManagerConfig.Logger.LogMessage( "1", DBServicesManagerConfig.Lang.Translate( "Using default response format: [$s] min version: [%s]", DBServicesManagerConfig.strDefaultResponseFormat, DBServicesManagerConfig.strDefaultResponseFormatVersion ) );
+			DBServicesManagerConfig.Logger.LogMessage( "1", DBServicesManagerConfig.Lang.Translate( "Using default response format: [%s] min version: [%s]", DBServicesManagerConfig.strDefaultResponseFormat, DBServicesManagerConfig.strDefaultResponseFormatVersion ) );
 
 			DBServicesManagerConfig.Logger.LogMessage( "1", DBServicesManagerConfig.Lang.Translate( "Count of responses formats registered: [%s]", Integer.toString( CAbstractResponseFormat.GetCountRegisteredResponsesFormats() ) ) );        
 

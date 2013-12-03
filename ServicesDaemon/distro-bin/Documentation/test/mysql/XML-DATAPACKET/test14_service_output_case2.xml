@@ -1,0 +1,24 @@
+<!-- Output from call service System.List.Objects -->
+
+<?xml version="1.0" encoding="UTF-8"?>
+<DATAPACKET dpversion="1.1">
+    <METADATA>
+        <FIELDS>
+            <FIELD attrname="Name" fieldtype="string" width="256"/>
+            <FIELD attrname="Type" fieldtype="string" width="128"/>
+            <FIELD attrname="Remarks" fieldtype="string" width="2048"/>
+        </FIELDS>
+        <PARAMS/>
+    </METADATA>
+    <ROWDATA>
+        <ROW Name="TBLTESTTABLE1" Type="TABLE" Remarks="" />
+        <ROW Name="tblBlobData" Type="TABLE" Remarks="" />
+        <ROW Name="tblGenericData" Type="TABLE" Remarks="" />
+        <ROW Name="tblGroups" Type="TABLE" Remarks="" />
+        <ROW Name="tblUsersDB" Type="TABLE" Remarks="" />
+        <ROW Name="tblUsersEng" Type="TABLE" Remarks="" />
+    </ROWDATA>
+    <ERRORS errorcount="0" >
+        <ERROR Code="0" Description="" />
+    </ERRORS>
+</DATAPACKET>

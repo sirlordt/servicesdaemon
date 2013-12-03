@@ -3021,7 +3021,7 @@ public abstract class CAbstractDBEngine {
     	
     }
     
-    public CResultSetResult getDatabaseInfo( Connection DBConnection, String strConfiguredDriverNameClass, CExtendedLogger Logger, CLanguage Lang ) {
+    public CResultSetResult getDatabaseInfo( Connection DBConnection, HashMap<String,String> ConfiguredValues, CExtendedLogger Logger, CLanguage Lang ) {
 
     	CResultSetResult Result =  new CResultSetResult();
     	
@@ -3164,8 +3164,8 @@ public abstract class CAbstractDBEngine {
     		MemoryRowSet.addRow( "updatesAreDetected.TYPE_SCROLL_SENSITIVE", Boolean.toString( DBMetadata.updatesAreDetected( ResultSet.TYPE_SCROLL_SENSITIVE ) ) );
     		MemoryRowSet.addRow( "usesLocalFilePerTable", Boolean.toString( DBMetadata.usesLocalFilePerTable() ) );
     		MemoryRowSet.addRow( "usesLocalFiles", Boolean.toString( DBMetadata.usesLocalFiles() ) );
-    		MemoryRowSet.addRow( "CatalogSeparator", DBMetadata.getCatalogSeparator() );
-    		MemoryRowSet.addRow( "CatalogTerm", DBMetadata.getCatalogTerm() );
+    		MemoryRowSet.addRow( "catalogSeparator", DBMetadata.getCatalogSeparator() );
+    		MemoryRowSet.addRow( "catalogTerm", DBMetadata.getCatalogTerm() );
     		MemoryRowSet.addRow( "databaseMajorVersion", Integer.toString( DBMetadata.getDatabaseMajorVersion() ) );
     		MemoryRowSet.addRow( "databaseMinorVersion", Integer.toString( DBMetadata.getDatabaseMinorVersion() ) );
     		MemoryRowSet.addRow( "databaseProductName", DBMetadata.getDatabaseProductName() );
@@ -3175,7 +3175,14 @@ public abstract class CAbstractDBEngine {
     		MemoryRowSet.addRow( "driverMinorVersion", Integer.toString( DBMetadata.getDriverMinorVersion() ) );
     		MemoryRowSet.addRow( "driverName", DBMetadata.getDriverName() );
     		MemoryRowSet.addRow( "driverVersion", DBMetadata.getDriverVersion() );
-    		MemoryRowSet.addRow( "configuredDriverNameClass", strConfiguredDriverNameClass );
+    		
+    		for( Entry<String, String> Entry : ConfiguredValues.entrySet() ) {
+    			
+    			MemoryRowSet.addRow( Entry.getKey(), Entry.getValue() );
+    			
+    		}
+    		
+    		//MemoryRowSet.addRow( "configuredDriverNameClass", strConfiguredDriverNameClass );
     		MemoryRowSet.addRow( "extraNameCharacters", DBMetadata.getExtraNameCharacters() );
     		MemoryRowSet.addRow( "identifierQuoteString", net.maindataservices.Utilities.ReplaceToHTMLEntity( DBMetadata.getIdentifierQuoteString() ) );
     		MemoryRowSet.addRow( "JDBCMajorVersion", Integer.toString( DBMetadata.getJDBCMajorVersion() ) );

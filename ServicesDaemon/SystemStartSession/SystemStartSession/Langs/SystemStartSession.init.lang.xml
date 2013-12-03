@@ -3,6 +3,7 @@
 <properties>
 <comment>Language file messages translations</comment>
 
+<entry key="Database connection name">Nombre de la conexión a la base de datos</entry>
 <entry key="Allow log on and get a security token">Permite iniciar sesión y obtener un token de seguridad</entry>
 <entry key="Response format name, example: XML-DATAPACKET, CSV, JSON">Nombre del formato de respuesta, ejemplo: XML-DATAPACKET, CSV, JSON</entry>
 <entry key="Response format version, example: 1.1">Versión del formato de respuesta, ejemplo: 1.1</entry>

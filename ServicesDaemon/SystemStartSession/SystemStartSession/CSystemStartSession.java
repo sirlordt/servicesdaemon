@@ -113,7 +113,7 @@ public class CSystemStartSession extends CAbstractService {
     		
     		SystemStartSessionDBConnection.InputParameters.add( InputParameter ); 	
     		
-    		InputParameter = new CInputServiceParameter( ConstantsServicesTags._RequestServiceName, true, ConstantsServicesTags._RequestServiceNameType, ConstantsServicesTags._RequestServiceNameLength, TParameterScope.IN, ServiceLang.Translate( "Service name" ) );
+    		InputParameter = new CInputServiceParameter( ConstantsServicesTags._RequestServiceName, true, ConstantsServicesTags._RequestServiceNameType, ConstantsServicesTags._RequestServiceNameLength, TParameterScope.IN, ServiceLang.Translate( "Service Name" ) );
     		
     		SystemStartSessionDBConnection.InputParameters.add( InputParameter ); 	
     		

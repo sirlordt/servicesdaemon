@@ -380,3 +380,36 @@ Nota 1: La instrucción DDL lleva a cabo el establecimiento de la secuencia GEN_
 ServiceName=System.Commit.Transaction
 SecurityTokenID=8876415734354505252
 TransactionID=7185005767632626866
+
+Prueba 14 Caso 1 (Verificar si un objeto Tabla = 1, Vista = 2, Función = 3 o Procedimiento Almacenado = 4)existe en la base de datos), para ver la salida del servicio vea el archivo test14_service_output_case1.xml
+
+ServiceName=System.Object.Exists
+ResponseFormat=XML-DATAPACKET
+ResponseFormatVersion=1.1
+SecurityTokenID=8876415734354505252
+ObjectType=1
+ObjectName=tblUsersDB
+
+Prueba 14 Caso 2 (Listar los objetos Todos = 0, Tablas = 1, Vistas = 2, Funciones = 3 o Procedimientos Almacenados = 4 de una base de datos), para ver la salida del servicio vea el archivo test14_service_output_case2.xml
+
+ServiceName=System.List.Objects
+ResponseFormat=XML-DATAPACKET
+ResponseFormatVersion=1.1
+SecurityTokenID=8876415734354505252
+ObjectType=1
+
+Prueba 14 Caso 3 (Listar los campos que pertenecen a un objeto Tabla = 1, Vista = 2, Función = 3 o Procedimiento Almacenado = 4), para ver la salida del servicio vea el archivo test14_service_output_case3.xml
+
+ServiceName=System.List.Objects
+ResponseFormat=XML-DATAPACKET
+ResponseFormatVersion=1.1
+SecurityTokenID=8876415734354505252
+ObjectType=1
+ObjectName=tblUsersDB
+
+Prueba 14 Caso 4 (Obtener informción de la base de datos), para ver la salida del servicio vea el archivo test14_service_output_case4.xml
+
+ServiceName=System.List.Objects
+ResponseFormat=XML-DATAPACKET
+ResponseFormatVersion=1.1
+SecurityTokenID=8876415734354505252

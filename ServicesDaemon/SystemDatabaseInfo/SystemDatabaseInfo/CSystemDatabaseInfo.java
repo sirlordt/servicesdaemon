@@ -156,7 +156,21 @@ public class CSystemDatabaseInfo extends CAbstractService {
 
 								if ( DBConnection != null ) {
 									
-									CResultSetResult Result = DBEngine.getDatabaseInfo( DBConnection, LocalConfigDBConnection.strDriver, ServiceLogger, ServiceLang );
+									HashMap<String,String> ConfiguredValues = new HashMap<String,String>();
+									ConfiguredValues.put( "configuredDriverNameClass", LocalConfigDBConnection.strDriver );
+									ConfiguredValues.put( "configuredEngineName", LocalConfigDBConnection.strEngine );
+									ConfiguredValues.put( "configuredEngineVersion", LocalConfigDBConnection.strEngineVersion );
+									ConfiguredValues.put( "configuredIP", LocalConfigDBConnection.strIP );
+									ConfiguredValues.put( "configuredPort", Integer.toString( LocalConfigDBConnection.intPort ) );
+									ConfiguredValues.put( "configuredDatabaseName", LocalConfigDBConnection.strDatabase );
+									ConfiguredValues.put( "configuredDummySQL", LocalConfigDBConnection.strDummySQL );
+									ConfiguredValues.put( "configuredSessionUser", LocalConfigDBConnection.strSessionUser );
+									ConfiguredValues.put( "configuredTransacionUser", LocalConfigDBConnection.strTransactionUser );
+									ConfiguredValues.put( "configuredDateFormat", LocalConfigDBConnection.strDateFormat );
+									ConfiguredValues.put( "configuredTimeFormat", LocalConfigDBConnection.strTimeFormat );
+									ConfiguredValues.put( "configuredDateTimeFormat", LocalConfigDBConnection.strDateTimeFormat );
+									
+									CResultSetResult Result = DBEngine.getDatabaseInfo( DBConnection, ConfiguredValues, ServiceLogger, ServiceLang );
 
 									Response.setContentType( ResponseFormat.getContentType() );
 									Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
