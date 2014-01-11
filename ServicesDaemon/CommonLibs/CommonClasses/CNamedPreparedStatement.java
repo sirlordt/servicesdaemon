@@ -1646,8 +1646,8 @@ public class CNamedPreparedStatement implements PreparedStatement {
 	/**
 	 * @see java.sql.PreparedStatement#setUnicodeStream(int, java.io.InputStream, int)
 	 */
-	@SuppressWarnings("deprecation")
 	@Override
+	@Deprecated
 	public void setUnicodeStream(int parameterIndex, InputStream x, int length)	throws SQLException {
 	
 		ps.setUnicodeStream(parameterIndex, x, length);
@@ -1665,7 +1665,7 @@ public class CNamedPreparedStatement implements PreparedStatement {
 	 * @param length
 	 * @throws SQLException
 	 */
-	@SuppressWarnings("deprecation")
+	@Deprecated
 	public void setUnicodeStream(String parameterName, InputStream x, int length) throws SQLException {
 		
 		ps.setUnicodeStream(getIndex(parameterName), x, length);

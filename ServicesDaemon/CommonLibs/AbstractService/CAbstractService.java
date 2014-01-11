@@ -14,6 +14,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.ServiceLoader;
 import java.util.Map.Entry;
 import java.util.Iterator;
@@ -30,12 +31,14 @@ import AbstractService.CInputServiceParameter.TParameterScope;
 import CommonClasses.CAbstractConfigLoader;
 import CommonClasses.CLanguage;
 import CommonClasses.CServicePostExecuteResult;
-import CommonClasses.CServicesDaemonConfig;
+import CommonClasses.CConfigServicesDaemon;
+import CommonClasses.ConstantsCommonClasses;
+import CommonClasses.IMessageObject;
 import CommonClasses.InitArgsConstants;
 import CommonClasses.NamesSQLTypes;
 import ExtendedLogger.CExtendedLogger;
 
-public abstract class CAbstractService {
+public abstract class CAbstractService implements IMessageObject {
 
 	public enum PluginsType { PrePlugin, PostPlugin };
 	
@@ -51,12 +54,12 @@ public abstract class CAbstractService {
 	protected String strServiceAuthorContact;
 	protected String strServiceVersion;
 
-	protected CServicesDaemonConfig ServicesDaemonConfig;
+	protected CConfigServicesDaemon ServicesDaemonConfig;
 	protected CAbstractConfigLoader OwnerConfig;
 	protected CExtendedLogger OwnerLogger;
 	protected CLanguage OwnerLang;
 
-	protected String strJarRunningPath;
+	protected String strRunningPath;
 	protected CExtendedLogger ServiceLogger;
 	protected CLanguage ServiceLang;
 	
@@ -64,10 +67,12 @@ public abstract class CAbstractService {
 	protected ArrayList<CAbstractServicePostExecute> PostExecute = null;
 	
 	public CAbstractService() {
-
+		
+		super();
+		
 	}
 	
-	public boolean InitializeService( CServicesDaemonConfig ServicesDaemonConfig, CAbstractConfigLoader OwnerConfig) { // Alternate manual contructor
+	public boolean initializeService( CConfigServicesDaemon ServicesDaemonConfig, CAbstractConfigLoader OwnerConfig ) { // Alternate manual contructor
 
 		boolean bResult = true;
 		
@@ -75,7 +80,7 @@ public abstract class CAbstractService {
 		this.bAuthRequired = true; // Default auth required for services
 		this.bHiddenService = false; // Default show
 		this.strServiceName = "BaseClassService";
-		this.intServiceType = ConstantsServicesTags._ReadService;
+		this.intServiceType = ConstantsCommonClasses._ReadService;
 		this.GroupsInputParametersService = new HashMap< String, ArrayList<CInputServiceParameter> >();
 
 		this.PreExecute = new ArrayList<CAbstractServicePreExecute>();
@@ -96,7 +101,7 @@ public abstract class CAbstractService {
 		
 		}
 
-		this.strJarRunningPath = "";
+		this.strRunningPath = "";
         this.ServiceLogger = null; 		
         this.ServiceLang = null; 		
 		
@@ -104,22 +109,36 @@ public abstract class CAbstractService {
 		
 	}
 	
-	public void SetupService() {
+	public boolean postInitializeService( CConfigServicesDaemon ServicesDaemonConfig, CAbstractConfigLoader OwnerConfig, LinkedHashMap<String,Object> InfoData ) {
+
+		//Do nothing
+		return true;
 		
-		SetupService( this.strServiceName, strJarRunningPath + DefaultConstantsServices.strDefaultLangsDir + this.strServiceName + "." + ServicesDaemonConfig.strDefaultLang );
+	}
+	
+	public boolean finalizeService( CConfigServicesDaemon ServicesDaemonConfig, CAbstractConfigLoader OwnerConfig ) {
+		
+		//Do nothing
+		return true;
+		
+	}
+	
+	public void setupService() {
+		
+		setupService( this.strServiceName,  this.strRunningPath + ConstantsCommonClasses._Langs_Dir + this.strServiceName + "." + ConstantsCommonClasses._Lang_Ext );
 		
 	}
 
-	public void SetupService( String strLoggerName, String strLangFileName ) {
+	public void setupService( String strLoggerName, String strLangFileName ) {
 		
         this.ServiceLogger = CExtendedLogger.getLogger( strLoggerName );
-        ServiceLogger.SetupLogger( ServicesDaemonConfig.InitArgs.contains( InitArgsConstants._LogToScreen ), strJarRunningPath + DefaultConstantsServices.strDefaultLogsSystemDir, this.strServiceName + ".log", ServicesDaemonConfig.strClassNameMethodName, ServicesDaemonConfig.bExactMatch, ServicesDaemonConfig.LoggingLevel.toString() );
+        ServiceLogger.setupLogger( ServicesDaemonConfig.InitArgs.contains( InitArgsConstants._LogToScreen ), this.strRunningPath + ConstantsCommonClasses._Logs_Dir, this.strServiceName + ".log", ServicesDaemonConfig.strClassNameMethodName, ServicesDaemonConfig.bExactMatch, ServicesDaemonConfig.LoggingLevel.toString(), ServicesDaemonConfig.strLogIP, ServicesDaemonConfig.intLogPort );
 		
 		this.ServiceLang = CLanguage.getLanguage( ServiceLogger, strLangFileName );
 		
 	}
 	
-	public boolean LoadAndRegisterServicePreExecute() {
+	public boolean loadAndRegisterServicePreExecute() {
 		
 		boolean bResult = false;
 		
@@ -140,7 +159,7 @@ public abstract class CAbstractService {
 					
 					CAbstractServicePreExecute ServicePluginInstance = it.next();
 
-					if ( ServicePluginInstance.InitializePreExecute( this.strServiceName, ServicesDaemonConfig, OwnerLogger, OwnerLang, ServiceLogger, ServiceLang ) == true ) {
+					if ( ServicePluginInstance.initializePreExecute( this.strServiceName, ServicesDaemonConfig, OwnerLogger, OwnerLang, ServiceLogger, ServiceLang ) == true ) {
 					   
 						PreExecute.add( ServicePluginInstance );
 
@@ -149,16 +168,16 @@ public abstract class CAbstractService {
 						String strMessage = "Registered pre execute service name: [%s] version: [%s]";
 
 						if ( ServiceLang != null )
-							strMessage = ServiceLang.Translate( strMessage, ServicePluginInstance.getName(), ServicePluginInstance.getVersion() );
+							strMessage = ServiceLang.translate( strMessage, ServicePluginInstance.getName(), ServicePluginInstance.getVersion() );
 						else if ( OwnerLang != null )
-							strMessage = OwnerLang.Translate( strMessage, ServicePluginInstance.getName(), ServicePluginInstance.getVersion() );
+							strMessage = OwnerLang.translate( strMessage, ServicePluginInstance.getName(), ServicePluginInstance.getVersion() );
 						else 
 							strMessage = String.format( strMessage, ServicePluginInstance.getName(), ServicePluginInstance.getVersion() );
 
 						if ( ServiceLogger != null )
-							ServiceLogger.LogMessage( "1", strMessage );
+							ServiceLogger.logMessage( "1", strMessage );
 						else if ( OwnerLogger != null )
-							OwnerLogger.LogMessage( "1", strMessage );
+							OwnerLogger.logMessage( "1", strMessage );
 
 					}
 					
@@ -166,9 +185,9 @@ public abstract class CAbstractService {
 				catch ( Exception Ex ) {
 
 					if ( ServiceLogger != null )
-						ServiceLogger.LogException( "-1011", Ex.getMessage(), Ex );
+						ServiceLogger.logException( "-1011", Ex.getMessage(), Ex );
 				    else if ( OwnerLogger != null )
-						OwnerLogger.LogException( "-1011", Ex.getMessage(), Ex );
+						OwnerLogger.logException( "-1011", Ex.getMessage(), Ex );
 
 				}
 
@@ -178,16 +197,16 @@ public abstract class CAbstractService {
 			String strMessage = "Count of pre execute service registered: [%s]";
 			
 			if ( ServiceLang != null )
-				strMessage = ServiceLang.Translate( strMessage, Integer.toString( intCountPlugins ) );
+				strMessage = ServiceLang.translate( strMessage, Integer.toString( intCountPlugins ) );
 			else if ( OwnerLang != null )
-				strMessage = OwnerLang.Translate( strMessage, Integer.toString( intCountPlugins ) );
+				strMessage = OwnerLang.translate( strMessage, Integer.toString( intCountPlugins ) );
 			else 
 				strMessage = String.format( strMessage, Integer.toString( intCountPlugins ) );
 			
 			if ( ServiceLogger != null )
-				ServiceLogger.LogMessage( "1", strMessage );
+				ServiceLogger.logMessage( "1", strMessage );
 			else if ( OwnerLogger != null )
-				OwnerLogger.LogMessage( "1", strMessage );
+				OwnerLogger.logMessage( "1", strMessage );
 
 			bResult = intCountPlugins > 0;
 
@@ -195,9 +214,9 @@ public abstract class CAbstractService {
 		catch ( Exception Ex ) {
 	
 			if ( ServiceLogger != null )
-				ServiceLogger.LogException( "-1010", Ex.getMessage(), Ex );
+				ServiceLogger.logException( "-1010", Ex.getMessage(), Ex );
 			else if ( OwnerLogger != null )
-				OwnerLogger.LogException( "-1010", Ex.getMessage(), Ex );
+				OwnerLogger.logException( "-1010", Ex.getMessage(), Ex );
 	
 		}
 		
@@ -206,7 +225,7 @@ public abstract class CAbstractService {
 		
 	}
 
-	public boolean LoadAndRegisterServicePostExecute() {
+	public boolean loadAndRegisterServicePostExecute() {
 		
 		boolean bResult = false;
 		
@@ -227,7 +246,7 @@ public abstract class CAbstractService {
 					
 					CAbstractServicePostExecute ServicePluginInstance = it.next();
 
-					if ( ServicePluginInstance.InitializePreExecute( this.strServiceName, ServicesDaemonConfig, OwnerLogger, OwnerLang, ServiceLogger, ServiceLang ) == true ) {
+					if ( ServicePluginInstance.initializePreExecute( this.strServiceName, ServicesDaemonConfig, OwnerLogger, OwnerLang, ServiceLogger, ServiceLang ) == true ) {
 					   
 						PostExecute.add( ServicePluginInstance );
 
@@ -236,16 +255,16 @@ public abstract class CAbstractService {
 						String strMessage = "Registered post service plugin name: [%s] version: [%s]";
 
 						if ( ServiceLang != null )
-							strMessage = ServiceLang.Translate( strMessage, ServicePluginInstance.getName(), ServicePluginInstance.getVersion() );
+							strMessage = ServiceLang.translate( strMessage, ServicePluginInstance.getName(), ServicePluginInstance.getVersion() );
 						else if ( OwnerLang != null )
-							strMessage = OwnerLang.Translate( strMessage, ServicePluginInstance.getName(), ServicePluginInstance.getVersion() );
+							strMessage = OwnerLang.translate( strMessage, ServicePluginInstance.getName(), ServicePluginInstance.getVersion() );
 						else 
 							strMessage = String.format( strMessage, ServicePluginInstance.getName(), ServicePluginInstance.getVersion() );
 
 						if ( ServiceLogger != null )
-							ServiceLogger.LogMessage( "1", strMessage );
+							ServiceLogger.logMessage( "1", strMessage );
 						else if ( OwnerLogger != null )
-							OwnerLogger.LogMessage( "1", strMessage );
+							OwnerLogger.logMessage( "1", strMessage );
 						
 					}
 					
@@ -253,9 +272,9 @@ public abstract class CAbstractService {
 				catch ( Exception Ex ) {
 
 					if ( ServiceLogger != null )
-						ServiceLogger.LogException( "-1011", Ex.getMessage(), Ex );
+						ServiceLogger.logException( "-1011", Ex.getMessage(), Ex );
 				    else if ( OwnerLogger != null )
-						OwnerLogger.LogException( "-1011", Ex.getMessage(), Ex );
+						OwnerLogger.logException( "-1011", Ex.getMessage(), Ex );
 
 				}
 
@@ -265,16 +284,16 @@ public abstract class CAbstractService {
 			String strMessage = "Count of post execute service registered: [%s]";
 			
 			if ( ServiceLang != null )
-				strMessage = ServiceLang.Translate( strMessage, Integer.toString( intCountPlugins ) );
+				strMessage = ServiceLang.translate( strMessage, Integer.toString( intCountPlugins ) );
 			else if ( OwnerLang != null )
-				strMessage = OwnerLang.Translate( strMessage, Integer.toString( intCountPlugins ) );
+				strMessage = OwnerLang.translate( strMessage, Integer.toString( intCountPlugins ) );
 			else 
 				strMessage = String.format( strMessage, Integer.toString( intCountPlugins ) );
 			
 			if ( ServiceLogger != null )
-				ServiceLogger.LogMessage( "1", strMessage );
+				ServiceLogger.logMessage( "1", strMessage );
 			else if ( OwnerLogger != null )
-				OwnerLogger.LogMessage( "1", strMessage );
+				OwnerLogger.logMessage( "1", strMessage );
 
 			bResult = intCountPlugins > 0;
 
@@ -282,9 +301,9 @@ public abstract class CAbstractService {
 		catch ( Exception Ex ) {
 	
 			if ( ServiceLogger != null )
-				ServiceLogger.LogException( "-1010", Ex.getMessage(), Ex );
+				ServiceLogger.logException( "-1010", Ex.getMessage(), Ex );
 			else if ( OwnerLogger != null )
-				OwnerLogger.LogException( "-1010", Ex.getMessage(), Ex );
+				OwnerLogger.logException( "-1010", Ex.getMessage(), Ex );
 	
 		}
 		
@@ -293,7 +312,7 @@ public abstract class CAbstractService {
 		
 	}
 
-	public CServicePreExecuteResult RunServicePreExecute( int intEntryCode, HttpServletRequest Request, HttpServletResponse Response, String strSecurityTokenID, HashMap<String,CAbstractService> RegisteredServices, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion ) {
+	public CServicePreExecuteResult runServicePreExecute( int intEntryCode, HttpServletRequest Request, HttpServletResponse Response, String strSecurityTokenID, HashMap<String,CAbstractService> RegisteredServices, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion ) {
 
 		CServicePreExecuteResult Result = null;
 		
@@ -301,7 +320,7 @@ public abstract class CAbstractService {
 			
 			for ( CAbstractServicePreExecute ServicePreExecute : this.PreExecute ) {
 				
-				Result = ServicePreExecute.PreExecute(intEntryCode, this.strServiceName, Request, Response, strSecurityTokenID, RegisteredServices, ResponseFormat, strResponseFormatVersion );
+				Result = ServicePreExecute.preExecute(intEntryCode, this.strServiceName, Request, Response, strSecurityTokenID, RegisteredServices, ResponseFormat, strResponseFormatVersion );
 	
 				if ( Result.bStopNextPreExecute == true ) {
 					
@@ -317,7 +336,7 @@ public abstract class CAbstractService {
 		
 	}
 	
-	public CServicePostExecuteResult RunServicePostExecute( int intEntryCode, HttpServletRequest Request, HttpServletResponse Response, String strSecurityTokenID, HashMap<String,CAbstractService> RegisteredServices, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion ) {
+	public CServicePostExecuteResult runServicePostExecute( int intEntryCode, HttpServletRequest Request, HttpServletResponse Response, String strSecurityTokenID, HashMap<String,CAbstractService> RegisteredServices, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion ) {
 
 		CServicePostExecuteResult Result = null;
 		
@@ -325,7 +344,7 @@ public abstract class CAbstractService {
 			
 			for ( CAbstractServicePostExecute ServicePostExecute : this.PostExecute ) {
 				
-				Result = ServicePostExecute.PostExecute( intEntryCode, this.strServiceName, Request, Response, strSecurityTokenID, RegisteredServices, ResponseFormat, strResponseFormatVersion );
+				Result = ServicePostExecute.postExecute( intEntryCode, this.strServiceName, Request, Response, strSecurityTokenID, RegisteredServices, ResponseFormat, strResponseFormatVersion );
 	
 				if ( Result.bStopNextPostExecute == true ) {
 					
@@ -486,17 +505,17 @@ public abstract class CAbstractService {
 	
 	public String getJarRunningPath() {
 		
-		return strJarRunningPath;
+		return strRunningPath;
 		
 	}
 
-	public CServicesDaemonConfig getServicesDaemonConfig() {
+	public CConfigServicesDaemon getServicesDaemonConfig() {
 
 		return this.ServicesDaemonConfig;
 
 	}
 
-	public void FillMissingWithAllParamsName( ArrayList<CInputServiceParameter> InputParametersService, ArrayList<String> arrMissingInputParameters ) {
+	public void fillMissingWithAllParamsName( ArrayList<CInputServiceParameter> InputParametersService, ArrayList<String> arrMissingInputParameters ) {
 
 		arrMissingInputParameters.clear();
 
@@ -509,7 +528,7 @@ public abstract class CAbstractService {
 
 	}
 
-	public CInputServiceParameter FindInputParamByName( ArrayList<CInputServiceParameter> InputParametersService, String strParamName ) {
+	public CInputServiceParameter findInputParamByName( ArrayList<CInputServiceParameter> InputParametersService, String strParamName ) {
 
 		for (CInputServiceParameter InputServiceParameter : InputParametersService ) {
 
@@ -525,7 +544,7 @@ public abstract class CAbstractService {
 
 	}
 
-	public boolean CheckInputParamValue( String strParameterType, String strParameterTypeWidth, TParameterScope ParameterScope, String strInputParamActualValue ) {
+	public boolean checkInputParamValue( String strParameterType, String strParameterTypeWidth, TParameterScope ParameterScope, String strInputParamActualValue ) {
 
 		if ( strParameterType.toLowerCase().equals( NamesSQLTypes._VARCHAR ) == true ) {
 
@@ -552,9 +571,9 @@ public abstract class CAbstractService {
 			catch ( Exception Ex ) {
 
 	        	if ( ServiceLogger != null )
-	        		ServiceLogger.LogException( "-1010", Ex.getMessage(), Ex ); 
+	        		ServiceLogger.logException( "-1010", Ex.getMessage(), Ex ); 
 	        	else if ( OwnerLogger != null )
-	        		OwnerLogger.LogException( "-1010", Ex.getMessage(), Ex );
+	        		OwnerLogger.logException( "-1010", Ex.getMessage(), Ex );
 
 			}
 
@@ -576,9 +595,9 @@ public abstract class CAbstractService {
 			catch ( Exception Ex ) {
 
 	        	if ( ServiceLogger != null )
-	        		ServiceLogger.LogException( "-1011", Ex.getMessage(), Ex ); 
+	        		ServiceLogger.logException( "-1011", Ex.getMessage(), Ex ); 
 	        	else if ( OwnerLogger != null )
-	        		OwnerLogger.LogException( "-1011", Ex.getMessage(), Ex );
+	        		OwnerLogger.logException( "-1011", Ex.getMessage(), Ex );
 
 			}
 
@@ -612,9 +631,9 @@ public abstract class CAbstractService {
 			catch ( Exception Ex ) {
 
 	        	if ( ServiceLogger != null )
-	        		ServiceLogger.LogException( "-1012", Ex.getMessage(), Ex ); 
+	        		ServiceLogger.logException( "-1012", Ex.getMessage(), Ex ); 
 	        	else if ( OwnerLogger != null )
-	        		OwnerLogger.LogException( "-1012", Ex.getMessage(), Ex );
+	        		OwnerLogger.logException( "-1012", Ex.getMessage(), Ex );
 
 			}
 
@@ -636,9 +655,9 @@ public abstract class CAbstractService {
 			catch ( Exception Ex ) {
 
 	        	if ( ServiceLogger != null )
-	        		ServiceLogger.LogException( "-1013", Ex.getMessage(), Ex ); 
+	        		ServiceLogger.logException( "-1013", Ex.getMessage(), Ex ); 
 	        	else if ( OwnerLogger != null )
-	        		OwnerLogger.LogException( "-1013", Ex.getMessage(), Ex );
+	        		OwnerLogger.logException( "-1013", Ex.getMessage(), Ex );
 
 			}
 
@@ -673,9 +692,9 @@ public abstract class CAbstractService {
 			catch ( Exception Ex ) {
 
 	        	if ( ServiceLogger != null )
-	        		ServiceLogger.LogException( "-1014", Ex.getMessage(), Ex ); 
+	        		ServiceLogger.logException( "-1014", Ex.getMessage(), Ex ); 
 	        	else if ( OwnerLogger != null )
-	        		OwnerLogger.LogException( "-1014", Ex.getMessage(), Ex );
+	        		OwnerLogger.logException( "-1014", Ex.getMessage(), Ex );
 
 			}
 
@@ -692,9 +711,9 @@ public abstract class CAbstractService {
 			catch (Exception Ex) {
 
 	        	if ( ServiceLogger != null )
-	        		ServiceLogger.LogException( "-1015", Ex.getMessage(), Ex ); 
+	        		ServiceLogger.logException( "-1015", Ex.getMessage(), Ex ); 
 	        	else if ( OwnerLogger != null )
-	        		OwnerLogger.LogException( "-1015", Ex.getMessage(), Ex );
+	        		OwnerLogger.logException( "-1015", Ex.getMessage(), Ex );
 
 			}
 
@@ -711,9 +730,9 @@ public abstract class CAbstractService {
 			catch (Exception Ex) {
 
 	        	if ( ServiceLogger != null )
-	        		ServiceLogger.LogException( "-1016", Ex.getMessage(), Ex ); 
+	        		ServiceLogger.logException( "-1016", Ex.getMessage(), Ex ); 
 	        	else if ( OwnerLogger != null )
-	        		OwnerLogger.LogException( "-1016", Ex.getMessage(), Ex );
+	        		OwnerLogger.logException( "-1016", Ex.getMessage(), Ex );
 
 			}
 
@@ -723,13 +742,13 @@ public abstract class CAbstractService {
 
 	}
 
-	public boolean CheckServiceInputParameters( ArrayList<CInputServiceParameter> InputParametersService, HttpServletRequest Request, HttpServletResponse Response, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang  ) {
+	public boolean checkServiceInputParameters( ArrayList<CInputServiceParameter> InputParametersService, HttpServletRequest Request, HttpServletResponse Response, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang  ) {
 
 		boolean bResult = true;
 
 		ArrayList<String> arrMissingInputParameters = new ArrayList<String>();
 
-		FillMissingWithAllParamsName( InputParametersService, arrMissingInputParameters );
+		fillMissingWithAllParamsName( InputParametersService, arrMissingInputParameters );
 
 		Map<String, String[]> ActualInputParam = Request.getParameterMap();
 
@@ -741,9 +760,9 @@ public abstract class CAbstractService {
 
 			Entry<String, String[]> Pairs = it.next();
 
-			String strParamName = (String) Pairs.getKey();
+			String strParamName = Pairs.getKey();
 
-			CInputServiceParameter InputParameter = FindInputParamByName( InputParametersService, strParamName );
+			CInputServiceParameter InputParameter = findInputParamByName( InputParametersService, strParamName );
 
 			if ( InputParameter == null ) { // not found
 
@@ -757,22 +776,22 @@ public abstract class CAbstractService {
 						String strMessage = "The parameter name [%s] is not part of the input parameters of the service";
 						
 						if ( ServiceLang != null )
-						    strMessage = ServiceLang.Translate( strMessage, strParamName );
+						    strMessage = ServiceLang.translate( strMessage, strParamName );
 						else if ( OwnerLang != null )
-						    strMessage = OwnerLang.Translate( strMessage, strParamName );
+						    strMessage = OwnerLang.translate( strMessage, strParamName );
 						else
 							strMessage = String.format( strMessage, strParamName );
 							
-						String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1015, strMessage, true, strResponseFormatVersion, strDateTimeFormat, strDateFormat, strTimeFormat, Logger, Lang );
+						String strResponseBuffer = ResponseFormat.formatSimpleMessage( "", "", -1015, strMessage, true, strResponseFormatVersion, strDateTimeFormat, strDateFormat, strTimeFormat, Logger, Lang );
 						Response.getWriter().print( strResponseBuffer );
 
 					} 
 					catch ( Exception Ex ) {
 
 						if ( ServiceLogger != null )
-							ServiceLogger.LogException( "-1015", Ex.getMessage(), Ex ); 
+							ServiceLogger.logException( "-1015", Ex.getMessage(), Ex ); 
 			        	else if ( OwnerLogger != null )
-			        		OwnerLogger.LogException( "-1015", Ex.getMessage(), Ex );
+			        		OwnerLogger.logException( "-1015", Ex.getMessage(), Ex );
 
 					}
 
@@ -806,7 +825,7 @@ public abstract class CAbstractService {
 
 						for ( int i = 0; i < arrPValues.length; i++ ) {
 
-							if ( CheckInputParamValue( InputParameter.getParameterDataType(), InputParameter.getParameterDataTypeWidth(), InputParameter.getParameterScope(), arrPValues[ i ] ) == false ) {
+							if ( checkInputParamValue( InputParameter.getParameterDataType(), InputParameter.getParameterDataTypeWidth(), InputParameter.getParameterScope(), arrPValues[ i ] ) == false ) {
 
 								try {
 
@@ -816,22 +835,22 @@ public abstract class CAbstractService {
 									String strMessage = "The paramete name [%s] position [%s] has the value [%s] is invalid";
 									
 									if ( ServiceLang != null )
-									    strMessage = ServiceLang.Translate( strMessage, strParamName, Integer.toString( i ), arrPValues[ i ] );
+									    strMessage = ServiceLang.translate( strMessage, strParamName, Integer.toString( i ), arrPValues[ i ] );
 									else if ( OwnerLang != null )
-									    strMessage = OwnerLang.Translate( strMessage, strParamName, Integer.toString( i ), arrPValues[ i ] );
+									    strMessage = OwnerLang.translate( strMessage, strParamName, Integer.toString( i ), arrPValues[ i ] );
 									else
 										strMessage = String.format( strMessage, strParamName, Integer.toString( i ), arrPValues[ i ] );
 										
-									String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1014, strMessage, true, strResponseFormatVersion, strDateTimeFormat, strDateFormat, strTimeFormat, Logger, Lang );
+									String strResponseBuffer = ResponseFormat.formatSimpleMessage( "", "", -1014, strMessage, true, strResponseFormatVersion, strDateTimeFormat, strDateFormat, strTimeFormat, Logger, Lang );
 									Response.getWriter().print( strResponseBuffer );
 
 								}
 								catch ( Exception Ex ) {
 
 									if ( ServiceLogger != null )
-										ServiceLogger.LogException( "-1014", Ex.getMessage(), Ex ); 
+										ServiceLogger.logException( "-1014", Ex.getMessage(), Ex ); 
 						        	else if ( OwnerLogger != null )
-						        		OwnerLogger.LogException( "-1014", Ex.getMessage(), Ex );
+						        		OwnerLogger.logException( "-1014", Ex.getMessage(), Ex );
 
 								}
 
@@ -844,7 +863,7 @@ public abstract class CAbstractService {
 
 
 					}
-					else if ( CheckInputParamValue( InputParameter.getParameterDataType(), InputParameter.getParameterDataTypeWidth(), InputParameter.getParameterScope(), strParamValue ) == false ) {
+					else if ( checkInputParamValue( InputParameter.getParameterDataType(), InputParameter.getParameterDataTypeWidth(), InputParameter.getParameterScope(), strParamValue ) == false ) {
 
 						try {
 
@@ -854,22 +873,22 @@ public abstract class CAbstractService {
 							String strMessage = "The parameter [%s] has the value [%s] is invalid";
 							
 							if ( ServiceLang != null )
-							    strMessage = ServiceLang.Translate( strMessage, strParamName, strParamValue );
+							    strMessage = ServiceLang.translate( strMessage, strParamName, strParamValue );
 							else if ( OwnerLang != null )
-							    strMessage = OwnerLang.Translate( strMessage, strParamName, strParamValue );
+							    strMessage = OwnerLang.translate( strMessage, strParamName, strParamValue );
 							else
 								strMessage = String.format( strMessage, strParamName,strParamValue );
 
-							String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1013, strMessage, true, strResponseFormatVersion, strDateTimeFormat, strDateFormat, strTimeFormat, Logger, Lang );
+							String strResponseBuffer = ResponseFormat.formatSimpleMessage( "", "", -1013, strMessage, true, strResponseFormatVersion, strDateTimeFormat, strDateFormat, strTimeFormat, Logger, Lang );
 							Response.getWriter().print( strResponseBuffer );
 
 						}
 						catch ( Exception Ex ) {
 
 							if ( ServiceLogger != null )
-								ServiceLogger.LogException( "-1013", Ex.getMessage(), Ex ); 
+								ServiceLogger.logException( "-1013", Ex.getMessage(), Ex ); 
 				        	else if ( OwnerLogger != null )
-				        		OwnerLogger.LogException( "-1013", Ex.getMessage(), Ex );
+				        		OwnerLogger.logException( "-1013", Ex.getMessage(), Ex );
 
 						}
 
@@ -888,22 +907,22 @@ public abstract class CAbstractService {
 						String strMessage = "The parameter [%s] is multivalued";
 						
 						if ( ServiceLang != null )
-						    strMessage = ServiceLang.Translate( strMessage, strParamName );
+						    strMessage = ServiceLang.translate( strMessage, strParamName );
 						else if ( OwnerLang != null )
-						    strMessage = OwnerLang.Translate( strMessage, strParamName );
+						    strMessage = OwnerLang.translate( strMessage, strParamName );
 						else
 							strMessage = String.format( strMessage, strParamName );
 
-						String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1012, strMessage, true, strResponseFormatVersion, strDateTimeFormat, strDateFormat, strTimeFormat, Logger, Lang );
+						String strResponseBuffer = ResponseFormat.formatSimpleMessage( "", "", -1012, strMessage, true, strResponseFormatVersion, strDateTimeFormat, strDateFormat, strTimeFormat, Logger, Lang );
 						Response.getWriter().print( strResponseBuffer );
 
 					} 
 					catch ( Exception Ex ) {
 
 						if ( ServiceLogger != null )
-							ServiceLogger.LogException( "-1012", Ex.getMessage(), Ex ); 
+							ServiceLogger.logException( "-1012", Ex.getMessage(), Ex ); 
 			        	else if ( OwnerLogger != null )
-			        		OwnerLogger.LogException( "-1012", Ex.getMessage(), Ex );
+			        		OwnerLogger.logException( "-1012", Ex.getMessage(), Ex );
 
 					}
 
@@ -925,20 +944,20 @@ public abstract class CAbstractService {
 				String strMessage = "The following parameters %s are required for service and were not sent";
 				
 				if ( OwnerLang != null )
-				    strMessage = OwnerLang.Translate( strMessage, arrMissingInputParameters.toString() );
+				    strMessage = OwnerLang.translate( strMessage, arrMissingInputParameters.toString() );
 				else
 					strMessage = String.format( strMessage, arrMissingInputParameters.toString() );
 
-				String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1011, strMessage, true, strResponseFormatVersion, strDateTimeFormat, strDateFormat, strTimeFormat, Logger, Lang );
+				String strResponseBuffer = ResponseFormat.formatSimpleMessage( "", "", -1011, strMessage, true, strResponseFormatVersion, strDateTimeFormat, strDateFormat, strTimeFormat, Logger, Lang );
 				Response.getWriter().print(strResponseBuffer);
 
 			} 
 			catch ( Exception Ex ) {
 
 				if ( ServiceLogger != null )
-					ServiceLogger.LogException( "-1011", Ex.getMessage(), Ex ); 
+					ServiceLogger.logException( "-1011", Ex.getMessage(), Ex ); 
 	        	else if ( OwnerLogger != null )
-	        		OwnerLogger.LogException( "-1011", Ex.getMessage(), Ex );
+	        		OwnerLogger.logException( "-1011", Ex.getMessage(), Ex );
 
 			}
 
@@ -975,6 +994,13 @@ public abstract class CAbstractService {
 
 	}
 
-	public abstract int ExecuteService( int intEntryCode, HttpServletRequest Request, HttpServletResponse Response, String strSecurityTokenID, HashMap<String,CAbstractService> RegisteredServices, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion );
+	public abstract int executeService( int intEntryCode, HttpServletRequest Request, HttpServletResponse Response, String strSecurityTokenID, HashMap<String,CAbstractService> RegisteredServices, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion );
 
+	@Override
+	public Object sendMessage( String strMessageName, Object MessageData ) {
+		
+		return "";
+		
+	}
+	
 }

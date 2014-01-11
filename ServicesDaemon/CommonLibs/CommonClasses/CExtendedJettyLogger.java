@@ -19,7 +19,7 @@ import ExtendedLogger.CExtendedLogger;
 
 public class CExtendedJettyLogger extends AbstractLogger {
 
-	public static CServicesDaemonConfig GlobalConfig = null;
+	public static CConfigServicesDaemon GlobalConfig = null;
 	
 	//protected Level ConfiguredLevel;
     protected CExtendedLogger ExtendedLogger;	
@@ -27,20 +27,20 @@ public class CExtendedJettyLogger extends AbstractLogger {
 	
 	public CExtendedJettyLogger() {
 
-		this( DefaultConstantsServicesDaemon.strDefaultJettyLoggerClassName );
+		this( ConstantsCommonClasses._Jetty_Logger_Class_Name );
 		
 	}
 
 	public CExtendedJettyLogger( String strName ) {
 		
-		ExtendedLogger = CExtendedLogger.getLogger( DefaultConstantsServicesDaemon.strDefaultJettyLoggerName );
+		ExtendedLogger = CExtendedLogger.getLogger( ConstantsCommonClasses._Jetty_Logger_Name );
 
 		if ( ExtendedLogger.getSetupSet() == false ) {  
 		
 			if ( GlobalConfig == null )
-				GlobalConfig = CServicesDaemonConfig.getServicesDaemonConfig();
+				GlobalConfig = CConfigServicesDaemon.getConfigServicesDaemon();
 
-			ExtendedLogger.SetupLogger( GlobalConfig.InitArgs.contains( "-LogToScreen" ), DefaultConstantsServicesDaemon.strDefaultRunningPath + DefaultConstantsServicesDaemon.strDefaultLogsSystemDir, DefaultConstantsServicesDaemon.strDefaultMainJettyFileLog, GlobalConfig.strClassNameMethodName, GlobalConfig.bExactMatch, GlobalConfig.LoggingLevel.toString() );
+			ExtendedLogger.setupLogger( GlobalConfig.InitArgs.contains( "-LogToScreen" ), GlobalConfig.getRunningPath() + ConstantsCommonClasses._Logs_System_Dir, ConstantsCommonClasses._Main_Jetty_File_Log, GlobalConfig.strClassNameMethodName, GlobalConfig.bExactMatch, GlobalConfig.LoggingLevel.toString(), GlobalConfig.strLogIP, GlobalConfig.intLogPort );
 		
 			//this class is a wrapper for the real logger, adjust the call stack level for precise logging info
 			ExtendedLogger.setCallStackLevel( 4 ); 
@@ -54,21 +54,21 @@ public class CExtendedJettyLogger extends AbstractLogger {
 	@Override
 	public void debug( Throwable Thrown ) {
 
-		ExtendedLogger.LogDebug( "2", "No message", Thrown );
+		ExtendedLogger.logDebug( "2", "No message", Thrown );
 		
 	}
 
 	@Override
 	public void debug( String strMessage, Object... args ) {
 
-		ExtendedLogger.LogDebug( "2", Format( strMessage, args ) );
+		ExtendedLogger.logDebug( "2", Format( strMessage, args ) );
 		
 	}
 
 	@Override
 	public void debug( String strMessage, Throwable Thrown ) {
 		
-		ExtendedLogger.LogDebug( "2", strMessage, Thrown );
+		ExtendedLogger.logDebug( "2", strMessage, Thrown );
 		
 	}
 
@@ -82,27 +82,27 @@ public class CExtendedJettyLogger extends AbstractLogger {
 	@Override
 	public void ignore( Throwable Thrown ) {
 
-		ExtendedLogger.LogEntry( "Ignore", "0", "No message", Thrown );
+		ExtendedLogger.logEntry( "Ignore", "0", "No message", Thrown );
 		
 	}
 
 	@Override
 	public void info( Throwable Thrown ) {
 
-		ExtendedLogger.LogInfo( "1", "No message", Thrown );
+		ExtendedLogger.logInfo( "1", "No message", Thrown );
 		
 	}
 
 	@Override
 	public void info( String strMessage, Object... args ) {
 		
-		ExtendedLogger.LogInfo( "1", Format( strMessage, args ) );
+		ExtendedLogger.logInfo( "1", Format( strMessage, args ) );
 	}
 
 	@Override
 	public void info( String strMessage, Throwable Thrown ) {
 		
-		ExtendedLogger.LogInfo( "1", strMessage, Thrown );
+		ExtendedLogger.logInfo( "1", strMessage, Thrown );
 
 	}
 
@@ -123,21 +123,21 @@ public class CExtendedJettyLogger extends AbstractLogger {
 	@Override
 	public void warn( Throwable Thrown ) {
 		
-		ExtendedLogger.LogWarning( "-1", "No message", Thrown );
+		ExtendedLogger.logWarning( "-1", "No message", Thrown );
 		
 	}
 
 	@Override
 	public void warn( String strMessage, Object... args ) {
 
-		ExtendedLogger.LogWarning( "-1", Format( strMessage, args ) );
+		ExtendedLogger.logWarning( "-1", Format( strMessage, args ) );
 	
 	}
 
 	@Override
 	public void warn( String strMessage, Throwable Thrown ) {
 		
-		ExtendedLogger.LogWarning( "-1", strMessage, Thrown );
+		ExtendedLogger.logWarning( "-1", strMessage, Thrown );
 		
 	}
 

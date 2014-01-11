@@ -10,31 +10,79 @@
  ******************************************************************************/
 package CommonClasses;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import ExtendedLogger.CExtendedLogger;
 
-public class CSecurityTokensManager {
+public class CSecurityTokensManager implements Serializable {
 
-	protected static CSecurityTokensManager SecurityTokensManager = null;
+	private static final long serialVersionUID = -8619961063144856850L;
+	
+	protected static LinkedHashMap<String,CSecurityTokensManager> SecurityTokensManagerList = null;
 	
 	static {
 		
-		SecurityTokensManager = new CSecurityTokensManager();
+		SecurityTokensManagerList = new LinkedHashMap<String,CSecurityTokensManager>();
 		
 	}
 	
-	public static CSecurityTokensManager getSecurityTokensManager() {
+	public static CSecurityTokensManager getSecurityTokensManager( String strManagerName ) {
+		
+		CSecurityTokensManager SecurityTokensManager = SecurityTokensManagerList.get( strManagerName );
+		
+		if ( SecurityTokensManager == null ) {
+			
+			SecurityTokensManager = new CSecurityTokensManager( strManagerName );
+			
+			SecurityTokensManagerList.put( strManagerName, SecurityTokensManager );
+			
+		}
+		/*else {
+			
+			SecurityTokensManager = SecurityTokensManagerList.get( intManagerLevel );
+			
+			SecurityTokensManager.intManagerLevel = SecurityTokensManagerList.size() - 1;
+			
+		}*/
 		
 		return SecurityTokensManager;
 		
 	}
 	
-	protected ArrayList<String> SecurityTokensListID = null;
+	protected String strManagerName;
+	protected ArrayList<String> ListOfSecurityTokensID = null;
 	
-	public CSecurityTokensManager() {
+	public CSecurityTokensManager( String strManagerName ) {
 		
-		SecurityTokensListID = new ArrayList<String>();
+		this.strManagerName = strManagerName;
+		ListOfSecurityTokensID = new ArrayList<String>();
+		
+	}
+
+	public CSecurityTokensManager( String strManagerName, ArrayList<String> ListOfSecurityTokensID ) {
+		
+		this.strManagerName = strManagerName;
+		this.ListOfSecurityTokensID = new ArrayList<String>( ListOfSecurityTokensID ); //Clone list
+		
+	}
+
+	public String getManagerName() {
+		
+		return strManagerName;
+		
+	}
+	
+	public synchronized ArrayList<String> getListOfSecurityTokensID() {
+		
+		return ListOfSecurityTokensID;
+		
+	}
+	
+	public synchronized void setListOfSecurityTokensID( ArrayList<String> ListOfSecurityTokensID ) {
+		
+		this.ListOfSecurityTokensID = ListOfSecurityTokensID; //Overwrite the list of known SecurityTokensID
 		
 	}
 
@@ -42,13 +90,13 @@ public class CSecurityTokensManager {
 
 		boolean bResult = false;
 		
-		if ( SecurityTokensListID.contains( strSecurityTokenID ) == false ) {
+		if ( ListOfSecurityTokensID.contains( strSecurityTokenID ) == false ) {
 			
-			SecurityTokensListID.add( strSecurityTokenID );
+			ListOfSecurityTokensID.add( strSecurityTokenID );
 
 			if ( Logger != null && Lang != null ) {
 				
-				Logger.LogMessage( "1" , Lang.Translate( "Added [%s] = [%s]", "SecurityTokenID", strSecurityTokenID ) );
+				Logger.logMessage( "1" , Lang.translate( "Added [%s] = [%s]", "SecurityTokenID", strSecurityTokenID ) );
 				
 			}
 
@@ -64,13 +112,13 @@ public class CSecurityTokensManager {
 
 		boolean bResult = false;
 		
-		if ( SecurityTokensListID.contains( strSecurityTokenID ) ) {
+		if ( ListOfSecurityTokensID.contains( strSecurityTokenID ) ) {
 			
-			SecurityTokensListID.remove( strSecurityTokenID );
+			ListOfSecurityTokensID.remove( strSecurityTokenID );
 
 			if ( Logger != null && Lang != null ) {
 				
-				Logger.LogWarning( "-1" , Lang.Translate( "[%s] = [%s] removed", "SecurityTokenID", strSecurityTokenID ) );
+				Logger.logWarning( "-1" , Lang.translate( "[%s] = [%s] removed", "SecurityTokenID", strSecurityTokenID ) );
 				
 			}
 
@@ -84,11 +132,11 @@ public class CSecurityTokensManager {
 	
 	public synchronized boolean checkSecurityTokenID( String strSecurityTokenID, CExtendedLogger Logger, CLanguage Lang ) {
 
-		boolean bResult = SecurityTokensListID.contains( strSecurityTokenID );
+		boolean bResult = ListOfSecurityTokensID.contains( strSecurityTokenID );
 		
 		if ( bResult == false && Logger != null && Lang != null ) {
 			
-			Logger.LogWarning( "-1" , Lang.Translate( "[%s] = [%s] not found", "SecurityTokenID", strSecurityTokenID ) );
+			Logger.logWarning( "-1" , Lang.translate( "[%s] = [%s] not found", "SecurityTokenID", strSecurityTokenID ) );
 			
 		}
 

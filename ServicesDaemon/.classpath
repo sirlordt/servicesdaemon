@@ -19,11 +19,21 @@
 	<classpathentry kind="src" path="PGSQLDBEngine"/>
 	<classpathentry kind="src" path="SQLServerDBEngine"/>
 	<classpathentry kind="src" path="SystemObjectExists"/>
-	<classpathentry kind="src" path="SystemListsObjects"/>
+	<classpathentry kind="src" path="SystemListObjects"/>
 	<classpathentry kind="src" path="SystemDescribeObject"/>
 	<classpathentry kind="src" path="SystemDatabaseInfo"/>
+	<classpathentry kind="src" path="DBCommonLibs"/>
+	<classpathentry kind="src" path="MemCachedCEngine"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jetty-8"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/servlet-3"/>
+	<classpathentry kind="lib" path="ServicesDaemon/ServicesDaemon/Libs/jetty-all-9.1.0.v20131115.jar"/>
+	<classpathentry kind="lib" path="ServicesDaemon/ServicesDaemon/Libs/javax.servlet-api-3.1.0.jar"/>
+	<classpathentry kind="lib" path="ServicesDaemon/ServicesDaemon/Libs/commons-codec-1.6.jar"/>
+	<classpathentry kind="lib" path="ServicesDaemon/ServicesDaemon/Libs/commons-logging-1.1.3.jar"/>
+	<classpathentry kind="lib" path="ServicesDaemon/ServicesDaemon/Libs/fluent-hc-4.3.1.jar"/>
+	<classpathentry kind="lib" path="ServicesDaemon/ServicesDaemon/Libs/httpclient-4.3.1.jar"/>
+	<classpathentry kind="lib" path="ServicesDaemon/ServicesDaemon/Libs/httpclient-cache-4.3.1.jar"/>
+	<classpathentry kind="lib" path="ServicesDaemon/ServicesDaemon/Libs/httpcore-4.3.jar"/>
+	<classpathentry kind="lib" path="ServicesDaemon/ServicesDaemon/Libs/httpmime-4.3.1.jar"/>
+	<classpathentry kind="lib" path="ServicesDaemon/ServicesDaemon/Libs/spymemcached-2.10.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

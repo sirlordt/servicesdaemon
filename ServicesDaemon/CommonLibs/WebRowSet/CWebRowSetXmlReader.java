@@ -1,11 +1,9 @@
 package WebRowSet;
 
 import java.io.StringReader;
-import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 
-import javax.sql.RowSet;
 import javax.sql.rowset.WebRowSet;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -16,11 +14,10 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.sun.rowset.JdbcRowSetResourceBundle;
-import com.sun.rowset.internal.WebRowSetXmlReader;
-import com.sun.rowset.internal.XmlReaderContentHandler;
-import com.sun.rowset.internal.XmlErrorHandler;
-import com.sun.rowset.internal.XmlResolver;
+import rowset.internal.WebRowSetXmlReader;
+import rowset.internal.XmlReaderContentHandler;
+import rowset.internal.XmlErrorHandler;
+import rowset.internal.XmlResolver;
 
 public class CWebRowSetXmlReader extends WebRowSetXmlReader {
 
@@ -29,13 +26,13 @@ public class CWebRowSetXmlReader extends WebRowSetXmlReader {
 	 */
 	private static final long serialVersionUID = 453457435059858559L;
 
-	JdbcRowSetResourceBundle resBundle = null; //I hate the private class members
+	//JdbcRowSetResourceBundle resBundle = null; //I hate the private class members
 
 	public CWebRowSetXmlReader() { //Must be called after the new operator 
 
 		super();
 		
-		try {
+		/*try {
 			
 			Field _PrivateClassField = WebRowSetXmlReader.class.getDeclaredField( "resBundle" );
 			_PrivateClassField.setAccessible( true );
@@ -46,7 +43,7 @@ public class CWebRowSetXmlReader extends WebRowSetXmlReader {
 		
 			Ex.printStackTrace();
 	
-		}	
+		}*/	
 		
 	}	
 	
@@ -57,7 +54,7 @@ public class CWebRowSetXmlReader extends WebRowSetXmlReader {
     		InputSource is = new InputSource( new StringReader( strXMLData ) );
     		DefaultHandler dh = new XmlErrorHandler();
 
-    		XmlReaderContentHandler hndr = new XmlReaderContentHandler( (RowSet) caller );
+    		XmlReaderContentHandler hndr = new XmlReaderContentHandler( caller );
     		SAXParserFactory factory = SAXParserFactory.newInstance();
     		factory.setNamespaceAware(true);
     		factory.setValidating(true);

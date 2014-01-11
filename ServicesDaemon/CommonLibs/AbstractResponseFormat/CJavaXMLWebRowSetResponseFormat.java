@@ -13,14 +13,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.sql.RowSetMetaData;
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetMetaDataImpl;
-import javax.sql.rowset.WebRowSet;
+//import javax.sql.rowset.WebRowSet;
 
 import net.maindataservices.Utilities;
 
 import WebRowSet.CWebRowSetImpl;
 
-import com.sun.rowset.CachedRowSetImpl;
-import com.sun.rowset.WebRowSetImpl;
+import rowset.CachedRowSetImpl;
+//import com.sun.rowset.WebRowSetImpl;
 
 import AbstractDBEngine.CAbstractDBEngine;
 import AbstractService.CAbstractService;
@@ -28,6 +28,7 @@ import AbstractService.CInputServiceParameter;
 import CommonClasses.CLanguage;
 import CommonClasses.CMemoryRowSet;
 import CommonClasses.CResultSetResult;
+import CommonClasses.ConstantsMessagesCodes;
 import CommonClasses.NamesSQLTypes;
 import ExtendedLogger.CExtendedLogger;
 
@@ -46,7 +47,7 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 
 		CJavaXMLWebRowSetResponseFormat NewInstance = new CJavaXMLWebRowSetResponseFormat();
     	
-    	NewInstance.InitResponseFormat( this.ServicesDaemonConfig, this.OwnerConfig );
+    	NewInstance.initResponseFormat( this.ServicesDaemonConfig, this.OwnerConfig );
     	
     	return NewInstance;
 	
@@ -56,7 +57,7 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 	public String getContentType() {
 
     	if ( OwnerConfig != null )
-    		return OwnerConfig.getConfigValue( ConstantsResponseFormat._JavaXML_WebRowSet_ContentType );
+    		return (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._JavaXML_WebRowSet_ContentType, null );
     	else
     		return ""; 
     	
@@ -66,13 +67,15 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 	public String getCharacterEncoding() {
 
 		if ( OwnerConfig != null )
-			return OwnerConfig.getConfigValue( ConstantsResponseFormat._JavaXML_WebRowSet_CharSet );
+			return (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._JavaXML_WebRowSet_CharSet, null );
 		else
 			return "";
 	
 	}
 
-    public void DescribeService( CAbstractService Service, CachedRowSet CachedRowset, CExtendedLogger Logger, CLanguage Lang ) {
+    public void describeService( CAbstractService Service, CachedRowSet CachedRowset, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+		long lngStart = System.currentTimeMillis();
     	
     	if ( Service.getHiddenService() == false ) {
     		
@@ -87,7 +90,7 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 
 	        Iterator< Entry< String, ArrayList< CInputServiceParameter > > > It = GroupsInputParametersService.entrySet().iterator();
 
-	        Logger.LogMessage( "1", Lang.Translate( "Service [%s] input params count: [%s]", Service.getServiceName(), Integer.toString( GroupsInputParametersService.size() ) ) );
+	        Logger.logMessage( "1", Lang.translate( "Service [%s] input params count: [%s]", Service.getServiceName(), Integer.toString( GroupsInputParametersService.size() ) ) );
 	        
             while ( It.hasNext() ) {
 	        
@@ -137,7 +140,7 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
             	}
             	catch ( Exception Ex ) {
             		
-                	Logger.LogException( "-1010", Ex.getMessage(), Ex );
+                	Logger.logException( "-1010", Ex.getMessage(), Ex );
             		
             	}
             	
@@ -145,16 +148,23 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
     		
     	}
     	
+		long lngEnd = System.currentTimeMillis();
+		
+		if ( Logger != null )
+			Logger.logDebug( "0xExecutedON", Lang.translate( "[%s] executed on: [%s] ms", "DescribeService", Long.toString( lngEnd - lngStart ) ) );
+    	
     }
 	
 	@Override
-	public String EnumerateServices( HashMap<String, CAbstractService> RegisteredServices, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+	public String enumerateServices( HashMap<String, CAbstractService> RegisteredServices, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 
+		long lngStart = System.currentTimeMillis();
+		
 		String strResult = "";
 		
 		try {
 
-			if ( Utilities.VersionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.VersionLessEquals( strVersion, this.strMaxVersion ) ) {
+			if ( Utilities.versionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.versionLessEquals( strVersion, this.strMaxVersion ) ) {
 			
 				RowSetMetaData RowsetMetaData = new RowSetMetaDataImpl();
 				RowsetMetaData.setColumnCount( 13 );
@@ -245,12 +255,12 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 
 					Entry<String, CAbstractService> Pairs = it.next();
 
-					String strServName = (String) Pairs.getKey();
+					String strServName = Pairs.getKey();
 
 					CAbstractService Service = RegisteredServices.get( strServName );
 
 					if ( Service != null )
-						this.DescribeService( Service, CachedRowset, Logger, Lang );
+						this.describeService( Service, CachedRowset, Logger, Lang );
 
 				}
 
@@ -258,7 +268,7 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 				
 				CachedRowset.beforeFirst();
 				
-				WebRowSet wrs = new WebRowSetImpl();
+				CWebRowSetImpl wrs = new CWebRowSetImpl();
 
 				StringWriter sw = new StringWriter();
 
@@ -272,9 +282,9 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 			else {
 				
 				if ( Logger != null )
-				    Logger.LogError( "-1015", OwnerConfig.Lang.Translate( "Format version [%s] not supported", strVersion ) );
+				    Logger.logError( "-1015", OwnerConfig.Lang.translate( "Format version [%s] not supported", strVersion ) );
 				else if ( OwnerConfig != null && OwnerConfig.Logger != null )
-				    OwnerConfig.Logger.LogError( "-1015", OwnerConfig.Lang.Translate( "Format version [%s] not supported", strVersion ) );
+				    OwnerConfig.Logger.logError( "-1015", OwnerConfig.Lang.translate( "Format version [%s] not supported", strVersion ) );
 				
 			}
 			
@@ -282,11 +292,16 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 		catch ( Exception Ex ) {
 			
 			if ( Logger != null )
-				Logger.LogException( "-1016", Ex.getMessage(), Ex );
+				Logger.logException( "-1016", Ex.getMessage(), Ex );
 			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
-				OwnerConfig.Logger.LogException( "-1016", Ex.getMessage(), Ex );
+				OwnerConfig.Logger.logException( "-1016", Ex.getMessage(), Ex );
         	
 		}
+		
+		long lngEnd = System.currentTimeMillis();
+		
+		if ( Logger != null )
+			Logger.logDebug( "0xExecutedON", Lang.translate( "[%s] executed on: [%s] ms", "EnumerateServices", Long.toString( lngEnd - lngStart ) ) );
 		
 		return strResult;
 	
@@ -436,15 +451,16 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 	}*/
 
     @Override
-    public boolean FormatResultSet( HttpServletResponse Response, CResultSetResult SQLDataSetResult, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang ) {
+    public boolean formatResultSet( HttpServletResponse Response, CResultSetResult SQLDataSetResult, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+		long lngStart = System.currentTimeMillis();
     	
     	boolean bResult = false;
     	
         try {
         	
-			if ( Utilities.VersionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.VersionLessEquals( strVersion, this.strMaxVersion ) ) {
+			if ( Utilities.versionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.versionLessEquals( strVersion, this.strMaxVersion ) ) {
 
-        		//String strTempDir = OwnerConfig.getConfigValue( "Temp_Dir" );
 
         		//String strTempResponseFormatedFilePath = strTempDir + UUID.randomUUID() + ".formated_response";
 
@@ -495,11 +511,24 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 					
 					wrs.initWriteXML( OutStream ); //Only write the headers
 					
+					boolean bNextPage = false;
+					
 					do {
 
 						wrs.WriteXMLPage( OutStream ); //Write the block
 
-					} while ( wrs.nextPage() );
+						try {
+						
+							bNextPage = wrs.nextPage();
+						
+						}
+						catch ( Exception Ex ) {
+							
+							//CachedRowSetImpl don't work always raise exception "Cursor position is invalid"
+							
+						}
+						
+					} while ( bNextPage );
 					
 					wrs.endWriteXML( OutStream ); //Write the end, </WebRowSet>
 					
@@ -514,6 +543,10 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 					MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructCode, Types.INTEGER, NamesSQLTypes._INTEGER, 0, JavaXMLWebRowSetTags._XML_StructCode );
 					MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructDescription, Types.VARCHAR, NamesSQLTypes._VARCHAR, JavaXMLWebRowSetTags._XML_StructDescriptionLength, JavaXMLWebRowSetTags._XML_StructDescription );
 
+					MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructAffectedRows, SQLDataSetResult.lngAffectedRows );
+					MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructCode, SQLDataSetResult.intCode );
+					MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructDescription, SQLDataSetResult.strDescription );
+					
 					ResultSet SQLDataSet = MemoryRowSet.createCachedRowSet();
 					
 					CWebRowSetImpl wrs = new CWebRowSetImpl();
@@ -561,17 +594,17 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 				if ( Logger != null ) {
 					
 					if ( Lang != null )
-						Logger.LogError( "-1015", Lang.Translate( "Format version [%s] not supported", strVersion ) );
+						Logger.logError( "-1015", Lang.translate( "Format version [%s] not supported", strVersion ) );
 					else
-						Logger.LogError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
+						Logger.logError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
 				    
 				}    
 				else if ( OwnerConfig != null && OwnerConfig.Logger != null ) {
 
 					if ( OwnerConfig.Lang != null )
-						OwnerConfig.Logger.LogError( "-1015", OwnerConfig.Lang.Translate( "Format version [%s] not supported", strVersion ) );
+						OwnerConfig.Logger.logError( "-1015", OwnerConfig.Lang.translate( "Format version [%s] not supported", strVersion ) );
 					else
-						OwnerConfig.Logger.LogError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
+						OwnerConfig.Logger.logError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
 
 				}    
 				
@@ -581,28 +614,35 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
         catch ( Exception Ex ) {
 
 			if ( Logger != null )
-				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				Logger.logException( "-1010", Ex.getMessage(), Ex );
 			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
-				OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				OwnerConfig.Logger.logException( "-1010", Ex.getMessage(), Ex );
 
         }
     	
+		long lngEnd = System.currentTimeMillis();
+		
+		if ( Logger != null )
+			Logger.logDebug( "0xExecutedON", Lang.translate( "[%s] executed on: [%s] ms", "FormatResultSet", Long.toString( lngEnd - lngStart ) ) );
+        
     	return bResult;
     	
     }
     
 	@Override
-	public boolean FormatResultsSets( HttpServletResponse Response, ArrayList<CResultSetResult> SQLDataSetResultList, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
+	public boolean formatResultsSets( HttpServletResponse Response, ArrayList<CResultSetResult> SQLDataSetResultList, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
     	
+		long lngStart = System.currentTimeMillis();
+		
     	boolean bResult = false;
     	
         try {
 
-			if ( Utilities.VersionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.VersionLessEquals( strVersion, this.strMaxVersion ) ) {
+			if ( Utilities.versionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.versionLessEquals( strVersion, this.strMaxVersion ) ) {
         	
 				if ( SQLDataSetResultList.size() > 0 ) {
 
-	        		//String strTempDir = OwnerConfig.getConfigValue( "Temp_Dir" );
+	        		//String strTempDir = (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Temp_Dir );
 
 	        		//String strTempResponseFormatedFilePath = strTempDir + UUID.randomUUID() + ".formated_response";
 
@@ -635,11 +675,24 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 								
 								bFirst = false;
 								
+								boolean bNextPage = false;
+								
 								do {
-
+									
 									wrs.WriteXMLPage( OutStream ); //Write the block
 
-								} while ( wrs.nextPage() );
+									try {
+										
+										bNextPage = wrs.nextPage();
+									
+									}
+									catch ( Exception Ex ) {
+										
+										//CachedRowSetImpl don't work always raise exception "Cursor position is invalid"
+										
+									}
+
+								} while ( bNextPage );
 
 								//MemoryRowSet.addRowData( SQLDataSet, DBEngine, Logger, Lang );
 								////MemoryRowSet.NormalizeRowCount( DefaultFieldValues ); //add default values to code and description field values
@@ -710,17 +763,17 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 				if ( Logger != null ) {
 					
 					if ( Lang != null )
-						Logger.LogError( "-1015", Lang.Translate( "Format version [%s] not supported", strVersion ) );
+						Logger.logError( "-1015", Lang.translate( "Format version [%s] not supported", strVersion ) );
 					else
-						Logger.LogError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
+						Logger.logError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
 				    
 				}    
 				else if ( OwnerConfig != null && OwnerConfig.Logger != null ) {
 
 					if ( OwnerConfig.Lang != null )
-						OwnerConfig.Logger.LogError( "-1015", OwnerConfig.Lang.Translate( "Format version [%s] not supported", strVersion ) );
+						OwnerConfig.Logger.logError( "-1015", OwnerConfig.Lang.translate( "Format version [%s] not supported", strVersion ) );
 					else
-						OwnerConfig.Logger.LogError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
+						OwnerConfig.Logger.logError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
 
 				}    
 				
@@ -730,26 +783,33 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
         catch ( Exception Ex ) {
 
 			if ( Logger != null )
-				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				Logger.logException( "-1010", Ex.getMessage(), Ex );
 			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
-				OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				OwnerConfig.Logger.logException( "-1010", Ex.getMessage(), Ex );
 
         }
+        
+		long lngEnd = System.currentTimeMillis();
+		
+		if ( Logger != null )
+			Logger.logDebug( "0xExecutedON", Lang.translate( "[%s] executed on: [%s] ms", "FormatResultsSets", Long.toString( lngEnd - lngStart ) ) );
     	
     	return bResult;
 
 	}
 	
 	@Override
-	public String FormatMemoryRowSet( CMemoryRowSet MemoryRowSet, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+	public String formatMemoryRowSet( CMemoryRowSet MemoryRowSet, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+		
+		long lngStart = System.currentTimeMillis();
 		
 		String strResult = "";
 
 		try {
 
-			if ( Utilities.VersionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.VersionLessEquals( strVersion, this.strMaxVersion ) ) {
+			if ( Utilities.versionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.versionLessEquals( strVersion, this.strMaxVersion ) ) {
 
-				WebRowSet wrs = new WebRowSetImpl();
+				CWebRowSetImpl wrs = new CWebRowSetImpl();
 
 				StringWriter sw = new StringWriter();
 				
@@ -765,17 +825,17 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 				if ( Logger != null ) {
 					
 					if ( Lang != null )
-						Logger.LogError( "-1015", Lang.Translate( "Format version [%s] not supported", strVersion ) );
+						Logger.logError( "-1015", Lang.translate( "Format version [%s] not supported", strVersion ) );
 					else
-						Logger.LogError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
+						Logger.logError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
 				    
 				}    
 				else if ( OwnerConfig != null && OwnerConfig.Logger != null ) {
 
 					if ( OwnerConfig.Lang != null )
-						OwnerConfig.Logger.LogError( "-1015", OwnerConfig.Lang.Translate( "Format version [%s] not supported", strVersion ) );
+						OwnerConfig.Logger.logError( "-1015", OwnerConfig.Lang.translate( "Format version [%s] not supported", strVersion ) );
 					else
-						OwnerConfig.Logger.LogError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
+						OwnerConfig.Logger.logError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
 
 				}    
 				
@@ -785,12 +845,17 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 		catch ( Exception Ex ) {
 
 			if ( Logger != null )
-				Logger.LogException( "-1016", Ex.getMessage(), Ex );
+				Logger.logException( "-1016", Ex.getMessage(), Ex );
 			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
-				OwnerConfig.Logger.LogException( "-1016", Ex.getMessage(), Ex );
+				OwnerConfig.Logger.logException( "-1016", Ex.getMessage(), Ex );
 
 		}
 
+		long lngEnd = System.currentTimeMillis();
+		
+		if ( Logger != null )
+			Logger.logDebug( "0xExecutedON", Lang.translate( "[%s] executed on: [%s] ms", "FormatMemoryRowSet", Long.toString( lngEnd - lngStart ) ) );
+		
 		return strResult;
 
 	}
@@ -884,13 +949,15 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 	}*/
 
 	@Override
-	public String FormatSimpleMessage( String strSecurityTokenID, String strTransactionID, int intCode, String strDescription, boolean bAttachToError, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+	public String formatSimpleMessage( String strSecurityTokenID, String strTransactionID, int intCode, String strDescription, boolean bAttachToError, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 
+		long lngStart = System.currentTimeMillis();
+		
 		String strResult = "";
 		
 		try {
 
-			if ( Utilities.VersionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.VersionLessEquals( strVersion, this.strMaxVersion ) ) {
+			if ( Utilities.versionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.versionLessEquals( strVersion, this.strMaxVersion ) ) {
 			
 				int intCountFileds = 2;
 				
@@ -978,7 +1045,7 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 				
 				CachedRowset.beforeFirst();
 				
-				WebRowSet wrs = new WebRowSetImpl();
+				CWebRowSetImpl wrs = new CWebRowSetImpl();
 
 				StringWriter sw = new StringWriter();
 
@@ -994,17 +1061,17 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 				if ( Logger != null ) {
 					
 					if ( Lang != null )
-						Logger.LogError( "-1015", Lang.Translate( "Format version [%s] not supported", strVersion ) );
+						Logger.logError( "-1015", Lang.translate( "Format version [%s] not supported", strVersion ) );
 					else
-						Logger.LogError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
+						Logger.logError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
 				    
 				}    
 				else if ( OwnerConfig != null && OwnerConfig.Logger != null ) {
 
 					if ( OwnerConfig.Lang != null )
-						OwnerConfig.Logger.LogError( "-1015", OwnerConfig.Lang.Translate( "Format version [%s] not supported", strVersion ) );
+						OwnerConfig.Logger.logError( "-1015", OwnerConfig.Lang.translate( "Format version [%s] not supported", strVersion ) );
 					else
-						OwnerConfig.Logger.LogError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
+						OwnerConfig.Logger.logError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
 
 				}    
 				
@@ -1014,12 +1081,17 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 		catch ( Exception Ex ) {
 			
 			if ( Logger != null )
-				Logger.LogException( "-1016", Ex.getMessage(), Ex );
+				Logger.logException( "-1016", Ex.getMessage(), Ex );
 			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
-				OwnerConfig.Logger.LogException( "-1016", Ex.getMessage(), Ex );
+				OwnerConfig.Logger.logException( "-1016", Ex.getMessage(), Ex );
         	
 		}
 		
+		long lngEnd = System.currentTimeMillis();
+		
+		if ( Logger != null )
+			Logger.logDebug( "0xExecutedON", Lang.translate( "[%s] executed on: [%s] ms", "FormatSimpleMessage", Long.toString( lngEnd - lngStart ) ) );
+			
 		return strResult;
 		
 	}

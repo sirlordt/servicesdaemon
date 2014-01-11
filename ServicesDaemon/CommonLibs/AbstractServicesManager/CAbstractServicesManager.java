@@ -11,14 +11,17 @@
 package AbstractServicesManager;
 
 
+import java.util.LinkedHashMap;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import CommonClasses.CServicesDaemonConfig;
+import CommonClasses.CConfigServicesDaemon;
 import CommonClasses.ConfigXMLTagsServicesDaemon;
+import CommonClasses.IMessageObject;
 
-public class CAbstractServicesManager extends HttpServlet {
+public class CAbstractServicesManager extends HttpServlet implements IMessageObject {
    
 	/**
 	 * 
@@ -26,18 +29,44 @@ public class CAbstractServicesManager extends HttpServlet {
 	private static final long serialVersionUID = 4428843572369800671L;
 
 	protected String strContextPath;
-    protected CServicesDaemonConfig ServicesDaemonConfig;
+    protected CConfigServicesDaemon ServicesDaemonConfig;
+    
+    protected int intInitPriority; //Control the order for post init from managers
+    
+    protected String strRunningPath;
     
     public CAbstractServicesManager() { 
 
     	this.strContextPath = "/*";
         
+    	intInitPriority = 10000;
+    	
     }
     
-    public boolean InitManager( CServicesDaemonConfig ServicesDaemonConfig ) {
+    public String getRunningPath() {
+    	
+    	return strRunningPath;
+    	
+    } 
+    
+    public boolean initManager( CConfigServicesDaemon ServicesDaemonConfig ) {
     	
     	this.ServicesDaemonConfig = ServicesDaemonConfig;
     	
+    	return true;
+    	
+    }
+    
+    public boolean postInitManager( CConfigServicesDaemon ServicesDaemonConfig, LinkedHashMap<String,Object> InfoData ) {
+    	
+    	//Do nothing
+    	return true;
+    	
+    }
+    
+    public boolean endManager( CConfigServicesDaemon ServicesDaemonConfig ) {
+    	
+    	//Do nothing
     	return true;
     	
     }
@@ -54,40 +83,56 @@ public class CAbstractServicesManager extends HttpServlet {
     	
     }
     
-    protected void ProcessRequest( HttpServletRequest request, HttpServletResponse response ) {
+    public int getInitPriority() {
+    	
+    	return intInitPriority;
+    	
+    }
+    
+    protected void processRequest( HttpServletRequest request, HttpServletResponse response ) {
     	
  	   try {
  	    	
 		   response.setContentType("text/html");
 		   response.setStatus(HttpServletResponse.SC_OK);
-		   response.getWriter().println("<h1>" + ServicesDaemonConfig.Lang.Translate( "Default services manager" ) + "</h1>" );
-	       response.getWriter().println("<h2>" + ServicesDaemonConfig.Lang.Translate( "Session" ) + "=" + request.getSession(true).getId() + "<h2>");
+		   response.getWriter().println("<h1>" + ServicesDaemonConfig.Lang.translate( "Default services manager" ) + "</h1>" );
+	       response.getWriter().println("<h2>" + ServicesDaemonConfig.Lang.translate( "Session" ) + "=" + request.getSession(true).getId() + "<h2>");
 	       response.getWriter().println("<h3>IP=" + request.getRemoteAddr() + "<h3>" );
 	   
 	   }
 	   catch ( Exception Ex ) {
   
-		   ServicesDaemonConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+		   ServicesDaemonConfig.Logger.logException( "-1010", Ex.getMessage(), Ex );
 		   
 	   }
     	
     }
     
-    protected void doGet( HttpServletRequest request, HttpServletResponse response ) {
+    @Override
+	protected void doGet( HttpServletRequest request, HttpServletResponse response ) {
     	
     	if ( ServicesDaemonConfig.strResponseRequestMethod.equals( ConfigXMLTagsServicesDaemon._Request_Method_ANY ) || ServicesDaemonConfig.strResponseRequestMethod.equals( ConfigXMLTagsServicesDaemon._Request_Method_OnlyGET ) )
-    		this.ProcessRequest( request, response );
+    		this.processRequest( request, response );
     	else
    	        response.setStatus( HttpServletResponse.SC_OK );
     		
     }
 
-    protected void doPost( HttpServletRequest request, HttpServletResponse response ) {
+    @Override
+	protected void doPost( HttpServletRequest request, HttpServletResponse response ) {
 	
     	if ( ServicesDaemonConfig.strResponseRequestMethod.equals( ConfigXMLTagsServicesDaemon._Request_Method_ANY ) || ServicesDaemonConfig.strResponseRequestMethod.equals( ConfigXMLTagsServicesDaemon._Request_Method_OnlyPOST ) )
-    		this.ProcessRequest( request, response );
+    		this.processRequest( request, response );
     	else
    	        response.setStatus( HttpServletResponse.SC_OK );
+    	
+	}
+
+	
+    @Override
+	public Object sendMessage(String strMessageName, Object MessageData) {
+
+    	return null;
     	
 	}
     

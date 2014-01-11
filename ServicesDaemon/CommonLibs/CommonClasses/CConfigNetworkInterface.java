@@ -10,6 +10,8 @@
  ******************************************************************************/
 package CommonClasses;
 
+import java.util.ArrayList;
+
 public class CConfigNetworkInterface {
 
 	public String strIP;
@@ -26,4 +28,28 @@ public class CConfigNetworkInterface {
 
 	}
 
+	public CConfigNetworkInterface( CConfigNetworkInterface ConfigNetworkInterfaceToClone ) {
+
+		strIP = ConfigNetworkInterfaceToClone.strIP;
+		strAddressType = ConfigNetworkInterfaceToClone.strAddressType;
+		intPort = ConfigNetworkInterfaceToClone.intPort;
+		bUseSSL = ConfigNetworkInterfaceToClone.bUseSSL;
+
+	}
+	
+	public static boolean checkNetAddressExists( ArrayList<CConfigNetworkInterface> NetworkInterfaceList, String strNetAddress ) {
+		
+		for ( CConfigNetworkInterface ConfigNetworkInterface: NetworkInterfaceList ) {
+			
+			if ( ConfigNetworkInterface.strIP.toLowerCase().equals( strNetAddress.toLowerCase() ) ) {
+				
+				return true;
+				
+			}
+			
+		}
+		
+		return false;
+	}  
+	
 }

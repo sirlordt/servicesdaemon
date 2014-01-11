@@ -62,5 +62,9 @@ public interface ConfigXMLTagsSystemStartSession {
 	public static final int _Section_NotFound = 4;
 	public static final int _Section_Any = 5;
 	
+	public static final String _Password_Crypted = "crypted";
+	public static final String _Password_Crypted_Sep = ":";
+	
+	public static final String _Auth_Type_Engine = "engine";
 	
 }

@@ -16,8 +16,8 @@ public interface ConstantsSystemStartSession {
 	public final String _Request_DBConnection_Type = "varchar";
 	public final String _Request_DBConnection_Length = "150";
 
-	public static final String _Global_DateTime_Format = "Global_DateTime_Format";
-	public static final String _Global_Date_Format = "Global_Date_Format";
-	public static final String _Global_Time_Format = "Global_Time_Format";
-	
+	public static final String _Main_File = "SystemStartSession";
+	public static final String _Conf_File = _Main_File + ".conf";
+	public static final String _Main_File_Log = _Main_File + ".log";
+
 }

@@ -27,8 +27,10 @@ import javax.servlet.http.HttpServletRequest;
 import net.maindataservices.Utilities;
 
 
+import AbstractDBEngine.CAbstractDBConnection;
 import AbstractDBEngine.CAbstractDBEngine;
-import AbstractDBEngine.CDBEngineConfigConnection;
+import AbstractDBEngine.CDBEngineConfigNativeDBConnection;
+import AbstractDBEngine.CJDBConnection;
 import CommonClasses.CLanguage;
 import CommonClasses.CMemoryFieldData;
 import CommonClasses.CMemoryRowSet;
@@ -48,9 +50,9 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
 	}
 	
 	@Override
-	public Connection getDBConnection( CDBEngineConfigConnection ConfigDBConnection, CExtendedLogger Logger, CLanguage Lang ) {
+	public CAbstractDBConnection getDBConnection( CDBEngineConfigNativeDBConnection ConfigDBConnection, CExtendedLogger Logger, CLanguage Lang ) {
 
-		Connection DBConnection = null;
+		CAbstractDBConnection DBConnection = null;
 		
 		try {
 			
@@ -58,17 +60,20 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
 
             if ( Logger != null ) {
             	
-        		Logger.LogMessage( "1", Lang.Translate( "Trying to connect with the next URL: [%s] and user: [%s]", strDatabaseURL, ConfigDBConnection.strUser ) );        
+        		Logger.logMessage( "1", Lang.translate( "Trying to connect with the next URL: [%s] and user: [%s]", strDatabaseURL, ConfigDBConnection.strUser ) );        
             	
             }
 
             Class.forName( ConfigDBConnection.strDriver );
 
-            DBConnection = DriverManager.getConnection( strDatabaseURL, ConfigDBConnection.strUser, ConfigDBConnection.strPassword ); 
+            Connection JDBConnection = DriverManager.getConnection( strDatabaseURL, ConfigDBConnection.strUser, ConfigDBConnection.strPassword ); 
 			
+            DBConnection = new CJDBConnection();
+            DBConnection.setDBConnection( JDBConnection );
+            
             if ( Logger != null ) {
             	
-        		Logger.LogMessage( "1", Lang.Translate( "Database connection established to next URL: [%s] and user: [%s]", strDatabaseURL, ConfigDBConnection.strUser ) );        
+        		Logger.logMessage( "1", Lang.translate( "Database connection established to next URL: [%s] and user: [%s]", strDatabaseURL, ConfigDBConnection.strUser ) );        
             	
             }
 			
@@ -76,7 +81,7 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
 		catch ( Exception Ex ) {
 			
 			if ( Logger != null )
-				Logger.LogException( "-1015", Ex.getMessage(), Ex ); 
+				Logger.logException( "-1015", Ex.getMessage(), Ex ); 
 			
 		}
 		
@@ -85,7 +90,7 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
 	}
 	
 	@Override
-	public ResultSet ExecuteDummySQL( Connection DBConnection, String strOptionalDummySQL, CExtendedLogger Logger, CLanguage Lang ) {
+	public ResultSet executeDummyCommand( CAbstractDBConnection DBConnection, String strOptionalDummySQL, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		ResultSet Result = null;
 		
@@ -97,7 +102,7 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
 				
 			}
 			
-			Statement SQLStatement = DBConnection.createStatement();			
+			Statement SQLStatement = ((Connection) DBConnection.getDBConnection()).createStatement();			
 			
 			Result = SQLStatement.executeQuery( strOptionalDummySQL );
 			
@@ -105,7 +110,7 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
 		catch ( Exception Ex ) {
 
 			if ( Logger != null )
-				Logger.LogException( "-1015", Ex.getMessage(), Ex ); 
+				Logger.logException( "-1015", Ex.getMessage(), Ex ); 
 
 		}
 	
@@ -114,7 +119,7 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
 	}
 
 	@Override
-    public CResultSetResult ExecutePlainInsertSQL( Connection DBConnection, String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    public CResultSetResult executePlainInsertCommand( CAbstractDBConnection DBConnection, String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
 
 		//Reimplement by issue of getGeneratedKey for autoincrement column
     	
@@ -122,14 +127,14 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
     	
     	try {
     	
-    		Statement SQLStatement = DBConnection.createStatement();
+    		Statement SQLStatement = ((Connection) DBConnection.getDBConnection()).createStatement();
 
             if ( Logger != null ) { //Trace how much time in execute sql, useful for trace expensive query
             	
         		if ( Lang != null )   
-				   Logger.LogInfo( "0x2003", Lang.Translate( "Init plain SQL statement" ) );
+				   Logger.logInfo( "0x2003", Lang.translate( "Init plain SQL statement" ) );
         		else
- 				   Logger.LogInfo( "0x2003", "Init plain SQL statement" );
+ 				   Logger.logInfo( "0x2003", "Init plain SQL statement" );
         			
             }
     		
@@ -138,9 +143,9 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
             if ( Logger != null ) { //Trace how much time in execute sql, useful for trace expensive query
             	
         		if ( Lang != null )   
-				   Logger.LogInfo( "0x2004", Lang.Translate( "End plain SQL statement" ) );
+				   Logger.logInfo( "0x2004", Lang.translate( "End plain SQL statement" ) );
         		else
- 				   Logger.LogInfo( "0x2004", "End plain SQL statement" );
+ 				   Logger.logInfo( "0x2004", "End plain SQL statement" );
         			
             }
 
@@ -150,7 +155,7 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
 
     			Result.Result = SQLStatement.getGeneratedKeys(); //Save the generated keys
 
-				if ( Result.Result != null && ( this.IsValidResult( Result.Result, Logger, Lang ) == false ) ) 
+				if ( Result.Result != null && ( this.isValidResult( Result.Result, Logger, Lang ) == false ) ) 
 					Result.Result = null;
 
 				if ( Result.Result != null )
@@ -159,7 +164,7 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
     		}
     		
     		if ( Lang != null )   
-    			Result.strDescription = Lang.Translate( "Sucess to execute the plain SQL statement [%s]", strSQL );
+    			Result.strDescription = Lang.translate( "Sucess to execute the plain SQL statement [%s]", strSQL );
     		else
     			Result.strDescription = String.format( "Sucess to execute the plain SQL statement [%s]", strSQL );
     	
@@ -167,12 +172,12 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
     	catch ( Exception Ex ) {
     		
     		if ( Lang != null )   
-    		    Result.strDescription = Lang.Translate( "Error to execute the plain SQL statement [%s]", strSQL );
+    		    Result.strDescription = Lang.translate( "Error to execute the plain SQL statement [%s]", strSQL );
     		else
     		    Result.strDescription = String.format( "Error to execute the plain SQL statement [%s]", strSQL ) ;
 
     		if ( Logger != null )
-				Logger.LogException( "-1015", Ex.getMessage(), Ex );
+				Logger.logException( "-1015", Ex.getMessage(), Ex );
     		
     	}
     	
@@ -181,7 +186,7 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
     }
 	
 	@Override
-    public ArrayList<CResultSetResult> ExecuteComplexInsertSQL( Connection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    public ArrayList<CResultSetResult> executeComplexInsertCommand( CAbstractDBConnection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
     	
 		//Reimplement by issue of getGeneratedKey for autoincrement column
 		
@@ -194,7 +199,7 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
     		Delimiters.put( ConfigXMLTagsServicesDaemon._StartMacroTag, ConfigXMLTagsServicesDaemon._EndMacroTag );
     		Delimiters.put( ConfigXMLTagsServicesDaemon._StartParamValue, ConfigXMLTagsServicesDaemon._EndParamValue );
 
-    		CNamedPreparedStatement MainNamedPreparedStatement = new CNamedPreparedStatement( DBConnection, strSQL, Delimiters );		
+    		CNamedPreparedStatement MainNamedPreparedStatement = new CNamedPreparedStatement( (Connection) DBConnection.getDBConnection(), strSQL, Delimiters );		
     	
 			LinkedHashMap<String,Integer> NamedParams = MainNamedPreparedStatement.getNamedParams();
 			
@@ -274,13 +279,13 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
 					
 					if ( Logger != null ) {
 						
-						Logger.LogException( "-1017", Ex.getMessage(), Ex );
+						Logger.logException( "-1017", Ex.getMessage(), Ex );
 					
 					}	
 					
 				}
 
-				CNamedPreparedStatement NamedPreparedStatement = new CNamedPreparedStatement( DBConnection, MainNamedPreparedStatement.getNamedParams(), MainNamedPreparedStatement.getParsedStatement() ); //, Statement.RETURN_GENERATED_KEYS );
+				CNamedPreparedStatement NamedPreparedStatement = new CNamedPreparedStatement( (Connection) DBConnection.getDBConnection(), MainNamedPreparedStatement.getNamedParams(), MainNamedPreparedStatement.getParsedStatement() ); //, Statement.RETURN_GENERATED_KEYS );
 				
 				while ( i.hasNext() ) {
 				       
@@ -294,16 +299,16 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
 				
 					if ( bLogParsedSQL == true ) {
 						
-						Logger.LogInfo( "2", Lang.Translate( "Executing the next SQL statement [%s] index call [%s]", strParsedStatement, Integer.toString( intIndexCall ) )  );
+						Logger.logInfo( "2", Lang.translate( "Executing the next SQL statement [%s] index call [%s]", strParsedStatement, Integer.toString( intIndexCall ) )  );
 						
 					}
 					
 		            if ( Logger != null ) { //Trace how much time in execute sql, useful for trace expensive query
 		            	
 		        		if ( Lang != null )   
-						   Logger.LogInfo( "0x2005", Lang.Translate( "Init complex SQL statement" ) );
+						   Logger.logInfo( "0x2005", Lang.translate( "Init complex SQL statement" ) );
 		        		else
-		 				   Logger.LogInfo( "0x2005", "Init complex SQL statement" );
+		 				   Logger.logInfo( "0x2005", "Init complex SQL statement" );
 		        			
 		            }
 					
@@ -312,9 +317,9 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
 		            if ( Logger != null ) { //Trace how much time in execute sql, useful for trace expensive query
 		            	
 		        		if ( Lang != null )   
-						   Logger.LogInfo( "0x2006", Lang.Translate( "End complex SQL statement" ) );
+						   Logger.logInfo( "0x2006", Lang.translate( "End complex SQL statement" ) );
 		        		else
-		 				   Logger.LogInfo( "0x2006", "End complex SQL statement" );
+		 				   Logger.logInfo( "0x2006", "End complex SQL statement" );
 		        			
 		            }
 					
@@ -326,7 +331,7 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
 					
 					}  	
 						
-					if ( GeneratedKeys != null && ( bIsValidResultSet == false || this.IsValidResult( GeneratedKeys, Logger, Lang) == false ) ) {
+					if ( GeneratedKeys != null && ( bIsValidResultSet == false || this.isValidResult( GeneratedKeys, Logger, Lang) == false ) ) {
 						
 						bIsValidResultSet = false;
 						
@@ -336,12 +341,12 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
 
 					if ( GeneratedKeys != null ) {
 
-						Result.add( new CResultSetResult( intAffectedRows, 1, Lang.Translate( "Sucess to execute the SQL statement" ), NamedPreparedStatement, GeneratedKeys ) ); //Return back the generated keys
+						Result.add( new CResultSetResult( intAffectedRows, 1, Lang.translate( "Sucess to execute the SQL statement" ), NamedPreparedStatement, GeneratedKeys ) ); //Return back the generated keys
 
 					}    
 					else { 
 
-						Result.add( new CResultSetResult( intAffectedRows, 1, Lang.Translate( "Sucess to execute the SQL statement" ) ) ); //No key generated
+						Result.add( new CResultSetResult( intAffectedRows, 1, Lang.translate( "Sucess to execute the SQL statement" ) ) ); //No key generated
 
 						NamedPreparedStatement.close(); //Close immediately to prevent resource leak in database driver
 
@@ -352,11 +357,11 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
 					
 					if ( Logger != null ) {
 					
-						Result.add( new CResultSetResult( -1, -1, Lang.Translate( "Error to execute the SQL statement, see the log file for more details" ) ) );
+						Result.add( new CResultSetResult( -1, -1, Lang.translate( "Error to execute the SQL statement, see the log file for more details" ) ) );
 
-						Logger.LogError( "-1001", Lang.Translate( "Error to execute the next SQL statement [%s] index call [%s]", strParsedStatement, Integer.toString( intIndexCall ) )  );
+						Logger.logError( "-1001", Lang.translate( "Error to execute the next SQL statement [%s] index call [%s]", strParsedStatement, Integer.toString( intIndexCall ) )  );
 						
-						Logger.LogException( "-1016", Ex.getMessage(), Ex );
+						Logger.logException( "-1016", Ex.getMessage(), Ex );
 					
 					}	
 				
@@ -370,7 +375,7 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
     	catch ( Exception Ex ) {
     		
 			if ( Logger != null )
-				Logger.LogException( "-1015", Ex.getMessage(), Ex ); 
+				Logger.logException( "-1015", Ex.getMessage(), Ex ); 
     		
     	}
 		
@@ -379,7 +384,7 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
     } 
 
 	@Override
-    public CResultSetResult getDatabaseInfo( Connection DBConnection, HashMap<String,String> ConfiguredValues, CExtendedLogger Logger, CLanguage Lang ) {
+    public CResultSetResult getDatabaseInfo( CAbstractDBConnection DBConnection, HashMap<String,String> ConfiguredValues, CExtendedLogger Logger, CLanguage Lang ) {
 
     	CResultSetResult Result =  new CResultSetResult();
     	
@@ -388,7 +393,7 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
     	
     	try {
     		
-    		DatabaseMetaData DBMetadata = DBConnection.getMetaData();
+    		DatabaseMetaData DBMetadata = ((Connection) DBConnection.getDBConnection()).getMetaData();
     		
         	CMemoryRowSet MemoryRowSet =  new CMemoryRowSet( false );
         	
@@ -544,7 +549,7 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
     		
     		//MemoryRowSet.addRow( "configuredDriverNameClass", strConfiguredDriverNameClass );
     		MemoryRowSet.addRow( "extraNameCharacters", DBMetadata.getExtraNameCharacters() );
-    		MemoryRowSet.addRow( "identifierQuoteString", net.maindataservices.Utilities.ReplaceToHTMLEntity( DBMetadata.getIdentifierQuoteString() ) );
+    		MemoryRowSet.addRow( "identifierQuoteString", net.maindataservices.Utilities.replaceToHTMLEntity( DBMetadata.getIdentifierQuoteString() ) );
     		MemoryRowSet.addRow( "JDBCMajorVersion", Integer.toString( DBMetadata.getJDBCMajorVersion() ) );
     		MemoryRowSet.addRow( "JDBCMinorVersion", Integer.toString( DBMetadata.getJDBCMinorVersion() ) );
     		MemoryRowSet.addRow( "maxBinaryLiteralLength", Integer.toString( DBMetadata.getMaxBinaryLiteralLength() ) );
@@ -640,7 +645,7 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
     		catch ( Exception Ex ) {
 
     			if ( Logger != null )
-    				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+    				Logger.logException( "-1010", Ex.getMessage(), Ex );
 
     		}
     		
@@ -669,7 +674,7 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
     		catch ( Exception Ex ) {
 
     			if ( Logger != null )
-    				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+    				Logger.logException( "-1010", Ex.getMessage(), Ex );
 
     		}
     		
@@ -691,7 +696,7 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
     		catch ( Exception Ex ) {
 
     			if ( Logger != null )
-    				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+    				Logger.logException( "-1010", Ex.getMessage(), Ex );
 
     		}
     		
@@ -705,7 +710,7 @@ public class CMySQLDBEngine extends CAbstractDBEngine {
     	catch ( Exception Ex ) {
 
 			if ( Logger != null )
-				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				Logger.logException( "-1010", Ex.getMessage(), Ex );
     	
     	}
     	

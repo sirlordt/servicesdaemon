@@ -10,7 +10,6 @@
  ******************************************************************************/
 package SystemPing;
 
-import java.io.File;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Types;
@@ -23,101 +22,73 @@ import AbstractResponseFormat.CAbstractResponseFormat;
 import AbstractService.CAbstractService;
 import AbstractService.CInputServiceParameter;
 import AbstractService.CServicePreExecuteResult;
-import AbstractService.ConstantsServicesTags;
-import AbstractService.DefaultConstantsServices;
 import AbstractService.CInputServiceParameter.TParameterScope;
 import CommonClasses.CAbstractConfigLoader;
 import CommonClasses.CClassPathLoader;
 import CommonClasses.CMemoryRowSet;
 import CommonClasses.CServicePostExecuteResult;
-import CommonClasses.CServicesDaemonConfig;
-import CommonClasses.DefaultConstantsServicesDaemon;
+import CommonClasses.CConfigServicesDaemon;
+import CommonClasses.ConstantsCommonClasses;
+import CommonClasses.ConstantsMessagesCodes;
 import CommonClasses.NamesSQLTypes;
+import DBCommonClasses.CDBAbstractService;
 
-public class CSystemPing extends CAbstractService {
+public class CSystemPing extends CDBAbstractService {
 
-    public final static String getJarFolder() {
-
-        String name =  CSystemPing.class.getCanonicalName().replace( '.', '/' );
-
-        String s = CSystemPing.class.getClass().getResource( "/" + name + ".class" ).toString();
-
-        s = s.replace( '/', File.separatorChar );
-
-        if ( s.indexOf(".jar") >= 0 )
-           s = s.substring( 0, s.indexOf(".jar") + 4 );
-        else
-           s = s.substring( 0, s.indexOf(".class") );
-
-        if ( s.indexOf( "jar:file:\\" )  == 0 ) { //Windows style path SO inside jar file 
-
-        	s = s.substring( 10 );
-
-        }
-        else if ( s.indexOf( "file:\\" )  == 0 ) { //Windows style path SO .class file
-
-        	s = s.substring( 6 );
-
-        }
-        else { //Unix family ( Linux/BSD/Mac/Solaris ) style path SO
-
-            s = s.substring( s.lastIndexOf(':') + 1 );
-
-        }
-
-        return s.substring( 0, s.lastIndexOf( File.separatorChar ) + 1 );
-
+    public CSystemPing() {
+    	
+    	super();
+    	
     }
-
+    
 	@Override
-	public boolean InitializeService( CServicesDaemonConfig ServicesDaemonConfig, CAbstractConfigLoader OwnerConfig ) { // Alternate manual contructor
+	public boolean initializeService( CConfigServicesDaemon ServicesDaemonConfig, CAbstractConfigLoader OwnerConfig ) { // Alternate manual contructor
 
-		boolean bResult = super.InitializeService( ServicesDaemonConfig, OwnerConfig );
+		boolean bResult = super.initializeService( ServicesDaemonConfig, OwnerConfig );
 		
 		try {
 		
 			this.bAuthRequired = false;
-			this.strJarRunningPath = getJarFolder();
-			DefaultConstantsSystemPing.strDefaultRunningPath = this.strJarRunningPath;
+			this.strRunningPath = net.maindataservices.Utilities.getJarFolder( this.getClass() );
 			this.strServiceName = "System.Ping";
 			this.strServiceVersion = "0.0.0.1";
 
-			this.SetupService( DefaultConstantsSystemPing.strDefaultMainFileLog, DefaultConstantsSystemPing.strDefaultRunningPath + DefaultConstantsServices.strDefaultLangsDir + DefaultConstantsSystemPing.strDefaultMainFile + "." + ServicesDaemonConfig.strDefaultLang ); //Init the Logger and Lang
+			this.setupService( ConstantsSystemPing._Main_File_Log, this.strRunningPath + ConstantsCommonClasses._Langs_Dir + ConstantsSystemPing._Main_File + "." + ConstantsCommonClasses._Lang_Ext ); //Init the Logger and Lang
 
-			ServiceLogger.LogMessage( "1", ServiceLang.Translate( "Running dir: [%s]", this.strJarRunningPath ) );        
-			ServiceLogger.LogMessage( "1", ServiceLang.Translate( "Version: [%s]", this.strServiceVersion ) );        
+			ServiceLogger.logMessage( "1", ServiceLang.translate( "Running dir: [%s]", this.strRunningPath ) );        
+			ServiceLogger.logMessage( "1", ServiceLang.translate( "Version: [%s]", this.strServiceVersion ) );        
 
-			CClassPathLoader ClassPathLoader = new CClassPathLoader( ServiceLogger, ServiceLang );
+			CClassPathLoader ClassPathLoader = new CClassPathLoader();
 
-			ClassPathLoader.LoadClassFiles( this.strJarRunningPath + DefaultConstantsServices.strDefaultPreExecuteDir, DefaultConstantsServicesDaemon.strDefaultLibsExt, 2 );
+			ClassPathLoader.LoadClassFiles( this.strRunningPath + ConstantsCommonClasses._Pre_Execute_Dir, ConstantsCommonClasses._Lib_Ext, 2, ServiceLogger, ServiceLang );
 
-			this.LoadAndRegisterServicePreExecute();
+			this.loadAndRegisterServicePreExecute();
 
-			ClassPathLoader.LoadClassFiles( this.strJarRunningPath + DefaultConstantsServices.strDefaultPostExecuteDir, DefaultConstantsServicesDaemon.strDefaultLibsExt, 2 );
+			ClassPathLoader.LoadClassFiles( this.strRunningPath + ConstantsCommonClasses._Post_Execute_Dir, ConstantsCommonClasses._Lib_Ext, 2, ServiceLogger, ServiceLang );
 
-			this.LoadAndRegisterServicePostExecute();
+			this.loadAndRegisterServicePostExecute();
 
-			this.strServiceDescription = ServiceLang.Translate( "Lets see if the server responds correctly, for monitoring purposes" );
+			this.strServiceDescription = ServiceLang.translate( "Lets see if the server responds correctly, for monitoring purposes" );
 
 			ArrayList< CInputServiceParameter > ServiceInputParameters = new ArrayList< CInputServiceParameter >();
 
-			CInputServiceParameter InputParameter = new CInputServiceParameter( ConstantsServicesTags._RequestResponseFormat, false, ConstantsServicesTags._RequestResponseFormatType, ConstantsServicesTags._RequestResponseFormatLength, TParameterScope.IN, ServiceLang.Translate( "Response format name, example: XML-DATAPACKET, CSV, JSON" ) );
+			CInputServiceParameter InputParameter = new CInputServiceParameter( ConstantsCommonClasses._Request_ResponseFormat, false, ConstantsCommonClasses._Request_ResponseFormat_Type, ConstantsCommonClasses._Request_ResponseFormat_Length, TParameterScope.IN, ServiceLang.translate( "Response format name, example: XML-DATAPACKET, CSV, JSON" ) );
 
 			ServiceInputParameters.add( InputParameter ); 	
 
-			InputParameter = new CInputServiceParameter( ConstantsServicesTags._RequestResponseFormatVersion, false, ConstantsServicesTags._RequestResponseFormatVersionType, ConstantsServicesTags._RequestResponseFormatVersionLength, TParameterScope.IN, ServiceLang.Translate( "Response format version, example: 1.1" ) );
+			InputParameter = new CInputServiceParameter( ConstantsCommonClasses._Request_ResponseFormatVersion, false, ConstantsCommonClasses._Request_ResponseFormatVersion_Type, ConstantsCommonClasses._Request_ResponseFormatVersion_Length, TParameterScope.IN, ServiceLang.translate( "Response format version, example: 1.1" ) );
 
 			ServiceInputParameters.add( InputParameter ); 	
 
-			InputParameter = new CInputServiceParameter( ConstantsServicesTags._RequestServiceName, true, ConstantsServicesTags._RequestServiceNameType, ConstantsServicesTags._RequestServiceNameLength, TParameterScope.IN, ServiceLang.Translate( "Service Name" ) );
+			InputParameter = new CInputServiceParameter( ConstantsCommonClasses._Request_ServiceName, true, ConstantsCommonClasses._Request_ServiceName_Type, ConstantsCommonClasses._Request_ServiceName_Length, TParameterScope.IN, ServiceLang.translate( "Service Name" ) );
 
 			ServiceInputParameters.add( InputParameter );
 
-			InputParameter = new CInputServiceParameter( ConstantsSystemPing._RequestPing, true, ConstantsSystemPing._RequestPingType, "0", TParameterScope.IN, ServiceLang.Translate( "Whole number sent as a parameter and return increased by 1" ) );
+			InputParameter = new CInputServiceParameter( ConstantsSystemPing._Request_Ping, true, ConstantsSystemPing._Request_Ping_Type, "0", TParameterScope.IN, ServiceLang.translate( "Whole number sent as a parameter and return increased by 1" ) );
 
 			ServiceInputParameters.add( InputParameter );
 
-			GroupsInputParametersService.put( ConstantsServicesTags._Default, ServiceInputParameters );
+			GroupsInputParametersService.put( ConstantsCommonClasses._Default, ServiceInputParameters );
 
 		}
 		catch ( Exception Ex ) {
@@ -125,7 +96,7 @@ public class CSystemPing extends CAbstractService {
 			bResult = false;
 			
 			if ( OwnerLogger != null )
-        		OwnerLogger.LogException( "-1010", Ex.getMessage(), Ex );
+        		OwnerLogger.logException( "-1010", Ex.getMessage(), Ex );
 			
 		}
 
@@ -134,13 +105,13 @@ public class CSystemPing extends CAbstractService {
 	}
 	
 	@Override
-	public int ExecuteService( int intEntryCode, HttpServletRequest Request, HttpServletResponse Response, String strSecurityTokenID, HashMap<String,CAbstractService> RegisteredServices, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion ) {
+	public int executeService( int intEntryCode, HttpServletRequest Request, HttpServletResponse Response, String strSecurityTokenID, HashMap<String,CAbstractService> RegisteredServices, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion ) {
 
 		int intResultCode = -1000;
 
-		if ( this.CheckServiceInputParameters( GroupsInputParametersService.get( ConstantsServicesTags._Default ), Request, Response, ResponseFormat, strResponseFormatVersion, OwnerConfig.getConfigValue( ConstantsSystemPing._Global_DateTime_Format ) , OwnerConfig.getConfigValue( ConstantsSystemPing._Global_Date_Format ), OwnerConfig.getConfigValue( ConstantsSystemPing._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang ) == true ) {
+		if ( this.checkServiceInputParameters( GroupsInputParametersService.get( ConstantsCommonClasses._Default ), Request, Response, ResponseFormat, strResponseFormatVersion, (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_DateTime_Format, null ) , (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_Date_Format, null ), (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_Time_Format, null ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang ) == true ) {
 
-			CServicePreExecuteResult ServicePreExecuteResult = this.RunServicePreExecute( intEntryCode, Request, Response, strSecurityTokenID, RegisteredServices, ResponseFormat, strResponseFormatVersion );
+			CServicePreExecuteResult ServicePreExecuteResult = this.runServicePreExecute( intEntryCode, Request, Response, strSecurityTokenID, RegisteredServices, ResponseFormat, strResponseFormatVersion );
 
 			if ( ServicePreExecuteResult == null || ServicePreExecuteResult.bStopExecuteService == false ) {
 
@@ -186,19 +157,19 @@ public class CSystemPing extends CAbstractService {
 
 					CachedRowset.moveToCurrentRow();*/
 					
-					Long lngPing = Long.parseLong( Request.getParameter( ConstantsSystemPing._RequestPing ) );
+					Long lngPing = Long.parseLong( Request.getParameter( ConstantsSystemPing._Request_Ping ) );
 
 					CMemoryRowSet ResultMemoryRowSet = new CMemoryRowSet( false );
 					
-					ResultMemoryRowSet.addField( ConstantsSystemPing._ResponsePong, Types.BIGINT, NamesSQLTypes._BIGINT, 0, NamesSQLTypes._BIGINT );
-					ResultMemoryRowSet.addField( ConstantsSystemPing._ResponseDateRequest, Types.DATE, NamesSQLTypes._DATE, 0, NamesSQLTypes._DATE );
-					ResultMemoryRowSet.addField( ConstantsSystemPing._ResponseTimeRequest, Types.TIME, NamesSQLTypes._TIME, 0, NamesSQLTypes._TIME );
+					ResultMemoryRowSet.addField( ConstantsSystemPing._Response_Pong, Types.BIGINT, NamesSQLTypes._BIGINT, 0, NamesSQLTypes._BIGINT );
+					ResultMemoryRowSet.addField( ConstantsSystemPing._Response_Date_Request, Types.DATE, NamesSQLTypes._DATE, 0, NamesSQLTypes._DATE );
+					ResultMemoryRowSet.addField( ConstantsSystemPing._Response_Time_Request, Types.TIME, NamesSQLTypes._TIME, 0, NamesSQLTypes._TIME );
 					
-					ResultMemoryRowSet.addData( ConstantsSystemPing._ResponsePong, lngPing + 1 );
-					ResultMemoryRowSet.addData( ConstantsSystemPing._ResponseDateRequest, new Date( System.currentTimeMillis() ) );
-					ResultMemoryRowSet.addData( ConstantsSystemPing._ResponseTimeRequest, new Time( System.currentTimeMillis() ) );
+					ResultMemoryRowSet.addData( ConstantsSystemPing._Response_Pong, lngPing + 1 );
+					ResultMemoryRowSet.addData( ConstantsSystemPing._Response_Date_Request, new Date( System.currentTimeMillis() ) );
+					ResultMemoryRowSet.addData( ConstantsSystemPing._Response_Time_Request, new Time( System.currentTimeMillis() ) );
 					
-					String strResponseBuffer = ResponseFormat.FormatMemoryRowSet( ResultMemoryRowSet, strResponseFormatVersion, OwnerConfig.getConfigValue( ConstantsSystemPing._Global_DateTime_Format ) , OwnerConfig.getConfigValue( ConstantsSystemPing._Global_Date_Format ), OwnerConfig.getConfigValue( ConstantsSystemPing._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
+					String strResponseBuffer = ResponseFormat.formatMemoryRowSet( ResultMemoryRowSet, strResponseFormatVersion, (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_DateTime_Format, null ) , (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_Date_Format, null ), (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_Time_Format, null ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 
 					Response.getWriter().print( strResponseBuffer );
 
@@ -208,9 +179,9 @@ public class CSystemPing extends CAbstractService {
 				catch ( Exception Ex ) {
 
 					if ( ServiceLogger != null )
-						ServiceLogger.LogException( "-1010", Ex.getMessage(), Ex ); 
+						ServiceLogger.logException( "-1010", Ex.getMessage(), Ex ); 
 					else if ( OwnerLogger != null )
-						OwnerLogger.LogException( "-1010", Ex.getMessage(), Ex );
+						OwnerLogger.logException( "-1010", Ex.getMessage(), Ex );
 
 				}
 
@@ -221,7 +192,7 @@ public class CSystemPing extends CAbstractService {
 
 			}
 
-			CServicePostExecuteResult ServicePostExecuteResult = this.RunServicePostExecute( intEntryCode, Request, Response, strSecurityTokenID, RegisteredServices, ResponseFormat, strResponseFormatVersion );
+			CServicePostExecuteResult ServicePostExecuteResult = this.runServicePostExecute( intEntryCode, Request, Response, strSecurityTokenID, RegisteredServices, ResponseFormat, strResponseFormatVersion );
 
 			if ( ServicePostExecuteResult != null ) {
 

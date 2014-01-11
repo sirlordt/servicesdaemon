@@ -22,7 +22,7 @@ import org.w3c.dom.NodeList;
 
 import ExtendedLogger.CExtendedLogger;
 
-public abstract class CAbstractConfigLoader {
+public abstract class CAbstractConfigLoader implements IMessageObject {
 
 	protected ArrayList<String> strFirstLevelConfigSectionsOrder = null;
 	protected ArrayList<Boolean> bFirstLevelConfigSectionsMustExists = null;
@@ -31,12 +31,22 @@ public abstract class CAbstractConfigLoader {
 	public CExtendedLogger Logger =  null;
 	public CLanguage Lang = null;
 
-	public CAbstractConfigLoader() {
+	public String strRunningPath = "";
+	
+	public CAbstractConfigLoader( String strRunningPath ) {
 
+		this.strRunningPath = strRunningPath;
+		
 		strFirstLevelConfigSectionsOrder = new ArrayList<String>();
 		bFirstLevelConfigSectionsMustExists = new ArrayList<Boolean>();
 		
 	}
+	
+	public String getRunningPath() {
+		
+		return strRunningPath;
+		
+	} 
 	
 	public String getConfigFilePath() {
 		
@@ -73,7 +83,7 @@ public abstract class CAbstractConfigLoader {
 		}
 		catch ( Exception Ex ) {
 			
-			Logger.LogException( "-1001", Ex.getMessage(), Ex );        
+			Logger.logException( "-1001", Ex.getMessage(), Ex );        
 			
 		}
 		
@@ -91,7 +101,7 @@ public abstract class CAbstractConfigLoader {
 		if ( this.Lang == null )
 			this.Lang = Lang;
 			
-		Logger.LogMessage( "1", Lang.Translate( "Loading config from file: [%s]", strConfigFilePath  ) );        
+		Logger.logMessage( "1", Lang.translate( "Loading config from file: [%s]", strConfigFilePath  ) );        
 
 		File XMLConfigFile = new File( strConfigFilePath );
 		
@@ -108,7 +118,7 @@ public abstract class CAbstractConfigLoader {
 				Document XMLDocument = XMLDocumentBuilder.parse( XMLConfigFile );
 				XMLDocument.getDocumentElement().normalize();
 	
-				Logger.LogMessage( "1", Lang.Translate( "XML node root of config file: [%s]", XMLDocument.getDocumentElement().getNodeName() ) );        
+				Logger.logMessage( "1", Lang.translate( "XML node root of config file: [%s]", XMLDocument.getDocumentElement().getNodeName() ) );        
 	
 		        NodeList NodeRootlst = XMLDocument.getElementsByTagName( ConfigXMLTagsServicesDaemon._Config );
 		          
@@ -133,7 +143,7 @@ public abstract class CAbstractConfigLoader {
 		            	}
 		            	else if ( bFirstLevelConfigSectionsMustExists.size() >= intConfigSecitonIndex && bFirstLevelConfigSectionsMustExists.get( intConfigSecitonIndex ) == true ) {
 
-		            		Logger.LogError( "-1002", Lang.Translate( "The config section [%s] not found", strFirstLevelConfigSectionsOrder.get( intConfigSecitonIndex ) ) );        
+		            		Logger.logError( "-1002", Lang.translate( "The config section [%s] not found", strFirstLevelConfigSectionsOrder.get( intConfigSecitonIndex ) ) );        
 
 		            		bResult = false;
 
@@ -142,7 +152,7 @@ public abstract class CAbstractConfigLoader {
 		            	}
 		            	else  {
 
-		            		Logger.LogWarning( "-1", Lang.Translate( "The config section [%s] not found", strFirstLevelConfigSectionsOrder.get( intConfigSecitonIndex ) ) );        
+		            		Logger.logWarning( "-1", Lang.translate( "The config section [%s] not found", strFirstLevelConfigSectionsOrder.get( intConfigSecitonIndex ) ) );        
 
 		            	}
 		                 
@@ -158,7 +168,7 @@ public abstract class CAbstractConfigLoader {
 		        else {
 		        	
 					//Hard coded error
-	    			Logger.LogError( "-1001", Lang.Translate( "Only one section [Config] tag allowed in config file in the path [%s]",  XMLConfigFile.getAbsolutePath() ) );        
+	    			Logger.logError( "-1001", Lang.translate( "Only one section [Config] tag allowed in config file in the path [%s]",  XMLConfigFile.getAbsolutePath() ) );        
 		        
 	    			bResult = false;
 	    			
@@ -167,7 +177,7 @@ public abstract class CAbstractConfigLoader {
 			} 
 			catch ( Exception Ex ) {
 			
-    			Logger.LogException( "-1010", Ex.getMessage(), Ex );        
+    			Logger.logException( "-1010", Ex.getMessage(), Ex );        
 				
     			bResult = false;
     			
@@ -178,7 +188,7 @@ public abstract class CAbstractConfigLoader {
 		else if ( bFileExists == false ) {
 			
 			//Hard coded error
-			Logger.LogError( "-1003", Lang.Translate( "The config file in the path [%s] not exists", XMLConfigFile.getAbsolutePath() ) );        
+			Logger.logError( "-1003", Lang.translate( "The config file in the path [%s] not exists", XMLConfigFile.getAbsolutePath() ) );        
 		
 			bResult = false;
 			
@@ -188,7 +198,7 @@ public abstract class CAbstractConfigLoader {
 		    if ( bFileCanRead == false ) {
 
 				//Hard coded error
-				Logger.LogError( "-1004", Lang.Translate( "The config file in the path [%s] cannot read, please check the owner and permissions", XMLConfigFile.getAbsolutePath() ) );        
+				Logger.logError( "-1004", Lang.translate( "The config file in the path [%s] cannot read, please check the owner and permissions", XMLConfigFile.getAbsolutePath() ) );        
 
 				bResult = false;
 
@@ -196,7 +206,7 @@ public abstract class CAbstractConfigLoader {
 		    else if ( bIsFile == false ) {
 		    	
 				//Hard coded error
-				Logger.LogError( "-1005", Lang.Translate( "The config path [%s] not is file", XMLConfigFile.getAbsolutePath() ) );        
+				Logger.logError( "-1005", Lang.translate( "The config path [%s] not is file", XMLConfigFile.getAbsolutePath() ) );        
 		    	
 				bResult = false;
 
@@ -208,10 +218,17 @@ public abstract class CAbstractConfigLoader {
 		
 	}
 
+	/*
 	public String getConfigValue( String strConfigKey ) {
 		
 		return "";
 		
 	}
+	
+	public Object getConfigObjectValue( String strConfigObjectType, String strConfigKey ) {
+		
+		return null;
+		
+	}*/
 	
 }

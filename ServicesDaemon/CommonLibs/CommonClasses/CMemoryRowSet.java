@@ -31,7 +31,7 @@ import AbstractDBEngine.CAbstractDBEngine;
 import CommonClasses.CMemoryFieldData.TFieldScope;
 import ExtendedLogger.CExtendedLogger;
 
-import com.sun.rowset.CachedRowSetImpl;
+import rowset.CachedRowSetImpl;
 
 public class CMemoryRowSet {
 
@@ -327,7 +327,7 @@ public class CMemoryRowSet {
 		catch ( Exception Ex ) {
 			
 			if ( Logger != null )
-				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				Logger.logException( "-1010", Ex.getMessage(), Ex );
 			
 		}
 		
@@ -373,7 +373,7 @@ public class CMemoryRowSet {
 		catch ( Exception Ex ) {
 			
 			if ( Logger != null )
-				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				Logger.logException( "-1010", Ex.getMessage(), Ex );
 			
 		}
 		
@@ -473,7 +473,7 @@ public class CMemoryRowSet {
 		catch ( Exception Ex ) {
 			
 			if ( Logger != null )
-				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				Logger.logException( "-1010", Ex.getMessage(), Ex );
 
 			bResult = false;
 			
@@ -517,7 +517,7 @@ public class CMemoryRowSet {
 		catch ( Exception Ex ) {
 			
 			if ( Logger != null )
-				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				Logger.logException( "-1010", Ex.getMessage(), Ex );
 			
 		}
 		

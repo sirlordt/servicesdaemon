@@ -24,10 +24,16 @@
 <entry key="The file in the path [%s] cannot read, please check the owner and permissions">El archivo en la ruta [%s] no se puede leer, por favor verifique el dueño y los permisos</entry>
 <entry key="The file in the path [%s] not exists">El archivo en la ruta [%s] no existe</entry>
 <entry key="The [%s] attribute value [%s] is not valid ip address">El atributo [%s] con el valor [%s] no es una dirección ip válida</entry>
-<entry key="The [%s] attribute value [%s] is out of range. Must be integer value in the next inclusive range, minimum [%s] and maximum [%s]">El número del puerto [%s] se encuentra fuera del rango. Debe ser un número entero en el siguiente rango inclusivo, mínimo [%s] y máximo [%s]</entry>
+<entry key="The [%s] attribute value [%s] is out of range. Must be integer value in the next inclusive range, minimum [%s] and maximum [%s]">El atributo [%s] con valor de [%s] se encuentra fuera del rango. Debe ser un número entero en el siguiente rango inclusivo, mínimo [%s] y máximo [%s]</entry>
 <entry key="Failed to load config from XML node section: [%s]">Falló al cargar de la configuración de la sección del nodo XML: [%s]</entry>
 
 <entry key="Session">Sesión</entry>
+
+<entry key="The [%s] node value is empty string, ignoring the node">El valor del nodo [%s] no puede ser una cadena vacia, ignorando el nodo</entry>
+<entry key="The [%s] node value is empty string, ignoring the section">El valor del nodo [%s] no puede ser una cadena vacia, ignorando la sección</entry>
+<entry key="The [%s] node value is empty string, ignoring the node or section">El valor del nodo [%s] no puede ser una cadena vacia, ignorando el nodo o la sección</entry>
+<entry key="Wrong count of attributes for the section [%s], found [%s] and must be [%s]">Cantidad incorrecta de atributos para la sección [%s], se encuentraron [%s] y deberían ser [%s]</entry>
+<entry key="Wrong count of attributes for the node [%s], found [%s] and must be [%s]">Cantidad incorrecta de atributos para el nodo [%s], se encuentraron [%s] y deberían ser [%s]</entry>
 
 <entry key="The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node">El atributo [%s] no fue encontrado, para el nodo [%s] en la posición relativa [%s], ignorando el nodo</entry>
 <entry key="The [%s] attribute not found, for the node [%s] at relative index [%s]">El atributo [%s] no fue encontrado, para el nodo [%s] en la posición relativa [%s]</entry>
@@ -38,11 +44,15 @@
 <entry key="The [%s] attribute cannot empty string, for the section [%s] at relative index [%s]">El atributo [%s] no puede ser una cadena vacia, para la sección [%s] en la posición relativa [%s]</entry>
 <entry key="The [%s] attribute cannot empty string, for the section [%s] at relative index [%s], ignoring the section">El atributo [%s] no puede ser una cadena vacia, para la sección [%s] en la posición relativa [%s], ignorando la sección</entry>
 <entry key="The [%s] attribute cannot empty string, for the section [%s], ignoring the section">El atributo [%s] no puede ser una cadena vacia, para la sección [%s], ignorando la sección</entry>
+<entry key="The [%s] attribute is empty for the section [%s]">El atributo [%s] es una cadena vacia, para la sección [%s]</entry>
+<entry key="The [%s] attribute is empty for the node [%s]">El atributo [%s] es una cadena vacia, para el nodo [%s]</entry>
 <entry key="The [%s] attribute cannot empty string">El atributo [%s] no puede ser una cadena vacia</entry>
 <entry key="The [%s] attribute cannot empty string, using the default value [%s]">El atributo [%s] no puede ser una cadena vacia, usando el valor por defecto [%s]</entry>
 <entry key="The [%s] attribute value [%s] is invalid, using the default value [%s]">El atributo [%s] con el valor de [%s] es inválido, usando el valor por defecto [%s]</entry>
 <entry key="The [%s] attribute value [%s] is invalid, must be positive integer or zero, for the node [%s] at relative index [%s]">El atributo [%s] con el valor de [%s] es inválido, debe ser un entero positivo o cero, para el nodo [%s] en la posición relativa [%s]</entry>
 <entry key="The [%s] attribute value [%s] is invalid, must be positive integer or zero, for the node [%s] at relative index [%s], ignoring the node">El atributo [%s] con el valor de [%s] es inválido, debe ser un entero positivo o cero, para el nodo [%s] en la posición relativa [%s], ignorando el nodo</entry>
+<entry key="The [%s] attribute value [%s] is invalid">El atributo [%s] con el valor de [%s] es inválido</entry>
+<entry key="The [%s] attribute value [%s] is invalid for the node [%s]">El atributo [%s] con el valor de [%s] es inválido para el nodo [%s]</entry>
 <entry key="The [%s] attribute cannot empty string">El atributo [%s] no puede ser una cadena vacia</entry>
 <entry key="The [%s] attribute is empty string, for the node [%s] at relative index [%s]">El atributo [%s] es una cadena vacia, para el nodo [%s] en la posición relativa [%s]</entry>
 <entry key="The [%s] attribute is empty string">El atributo [%s] es una cadena vacia</entry>
@@ -57,6 +67,9 @@
 <entry key="The [%s] attribute value [%s] is no valid time format, using the default value [%s]">El atributo [%s] con el valor de [%s] no es un formato de hora válido, usando el valor por defecto [%s]</entry>
 <entry key="The [%s] attribute is unknown for the node [%s]">El atributo [%s] es desconocido para el nodo [%s]</entry>
 <entry key="The [%s] attribute is unknown">El atributo [%s] es desconocido</entry>
+<entry key="Ignoring the section [%s]">Ignorando la sección [%s]</entry>
+<entry key="Ignoring the node [%s]">Ignorando el nodo [%s]</entry>
+
 
 <entry key="Loading classes from path: [%s]">Cargando clases de la ruta: [%s]</entry>
 <entry key="Jar count files found: [%s]">Cantidad de archivos jar encontrados: [%s]</entry>
@@ -88,6 +101,15 @@
 <entry key="The following parameters %s are required for service and were not sent">Los siguientes parámetros %s son requeridos por el servicio y no fueron enviados</entry>
 <entry key="Service [%s] expected [%s] parameters however were sent [%s]">El servicio [%s] espera [%s] sin embargo se enviaron [%s]</entry>
 
+<entry key="Start Debug tag found on URI: [%s]">Inicio de la etiqueta Debug encontrada en el URI: [%s]</entry>
+<entry key="Debug tag Id: [%s]">Etiqueta Debug Id: [%s]</entry>
+<entry key="End Debug tag found on URI: [%s]">Finalización de la etiqueta Debug encontrada en el URI: [%s]</entry>
+<entry key="Line: [%s], Column: [%s]">Línea: [%s], Column: [%s]</entry>
+<entry key="Post initialize of service: [%s]">Post inicialización del servicio: [%s]</entry>
+<entry key="Post initialize of services manager: [%s]">Post inicialización del administrador de servicios: [%s]</entry>
+<entry key="[%s] executed on: [%s] ms">[%s] executado en: [%s] ms</entry>
+<entry key=""></entry>
+<entry key=""></entry>
 <entry key=""></entry>
 <entry key=""></entry>
 <entry key=""></entry>

@@ -16,6 +16,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Arrays;
 import java.util.Vector;
 
 import ExtendedLogger.CExtendedLogger;
@@ -28,45 +29,17 @@ public class CClassPathLoader {
     protected final URLClassLoader loader;
     protected final Method methodAdd;
     
+    protected final String _BackupExtension = ".backup";
+    
     protected int intCountClassLoaded = 0;
     
-	protected CExtendedLogger Logger = null;
-    protected CLanguage Lang = null;
-    
-    public CClassPathLoader( CExtendedLogger Logger, CLanguage Lang ) throws Exception {
+    public CClassPathLoader() throws Exception {
 		
-		this.Logger = Logger;
-		this.Lang = Lang;
-    	
     	loader = (URLClassLoader) ClassLoader.getSystemClassLoader();
 		methodAdd = URLClassLoader.class.getDeclaredMethod( METHOD_ADD_URL, METHOD_PARAMS );
 		methodAdd.setAccessible( true );
 
 	}
-    
-    public void setLogger( CExtendedLogger Logger ) {
-    	
-    	this.Logger = Logger;
-    	
-    }
-    
-    public CExtendedLogger getLogger() {
-    	
-    	return this.Logger;
-    	
-    }
-
-    public void setLang( CLanguage Lang ) {
-    	
-    	this.Lang = Lang;
-    	
-    }
-    
-    public CLanguage getLang() {
-    	
-    	return this.Lang;
-    	
-    }
     
     public int getCountClassLoaded() {
     	
@@ -74,13 +47,13 @@ public class CClassPathLoader {
     	
     }
     
-    public URL[] getURLs() {
+    protected URL[] getURLs() {
         
     	return loader.getURLs();
     
     }
 
-    public boolean addURL(URL url) {
+    protected boolean addURL( URL url, CExtendedLogger Logger ) {
     
     	boolean bResult = false;
     	
@@ -98,10 +71,9 @@ public class CClassPathLoader {
     		   
     	   } 
     	   catch ( Exception Ex ) {
-    		    
-    		   CExtendedLogger GlobalLogger = CExtendedLogger.getLogger( DefaultConstantsServicesDaemon.strDefaultLoggerName );
 
-    		   GlobalLogger.LogException( "-1010", Ex.getMessage(), Ex ); 
+    		   if ( Logger != null )
+    			   Logger.logException( "-1010", Ex.getMessage(), Ex ); 
            
     	   }
         
@@ -111,13 +83,13 @@ public class CClassPathLoader {
     	
     }
 
-    public void addURLs( URL[] urls ) {
+    protected void addURLs( URL[] urls, CExtendedLogger Logger ) {
 
     	if ( urls != null ) {
         
     	   for ( URL url : urls ) {
            
-    		   addURL( url );
+    		   addURL( url, Logger );
            
     	   }
         
@@ -125,26 +97,26 @@ public class CClassPathLoader {
     	
     }
 
-    public void addFile( File FileToAdd ) throws MalformedURLException {
+    protected void addFile( File FileToAdd, CExtendedLogger Logger ) throws MalformedURLException {
     
     	if ( FileToAdd != null ) {
         
-    	   addURL( FileToAdd.toURI().toURL() );
+    	   addURL( FileToAdd.toURI().toURL(), Logger );
         
     	}
     	
     }
 
-    public void addFile(String strFileName ) throws MalformedURLException {
+    protected void addFile( String strFileName, CExtendedLogger Logger ) throws MalformedURLException {
     
     	System.out.println( strFileName );
-    	addFile( new File( strFileName ) );
+    	addFile( new File( strFileName ), Logger );
     
     }
     
-    public static File[] FindFilesToLoad( String strPath, String strFileExtenstion ) {
+    protected File[] FindFilesToLoad( String strPath, String strFileExtension ) {
        
-    	final String strFileExt = strFileExtenstion;
+    	final String strFileExt = strFileExtension;
     	
         Vector<File> vUrls = new Vector<File>();
 
@@ -165,8 +137,12 @@ public class CClassPathLoader {
 
             for ( File jar : jars ) {
                 
-            	vUrls.add(jar);
+            	if ( jar.getAbsolutePath().endsWith( _BackupExtension ) == false ) {
+            		
+            		vUrls.add(jar);
             
+            	}
+            	
             }
         
         }
@@ -175,7 +151,7 @@ public class CClassPathLoader {
 
     }
     
-    public static File[] RecursiveFindFilesToLoad( String strPath, String strFileExtenstion, int intMaxDepth, int intActuakDepth ) {
+    protected File[] RecursiveFindFilesToLoad( String strPath, String strFileExtension, int intMaxDepth, int intActualDepth ) {
     	
         Vector<File> vUrls = new Vector<File>();
 
@@ -183,15 +159,17 @@ public class CClassPathLoader {
  
         if ( Directory.exists() && Directory.isDirectory() ) {
             
-            File[] ListFoundFile = Directory.listFiles(); 
+            File[] ListFoundFile = Directory.listFiles();
+            
+            Arrays.sort( ListFoundFile );
             
             for ( File FileFound : ListFoundFile ) {
                 
             	if ( FileFound.isDirectory() == true && FileFound.canRead() == true ) { 
             	
-            		if ( intActuakDepth + 1 <= intMaxDepth ) {  
+            		if ( intActualDepth + 1 <= intMaxDepth && FileFound.getAbsolutePath().endsWith( _BackupExtension ) == false ) {  
             			
-            			File[] DeepListFoundFile = RecursiveFindFilesToLoad( FileFound.getAbsolutePath(), strFileExtenstion, intMaxDepth, intActuakDepth + 1 );
+            			File[] DeepListFoundFile = RecursiveFindFilesToLoad( FileFound.getAbsolutePath(), strFileExtension, intMaxDepth, intActualDepth + 1 );
             		
                         for ( File DeepFileFound : DeepListFoundFile ) {
   
@@ -201,7 +179,7 @@ public class CClassPathLoader {
             		}	
             	
             	}	
-            	else if ( FileFound.isFile() == true && FileFound.getAbsolutePath().endsWith( strFileExtenstion ) == true ) {
+            	else if ( FileFound.isFile() == true && FileFound.getAbsolutePath().endsWith( strFileExtension ) == true ) {
             	
             		vUrls.add(  FileFound );
 
@@ -215,19 +193,33 @@ public class CClassPathLoader {
         
     }
     
-    public boolean LoadClassFiles( String strPath, String strFileExtenstion, int intMaxDepth ) {
+    public boolean LoadClassFiles( String strPath, String strFileExtension, int intMaxDepth, CExtendedLogger Logger, CLanguage Lang  ) {
 
     	boolean bResult = false;
         
         try {
 
-			if ( Logger != null && Lang != null )   
-        	    Logger.LogMessage( "1", Lang.Translate( "Loading classes from path: [%s]", strPath ) ); 
+			if ( Logger != null ) {  
+        	 
+				if ( Lang != null )
+					Logger.logMessage( "1", Lang.translate( "Loading classes from path: [%s]", strPath ) );
+				else
+					Logger.logMessage( "1", String.format( "Loading classes from path: [%s]", strPath ) );
+					
+			}    
 
-			File[] jars = RecursiveFindFilesToLoad( strPath, strFileExtenstion, intMaxDepth,  1 );
+			File[] jars = RecursiveFindFilesToLoad( strPath, strFileExtension, intMaxDepth,  1 );
 			
-			if ( Logger != null && Lang != null )
-				Logger.LogMessage( "1", Lang.Translate( "Jar count files found: [%s]", Integer.toString( jars.length ) ) ); 
+			Arrays.sort( jars );
+			
+			if ( Logger != null ) {
+			
+				if ( Lang != null )
+					Logger.logMessage( "1", Lang.translate( "Jar count files found: [%s]", Integer.toString( jars.length ) ) );
+				else
+					Logger.logMessage( "1", String.format( "Jar count files found: [%s]", Integer.toString( jars.length ) ) );
+					
+			}	
 
             if ( jars.length > 0 ) {
                 
@@ -235,16 +227,22 @@ public class CClassPathLoader {
 
                 	try {
                         
-                		this.addFile( jar );
+                		this.addFile( jar, Logger );
 
-                		if ( Logger != null && Lang != null )
-            				Logger.LogMessage( "1", Lang.Translate( "Added jar file from the path: [%s]", jar.getAbsolutePath() ) ); 
+                		if ( Logger != null ) {
+            			
+                			if ( Lang != null )
+                				Logger.logMessage( "1", Lang.translate( "Added jar file from the path: [%s]", jar.getAbsolutePath() ) );
+                			else 
+                				Logger.logMessage( "1", String.format( "Added jar file from the path: [%s]", jar.getAbsolutePath() ) );
+                		
+                		}	
                     
                 	} 
                 	catch ( Exception Ex ) {
                        
-                		if ( Logger != null && Lang != null ) 
-                		    Logger.LogException( "-1010", Ex.getMessage(), Ex ); 
+                		if ( Logger != null ) 
+                		    Logger.logException( "-1010", Ex.getMessage(), Ex ); 
 
                 	}
             
@@ -258,14 +256,13 @@ public class CClassPathLoader {
     	} 
     	catch ( Exception Ex ) {
 
-    		if ( Logger != null && Lang != null ) 
-    		    Logger.LogException( "-1011", Ex.getMessage(), Ex ); 
+    		if ( Logger != null ) 
+    		    Logger.logException( "-1011", Ex.getMessage(), Ex ); 
 
         }
         
     	return bResult;
     	
     }
-    
 
 }

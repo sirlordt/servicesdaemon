@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.sql.SQLException;
 
-import com.sun.rowset.CachedRowSetImpl;
-import com.sun.rowset.WebRowSetImpl;
+import rowset.CachedRowSetImpl;
+import rowset.WebRowSetImpl;
 
 public class CWebRowSetImpl extends WebRowSetImpl {
 
@@ -29,7 +29,7 @@ public class CWebRowSetImpl extends WebRowSetImpl {
 	@SuppressWarnings("unchecked")
 	public void initMergedWriteXML( java.io.OutputStream oStream ) {
 		
-		xmlWriter.initStackAndWriter( oStream );
+		//xmlWriter.initStackAndWriter( oStream );
 
 		if ( xmlWriter.getInternalStack() != null ) { //keep the correct indent in the xml file
 		

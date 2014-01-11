@@ -90,7 +90,7 @@ public class CMemoryFieldData {
 				
 				if ( Logger != null ) {
 					
-					Logger.LogException( "-1015", Ex.getMessage(), Ex );
+					Logger.logException( "-1015", Ex.getMessage(), Ex );
 				
 				}	
 				
@@ -220,9 +220,9 @@ public class CMemoryFieldData {
 					if ( Logger != null ) {
 						
 						if ( Lang != null )
-						    Logger.LogWarning( "-1", Lang.Translate( "Unknown SQL data type [%s]", Integer.toString( intSQLType ) ) );
+						    Logger.logWarning( "-1", Lang.translate( "Unknown SQL data type [%s]", Integer.toString( intSQLType ) ) );
 						else
-						    Logger.LogWarning( "-1", String.format( "Unknown SQL data type [%s]", Integer.toString( intSQLType ) ) );
+						    Logger.logWarning( "-1", String.format( "Unknown SQL data type [%s]", Integer.toString( intSQLType ) ) );
 						
 						
 					}
@@ -238,7 +238,7 @@ public class CMemoryFieldData {
 
 			if ( Logger != null ) {
 				
-				Logger.LogException( "-1015", Ex.getMessage(), Ex );
+				Logger.logException( "-1015", Ex.getMessage(), Ex );
 			
 			}	
 
@@ -274,7 +274,7 @@ public class CMemoryFieldData {
 					case Types.BIGINT: { this.addData( Long.parseLong( strData ) ); break; }
 					case Types.SMALLINT: { this.addData( Short.parseShort( strData ) ); break; }
 					case Types.VARCHAR: 
-					case Types.CHAR: { this.addData( (String) strData ); break; }
+					case Types.CHAR: { this.addData( strData ); break; }
 					case Types.BOOLEAN: { this.addData( Boolean.parseBoolean( strData ) ); break; }
 					case Types.BLOB: {
 	
@@ -331,9 +331,9 @@ public class CMemoryFieldData {
 						if ( Logger != null ) {
 							
 							if ( Lang != null )
-							    Logger.LogWarning( "-1", Lang.Translate( "Unknown SQL data type [%s]", Integer.toString( intSQLType ) ) );
+							    Logger.logWarning( "-1", Lang.translate( "Unknown SQL data type [%s]", Integer.toString( intSQLType ) ) );
 							else
-							    Logger.LogWarning( "-1", String.format( "Unknown SQL data type [%s]", Integer.toString( intSQLType ) ) );
+							    Logger.logWarning( "-1", String.format( "Unknown SQL data type [%s]", Integer.toString( intSQLType ) ) );
 							
 							
 						}
@@ -356,7 +356,7 @@ public class CMemoryFieldData {
 
 			if ( Logger != null ) {
 				
-				Logger.LogException( "-1015", Ex.getMessage(), Ex );
+				Logger.logException( "-1015", Ex.getMessage(), Ex );
 			
 			}	
 
@@ -442,7 +442,7 @@ public class CMemoryFieldData {
 						case Types.BIGINT: { bResult = (Long) Value == (Long) FieldData; break; }
 						case Types.SMALLINT: { bResult = (Short) Value == (Short) FieldData; break; }
 						case Types.VARCHAR: 
-						case Types.CHAR: { bResult = ((String) Value).equals( (String) FieldData ); break; }
+						case Types.CHAR: { bResult = ((String) Value).equals( FieldData ); break; }
 						case Types.BOOLEAN: { bResult = (Boolean) Value  == (Boolean) FieldData; break; }
 						case Types.BLOB: {
 	
@@ -471,9 +471,9 @@ public class CMemoryFieldData {
 							if ( Logger != null ) {
 								
 								if ( Lang != null )
-								    Logger.LogWarning( "-1", Lang.Translate( "Unknown SQL data type [%s]", Integer.toString( intSQLType ) ) );
+								    Logger.logWarning( "-1", Lang.translate( "Unknown SQL data type [%s]", Integer.toString( intSQLType ) ) );
 								else
-								    Logger.LogWarning( "-1", String.format( "Unknown SQL data type [%s]", Integer.toString( intSQLType ) ) );
+								    Logger.logWarning( "-1", String.format( "Unknown SQL data type [%s]", Integer.toString( intSQLType ) ) );
 								
 								
 							}
@@ -489,7 +489,7 @@ public class CMemoryFieldData {
 
 					if ( Logger != null ) {
 						
-						Logger.LogException( "-1015", Ex.getMessage(), Ex );
+						Logger.logException( "-1015", Ex.getMessage(), Ex );
 					
 					}	
 
@@ -526,7 +526,7 @@ public class CMemoryFieldData {
 						case Types.BIGINT: { bResult = Long.parseLong( strValue ) == (Long) FieldData; break; }
 						case Types.SMALLINT: { bResult = Short.parseShort( strValue ) == (Short) FieldData; break; }
 						case Types.VARCHAR: 
-						case Types.CHAR: { bResult = strValue.equals( (String) FieldData ); break; }
+						case Types.CHAR: { bResult = strValue.equals( FieldData ); break; }
 						case Types.BOOLEAN: { bResult = Boolean.parseBoolean( strValue ) == (Boolean) FieldData; break; }
 						case Types.BLOB: {
 	
@@ -581,9 +581,9 @@ public class CMemoryFieldData {
 							if ( Logger != null ) {
 								
 								if ( Lang != null )
-								    Logger.LogWarning( "-1", Lang.Translate( "Unknown SQL data type [%s]", Integer.toString( intSQLType ) ) );
+								    Logger.logWarning( "-1", Lang.translate( "Unknown SQL data type [%s]", Integer.toString( intSQLType ) ) );
 								else
-								    Logger.LogWarning( "-1", String.format( "Unknown SQL data type [%s]", Integer.toString( intSQLType ) ) );
+								    Logger.logWarning( "-1", String.format( "Unknown SQL data type [%s]", Integer.toString( intSQLType ) ) );
 								
 								
 							}
@@ -599,7 +599,7 @@ public class CMemoryFieldData {
 
 					if ( Logger != null ) {
 						
-						Logger.LogException( "-1015", Ex.getMessage(), Ex );
+						Logger.logException( "-1015", Ex.getMessage(), Ex );
 					
 					}	
 
@@ -700,9 +700,9 @@ public class CMemoryFieldData {
 							if ( Logger != null ) {
 								
 								if ( Lang != null )
-								    Logger.LogWarning( "-1", Lang.Translate( "Unknown SQL data type [%s]", Integer.toString( intSQLType ) ) );
+								    Logger.logWarning( "-1", Lang.translate( "Unknown SQL data type [%s]", Integer.toString( intSQLType ) ) );
 								else
-								    Logger.LogWarning( "-1", String.format( "Unknown SQL data type [%s]", Integer.toString( intSQLType ) ) );
+								    Logger.logWarning( "-1", String.format( "Unknown SQL data type [%s]", Integer.toString( intSQLType ) ) );
 								
 								
 							}
@@ -718,7 +718,7 @@ public class CMemoryFieldData {
 
 					if ( Logger != null ) {
 						
-						Logger.LogException( "-1015", Ex.getMessage(), Ex );
+						Logger.logException( "-1015", Ex.getMessage(), Ex );
 					
 					}	
 

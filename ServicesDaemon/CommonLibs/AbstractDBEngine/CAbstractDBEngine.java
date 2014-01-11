@@ -44,7 +44,7 @@ import CommonClasses.CMemoryRowSet;
 import CommonClasses.CNamedCallableStatement;
 import CommonClasses.CNamedPreparedStatement;
 import CommonClasses.CResultSetResult;
-import CommonClasses.CServicesDaemonConfig;
+import CommonClasses.CConfigServicesDaemon;
 import CommonClasses.ConfigXMLTagsServicesDaemon;
 import CommonClasses.NamesSQLTypes;
 import ExtendedLogger.CExtendedLogger;
@@ -69,7 +69,7 @@ public abstract class CAbstractDBEngine {
 			
 			if ( DBEngine.strName.toLowerCase().equals( strName ) == true ) {
 			
-				if ( Utilities.VersionGreaterEquals( strVersion, DBEngine.getVersion() ) ) {
+				if ( Utilities.versionGreaterEquals( strVersion, DBEngine.getVersion() ) ) {
 				
 				   Result = DBEngine;
 				   break;
@@ -84,7 +84,7 @@ public abstract class CAbstractDBEngine {
 		
 	}
 	
-	public static boolean ResigterDBEngine( CAbstractDBEngine DBEngine ) { 
+	public static boolean registerDBEngine( CAbstractDBEngine DBEngine ) { 
 		
 		boolean bResult = false;
 				
@@ -100,13 +100,13 @@ public abstract class CAbstractDBEngine {
 		
 	}
     
-    public static void ClearRegisteredDBEngines() {
+    public static void clearRegisteredDBEngines() {
     	
     	RegisteredDBEngines.clear();
     	
     }
     
-    public static int GetCountRegisteredDBEngines() {
+    public static int getCountRegisteredDBEngines() {
     	
     	return RegisteredDBEngines.size();
     	
@@ -116,7 +116,7 @@ public abstract class CAbstractDBEngine {
     
     protected String strName;
     protected String strVersion;
-    protected CServicesDaemonConfig ServicesDaemonConfig = null;
+    protected CConfigServicesDaemon ServicesDaemonConfig = null;
 	
     public CAbstractDBEngine() {
 	}
@@ -133,7 +133,7 @@ public abstract class CAbstractDBEngine {
     	
     }
     
-    public boolean InitializeDBEngine( CServicesDaemonConfig ServicesDaemonConfig ) {
+    public boolean initializeDBEngine( CConfigServicesDaemon ServicesDaemonConfig ) {
     	
     	this.ServicesDaemonConfig = ServicesDaemonConfig;
     	
@@ -157,42 +157,42 @@ public abstract class CAbstractDBEngine {
     	
     }
 	
-	public SQLStatementType getSQLStatementType( String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
+	public SQLStatementType getSQLStatementType( String strCommand, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		SQLStatementType Result = SQLStatementType.Unknown;
 
 		try {
 		
-			if ( strSQL != null  && strSQL.length() >= 6 ) {
+			if ( strCommand != null  && strCommand.length() >= 6 ) {
 
-				strSQL = strSQL.toLowerCase();
+				strCommand = strCommand.toLowerCase();
 				
-				if ( strSQL.indexOf( ConstantsAbstractDBEngine._CALL ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._CALL1 ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._CALL_FUNCTION ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._CALL_FUNCTION1 ) == 0 ) { 
+				if ( strCommand.indexOf( ConstantsAbstractDBEngine._CALL ) == 0 || strCommand.indexOf( ConstantsAbstractDBEngine._CALL1 ) == 0 || strCommand.indexOf( ConstantsAbstractDBEngine._CALL_FUNCTION ) == 0 || strCommand.indexOf( ConstantsAbstractDBEngine._CALL_FUNCTION1 ) == 0 ) { 
 
 					Result = SQLStatementType.Call;
 					
 				}
-				else if ( strSQL.indexOf( ConstantsAbstractDBEngine._SELECT ) == 0 ) {
+				else if ( strCommand.indexOf( ConstantsAbstractDBEngine._SELECT ) == 0 ) {
 
 					Result = SQLStatementType.Select;
 					
 				}
-				else if ( strSQL.indexOf( ConstantsAbstractDBEngine._INSERT ) == 0 ) {
+				else if ( strCommand.indexOf( ConstantsAbstractDBEngine._INSERT ) == 0 ) {
 					
 					Result = SQLStatementType.Insert;
 					
 				}
-				else if ( strSQL.indexOf( ConstantsAbstractDBEngine._UPDATE ) == 0 ) {
+				else if ( strCommand.indexOf( ConstantsAbstractDBEngine._UPDATE ) == 0 ) {
 					
 					Result = SQLStatementType.Update;
 					
 				}
-				else if ( strSQL.indexOf( ConstantsAbstractDBEngine._DELETE ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._TRUNCATE ) == 0 ) {
+				else if ( strCommand.indexOf( ConstantsAbstractDBEngine._DELETE ) == 0 || strCommand.indexOf( ConstantsAbstractDBEngine._TRUNCATE ) == 0 ) {
 					
 					Result = SQLStatementType.Delete;
 					
 				}
-				else if ( strSQL.indexOf( ConstantsAbstractDBEngine._CREATE ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._ALTER ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._MODIFY ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._DROP ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._SHOW ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._DESCRIBE ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._SET ) == 0 || strSQL.indexOf( ConstantsAbstractDBEngine._GO ) == 0) {
+				else if ( strCommand.indexOf( ConstantsAbstractDBEngine._CREATE ) == 0 || strCommand.indexOf( ConstantsAbstractDBEngine._ALTER ) == 0 || strCommand.indexOf( ConstantsAbstractDBEngine._MODIFY ) == 0 || strCommand.indexOf( ConstantsAbstractDBEngine._DROP ) == 0 || strCommand.indexOf( ConstantsAbstractDBEngine._SHOW ) == 0 || strCommand.indexOf( ConstantsAbstractDBEngine._DESCRIBE ) == 0 || strCommand.indexOf( ConstantsAbstractDBEngine._SET ) == 0 || strCommand.indexOf( ConstantsAbstractDBEngine._GO ) == 0) {
 					
 					Result = SQLStatementType.DDL;
 					
@@ -204,7 +204,7 @@ public abstract class CAbstractDBEngine {
 		catch ( Exception Ex ) {
 			
 			if ( Logger != null )
-				Logger.LogException( "-1015", Ex.getMessage(), Ex );
+				Logger.logException( "-1015", Ex.getMessage(), Ex );
 			
 		}
 			
@@ -212,20 +212,20 @@ public abstract class CAbstractDBEngine {
 		
 	}
     
-    public String RemoveCallFunction( String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    public String removeCallFunction( String strCommand, CExtendedLogger Logger, CLanguage Lang ) {
     	
 		try {
 			
-			if ( strSQL.indexOf( ConstantsAbstractDBEngine._CALL_FUNCTION ) == 0  ) {
+			if ( strCommand.indexOf( ConstantsAbstractDBEngine._CALL_FUNCTION ) == 0  ) {
 
-				String strTmp = strSQL.substring( ConstantsAbstractDBEngine._CALL_FUNCTION.length() ).trim(); //strSQL.replace( ConstantsAbstractDBEngine._CALL_FUNCTION, ConstantsAbstractDBEngine._CALL); //( ConstantsAbstractDBEngine._CALL_FUNCTION.length() );
+				String strTmp = strCommand.substring( ConstantsAbstractDBEngine._CALL_FUNCTION.length() ).trim(); //strCommand.replace( ConstantsAbstractDBEngine._CALL_FUNCTION, ConstantsAbstractDBEngine._CALL); //( ConstantsAbstractDBEngine._CALL_FUNCTION.length() );
 
 				return strTmp;
 
 			}
-			else if ( strSQL.indexOf( ConstantsAbstractDBEngine._CALL_FUNCTION1 ) == 0 ) {
+			else if ( strCommand.indexOf( ConstantsAbstractDBEngine._CALL_FUNCTION1 ) == 0 ) {
 
-				String strTmp = "{" + strSQL.substring( ConstantsAbstractDBEngine._CALL_FUNCTION1.length() ).trim(); //strSQL.replace( ConstantsAbstractDBEngine._CALL_FUNCTION1, ConstantsAbstractDBEngine._CALL1 );
+				String strTmp = "{" + strCommand.substring( ConstantsAbstractDBEngine._CALL_FUNCTION1.length() ).trim(); //strCommand.replace( ConstantsAbstractDBEngine._CALL_FUNCTION1, ConstantsAbstractDBEngine._CALL1 );
 
 				return strTmp;
 
@@ -235,11 +235,11 @@ public abstract class CAbstractDBEngine {
 		catch ( Exception Ex ) {
 			
 			if ( Logger != null )
-				Logger.LogException( "-1015", Ex.getMessage(), Ex );
+				Logger.logException( "-1015", Ex.getMessage(), Ex );
 			
 		}
     	
-    	return strSQL;
+    	return strCommand;
     	
     }
 	
@@ -330,7 +330,7 @@ public abstract class CAbstractDBEngine {
 						
 						        if ( Logger != null && Lang != null ) {
 						    	   
-						        	Logger.LogWarning( "-1", Lang.Translate( "Unkown Macro type [%s], field name [%s], field value [%s]", Integer.toString( intMacrosTypes[ intMacroIndex ] ), strFieldName, strMacrosValues[ intMacroIndex ] ) );
+						        	Logger.logWarning( "-1", Lang.translate( "Unkown Macro type [%s], field name [%s], field value [%s]", Integer.toString( intMacrosTypes[ intMacroIndex ] ), strFieldName, strMacrosValues[ intMacroIndex ] ) );
 						    	   
 						        } 
 		
@@ -349,7 +349,7 @@ public abstract class CAbstractDBEngine {
 		catch ( Exception Ex ) {
 			
 			if ( Logger != null )
-				Logger.LogException( "-1015", Ex.getMessage(), Ex );
+				Logger.logException( "-1015", Ex.getMessage(), Ex );
 			
 		}
 		
@@ -430,7 +430,7 @@ public abstract class CAbstractDBEngine {
 						
 						       if ( Logger != null && Lang != null ) {
 						    	   
-									Logger.LogWarning( "-1", Lang.Translate( "Unkown SQL field type [%s], field name [%s], field value [%s]", Integer.toString( intFieldType ), strFieldName, strFieldValue ) );
+									Logger.logWarning( "-1", Lang.translate( "Unkown SQL field type [%s], field name [%s], field value [%s]", Integer.toString( intFieldType ), strFieldName, strFieldValue ) );
 						    	   
 						       } 
 						
@@ -449,7 +449,7 @@ public abstract class CAbstractDBEngine {
 		catch ( Exception Ex ) {
 			
 			if ( Logger != null )
-				Logger.LogException( "-1015", Ex.getMessage(), Ex );
+				Logger.logException( "-1015", Ex.getMessage(), Ex );
 			
 		}
 		
@@ -538,7 +538,7 @@ public abstract class CAbstractDBEngine {
 						
 						        if ( Logger != null && Lang != null ) {
 						    	   
-						        	Logger.LogWarning( "-1", Lang.Translate( "Unkown Macro type [%s], field name [%s], field value [%s]", Integer.toString( intMacrosTypes[ intMacroIndex ] ), strFieldName, strMacrosValues[ intMacroIndex ] ) );
+						        	Logger.logWarning( "-1", Lang.translate( "Unkown Macro type [%s], field name [%s], field value [%s]", Integer.toString( intMacrosTypes[ intMacroIndex ] ), strFieldName, strMacrosValues[ intMacroIndex ] ) );
 						    	   
 						        } 
 		
@@ -557,7 +557,7 @@ public abstract class CAbstractDBEngine {
 		catch ( Exception Ex ) {
 			
 			if ( Logger != null )
-				Logger.LogException( "-1015", Ex.getMessage(), Ex );
+				Logger.logException( "-1015", Ex.getMessage(), Ex );
 			
 		}
 		
@@ -640,7 +640,7 @@ public abstract class CAbstractDBEngine {
 							
 							       if ( Logger != null && Lang != null ) {
 							    	   
-										Logger.LogWarning( "-1", Lang.Translate( "Unkown SQL field type [%s], field name [%s], field value [%s]", Integer.toString( intFieldType ), strFieldName, strFieldValue ) );
+										Logger.logWarning( "-1", Lang.translate( "Unkown SQL field type [%s], field name [%s], field value [%s]", Integer.toString( intFieldType ), strFieldName, strFieldValue ) );
 							    	   
 							       } 
 							
@@ -668,7 +668,7 @@ public abstract class CAbstractDBEngine {
 					
 					if ( Logger != null ) {
 						
-						Logger.LogException( "-1015", Ex.getMessage(), Ex );
+						Logger.logException( "-1015", Ex.getMessage(), Ex );
 					
 					}
 					
@@ -680,7 +680,7 @@ public abstract class CAbstractDBEngine {
 		catch ( Exception Ex ) {
 			
 			if ( Logger != null )
-				Logger.LogException( "-1016", Ex.getMessage(), Ex );
+				Logger.logException( "-1016", Ex.getMessage(), Ex );
 			
 		}
 		
@@ -688,24 +688,26 @@ public abstract class CAbstractDBEngine {
 	
 	}
 	
-    public abstract Connection getDBConnection( CDBEngineConfigConnection ConfigDBConnection, CExtendedLogger Logger, CLanguage Lang );
+    public abstract CAbstractDBConnection getDBConnection( CDBEngineConfigNativeDBConnection ConfigDBConnection, CExtendedLogger Logger, CLanguage Lang );
 	
-	public boolean isValid( Connection DBConnection, CExtendedLogger Logger, CLanguage Lang ) {
+	public boolean isValid( CAbstractDBConnection DBConnection, CExtendedLogger Logger, CLanguage Lang ) {
+		
+    	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
 		
 		boolean bValid = false;
 		
 		try {   
 		    
-			bValid = DBConnection.isValid( 5 );
+			bValid = JDBConnection.isValid( 5 );
 			
 			if ( bValid == false && Logger != null && Lang != null ) 
-				Logger.LogMessage( "1", Lang.Translate( "Database connection is invalid" ) );        
+				Logger.logMessage( "1", Lang.translate( "Database connection is invalid" ) );        
 			
 		}
 		catch ( Exception Ex ) {
 		
 			if ( Logger != null )
-				Logger.LogException( "-1015", Ex.getMessage(), Ex ); 
+				Logger.logException( "-1015", Ex.getMessage(), Ex ); 
 
 		}
 		
@@ -713,17 +715,19 @@ public abstract class CAbstractDBEngine {
 		
 	}
 	
-	public boolean setAutoCommit( Connection DBConnection, boolean bAutoCommit, CExtendedLogger Logger, CLanguage Lang ) {
+	public boolean setAutoCommit( CAbstractDBConnection DBConnection, boolean bAutoCommit, CExtendedLogger Logger, CLanguage Lang ) {
+		
+    	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
 		
 		try {   
 		
 			if ( this.isValid( DBConnection, Logger, Lang ) ) {
 
-				DBConnection.setAutoCommit( bAutoCommit );
+				JDBConnection.setAutoCommit( bAutoCommit );
 
 				if ( Logger != null && Lang != null ) {
 
-					Logger.LogMessage( "1", Lang.Translate( "Database connection auto commit set to: [%s]", Boolean.toString( bAutoCommit ) ) );        
+					Logger.logMessage( "1", Lang.translate( "Database connection auto commit set to: [%s]", Boolean.toString( bAutoCommit ) ) );        
 
 				}
 
@@ -741,8 +745,8 @@ public abstract class CAbstractDBEngine {
 
 			if ( Logger != null  && Lang != null ) {
         		
-				Logger.LogWarning( "-1", Lang.Translate( "Cannot change the database connection auto commit to: [%s]", Boolean.toString( bAutoCommit ) ) );        
-				Logger.LogException( "-1015", Ex.getMessage(), Ex );
+				Logger.logWarning( "-1", Lang.translate( "Cannot change the database connection auto commit to: [%s]", Boolean.toString( bAutoCommit ) ) );        
+				Logger.logException( "-1015", Ex.getMessage(), Ex );
 				
 			}	
 
@@ -752,17 +756,19 @@ public abstract class CAbstractDBEngine {
 		
 	}
 	
-	public boolean commit( Connection DBConnection, CExtendedLogger Logger, CLanguage Lang ) { 
+	public boolean commit( CAbstractDBConnection DBConnection, CExtendedLogger Logger, CLanguage Lang ) { 
 
+    	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
+		
 		try {
 
 			if ( this.isValid( DBConnection, Logger, Lang ) ) {
 
-				DBConnection.commit();
+				JDBConnection.commit();
 
 				if ( Logger != null && Lang != null ) {
 
-					Logger.LogMessage( "1", Lang.Translate( "Database transaction commited"  ) );        
+					Logger.logMessage( "1", Lang.translate( "Database transaction commited"  ) );        
 
 				}
 
@@ -780,8 +786,8 @@ public abstract class CAbstractDBEngine {
 
 			if ( Logger != null && Lang != null ) {
         		
-				Logger.LogWarning( "-1", Lang.Translate( "Cannot commit database transaction" ) );        
-				Logger.LogException( "-1015", Ex.getMessage(), Ex );
+				Logger.logWarning( "-1", Lang.translate( "Cannot commit database transaction" ) );        
+				Logger.logException( "-1015", Ex.getMessage(), Ex );
 				
 			}	
 
@@ -791,17 +797,19 @@ public abstract class CAbstractDBEngine {
 		
 	}
 	
-	public boolean rollback( Connection DBConnection, CExtendedLogger Logger, CLanguage Lang ) {
+	public boolean rollback( CAbstractDBConnection DBConnection, CExtendedLogger Logger, CLanguage Lang ) {
+		
+    	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
 		
 		try {
 
 			if ( this.isValid( DBConnection, Logger, Lang ) ) {
 
-				DBConnection.rollback();
+				JDBConnection.rollback();
 
 				if ( Logger != null && Lang != null ) {
 
-					Logger.LogMessage( "1", Lang.Translate( "Database transaction rollback"  ) );        
+					Logger.logMessage( "1", Lang.translate( "Database transaction rollback"  ) );        
 
 				}
 
@@ -819,8 +827,8 @@ public abstract class CAbstractDBEngine {
 
 			if ( Logger != null && Lang != null ) {
         		
-				Logger.LogWarning( "-1", Lang.Translate( "Cannot rollback database transaction" ) );        
-				Logger.LogException( "-1015", Ex.getMessage(), Ex );
+				Logger.logWarning( "-1", Lang.translate( "Cannot rollback database transaction" ) );        
+				Logger.logException( "-1015", Ex.getMessage(), Ex );
 				
 			}	
 
@@ -830,17 +838,19 @@ public abstract class CAbstractDBEngine {
 		
 	}
 	
-	public boolean close( Connection DBConnection, CExtendedLogger Logger, CLanguage Lang ) {
+	public boolean close( CAbstractDBConnection DBConnection, CExtendedLogger Logger, CLanguage Lang ) {
+		
+    	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
 		
 		try {
 
 			if ( this.isValid( DBConnection, Logger, Lang ) ) {
 
-				DBConnection.close();
+				JDBConnection.close();
 
 				if ( Logger != null && Lang != null ) {
 
-					Logger.LogMessage( "1", Lang.Translate( "Database connection closed"  ) );        
+					Logger.logMessage( "1", Lang.translate( "Database connection closed"  ) );        
 
 				}
 
@@ -858,8 +868,8 @@ public abstract class CAbstractDBEngine {
 
 			if ( Logger != null && Lang != null ) {
         		
-				Logger.LogWarning( "-1", Lang.Translate( "Cannot close database connection" ) );        
-				Logger.LogException( "-1015", Ex.getMessage(), Ex );
+				Logger.logWarning( "-1", Lang.translate( "Cannot close database connection" ) );        
+				Logger.logException( "-1015", Ex.getMessage(), Ex );
 				
 			}	
 
@@ -869,8 +879,10 @@ public abstract class CAbstractDBEngine {
 		
 	}
 
-    public CMemoryRowSet ExecuteQuerySQLByInputServiceParameters( Connection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    public CMemoryRowSet executeQuerySQLByInputServiceParameters( CAbstractDBConnection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strCommand, CExtendedLogger Logger, CLanguage Lang ) {
 
+    	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
+    	
 		CMemoryRowSet Result = null;
 		
 		try {	
@@ -880,7 +892,7 @@ public abstract class CAbstractDBEngine {
 			Delimiters.put( ConfigXMLTagsServicesDaemon._StartMacroTag, ConfigXMLTagsServicesDaemon._EndMacroTag );
 			Delimiters.put( ConfigXMLTagsServicesDaemon._StartParamValue, ConfigXMLTagsServicesDaemon._EndParamValue );
 			
-			CNamedPreparedStatement NamedPreparedStatement = new CNamedPreparedStatement( DBConnection, strSQL, Delimiters );		
+			CNamedPreparedStatement NamedPreparedStatement = new CNamedPreparedStatement( JDBConnection, strCommand, Delimiters );		
 
 			HashMap<String,Integer> NamedParams = NamedPreparedStatement.getNamedParams();
 			
@@ -912,7 +924,7 @@ public abstract class CAbstractDBEngine {
 					}
 					else {
 						
-                		Logger.LogWarning( "-1", Lang.Translate( "The macro index [%s] is greater than macro values length [%s] and/or macro types length [%s]", Integer.toString( intMacroIndex ), Integer.toString( strMacrosValues.length ), Integer.toString( intMacrosTypes.length ) ) );        
+                		Logger.logWarning( "-1", Lang.translate( "The macro index [%s] is greater than macro values length [%s] and/or macro types length [%s]", Integer.toString( intMacroIndex ), Integer.toString( strMacrosValues.length ), Integer.toString( intMacrosTypes.length ) ) );        
 						
 					}
 					
@@ -922,8 +934,8 @@ public abstract class CAbstractDBEngine {
                 	
                     if ( Logger != null ) {
                     	
-                		Logger.LogWarning( "-1", Lang.Translate( "Input parameter [%s] definitions not found", NamedParam.getKey() ) );        
-                		Logger.LogWarning( "-1", Lang.Translate( "Macro value [%s] not found", NamedParam.getKey() ) );        
+                		Logger.logWarning( "-1", Lang.translate( "Input parameter [%s] definitions not found", NamedParam.getKey() ) );        
+                		Logger.logWarning( "-1", Lang.translate( "Macro value [%s] not found", NamedParam.getKey() ) );        
                     	
                     }
 
@@ -935,7 +947,7 @@ public abstract class CAbstractDBEngine {
                 	
                     if ( Logger != null ) {
                     	
-                		Logger.LogWarning( "-1", Lang.Translate( "Input parameter [%s] value not found on request", NamedParam.getKey() ) );        
+                		Logger.logWarning( "-1", Lang.translate( "Input parameter [%s] value not found on request", NamedParam.getKey() ) );        
                     	
                     }
 
@@ -954,7 +966,7 @@ public abstract class CAbstractDBEngine {
 				
                 if ( Logger != null ) {
                 	
-            		Logger.LogError( "-1001", Lang.Translate( "Cannot parse the next SQL statement [%s]", strSQL ) );        
+            		Logger.logError( "-1001", Lang.translate( "Cannot parse the next SQL statement [%s]", strCommand ) );        
                 	
                 }
 				
@@ -966,7 +978,7 @@ public abstract class CAbstractDBEngine {
 		catch ( Exception Ex ) {
 
 			if ( Logger != null )
-				Logger.LogException( "-1015", Ex.getMessage(), Ex ); 
+				Logger.logException( "-1015", Ex.getMessage(), Ex ); 
 
 		}
 
@@ -974,8 +986,10 @@ public abstract class CAbstractDBEngine {
 		
 	}
 
-    public boolean ExecuteModifySQLByInputServiceParameters( Connection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    public boolean executeModifySQLByInputServiceParameters( CAbstractDBConnection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strCommand, CExtendedLogger Logger, CLanguage Lang ) {
 		
+    	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
+    	
 		boolean bResult = false;
 		
 		try {	
@@ -985,7 +999,7 @@ public abstract class CAbstractDBEngine {
 			Delimiters.put( ConfigXMLTagsServicesDaemon._StartMacroTag, ConfigXMLTagsServicesDaemon._EndMacroTag );
 			Delimiters.put( ConfigXMLTagsServicesDaemon._StartParamValue, ConfigXMLTagsServicesDaemon._EndParamValue );
 			
-			CNamedPreparedStatement NamedPreparedStatement = new CNamedPreparedStatement( DBConnection, strSQL, Delimiters );		
+			CNamedPreparedStatement NamedPreparedStatement = new CNamedPreparedStatement( JDBConnection, strCommand, Delimiters );		
 
 			HashMap<String,Integer> NamedParams = NamedPreparedStatement.getNamedParams();
 			
@@ -1017,7 +1031,7 @@ public abstract class CAbstractDBEngine {
 					}
 					else {
 						
-                		Logger.LogWarning( "-1", Lang.Translate( "The macro index [%s] is greater than macro values length [%s] and/or macro types length [%s]", Integer.toString( intMacroIndex ), Integer.toString( strMacrosValues.length ), Integer.toString( intMacrosTypes.length ) ) );        
+                		Logger.logWarning( "-1", Lang.translate( "The macro index [%s] is greater than macro values length [%s] and/or macro types length [%s]", Integer.toString( intMacroIndex ), Integer.toString( strMacrosValues.length ), Integer.toString( intMacrosTypes.length ) ) );        
 						
 					}
 					
@@ -1027,8 +1041,8 @@ public abstract class CAbstractDBEngine {
                 	
                     if ( Logger != null ) {
                     	
-                		Logger.LogWarning( "-1", Lang.Translate( "Input parameter [%s] definitions not found", NamedParam.getKey() ) );        
-                		Logger.LogWarning( "-1", Lang.Translate( "Macro value [%s] not found", NamedParam.getKey() ) );        
+                		Logger.logWarning( "-1", Lang.translate( "Input parameter [%s] definitions not found", NamedParam.getKey() ) );        
+                		Logger.logWarning( "-1", Lang.translate( "Macro value [%s] not found", NamedParam.getKey() ) );        
                     	
                     }
 
@@ -1040,7 +1054,7 @@ public abstract class CAbstractDBEngine {
                 	
                     if ( Logger != null ) {
                     	
-                		Logger.LogWarning( "-1", Lang.Translate( "Input parameter [%s] value not found on request", NamedParam.getKey() ) );        
+                		Logger.logWarning( "-1", Lang.translate( "Input parameter [%s] value not found on request", NamedParam.getKey() ) );        
                     	
                     }
 
@@ -1060,7 +1074,7 @@ public abstract class CAbstractDBEngine {
 				
                 if ( Logger != null ) {
                 	
-            		Logger.LogError( "-1001", Lang.Translate( "Cannot parse the next SQL statement [%s]", strSQL ) );        
+            		Logger.logError( "-1001", Lang.translate( "Cannot parse the next SQL statement [%s]", strCommand ) );        
                 	
                 }
 				
@@ -1072,7 +1086,7 @@ public abstract class CAbstractDBEngine {
 		catch ( Exception Ex ) {
 
 			if ( Logger != null )
-				Logger.LogException( "-1015", Ex.getMessage(), Ex ); 
+				Logger.logException( "-1015", Ex.getMessage(), Ex ); 
 
 		}
 
@@ -1080,8 +1094,10 @@ public abstract class CAbstractDBEngine {
 		
 	}
 	
-	public CMemoryRowSet ExecuteCallableStatementByInputServiceParameters( Connection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, CExtendedLogger Logger, CLanguage Lang  ) {
+	public CMemoryRowSet executeCallableStatementByInputServiceParameters( CAbstractDBConnection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strCommand, CExtendedLogger Logger, CLanguage Lang  ) {
 
+    	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
+		
 		CMemoryRowSet Result = null;
 		
 		try {	
@@ -1091,7 +1107,7 @@ public abstract class CAbstractDBEngine {
 			Delimiters.put( ConfigXMLTagsServicesDaemon._StartMacroTag, ConfigXMLTagsServicesDaemon._EndMacroTag );
 			Delimiters.put( ConfigXMLTagsServicesDaemon._StartParamValue, ConfigXMLTagsServicesDaemon._EndParamValue );
 			
-			CNamedCallableStatement NamedCallableStatement = new CNamedCallableStatement( DBConnection, strSQL, Delimiters );		
+			CNamedCallableStatement NamedCallableStatement = new CNamedCallableStatement( JDBConnection, strCommand, Delimiters );		
 
 			HashMap<String,Integer> NamedParams = NamedCallableStatement.getNamedParams();
 			
@@ -1147,7 +1163,7 @@ public abstract class CAbstractDBEngine {
 					}
 					else {
 						
-                		Logger.LogWarning( "-1", Lang.Translate( "The macro index [%s] is greater than macro values length [%s] and/or macro types length [%s]", Integer.toString( intMacroIndex ), Integer.toString( strMacrosValues.length ), Integer.toString( intMacrosTypes.length ) ) );        
+                		Logger.logWarning( "-1", Lang.translate( "The macro index [%s] is greater than macro values length [%s] and/or macro types length [%s]", Integer.toString( intMacroIndex ), Integer.toString( strMacrosValues.length ), Integer.toString( intMacrosTypes.length ) ) );        
 						
 					}
 					
@@ -1157,8 +1173,8 @@ public abstract class CAbstractDBEngine {
                 	
                     if ( Logger != null ) {
                     	
-                		Logger.LogWarning( "-1", Lang.Translate( "Input parameter [%s] definitions not found", NamedParam.getKey() ) );        
-                		Logger.LogWarning( "-1", Lang.Translate( "Macro value [%s] not found", NamedParam.getKey() ) );        
+                		Logger.logWarning( "-1", Lang.translate( "Input parameter [%s] definitions not found", NamedParam.getKey() ) );        
+                		Logger.logWarning( "-1", Lang.translate( "Macro value [%s] not found", NamedParam.getKey() ) );        
                     	
                     }
 
@@ -1170,7 +1186,7 @@ public abstract class CAbstractDBEngine {
                 	
                     if ( Logger != null ) {
                     	
-                		Logger.LogWarning( "-1", Lang.Translate( "Input parameter [%s] value not found on request", NamedParam.getKey() ) );        
+                		Logger.logWarning( "-1", Lang.translate( "Input parameter [%s] value not found on request", NamedParam.getKey() ) );        
                     	
                     }
 
@@ -1188,7 +1204,7 @@ public abstract class CAbstractDBEngine {
 
 				if ( CallableStatementResultSet == null && bContainsOutParams ) {
 					
-					CallableStatementResultSet = this.BuildCachedRowSetFromFieldsScopeOut( TmpMemoryRowSet, NamedCallableStatement, Logger, Lang );
+					CallableStatementResultSet = this.buildCachedRowSetFromFieldsScopeOut( TmpMemoryRowSet, NamedCallableStatement, Logger, Lang );
 					
 				}
 
@@ -1199,7 +1215,7 @@ public abstract class CAbstractDBEngine {
 				
                 if ( Logger != null ) {
                 	
-            		Logger.LogError( "-1001", Lang.Translate( "Cannot parse the next SQL statement [%s]", strSQL ) );        
+            		Logger.logError( "-1001", Lang.translate( "Cannot parse the next SQL statement [%s]", strCommand ) );        
                 	
                 }
 				
@@ -1211,7 +1227,7 @@ public abstract class CAbstractDBEngine {
 		catch ( Exception Ex ) {
 
 			if ( Logger != null )
-				Logger.LogException( "-1015", Ex.getMessage(), Ex ); 
+				Logger.logException( "-1015", Ex.getMessage(), Ex ); 
 
 		}
 
@@ -1219,20 +1235,20 @@ public abstract class CAbstractDBEngine {
 		
 	}
 	
-	public abstract ResultSet ExecuteDummySQL( Connection DBConnection, String strOptionalDummySQL, CExtendedLogger Logger, CLanguage Lang );
+	public abstract ResultSet executeDummyCommand( CAbstractDBConnection DBConnection, String strOptionalDummySQL, CExtendedLogger Logger, CLanguage Lang );
 
-	public boolean CheckPlainSQLStatement( String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
+	public boolean checkPlainSQLStatement( String strCommand, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		try {
 		
-			if ( strSQL.indexOf( ConfigXMLTagsServicesDaemon._StartParamValue ) == -1 )
+			if ( strCommand.indexOf( ConfigXMLTagsServicesDaemon._StartParamValue ) == -1 )
 				return true;
 			
 		}
 		catch ( Exception Ex ) {
 			
 			if ( Logger != null )
-				Logger.LogException( "-1015", Ex.getMessage(), Ex );
+				Logger.logException( "-1015", Ex.getMessage(), Ex );
 			
 		}
 
@@ -1240,39 +1256,41 @@ public abstract class CAbstractDBEngine {
 		
 	}
     
-    public CResultSetResult ExecutePlainQuerySQL( Connection DBConnection, String strSQL, int intInternaFetchSize, CExtendedLogger Logger, CLanguage Lang ) {
+    public CResultSetResult executePlainQueryCommand( CAbstractDBConnection DBConnection, String strCommand, int intInternaFetchSize, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+    	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
     	
     	CResultSetResult Result = new CResultSetResult( -1, -1, "" ); 
     	
     	try {
     	
-    		Statement SQLStatement = DBConnection.createStatement( ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY );
+    		Statement SQLStatement = JDBConnection.createStatement( ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY );
     		
             if ( Logger != null ) { //Trace how much time in execute sql, useful for trace expensive query 
             	
         		if ( Lang != null )   
-				   Logger.LogInfo( "0x2001", Lang.Translate( "Init plain SQL statement" ) );
+				   Logger.logInfo( "0x2001", Lang.translate( "Init plain SQL statement" ) );
         		else
- 				   Logger.LogInfo( "0x2001", "Init plain SQL statement" );
+ 				   Logger.logInfo( "0x2001", "Init plain SQL statement" );
         			
             }	
     		
-    		ResultSet QueryResult = SQLStatement.executeQuery( strSQL );
+    		ResultSet QueryResult = SQLStatement.executeQuery( strCommand );
     		
     		QueryResult.setFetchSize( intInternaFetchSize );
     		
     		if ( QueryResult.getFetchSize() != intInternaFetchSize ) {
     			
-				Logger.LogWarning( "-1", Lang.Translate(  "The JDBC Driver [%s] ignoring fetch size value [%s], using JDBC driver default value [%s]", DBConnection.getMetaData().getDriverName(), Integer.toString( intInternaFetchSize ), Integer.toString( QueryResult.getFetchSize() ) ) );
+				Logger.logWarning( "-1", Lang.translate(  "The JDBC Driver [%s] ignoring fetch size value [%s], using JDBC driver default value [%s]", JDBConnection.getMetaData().getDriverName(), Integer.toString( intInternaFetchSize ), Integer.toString( QueryResult.getFetchSize() ) ) );
     			
     		}
     		
             if ( Logger != null ) { //Trace how much time in execute sql, useful for trace expensive query
             	
         		if ( Lang != null )   
-				   Logger.LogInfo( "0x2002", Lang.Translate( "End plain SQL statement" ) );
+				   Logger.logInfo( "0x2002", Lang.translate( "End plain SQL statement" ) );
         		else
- 				   Logger.LogInfo( "0x2002", "End plain SQL statement" );
+ 				   Logger.logInfo( "0x2002", "End plain SQL statement" );
         			
             }	
 
@@ -1280,21 +1298,21 @@ public abstract class CAbstractDBEngine {
     		Result.Result = QueryResult;
 
     		if ( Lang != null )   
-    			Result.strDescription = Lang.Translate( "Sucess to execute the plain query SQL statement [%s]", strSQL );
+    			Result.strDescription = Lang.translate( "Sucess to execute the plain query SQL statement [%s]", strCommand );
     		else
-    			Result.strDescription = String.format( "Sucess to execute the plain query SQL statement [%s]", strSQL );
+    			Result.strDescription = String.format( "Sucess to execute the plain query SQL statement [%s]", strCommand );
     			  
     	
     	}
     	catch ( Exception Ex ) {
     		
     		if ( Lang != null )   
-    		    Result.strDescription = Lang.Translate( "Error to execute the plain query SQL statement [%s]", strSQL );
+    		    Result.strDescription = Lang.translate( "Error to execute the plain query SQL statement [%s]", strCommand );
     		else
-    		    Result.strDescription = String.format( "Error to execute the plain query SQL statement [%s]", strSQL ) ;
+    		    Result.strDescription = String.format( "Error to execute the plain query SQL statement [%s]", strCommand ) ;
 
     		if ( Logger != null )
-				Logger.LogException( "-1015", Ex.getMessage(), Ex );
+				Logger.logException( "-1015", Ex.getMessage(), Ex );
     		
     	}
     	
@@ -1302,40 +1320,42 @@ public abstract class CAbstractDBEngine {
     	
     }
     
-    public CResultSetResult ExecutePlainCommonSQL( Connection DBConnection, String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    public CResultSetResult executePlainCommonCommand( CAbstractDBConnection DBConnection, String strCommand, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+    	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
     	
     	CResultSetResult Result = new CResultSetResult( -1, -1, "" ); 
     	
     	try {
     	
-    		Statement SQLStatement = DBConnection.createStatement( ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY );
+    		Statement SQLStatement = JDBConnection.createStatement( ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY );
 
             if ( Logger != null ) {
             	
         		if ( Lang != null )   
-				   Logger.LogInfo( "0x2003", Lang.Translate( "Init plain SQL statement" ) );
+				   Logger.logInfo( "0x2003", Lang.translate( "Init plain SQL statement" ) );
         		else
- 				   Logger.LogInfo( "0x2003", "Init plain SQL statement" );
+ 				   Logger.logInfo( "0x2003", "Init plain SQL statement" );
         			
             }
             
-    		Result.lngAffectedRows = SQLStatement.executeUpdate( strSQL );
+    		Result.lngAffectedRows = SQLStatement.executeUpdate( strCommand );
 
             if ( Logger != null ) {
             	
         		if ( Lang != null )   
-				   Logger.LogInfo( "0x2004", Lang.Translate( "End plain SQL statement" ) );
+				   Logger.logInfo( "0x2004", Lang.translate( "End plain SQL statement" ) );
         		else
- 				   Logger.LogInfo( "0x2004", "End plain SQL statement" );
+ 				   Logger.logInfo( "0x2004", "End plain SQL statement" );
         			
             }
             
     		Result.intCode = 1;
 
     		if ( Lang != null )   
-    			Result.strDescription = Lang.Translate( "Sucess to execute the plain SQL statement [%s]", strSQL );
+    			Result.strDescription = Lang.translate( "Sucess to execute the plain SQL statement [%s]", strCommand );
     		else
-    			Result.strDescription = String.format( "Sucess to execute the plain SQL statement [%s]", strSQL );
+    			Result.strDescription = String.format( "Sucess to execute the plain SQL statement [%s]", strCommand );
     	
     		SQLStatement.close();
     		
@@ -1343,12 +1363,12 @@ public abstract class CAbstractDBEngine {
     	catch ( Exception Ex ) {
     		
     		if ( Lang != null )   
-    		    Result.strDescription = Lang.Translate( "Error to execute the plain SQL statement [%s]", strSQL );
+    		    Result.strDescription = Lang.translate( "Error to execute the plain SQL statement [%s]", strCommand );
     		else
-    		    Result.strDescription = String.format( "Error to execute the plain SQL statement [%s]", strSQL ) ;
+    		    Result.strDescription = String.format( "Error to execute the plain SQL statement [%s]", strCommand ) ;
 
     		if ( Logger != null )
-				Logger.LogException( "-1015", Ex.getMessage(), Ex );
+				Logger.logException( "-1015", Ex.getMessage(), Ex );
     		
     	}
     	
@@ -1356,33 +1376,33 @@ public abstract class CAbstractDBEngine {
     	
     }
     
-    public CResultSetResult ExecutePlainInsertSQL( Connection DBConnection, String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    public CResultSetResult executePlainInsertCommand( CAbstractDBConnection DBConnection, String strCommand, CExtendedLogger Logger, CLanguage Lang ) {
 
     	//Warning: Reimplement for MySQL and another RDBMS with "autoincrement" column table type, see jdbc getGeneratedKeys() for more details
 
-    	return ExecutePlainCommonSQL( DBConnection, strSQL, Logger, Lang );    	
+    	return executePlainCommonCommand( DBConnection, strCommand, Logger, Lang );    	
     	
     }
     
-    public CResultSetResult ExecutePlainUpdateSQL( Connection DBConnection, String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    public CResultSetResult executePlainUpdateCommand( CAbstractDBConnection DBConnection, String strCommand, CExtendedLogger Logger, CLanguage Lang ) {
 
-    	return ExecutePlainCommonSQL( DBConnection, strSQL, Logger, Lang );    	
+    	return executePlainCommonCommand( DBConnection, strCommand, Logger, Lang );    	
     	
     }
     
-    public CResultSetResult ExecutePlainDeleteSQL( Connection DBConnection, String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    public CResultSetResult executePlainDeleteCommand( CAbstractDBConnection DBConnection, String strCommand, CExtendedLogger Logger, CLanguage Lang ) {
 
-    	return ExecutePlainCommonSQL( DBConnection, strSQL, Logger, Lang );    	
+    	return executePlainCommonCommand( DBConnection, strCommand, Logger, Lang );    	
     	
     }
     
-    public CResultSetResult ExecutePlainDDLSQL( Connection DBConnection, String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    public CResultSetResult executePlainDDLCommand( CAbstractDBConnection DBConnection, String strCommand, CExtendedLogger Logger, CLanguage Lang ) {
 
-    	return ExecutePlainCommonSQL( DBConnection, strSQL, Logger, Lang );    	
+    	return executePlainCommonCommand( DBConnection, strCommand, Logger, Lang );    	
     	
     }
     
-    public boolean IsValidResult( ResultSet Resultset, CExtendedLogger Logger, CLanguage Lang ) {
+    public boolean isValidResult( ResultSet Resultset, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	try {
     	
@@ -1418,7 +1438,7 @@ public abstract class CAbstractDBEngine {
     	catch ( Exception Ex ) {
     		
     		if ( Logger != null )
-				Logger.LogException( "-1015", Ex.getMessage(), Ex );
+				Logger.logException( "-1015", Ex.getMessage(), Ex );
     		
     		return false;
     		
@@ -1428,15 +1448,17 @@ public abstract class CAbstractDBEngine {
     	
     }
     
-    public CResultSetResult ExecutePlainCallableStatement( Connection DBConnection, String strSQL, int intInternaFetchSize, CExtendedLogger Logger, CLanguage Lang ) {
+    public CResultSetResult executePlainCallableStatement( CAbstractDBConnection DBConnection, String strCommand, int intInternaFetchSize, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+    	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
     	
     	CResultSetResult Result = new CResultSetResult( -1, -1, "" ); 
     	
     	try {
     	
-    		strSQL = this.RemoveCallFunction(strSQL, Logger, Lang );
+    		strCommand = this.removeCallFunction(strCommand, Logger, Lang );
     		
-    		CallableStatement CallStatement = DBConnection.prepareCall( strSQL );
+    		CallableStatement CallStatement = JDBConnection.prepareCall( strCommand );
 
 			/*CallStatement.registerOutParameter( 1, Types.INTEGER );
 			CallStatement.registerOutParameter( 2, Types.INTEGER );
@@ -1449,7 +1471,7 @@ public abstract class CAbstractDBEngine {
     		Result.intCode = 1; //CallStatement.getInt( "IdValid" );
     		Result.Result = CallStatement.getResultSet();
     		
-    		if ( this.IsValidResult( Result.Result, Logger, Lang ) == false ) {
+    		if ( this.isValidResult( Result.Result, Logger, Lang ) == false ) {
     		
     			Result.Result = null;
     			
@@ -1460,7 +1482,7 @@ public abstract class CAbstractDBEngine {
 
     			if ( Result.Result.getFetchSize() != intInternaFetchSize ) {
 
-    				Logger.LogWarning( "-1", Lang.Translate(  "The JDBC Driver [%s] ignoring fetch size value [%s], using JDBC driver default value [%s]", DBConnection.getMetaData().getDriverName(), Integer.toString( intInternaFetchSize ), Integer.toString( Result.Result.getFetchSize() ) ) );
+    				Logger.logWarning( "-1", Lang.translate(  "The JDBC Driver [%s] ignoring fetch size value [%s], using JDBC driver default value [%s]", JDBConnection.getMetaData().getDriverName(), Integer.toString( intInternaFetchSize ), Integer.toString( Result.Result.getFetchSize() ) ) );
 
     			}
 
@@ -1469,20 +1491,20 @@ public abstract class CAbstractDBEngine {
     		Result.lngAffectedRows = 0;
 
     		if ( Lang != null )   
-    			Result.strDescription = Lang.Translate( "Sucess to execute the plain SQL statement [%s]", strSQL );
+    			Result.strDescription = Lang.translate( "Sucess to execute the plain SQL statement [%s]", strCommand );
     		else
-    			Result.strDescription = String.format( "Sucess to execute the plain SQL statement [%s]", strSQL );
+    			Result.strDescription = String.format( "Sucess to execute the plain SQL statement [%s]", strCommand );
     		
     	}
     	catch ( Exception Ex ) {
     		
     		if ( Lang != null )   
-    		    Result.strDescription = Lang.Translate( "Error to execute the plain SQL statement [%s]", strSQL );
+    		    Result.strDescription = Lang.translate( "Error to execute the plain SQL statement [%s]", strCommand );
     		else
-    		    Result.strDescription = String.format( "Error to execute the plain SQL statement [%s]", strSQL ) ;
+    		    Result.strDescription = String.format( "Error to execute the plain SQL statement [%s]", strCommand ) ;
 
     		if ( Logger != null )
-				Logger.LogException( "-1015", Ex.getMessage(), Ex );
+				Logger.logException( "-1015", Ex.getMessage(), Ex );
     		
     	}
     	
@@ -1567,9 +1589,9 @@ public abstract class CAbstractDBEngine {
 								if ( Logger != null ) {
 									
 									if ( Lang != null )
-									    Logger.LogWarning( "-1", Lang.Translate( "Unknown SQL data type [%s]", Integer.toString( MemoryField.intSQLType ) ) );
+									    Logger.logWarning( "-1", Lang.translate( "Unknown SQL data type [%s]", Integer.toString( MemoryField.intSQLType ) ) );
 									else
-									    Logger.LogWarning( "-1", String.format( "Unknown SQL data type [%s]", Integer.toString( MemoryField.intSQLType ) ) );
+									    Logger.logWarning( "-1", String.format( "Unknown SQL data type [%s]", Integer.toString( MemoryField.intSQLType ) ) );
 									
 									
 								}
@@ -1585,7 +1607,7 @@ public abstract class CAbstractDBEngine {
 
 						if ( Logger != null ) {
 							
-							Logger.LogException( "-1015", Ex.getMessage(), Ex );
+							Logger.logException( "-1015", Ex.getMessage(), Ex );
 						
 						}	
 
@@ -1605,7 +1627,7 @@ public abstract class CAbstractDBEngine {
 						
 						if ( Logger != null ) {
 							
-							Logger.LogException( "-1015", Ex.getMessage(), Ex );
+							Logger.logException( "-1015", Ex.getMessage(), Ex );
 						
 						}
 						
@@ -1700,9 +1722,9 @@ public abstract class CAbstractDBEngine {
 									if ( Logger != null ) {
 										
 										if ( Lang != null )
-										    Logger.LogWarning( "-1", Lang.Translate( "Unknown SQL data type [%s]", Integer.toString( MemoryField.intSQLType ) ) );
+										    Logger.logWarning( "-1", Lang.translate( "Unknown SQL data type [%s]", Integer.toString( MemoryField.intSQLType ) ) );
 										else
-										    Logger.LogWarning( "-1", String.format( "Unknown SQL data type [%s]", Integer.toString( MemoryField.intSQLType ) ) );
+										    Logger.logWarning( "-1", String.format( "Unknown SQL data type [%s]", Integer.toString( MemoryField.intSQLType ) ) );
 										
 										
 									}
@@ -1718,7 +1740,7 @@ public abstract class CAbstractDBEngine {
 		
 							if ( Logger != null ) {
 								
-								Logger.LogException( "-1015", Ex.getMessage(), Ex );
+								Logger.logException( "-1015", Ex.getMessage(), Ex );
 							
 							}	
 		
@@ -1738,7 +1760,7 @@ public abstract class CAbstractDBEngine {
 							
 							if ( Logger != null ) {
 								
-								Logger.LogException( "-1016", Ex.getMessage(), Ex );
+								Logger.logException( "-1016", Ex.getMessage(), Ex );
 							
 							}
 							
@@ -1761,7 +1783,7 @@ public abstract class CAbstractDBEngine {
 					
 					if ( Logger != null ) {
 						
-						Logger.LogException( "-1017", Ex.getMessage(), Ex );
+						Logger.logException( "-1017", Ex.getMessage(), Ex );
 					
 					}
 					
@@ -1775,7 +1797,7 @@ public abstract class CAbstractDBEngine {
 
 	}
 	
-	public CachedRowSet BuildCachedRowSetFromFieldsScopeOut( CMemoryRowSet MemoryRowSet, CNamedCallableStatement NamedCallableStatement, CExtendedLogger Logger, CLanguage Lang ) {
+	public CachedRowSet buildCachedRowSetFromFieldsScopeOut( CMemoryRowSet MemoryRowSet, CNamedCallableStatement NamedCallableStatement, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		CachedRowSet Result = null;
 		
@@ -1837,7 +1859,7 @@ public abstract class CAbstractDBEngine {
 			
 			if ( Logger != null ) {
 				
-				Logger.LogException( "-1016", Ex.getMessage(), Ex );
+				Logger.logException( "-1016", Ex.getMessage(), Ex );
 			
 			}	
 			
@@ -1847,7 +1869,9 @@ public abstract class CAbstractDBEngine {
 		
 	}
 	
-    public ArrayList<CResultSetResult> ExecuteComplexQueySQL( Connection DBConnection, int intInternaFetchSize, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    public ArrayList<CResultSetResult> executeComplexQueyCommand( CAbstractDBConnection DBConnection, int intInternaFetchSize, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strCommand, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+    	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
     	
     	ArrayList<CResultSetResult> Result = new ArrayList<CResultSetResult>();
 
@@ -1858,7 +1882,7 @@ public abstract class CAbstractDBEngine {
     		Delimiters.put( ConfigXMLTagsServicesDaemon._StartMacroTag, ConfigXMLTagsServicesDaemon._EndMacroTag );
     		Delimiters.put( ConfigXMLTagsServicesDaemon._StartParamValue, ConfigXMLTagsServicesDaemon._EndParamValue );
 
-    		CNamedPreparedStatement MainNamedPreparedStatement = new CNamedPreparedStatement( DBConnection, strSQL, Delimiters );		
+    		CNamedPreparedStatement MainNamedPreparedStatement = new CNamedPreparedStatement( JDBConnection, strCommand, Delimiters );		
     	
 			LinkedHashMap<String,Integer> NamedParams = MainNamedPreparedStatement.getNamedParams();
 			
@@ -1936,7 +1960,7 @@ public abstract class CAbstractDBEngine {
 					
 					if ( Logger != null ) {
 						
-						Logger.LogException( "-1017", Ex.getMessage(), Ex );
+						Logger.logException( "-1017", Ex.getMessage(), Ex );
 					
 					}	
 					
@@ -1944,7 +1968,7 @@ public abstract class CAbstractDBEngine {
 
 				try {
 					
-					CNamedPreparedStatement NamedPreparedStatement = new CNamedPreparedStatement( DBConnection, MainNamedPreparedStatement.getNamedParams(), MainNamedPreparedStatement.getParsedStatement() );
+					CNamedPreparedStatement NamedPreparedStatement = new CNamedPreparedStatement( JDBConnection, MainNamedPreparedStatement.getNamedParams(), MainNamedPreparedStatement.getParsedStatement() );
 
 					while ( i.hasNext() ) {
 
@@ -1956,16 +1980,16 @@ public abstract class CAbstractDBEngine {
 
 					if ( bLogParsedSQL == true ) {
 						
-						Logger.LogInfo( "2", Lang.Translate( "Executing the next SQL statement [%s] index call [%s]", strParsedStatement, Integer.toString( intIndexCall ) )  );
+						Logger.logInfo( "2", Lang.translate( "Executing the next SQL statement [%s] index call [%s]", strParsedStatement, Integer.toString( intIndexCall ) )  );
 						
 					}
 					
 		            if ( Logger != null ) { //Trace how much time in execute sql, useful for trace expensive query
 		            	
 		        		if ( Lang != null )   
-						   Logger.LogInfo( "0x2005", Lang.Translate( "Init complex SQL statement" ) );
+						   Logger.logInfo( "0x2005", Lang.translate( "Init complex SQL statement" ) );
 		        		else
-		 				   Logger.LogInfo( "0x2005", "Init complex SQL statement" );
+		 				   Logger.logInfo( "0x2005", "Init complex SQL statement" );
 		        			
 		            }
 					
@@ -1975,22 +1999,22 @@ public abstract class CAbstractDBEngine {
 		    		
 		    		if ( QueryResult.getFetchSize() != intInternaFetchSize ) {
 		    			
-						Logger.LogWarning( "-1", Lang.Translate(  "The JDBC Driver [%s] ignoring fetch size value [%s], using JDBC driver default value [%s]", DBConnection.getMetaData().getDriverName(), Integer.toString( intInternaFetchSize ), Integer.toString( QueryResult.getFetchSize() ) ) );
+						Logger.logWarning( "-1", Lang.translate(  "The JDBC Driver [%s] ignoring fetch size value [%s], using JDBC driver default value [%s]", JDBConnection.getMetaData().getDriverName(), Integer.toString( intInternaFetchSize ), Integer.toString( QueryResult.getFetchSize() ) ) );
 		    			
 		    		}
 					
 		            if ( Logger != null ) { //Trace how much time in execute sql, useful for trace expensive query
 		            	
 		        		if ( Lang != null )   
-						   Logger.LogInfo( "0x2006", Lang.Translate( "End complex SQL statement" ) );
+						   Logger.logInfo( "0x2006", Lang.translate( "End complex SQL statement" ) );
 		        		else
-		 				   Logger.LogInfo( "0x2006", "End complex SQL statement" );
+		 				   Logger.logInfo( "0x2006", "End complex SQL statement" );
 		        			
 		            }
 		            
 					if ( QueryResult != null ) {
 						
-						Result.add( new CResultSetResult( -1, 1, Lang.Translate( "Sucess to execute the SQL statement" ), NamedPreparedStatement, QueryResult ) );
+						Result.add( new CResultSetResult( -1, 1, Lang.translate( "Sucess to execute the SQL statement" ), NamedPreparedStatement, QueryResult ) );
 						
 					}
 					
@@ -1999,11 +2023,11 @@ public abstract class CAbstractDBEngine {
 					
 					if ( Logger != null ) {
 					
-						Result.add( new CResultSetResult( -1, -1, Lang.Translate( "Error to execute the SQL statement, see the log file for more details" ) ) );
+						Result.add( new CResultSetResult( -1, -1, Lang.translate( "Error to execute the SQL statement, see the log file for more details" ) ) );
 
-						Logger.LogError( "-1001", Lang.Translate( "Error to execute the next SQL statement [%s] index call [%s]", strParsedStatement, Integer.toString( intIndexCall ) )  );
+						Logger.logError( "-1001", Lang.translate( "Error to execute the next SQL statement [%s] index call [%s]", strParsedStatement, Integer.toString( intIndexCall ) )  );
 						
-						Logger.LogException( "-1016", Ex.getMessage(), Ex );
+						Logger.logException( "-1016", Ex.getMessage(), Ex );
 					
 					}	
 				
@@ -2016,10 +2040,10 @@ public abstract class CAbstractDBEngine {
     	}
     	catch ( Exception Ex ) {
     		
-			Result.add( new CResultSetResult( -1, -1, Lang.Translate( "Error to execute the SQL statement, see the log file for more details" ) ) );
+			Result.add( new CResultSetResult( -1, -1, Lang.translate( "Error to execute the SQL statement, see the log file for more details" ) ) );
 
     		if ( Logger != null )
-				Logger.LogException( "-1015", Ex.getMessage(), Ex ); 
+				Logger.logException( "-1015", Ex.getMessage(), Ex ); 
     		
     	}
 		
@@ -2027,8 +2051,10 @@ public abstract class CAbstractDBEngine {
     	
     }
     
-    public ArrayList<CResultSetResult> ExecuteCommonComplexSQL( Connection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    public ArrayList<CResultSetResult> executeCommonComplexCommand( CAbstractDBConnection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strCommand, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
  
+    	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
+    	
     	ArrayList<CResultSetResult> Result = new ArrayList<CResultSetResult>();
 
     	try {
@@ -2038,7 +2064,7 @@ public abstract class CAbstractDBEngine {
     		Delimiters.put( ConfigXMLTagsServicesDaemon._StartMacroTag, ConfigXMLTagsServicesDaemon._EndMacroTag );
     		Delimiters.put( ConfigXMLTagsServicesDaemon._StartParamValue, ConfigXMLTagsServicesDaemon._EndParamValue );
 
-    		CNamedPreparedStatement MainNamedPreparedStatement = new CNamedPreparedStatement( DBConnection, strSQL, Delimiters );		
+    		CNamedPreparedStatement MainNamedPreparedStatement = new CNamedPreparedStatement( JDBConnection, strCommand, Delimiters );		
     	
 			LinkedHashMap<String,Integer> NamedParams = MainNamedPreparedStatement.getNamedParams();
 			
@@ -2118,7 +2144,7 @@ public abstract class CAbstractDBEngine {
 
 						if ( Logger != null ) {
 
-							Logger.LogException( "-1017", Ex.getMessage(), Ex );
+							Logger.logException( "-1017", Ex.getMessage(), Ex );
 
 						}	
 
@@ -2126,7 +2152,7 @@ public abstract class CAbstractDBEngine {
 
 					try {
 
-						CNamedPreparedStatement NamedPreparedStatement = new CNamedPreparedStatement( DBConnection, MainNamedPreparedStatement.getNamedParams(), MainNamedPreparedStatement.getParsedStatement() );
+						CNamedPreparedStatement NamedPreparedStatement = new CNamedPreparedStatement( JDBConnection, MainNamedPreparedStatement.getNamedParams(), MainNamedPreparedStatement.getParsedStatement() );
 
 						while ( i.hasNext() ) {
 
@@ -2138,16 +2164,16 @@ public abstract class CAbstractDBEngine {
 
 						if ( bLogParsedSQL == true ) {
 
-							Logger.LogInfo( "2", Lang.Translate( "Executing the next SQL statement [%s] index call [%s]", strParsedStatement, Integer.toString( intIndexCall ) )  );
+							Logger.logInfo( "2", Lang.translate( "Executing the next SQL statement [%s] index call [%s]", strParsedStatement, Integer.toString( intIndexCall ) )  );
 
 						}
 
 			            if ( Logger != null ) {
 			            	
 			        		if ( Lang != null )   
-							   Logger.LogInfo( "0x2007", Lang.Translate( "Init complex SQL statement" ) );
+							   Logger.logInfo( "0x2007", Lang.translate( "Init complex SQL statement" ) );
 			        		else
-			 				   Logger.LogInfo( "0x2007", "Init complex SQL statement" );
+			 				   Logger.logInfo( "0x2007", "Init complex SQL statement" );
 			        			
 			            }
 						
@@ -2156,13 +2182,13 @@ public abstract class CAbstractDBEngine {
 			            if ( Logger != null ) {
 			            	
 			        		if ( Lang != null )   
-							   Logger.LogInfo( "0x2008", Lang.Translate( "End complex SQL statement" ) );
+							   Logger.logInfo( "0x2008", Lang.translate( "End complex SQL statement" ) );
 			        		else
-			 				   Logger.LogInfo( "0x2008", "End complex SQL statement" );
+			 				   Logger.logInfo( "0x2008", "End complex SQL statement" );
 			        			
 			            }
 			            
-						Result.add( new CResultSetResult( intAffectedRows, 1, Lang.Translate( "Sucess to execute the SQL statement" ) ) );
+						Result.add( new CResultSetResult( intAffectedRows, 1, Lang.translate( "Sucess to execute the SQL statement" ) ) );
 
 						NamedPreparedStatement.close(); //Close immediately to prevent resource leak in database driver
 
@@ -2171,11 +2197,11 @@ public abstract class CAbstractDBEngine {
 
 						if ( Logger != null ) {
 
-							Result.add( new CResultSetResult( -1, -1, Lang.Translate( "Error to execute the SQL statement, see the log file for more details" ) ) );
+							Result.add( new CResultSetResult( -1, -1, Lang.translate( "Error to execute the SQL statement, see the log file for more details" ) ) );
 
-							Logger.LogError( "-1001", Lang.Translate( "Error to execute the next SQL statement [%s] index call [%s]", strParsedStatement, Integer.toString( intIndexCall ) )  );
+							Logger.logError( "-1001", Lang.translate( "Error to execute the next SQL statement [%s] index call [%s]", strParsedStatement, Integer.toString( intIndexCall ) )  );
 
-							Logger.LogException( "-1016", Ex.getMessage(), Ex );
+							Logger.logException( "-1016", Ex.getMessage(), Ex );
 
 						}	
 
@@ -2186,9 +2212,9 @@ public abstract class CAbstractDBEngine {
 			}
 			else {
 				
-				Result.add( new CResultSetResult( -1, -1, Lang.Translate( "Error to execute the SQL statement, see the log file for more details" ) ) );
+				Result.add( new CResultSetResult( -1, -1, Lang.translate( "Error to execute the SQL statement, see the log file for more details" ) ) );
 
-				Logger.LogError( "-1001", Lang.Translate( "Error to execute the next SQL statement, no valid params names found for service call" )  );
+				Logger.logError( "-1001", Lang.translate( "Error to execute the next SQL statement, no valid params names found for service call" )  );
 				
 			}
 			
@@ -2198,7 +2224,7 @@ public abstract class CAbstractDBEngine {
     	catch ( Exception Ex ) {
     		
 			if ( Logger != null )
-				Logger.LogException( "-1015", Ex.getMessage(), Ex ); 
+				Logger.logException( "-1015", Ex.getMessage(), Ex ); 
     		
     	}
 		
@@ -2206,46 +2232,48 @@ public abstract class CAbstractDBEngine {
     	
     }
 
-    public ArrayList<CResultSetResult> ExecuteComplexInsertSQL( Connection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    public ArrayList<CResultSetResult> executeComplexInsertCommand( CAbstractDBConnection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strCommand, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	//Warning: Reimplement for MySQL and another RDBMS with "autoincrement" column table type, see jdbc getGeneratedKeys() for more details
 
-    	return ExecuteCommonComplexSQL( DBConnection, Request, intMacrosTypes, strMacrosNames, strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, strSQL, bLogParsedSQL, Logger, Lang );
+    	return executeCommonComplexCommand( DBConnection, Request, intMacrosTypes, strMacrosNames, strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, strCommand, bLogParsedSQL, Logger, Lang );
     	
     } 
 
-    public ArrayList<CResultSetResult> ExecuteComplexUpdateSQL( Connection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    public ArrayList<CResultSetResult> executeComplexUpdateCommand( CAbstractDBConnection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strCommand, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
     	
-    	return ExecuteCommonComplexSQL( DBConnection, Request, intMacrosTypes, strMacrosNames, strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, strSQL, bLogParsedSQL, Logger, Lang );
-    	
-    }
-    
-    public ArrayList<CResultSetResult> ExecuteComplexDeleteSQL( Connection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
-    	
-    	return ExecuteCommonComplexSQL( DBConnection, Request, intMacrosTypes, strMacrosNames, strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, strSQL, bLogParsedSQL, Logger, Lang );
+    	return executeCommonComplexCommand( DBConnection, Request, intMacrosTypes, strMacrosNames, strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, strCommand, bLogParsedSQL, Logger, Lang );
     	
     }
     
-    public ArrayList<CResultSetResult> ExecuteComplexDDL( Connection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    public ArrayList<CResultSetResult> executeComplexDeleteCommand( CAbstractDBConnection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strCommand, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
     	
-    	return ExecuteCommonComplexSQL( DBConnection, Request, intMacrosTypes, strMacrosNames, strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, strSQL, bLogParsedSQL, Logger, Lang );
+    	return executeCommonComplexCommand( DBConnection, Request, intMacrosTypes, strMacrosNames, strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, strCommand, bLogParsedSQL, Logger, Lang );
+    	
+    }
+    
+    public ArrayList<CResultSetResult> executeComplexDDLCommand( CAbstractDBConnection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strCommand, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+    	return executeCommonComplexCommand( DBConnection, Request, intMacrosTypes, strMacrosNames, strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, strCommand, bLogParsedSQL, Logger, Lang );
     	
     }
    
-    public ArrayList<CResultSetResult> ExecuteComplexCallableStatement( Connection DBConnection, int intInternaFetchSize, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    public ArrayList<CResultSetResult> executeComplexCallableStatement( CAbstractDBConnection DBConnection, int intInternaFetchSize, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strCommand, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+    	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
     	
     	ArrayList<CResultSetResult> Result = new ArrayList<CResultSetResult>();
 
     	try {
     	
-    		strSQL = this.RemoveCallFunction( strSQL, Logger, Lang );
+    		strCommand = this.removeCallFunction( strCommand, Logger, Lang );
     		
     		HashMap<String,String> Delimiters = new HashMap<String,String>();
 
     		Delimiters.put( ConfigXMLTagsServicesDaemon._StartMacroTag, ConfigXMLTagsServicesDaemon._EndMacroTag );
     		Delimiters.put( ConfigXMLTagsServicesDaemon._StartParamValue, ConfigXMLTagsServicesDaemon._EndParamValue );
 
-    		CNamedCallableStatement MainNamedCallableStatement = new CNamedCallableStatement( DBConnection, strSQL, Delimiters );		
+    		CNamedCallableStatement MainNamedCallableStatement = new CNamedCallableStatement( JDBConnection, strCommand, Delimiters );		
     	
 			LinkedHashMap<String,Integer> NamedParams = MainNamedCallableStatement.getNamedParams();
 			
@@ -2326,13 +2354,13 @@ public abstract class CAbstractDBEngine {
 					
 					if ( Logger != null ) {
 						
-						Logger.LogException( "-1017", Ex.getMessage(), Ex );
+						Logger.logException( "-1017", Ex.getMessage(), Ex );
 					
 					}	
 					
 				}
 
-				CNamedCallableStatement NamedCallableStatement = new CNamedCallableStatement( DBConnection, MainNamedCallableStatement.getNamedParams(), MainNamedCallableStatement.getParsedStatement() );
+				CNamedCallableStatement NamedCallableStatement = new CNamedCallableStatement( JDBConnection, MainNamedCallableStatement.getNamedParams(), MainNamedCallableStatement.getParsedStatement() );
 				
 				while ( i.hasNext() ) {
 				       
@@ -2346,7 +2374,7 @@ public abstract class CAbstractDBEngine {
 				
 					if ( bLogParsedSQL == true ) {
 						
-						Logger.LogInfo( "2", Lang.Translate( "Executing the next SQL statement [%s] index call [%s]", strParsedStatement, Integer.toString( intIndexCall ) )  );
+						Logger.logInfo( "2", Lang.translate( "Executing the next SQL statement [%s] index call [%s]", strParsedStatement, Integer.toString( intIndexCall ) )  );
 						
 					}
 					
@@ -2354,7 +2382,7 @@ public abstract class CAbstractDBEngine {
 					
 					ResultSet CallableStatementResultSet = NamedCallableStatement.getResultSet();
 					
-					if ( bIsValidResultSet == false || this.IsValidResult( CallableStatementResultSet, Logger, Lang) == false ) {
+					if ( bIsValidResultSet == false || this.isValidResult( CallableStatementResultSet, Logger, Lang) == false ) {
 						
 						bIsValidResultSet = false;
 						
@@ -2367,7 +2395,7 @@ public abstract class CAbstractDBEngine {
 			    		
 			    		if ( CallableStatementResultSet.getFetchSize() != intInternaFetchSize ) {
 			    			
-							Logger.LogWarning( "-1", Lang.Translate(  "The JDBC Driver [%s] ignoring fetch size value [%s], using JDBC driver default value [%s]", DBConnection.getMetaData().getDriverName(), Integer.toString( intInternaFetchSize ), Integer.toString( CallableStatementResultSet.getFetchSize() ) ) );
+							Logger.logWarning( "-1", Lang.translate(  "The JDBC Driver [%s] ignoring fetch size value [%s], using JDBC driver default value [%s]", JDBConnection.getMetaData().getDriverName(), Integer.toString( intInternaFetchSize ), Integer.toString( CallableStatementResultSet.getFetchSize() ) ) );
 			    			
 			    		}
 						
@@ -2375,22 +2403,22 @@ public abstract class CAbstractDBEngine {
 					
 					if ( CallableStatementResultSet == null && bContainsOutParams ) {
 						
-						CallableStatementResultSet = this.BuildCachedRowSetFromFieldsScopeOut( MemoryRowSet, NamedCallableStatement, Logger, Lang );
+						CallableStatementResultSet = this.buildCachedRowSetFromFieldsScopeOut( MemoryRowSet, NamedCallableStatement, Logger, Lang );
 						
 					}
 					
-					Result.add( new CResultSetResult( 0, 1, Lang.Translate( "Sucess to execute the SQL statement" ), NamedCallableStatement, CallableStatementResultSet ) );
+					Result.add( new CResultSetResult( 0, 1, Lang.translate( "Sucess to execute the SQL statement" ), NamedCallableStatement, CallableStatementResultSet ) );
 					
 				}
 				catch ( Exception Ex ) {
 					
 					if ( Logger != null ) {
 					
-						Result.add( new CResultSetResult( -1, -1, Lang.Translate( "Error to execute the SQL statement, see the log file for more details" ) ) );
+						Result.add( new CResultSetResult( -1, -1, Lang.translate( "Error to execute the SQL statement, see the log file for more details" ) ) );
 
-						Logger.LogError( "-1001", Lang.Translate( "Error to execute the next SQL statement [%s] index call [%s]", strParsedStatement, Integer.toString( intIndexCall ) )  );
+						Logger.logError( "-1001", Lang.translate( "Error to execute the next SQL statement [%s] index call [%s]", strParsedStatement, Integer.toString( intIndexCall ) )  );
 						
-						Logger.LogException( "-1016", Ex.getMessage(), Ex );
+						Logger.logException( "-1016", Ex.getMessage(), Ex );
 					
 					}	
 				
@@ -2404,7 +2432,7 @@ public abstract class CAbstractDBEngine {
     	catch ( Exception Ex ) {
     		
 			if ( Logger != null )
-				Logger.LogException( "-1015", Ex.getMessage(), Ex ); 
+				Logger.logException( "-1015", Ex.getMessage(), Ex ); 
     		
     	}
 		
@@ -2412,7 +2440,7 @@ public abstract class CAbstractDBEngine {
     	
     }
 
-    public void CloseResultSetResultStatement( ArrayList<CResultSetResult> ResultSetResults, CExtendedLogger Logger, CLanguage Lang ) {
+    public void closeResultSetResultStatement( ArrayList<CResultSetResult> ResultSetResults, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	if ( ResultSetResults != null ) {
 
@@ -2450,7 +2478,7 @@ public abstract class CAbstractDBEngine {
     			catch ( Exception Ex ) {
 
     				if ( Logger != null )
-    					Logger.LogException( "-1015", Ex.getMessage(), Ex ); 
+    					Logger.logException( "-1015", Ex.getMessage(), Ex ); 
 
     			}
 
@@ -2460,7 +2488,7 @@ public abstract class CAbstractDBEngine {
     	
     }
     
-    public void CloseResultSetResultStatement( CResultSetResult ResultSetResult, CExtendedLogger Logger, CLanguage Lang ) {
+    public void closeResultSetResultStatement( CResultSetResult ResultSetResult, CExtendedLogger Logger, CLanguage Lang ) {
     	
 		try {
 
@@ -2494,7 +2522,7 @@ public abstract class CAbstractDBEngine {
 		catch ( Exception Ex ) {
 
 			if ( Logger != null )
-				Logger.LogException( "-1015", Ex.getMessage(), Ex ); 
+				Logger.logException( "-1015", Ex.getMessage(), Ex ); 
 
 		}
     	
@@ -2596,7 +2624,7 @@ public abstract class CAbstractDBEngine {
 	    catch ( Exception Ex ) {
 		   
 			if ( Logger != null )
-				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				Logger.logException( "-1010", Ex.getMessage(), Ex );
 		   
 	    }
 	   
@@ -2674,7 +2702,7 @@ public abstract class CAbstractDBEngine {
 	    catch ( Exception Ex ) {
 		   
 			if ( Logger != null )
-				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				Logger.logException( "-1010", Ex.getMessage(), Ex );
 		   
 	    }
 	   
@@ -2725,7 +2753,7 @@ public abstract class CAbstractDBEngine {
 	    catch ( Exception Ex ) {
 		   
 			if ( Logger != null )
-				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				Logger.logException( "-1010", Ex.getMessage(), Ex );
 		   
 	    }
     	
@@ -2776,7 +2804,7 @@ public abstract class CAbstractDBEngine {
 	    catch ( Exception Ex ) {
 		   
 			if ( Logger != null )
-				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				Logger.logException( "-1010", Ex.getMessage(), Ex );
 		   
 	    }
     	
@@ -2812,7 +2840,7 @@ public abstract class CAbstractDBEngine {
 	    catch ( Exception Ex ) {
 		   
 			if ( Logger != null )
-				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				Logger.logException( "-1010", Ex.getMessage(), Ex );
 		   
 	    }
     	
@@ -2848,7 +2876,7 @@ public abstract class CAbstractDBEngine {
 	    catch ( Exception Ex ) {
 		   
 			if ( Logger != null )
-				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				Logger.logException( "-1010", Ex.getMessage(), Ex );
 		   
 	    }
     	
@@ -2856,13 +2884,15 @@ public abstract class CAbstractDBEngine {
     	
     }
     
-    public boolean databaseObjectExists( Connection DBConnection, int intObjectType, String strObjectName, CExtendedLogger Logger, CLanguage Lang ) {
+    public boolean databaseObjectExists( CAbstractDBConnection DBConnection, int intObjectType, String strObjectName, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+    	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
     	
     	boolean bResult = false;
     	
     	try {
 		
-    		DatabaseMetaData DBMetadata = DBConnection.getMetaData();
+    		DatabaseMetaData DBMetadata = JDBConnection.getMetaData();
     		
     		if ( intObjectType == 1 ) { //Table
 
@@ -2878,7 +2908,7 @@ public abstract class CAbstractDBEngine {
     			catch ( Exception Ex ) {
 
     				if ( Logger != null )
-    					Logger.LogException( "-1010", Ex.getMessage(), Ex );
+    					Logger.logException( "-1010", Ex.getMessage(), Ex );
 
     			}
         		
@@ -2897,7 +2927,7 @@ public abstract class CAbstractDBEngine {
     			catch ( Exception Ex ) {
 
     				if ( Logger != null )
-    					Logger.LogException( "-1011", Ex.getMessage(), Ex );
+    					Logger.logException( "-1011", Ex.getMessage(), Ex );
 
     			}
     			
@@ -2914,7 +2944,7 @@ public abstract class CAbstractDBEngine {
     			catch ( Exception Ex ) {
 
     				if ( Logger != null )
-    					Logger.LogException( "-1010", Ex.getMessage(), Ex );
+    					Logger.logException( "-1010", Ex.getMessage(), Ex );
 
     			}
     			
@@ -2931,7 +2961,7 @@ public abstract class CAbstractDBEngine {
     			catch ( Exception Ex ) {
 
     				if ( Logger != null )
-    					Logger.LogException( "-1010", Ex.getMessage(), Ex );
+    					Logger.logException( "-1010", Ex.getMessage(), Ex );
 
     			}
         		
@@ -2941,7 +2971,7 @@ public abstract class CAbstractDBEngine {
     	catch ( Exception Ex ) {
 
 			if ( Logger != null )
-				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				Logger.logException( "-1010", Ex.getMessage(), Ex );
     	
     	}
     	
@@ -2949,7 +2979,9 @@ public abstract class CAbstractDBEngine {
     	
     }
     
-    public CResultSetResult describeDatabaseObject( Connection DBConnection, int intObjectType, String strObjectName, CExtendedLogger Logger, CLanguage Lang ) {
+    public CResultSetResult describeDatabaseObject( CAbstractDBConnection DBConnection, int intObjectType, String strObjectName, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+    	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
     	
     	CResultSetResult Result =  new CResultSetResult();
     	
@@ -2958,7 +2990,7 @@ public abstract class CAbstractDBEngine {
     	
     	try {
 		
-    		DatabaseMetaData DBMetadata = DBConnection.getMetaData();
+    		DatabaseMetaData DBMetadata = JDBConnection.getMetaData();
     		
     		if ( intObjectType == 1 || intObjectType == 2 ) { //Table Or View
     		
@@ -2970,7 +3002,7 @@ public abstract class CAbstractDBEngine {
     			catch ( Exception Ex ) {
 
     				if ( Logger != null )
-    					Logger.LogException( "-1010", Ex.getMessage(), Ex );
+    					Logger.logException( "-1010", Ex.getMessage(), Ex );
 
     			}
     		
@@ -2985,7 +3017,7 @@ public abstract class CAbstractDBEngine {
     			catch ( Exception Ex ) {
 
     				if ( Logger != null )
-    					Logger.LogException( "-1010", Ex.getMessage(), Ex );
+    					Logger.logException( "-1010", Ex.getMessage(), Ex );
 
     			}
     			
@@ -3000,7 +3032,7 @@ public abstract class CAbstractDBEngine {
     			catch ( Exception Ex ) {
 
     				if ( Logger != null )
-    					Logger.LogException( "-1010", Ex.getMessage(), Ex );
+    					Logger.logException( "-1010", Ex.getMessage(), Ex );
 
     			}
     			
@@ -3013,7 +3045,7 @@ public abstract class CAbstractDBEngine {
     	catch ( Exception Ex ) {
 
 			if ( Logger != null )
-				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				Logger.logException( "-1010", Ex.getMessage(), Ex );
     	
     	}
     	
@@ -3021,8 +3053,10 @@ public abstract class CAbstractDBEngine {
     	
     }
     
-    public CResultSetResult getDatabaseInfo( Connection DBConnection, HashMap<String,String> ConfiguredValues, CExtendedLogger Logger, CLanguage Lang ) {
+    public CResultSetResult getDatabaseInfo( CAbstractDBConnection DBConnection, HashMap<String,String> ConfiguredValues, CExtendedLogger Logger, CLanguage Lang ) {
 
+    	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
+    	
     	CResultSetResult Result =  new CResultSetResult();
     	
     	Result.intCode = -1;
@@ -3030,7 +3064,7 @@ public abstract class CAbstractDBEngine {
     	
     	try {
     		
-    		DatabaseMetaData DBMetadata = DBConnection.getMetaData();
+    		DatabaseMetaData DBMetadata = JDBConnection.getMetaData();
     		
         	CMemoryRowSet MemoryRowSet =  new CMemoryRowSet( false );
         	
@@ -3184,7 +3218,7 @@ public abstract class CAbstractDBEngine {
     		
     		//MemoryRowSet.addRow( "configuredDriverNameClass", strConfiguredDriverNameClass );
     		MemoryRowSet.addRow( "extraNameCharacters", DBMetadata.getExtraNameCharacters() );
-    		MemoryRowSet.addRow( "identifierQuoteString", net.maindataservices.Utilities.ReplaceToHTMLEntity( DBMetadata.getIdentifierQuoteString() ) );
+    		MemoryRowSet.addRow( "identifierQuoteString", net.maindataservices.Utilities.replaceToHTMLEntity( DBMetadata.getIdentifierQuoteString() ) );
     		MemoryRowSet.addRow( "JDBCMajorVersion", Integer.toString( DBMetadata.getJDBCMajorVersion() ) );
     		MemoryRowSet.addRow( "JDBCMinorVersion", Integer.toString( DBMetadata.getJDBCMinorVersion() ) );
     		MemoryRowSet.addRow( "maxBinaryLiteralLength", Integer.toString( DBMetadata.getMaxBinaryLiteralLength() ) );
@@ -3280,7 +3314,7 @@ public abstract class CAbstractDBEngine {
     		catch ( Exception Ex ) {
 
     			if ( Logger != null )
-    				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+    				Logger.logException( "-1010", Ex.getMessage(), Ex );
 
     		}
     		
@@ -3309,7 +3343,7 @@ public abstract class CAbstractDBEngine {
     		catch ( Exception Ex ) {
 
     			if ( Logger != null )
-    				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+    				Logger.logException( "-1010", Ex.getMessage(), Ex );
 
     		}
     		
@@ -3331,7 +3365,7 @@ public abstract class CAbstractDBEngine {
     		catch ( Exception Ex ) {
 
     			if ( Logger != null )
-    				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+    				Logger.logException( "-1010", Ex.getMessage(), Ex );
 
     		}
     		
@@ -3345,7 +3379,7 @@ public abstract class CAbstractDBEngine {
     	catch ( Exception Ex ) {
 
 			if ( Logger != null )
-				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				Logger.logException( "-1010", Ex.getMessage(), Ex );
     	
     	}
     	
@@ -3353,8 +3387,10 @@ public abstract class CAbstractDBEngine {
     	
     }
     
-    public CResultSetResult listDatabaseObjects( Connection DBConnection, int intObjectType, CExtendedLogger Logger, CLanguage Lang ) {
+    public CResultSetResult listDatabaseObjects( CAbstractDBConnection DBConnection, int intObjectType, CExtendedLogger Logger, CLanguage Lang ) {
 
+    	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
+    	
     	CResultSetResult Result =  new CResultSetResult();
     	
     	Result.intCode = -1;
@@ -3362,7 +3398,7 @@ public abstract class CAbstractDBEngine {
     	
     	try {
     		
-    		DatabaseMetaData DBMetadata = DBConnection.getMetaData();
+    		DatabaseMetaData DBMetadata = JDBConnection.getMetaData();
     		
         	CMemoryRowSet MemoryRowSet =  new CMemoryRowSet( false );
         	
@@ -3389,7 +3425,7 @@ public abstract class CAbstractDBEngine {
         		catch ( Exception Ex ) {
         			
         			if ( Logger != null )
-        				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+        				Logger.logException( "-1010", Ex.getMessage(), Ex );
         			
         		}
         		
@@ -3413,7 +3449,7 @@ public abstract class CAbstractDBEngine {
         		catch ( Exception Ex ) {
         			
         			if ( Logger != null )
-        				Logger.LogException( "-1011", Ex.getMessage(), Ex );
+        				Logger.logException( "-1011", Ex.getMessage(), Ex );
         			
         		}
         		
@@ -3435,7 +3471,7 @@ public abstract class CAbstractDBEngine {
         		catch ( Exception Ex ) {
         			
         			if ( Logger != null )
-        				Logger.LogException( "-1012", Ex.getMessage(), Ex );
+        				Logger.logException( "-1012", Ex.getMessage(), Ex );
         			
         		}
         		
@@ -3457,7 +3493,7 @@ public abstract class CAbstractDBEngine {
         		catch ( Exception Ex ) {
         			
         			if ( Logger != null )
-        				Logger.LogException( "-1013", Ex.getMessage(), Ex );
+        				Logger.logException( "-1013", Ex.getMessage(), Ex );
         			
         		}
         		
@@ -3470,7 +3506,7 @@ public abstract class CAbstractDBEngine {
     	catch ( Exception Ex ) {
 
 			if ( Logger != null )
-				Logger.LogException( "-1014", Ex.getMessage(), Ex );
+				Logger.logException( "-1014", Ex.getMessage(), Ex );
     	
     	}
     	

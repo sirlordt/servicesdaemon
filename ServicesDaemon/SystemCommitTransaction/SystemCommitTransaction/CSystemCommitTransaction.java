@@ -10,134 +10,100 @@
  ******************************************************************************/
 package SystemCommitTransaction;
 
-import java.io.File;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.Semaphore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import AbstractDBEngine.CAbstractDBConnection;
 import AbstractDBEngine.CAbstractDBEngine;
 import AbstractResponseFormat.CAbstractResponseFormat;
 import AbstractService.CAbstractService;
 import AbstractService.CInputServiceParameter;
 import AbstractService.CInputServiceParameter.TParameterScope;
 import AbstractService.CServicePreExecuteResult;
-import AbstractService.ConstantsServicesTags;
-import AbstractService.DefaultConstantsServices;
 import CommonClasses.CAbstractConfigLoader;
 import CommonClasses.CClassPathLoader;
-import CommonClasses.CDBConnectionsManager;
+import CommonClasses.CConfigNativeDBConnection;
+import CommonClasses.CNativeDBConnectionsManager;
 import CommonClasses.CServicePostExecuteResult;
-import CommonClasses.CServicesDaemonConfig;
-import CommonClasses.CSessionInfoManager;
-import CommonClasses.DefaultConstantsServicesDaemon;
-import DBServicesManager.CConfigDBConnection;
-import DBServicesManager.CDBServicesManagerConfig;
+import CommonClasses.CConfigServicesDaemon;
+import CommonClasses.CNativeSessionInfoManager;
+import CommonClasses.ConstantsCommonClasses;
+import CommonClasses.ConstantsMessagesCodes;
+import DBCommonClasses.CDBAbstractService;
 
-public class CSystemCommitTransaction extends CAbstractService {
+public class CSystemCommitTransaction extends CDBAbstractService {
 
-	protected CSystemCommitTransactionConfig SystemCommitTransactionConfig = null;
-	
-    public final static String getJarFolder() {
-
-        String name =  CSystemCommitTransaction.class.getCanonicalName().replace( '.', '/' );
-
-        String s = CSystemCommitTransaction.class.getClass().getResource( "/" + name + ".class" ).toString();
-
-        s = s.replace( '/', File.separatorChar );
-
-        if ( s.indexOf(".jar") >= 0 )
-           s = s.substring( 0, s.indexOf(".jar") + 4 );
-        else
-           s = s.substring( 0, s.indexOf(".class") );
-
-        if ( s.indexOf( "jar:file:\\" )  == 0 ) { //Windows style path SO inside jar file 
-
-        	s = s.substring( 10 );
-
-        }
-        else if ( s.indexOf( "file:\\" )  == 0 ) { //Windows style path SO .class file
-
-        	s = s.substring( 6 );
-
-        }
-        else { //Unix family ( Linux/BSD/Mac/Solaris ) style path SO
-
-            s = s.substring( s.lastIndexOf(':') + 1 );
-
-        }
-
-        return s.substring( 0, s.lastIndexOf( File.separatorChar ) + 1 );
-
-    }
+	protected CConfigSystemCommitTransaction SystemCommitTransactionConfig = null;
 
 	public CSystemCommitTransaction() {
+		
+		super();
+
 	}
 
 	@Override
-	public boolean InitializeService( CServicesDaemonConfig ServicesDaemonConfig, CAbstractConfigLoader OwnerConfig ) { // Alternate manual contructor
+	public boolean initializeService( CConfigServicesDaemon ServicesDaemonConfig, CAbstractConfigLoader OwnerConfig ) { // Alternate manual contructor
 
 		boolean bResult = false;
 		
-		super.InitializeService( ServicesDaemonConfig, OwnerConfig );
+		super.initializeService( ServicesDaemonConfig, OwnerConfig );
 		
 		try {
 
 			this.bAuthRequired = true;
-			this.strJarRunningPath = getJarFolder();
-			DefaultConstantsSystemCommitTransaction.strDefaultRunningPath = this.strJarRunningPath;
+			this.strRunningPath = net.maindataservices.Utilities.getJarFolder( this.getClass() );
 			this.strServiceName = "System.Commit.Transaction";
 			this.strServiceVersion = "0.0.0.1";
 
-			this.SetupService( DefaultConstantsSystemCommitTransaction.strDefaultMainFileLog, DefaultConstantsSystemCommitTransaction.strDefaultRunningPath + DefaultConstantsServices.strDefaultLangsDir + DefaultConstantsSystemCommitTransaction.strDefaultMainFile + "." + ServicesDaemonConfig.strDefaultLang ); //Init the Logger and Lang
+			this.setupService( ConstantsSystemCommitTransaction._Main_File_Log, this.strRunningPath + ConstantsCommonClasses._Langs_Dir + ConstantsSystemCommitTransaction._Main_File + "." + ConstantsCommonClasses._Lang_Ext ); //Init the Logger and Lang
 			
-			ServiceLogger.LogMessage( "1", ServiceLang.Translate( "Running dir: [%s]", this.strJarRunningPath ) );        
-			ServiceLogger.LogMessage( "1", ServiceLang.Translate( "Version: [%s]", this.strServiceVersion ) );        
+			ServiceLogger.logMessage( "1", ServiceLang.translate( "Running dir: [%s]", this.strRunningPath ) );        
+			ServiceLogger.logMessage( "1", ServiceLang.translate( "Version: [%s]", this.strServiceVersion ) );        
 
-			CClassPathLoader ClassPathLoader = new CClassPathLoader( ServiceLogger, ServiceLang );
+			CClassPathLoader ClassPathLoader = new CClassPathLoader();
 
-			ClassPathLoader.LoadClassFiles( this.strJarRunningPath + DefaultConstantsServices.strDefaultPreExecuteDir, DefaultConstantsServicesDaemon.strDefaultLibsExt, 2 );
+			ClassPathLoader.LoadClassFiles( this.strRunningPath + ConstantsCommonClasses._Pre_Execute_Dir, ConstantsCommonClasses._Lib_Ext, 2, ServiceLogger, ServiceLang  );
 
-			this.LoadAndRegisterServicePreExecute();
+			this.loadAndRegisterServicePreExecute();
 
-			ClassPathLoader.LoadClassFiles( this.strJarRunningPath + DefaultConstantsServices.strDefaultPostExecuteDir, DefaultConstantsServicesDaemon.strDefaultLibsExt, 2 );
+			ClassPathLoader.LoadClassFiles( this.strRunningPath + ConstantsCommonClasses._Post_Execute_Dir, ConstantsCommonClasses._Lib_Ext, 2, ServiceLogger, ServiceLang  );
 
-			this.LoadAndRegisterServicePostExecute();
+			this.loadAndRegisterServicePostExecute();
 
-			SystemCommitTransactionConfig = CSystemCommitTransactionConfig.getSystemCommitTransactionConfig( ServicesDaemonConfig, ( CDBServicesManagerConfig ) OwnerConfig );
+			SystemCommitTransactionConfig = CConfigSystemCommitTransaction.getSystemCommitTransactionConfig( ServicesDaemonConfig, OwnerConfig, this.strRunningPath );
 
-			if ( SystemCommitTransactionConfig.LoadConfig( DefaultConstantsSystemCommitTransaction.strDefaultRunningPath + DefaultConstantsSystemCommitTransaction.strDefaultConfFile, ServiceLang, ServiceLogger ) == true ) {
+			if ( SystemCommitTransactionConfig.LoadConfig( this.strRunningPath + ConstantsSystemCommitTransaction._Conf_File, ServiceLang, ServiceLogger ) == true ) {
 
 				bResult = true;
 
-				this.strServiceDescription = ServiceLang.Translate( "Allow commit transaction in database from a transaction id" );
+				this.strServiceDescription = ServiceLang.translate( "Allow commit transaction in database from a transaction id" );
 
 				ArrayList< CInputServiceParameter > ServiceInputParameters = new ArrayList< CInputServiceParameter >();
 
-				CInputServiceParameter InputParameter = new CInputServiceParameter( ConstantsServicesTags._RequestResponseFormat, false, ConstantsServicesTags._RequestResponseFormatType, ConstantsServicesTags._RequestResponseFormatLength, TParameterScope.IN, ServiceLang.Translate( "Response format name, example: XML-DATAPACKET, CSV, JSON" ) );
+				CInputServiceParameter InputParameter = new CInputServiceParameter( ConstantsCommonClasses._Request_ResponseFormat, false, ConstantsCommonClasses._Request_ResponseFormat_Type, ConstantsCommonClasses._Request_ResponseFormat_Length, TParameterScope.IN, ServiceLang.translate( "Response format name, example: XML-DATAPACKET, CSV, JSON" ) );
 
 				ServiceInputParameters.add( InputParameter ); 	
 
-				InputParameter = new CInputServiceParameter( ConstantsServicesTags._RequestResponseFormatVersion, false, ConstantsServicesTags._RequestResponseFormatVersionType, ConstantsServicesTags._RequestResponseFormatVersionLength, TParameterScope.IN, ServiceLang.Translate( "Response format version, example: 1.1" ) );
+				InputParameter = new CInputServiceParameter( ConstantsCommonClasses._Request_ResponseFormatVersion, false, ConstantsCommonClasses._Request_ResponseFormatVersion_Type, ConstantsCommonClasses._Request_ResponseFormatVersion_Length, TParameterScope.IN, ServiceLang.translate( "Response format version, example: 1.1" ) );
 
 				ServiceInputParameters.add( InputParameter ); 	
 
-				InputParameter = new CInputServiceParameter( ConstantsServicesTags._RequestServiceName, true, ConstantsServicesTags._RequestServiceNameType, ConstantsServicesTags._RequestServiceNameLength, TParameterScope.IN, ServiceLang.Translate( "Service Name" ) );
+				InputParameter = new CInputServiceParameter( ConstantsCommonClasses._Request_ServiceName, true, ConstantsCommonClasses._Request_ServiceName_Type, ConstantsCommonClasses._Request_ServiceName_Length, TParameterScope.IN, ServiceLang.translate( "Service Name" ) );
 
 				ServiceInputParameters.add( InputParameter );
 
-				InputParameter = new CInputServiceParameter( ConstantsServicesTags._RequestSecurityTokenID, true, ConstantsServicesTags._RequestSecurityTokenIDType, "0", TParameterScope.IN, ServiceLang.Translate( "Security token obtained with a start session service call" ) );
+				InputParameter = new CInputServiceParameter( ConstantsCommonClasses._Request_SecurityTokenID, true, ConstantsCommonClasses._Request_SecurityTokenID_Type, ConstantsCommonClasses._Request_SecurityTokenID_Length, TParameterScope.IN, ServiceLang.translate( "Security token obtained with a start session service call" ) );
 
 				ServiceInputParameters.add( InputParameter );
 
-				InputParameter = new CInputServiceParameter( ConstantsServicesTags._RequestTransactionID, true, ConstantsServicesTags._RequestTransactionIDType, "0", TParameterScope.IN, ServiceLang.Translate( "Transaction id obtained with a start transaction service call" ) );
+				InputParameter = new CInputServiceParameter( ConstantsCommonClasses._Request_TransactionID, true, ConstantsCommonClasses._Request_TransactionID_Type, ConstantsCommonClasses._Request_TransactionID_Length, TParameterScope.IN, ServiceLang.translate( "Transaction id obtained with a start transaction service call" ) );
 
 				ServiceInputParameters.add( InputParameter );
 
-				GroupsInputParametersService.put( ConstantsServicesTags._Default, ServiceInputParameters );
+				GroupsInputParametersService.put( ConstantsCommonClasses._Default, ServiceInputParameters );
 
 			}
 		
@@ -147,7 +113,7 @@ public class CSystemCommitTransaction extends CAbstractService {
 			bResult = false;
 			
 			if ( OwnerLogger != null )
-        		OwnerLogger.LogException( "-1010", Ex.getMessage(), Ex );
+        		OwnerLogger.logException( "-1010", Ex.getMessage(), Ex );
 			
 		}
 		
@@ -156,30 +122,30 @@ public class CSystemCommitTransaction extends CAbstractService {
 	}
 
 	@Override
-	public int ExecuteService( int intEntryCode, HttpServletRequest Request, HttpServletResponse Response, String strSecurityTokenID, HashMap<String, CAbstractService> RegisteredServices, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion ) {
+	public int executeService( int intEntryCode, HttpServletRequest Request, HttpServletResponse Response, String strSecurityTokenID, HashMap<String, CAbstractService> RegisteredServices, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion ) {
 
 		int intResultCode = -1000;
 		
-		CSessionInfoManager SessionInfoManager = CSessionInfoManager.getSessionInfoManager();
+		CNativeSessionInfoManager SessionInfoManager = CNativeSessionInfoManager.getSessionInfoManager();
 		
-		CConfigDBConnection LocalConfigDBConnection = null;
+		CConfigNativeDBConnection LocalConfigDBConnection = null;
 		
 		if ( SessionInfoManager != null )
-			LocalConfigDBConnection = SessionInfoManager.getConfigDBConnectionFromSecurityTokenID( strSecurityTokenID, ServiceLogger, ServiceLang ); 
+			LocalConfigDBConnection = SessionInfoManager.getConfigNativeDBConnectionFromSecurityTokenID( strSecurityTokenID, ServiceLogger, ServiceLang ); 
 		
-		if ( this.CheckServiceInputParameters( GroupsInputParametersService.get( ConstantsServicesTags._Default ), Request, Response, ResponseFormat, strResponseFormatVersion, LocalConfigDBConnection!=null?LocalConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemCommitTransaction._Global_DateTime_Format ), LocalConfigDBConnection!=null?LocalConfigDBConnection.strDateFormat:OwnerConfig.getConfigValue( ConstantsSystemCommitTransaction._Global_Date_Format ), LocalConfigDBConnection!=null?LocalConfigDBConnection.strTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemCommitTransaction._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang ) == true ) {
+		if ( this.checkServiceInputParameters( GroupsInputParametersService.get( ConstantsCommonClasses._Default ), Request, Response, ResponseFormat, strResponseFormatVersion, LocalConfigDBConnection!=null?LocalConfigDBConnection.strDateTimeFormat:(String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_DateTime_Format, null ), LocalConfigDBConnection!=null?LocalConfigDBConnection.strDateFormat:(String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_Date_Format, null ), LocalConfigDBConnection!=null?LocalConfigDBConnection.strTimeFormat:(String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_Time_Format, null ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang ) == true ) {
 			
-			CServicePreExecuteResult ServicePreExecuteResult = this.RunServicePreExecute( intEntryCode, Request, Response, strSecurityTokenID, RegisteredServices, ResponseFormat, strResponseFormatVersion );
+			CServicePreExecuteResult ServicePreExecuteResult = this.runServicePreExecute( intEntryCode, Request, Response, strSecurityTokenID, RegisteredServices, ResponseFormat, strResponseFormatVersion );
 
 			if ( ServicePreExecuteResult == null || ServicePreExecuteResult.bStopExecuteService == false ) {
 
 				try {
 
-					String strTransactionID = ( String ) Request.getParameter( ConstantsServicesTags._RequestTransactionID );
+					String strTransactionID = Request.getParameter( ConstantsCommonClasses._Request_TransactionID );
 
-					CDBConnectionsManager DBConnectionsManager = CDBConnectionsManager.getDBConnectionManager();
+					CNativeDBConnectionsManager DBConnectionsManager = CNativeDBConnectionsManager.getNativeDBConnectionManager();
 
-					Connection DBConnection = DBConnectionsManager.getDBConnection( strTransactionID, ServiceLogger, ServiceLang );
+					CAbstractDBConnection DBConnection = DBConnectionsManager.getDBConnection( strTransactionID, ServiceLogger, ServiceLang );
 
 					if ( DBConnection != null ) {
 
@@ -193,24 +159,25 @@ public class CSystemCommitTransaction extends CAbstractService {
 
 							if ( DBEngine != null ) {
 
-								Semaphore DBConnectionSemaphore = DBConnectionsManager.getDBConnectionSemaphore( strTransactionID, ServiceLogger, ServiceLang );
+								//Semaphore DBConnectionSemaphore = DBConnectionsManager.getNativeDBConnectionSemaphore( strTransactionID, ServiceLogger, ServiceLang );
 
-								if ( DBConnectionSemaphore != null ) {
+								//if ( DBConnectionSemaphore != null ) {
 
 									try {
 
-										DBConnectionSemaphore.acquire(); //Blocks another threads to use this connection
+										DBConnection.lockConnection( false, ServiceLogger, ServiceLang ); //Blocks another threads to use this connection
+										//DBConnectionSemaphore.acquire(); //Blocks another threads to use this connection
 
 										try {  
 
 											DBEngine.commit( DBConnection, ServiceLogger, ServiceLang );
 
-											ServiceLogger.LogInfo( "0x1502", ServiceLang.Translate( "Success commit transaction with SessionKey: [%s], SecurityTokenID: [%s], TransactionID: [%s], Database: [%s]", LocalConfigDBConnection.strSessionKey, strSecurityTokenID, strTransactionID, LocalConfigDBConnection.strName ) );        
+											ServiceLogger.logInfo( "0x1502", ServiceLang.translate( "Success commit transaction with SessionKey: [%s], SecurityTokenID: [%s], TransactionID: [%s], Database: [%s]", LocalConfigDBConnection.strSessionKey, strSecurityTokenID, strTransactionID, LocalConfigDBConnection.strName ) );        
 											
 											Response.setContentType( ResponseFormat.getContentType() );
 											Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-											String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", strTransactionID, 1, ServiceLang.Translate( "Success commit transaction for id: [%s]", strTransactionID ), false, strResponseFormatVersion, LocalConfigDBConnection.strDateTimeFormat, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
+											String strResponseBuffer = ResponseFormat.formatSimpleMessage( "", strTransactionID, 1, ServiceLang.translate( "Success commit transaction for id: [%s]", strTransactionID ), false, strResponseFormatVersion, LocalConfigDBConnection.strDateTimeFormat, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 											Response.getWriter().print( strResponseBuffer );
 
 											intResultCode = 1;
@@ -219,25 +186,26 @@ public class CSystemCommitTransaction extends CAbstractService {
 										catch ( Exception Ex ) {
 
 											if ( ServiceLogger != null )
-												ServiceLogger.LogException( "-1024", Ex.getMessage(), Ex ); 
+												ServiceLogger.logException( "-1024", Ex.getMessage(), Ex ); 
 											else if ( OwnerLogger != null )
-												OwnerLogger.LogException( "-1024", Ex.getMessage(), Ex );
+												OwnerLogger.logException( "-1024", Ex.getMessage(), Ex );
 
 										}
 
-										DBConnectionSemaphore.release(); //Release another threads to use this connection
+										DBConnection.unlockConnection( ServiceLogger, ServiceLang ); //Release another threads to use this connection
+										//DBConnectionSemaphore.release(); //Release another threads to use this connection
 
 									}
 									catch ( Exception Ex ) {
 
 										if ( ServiceLogger != null )
-											ServiceLogger.LogException( "-1023", Ex.getMessage(), Ex ); 
+											ServiceLogger.logException( "-1023", Ex.getMessage(), Ex ); 
 										else if ( OwnerLogger != null )
-											OwnerLogger.LogException( "-1023", Ex.getMessage(), Ex );
+											OwnerLogger.logException( "-1023", Ex.getMessage(), Ex );
 
 									}
 
-								}                        
+								/*}                        
 								else {
 
 									try {
@@ -264,7 +232,7 @@ public class CSystemCommitTransaction extends CAbstractService {
 
 									}
 
-								}
+								}*/
 
 
 							}
@@ -274,23 +242,23 @@ public class CSystemCommitTransaction extends CAbstractService {
 
 									if ( ServiceLogger != null ) {
 
-										ServiceLogger.LogError( "-1003", ServiceLang.Translate( "The database engine name [%s] version [%s] not found", LocalConfigDBConnection.strEngine, LocalConfigDBConnection.strEngineVersion ) );        
+										ServiceLogger.logError( "-1003", ServiceLang.translate( "The database engine name [%s] version [%s] not found", LocalConfigDBConnection.strEngine, LocalConfigDBConnection.strEngineVersion ) );        
 
 									}
 
 									Response.setContentType( ResponseFormat.getContentType() );
 									Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-									String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1003, ServiceLang.Translate( "Failed to commit transaction for id: [%s], see the log file for more details", strSecurityTokenID ), true, strResponseFormatVersion, LocalConfigDBConnection.strDateTimeFormat, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
+									String strResponseBuffer = ResponseFormat.formatSimpleMessage( "", "", -1003, ServiceLang.translate( "Failed to commit transaction for id: [%s], see the log file for more details", strSecurityTokenID ), true, strResponseFormatVersion, LocalConfigDBConnection.strDateTimeFormat, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 									Response.getWriter().print( strResponseBuffer );
 
 								}
 								catch ( Exception Ex ) {
 
 									if ( ServiceLogger != null )
-										ServiceLogger.LogException( "-1021", Ex.getMessage(), Ex ); 
+										ServiceLogger.logException( "-1021", Ex.getMessage(), Ex ); 
 									else if ( OwnerLogger != null )
-										OwnerLogger.LogException( "-1021", Ex.getMessage(), Ex );
+										OwnerLogger.logException( "-1021", Ex.getMessage(), Ex );
 
 								}
 
@@ -301,14 +269,14 @@ public class CSystemCommitTransaction extends CAbstractService {
 
 							if ( ServiceLogger != null ) {
 
-								ServiceLogger.LogError( "-1002", ServiceLang.Translate( "Cannot locate in session the database connection config for the security token: [%s]", strSecurityTokenID ) );        
+								ServiceLogger.logError( "-1002", ServiceLang.translate( "Cannot locate in session the database connection config for the security token: [%s]", strSecurityTokenID ) );        
 
 							}
 
 							Response.setContentType( ResponseFormat.getContentType() );
 							Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-							String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1002, ServiceLang.Translate( "Failed to commit transaction for id: [%s], see the log file for more details", strTransactionID ), true, strResponseFormatVersion, LocalConfigDBConnection!=null?LocalConfigDBConnection.strDateTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemCommitTransaction._Global_DateTime_Format ), LocalConfigDBConnection!=null?LocalConfigDBConnection.strDateFormat:OwnerConfig.getConfigValue( ConstantsSystemCommitTransaction._Global_Date_Format ), LocalConfigDBConnection!=null?LocalConfigDBConnection.strTimeFormat:OwnerConfig.getConfigValue( ConstantsSystemCommitTransaction._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
+							String strResponseBuffer = ResponseFormat.formatSimpleMessage( "", "", -1002, ServiceLang.translate( "Failed to commit transaction for id: [%s], see the log file for more details", strTransactionID ), true, strResponseFormatVersion, LocalConfigDBConnection!=null?LocalConfigDBConnection.strDateTimeFormat:(String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_DateTime_Format, null ), LocalConfigDBConnection!=null?LocalConfigDBConnection.strDateFormat:(String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_Date_Format, null ), LocalConfigDBConnection!=null?LocalConfigDBConnection.strTimeFormat:(String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_Time_Format, null ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 							Response.getWriter().print( strResponseBuffer );
 
 						}
@@ -318,14 +286,14 @@ public class CSystemCommitTransaction extends CAbstractService {
 
 						if ( ServiceLogger != null ) {
 
-							ServiceLogger.LogError( "-1001", ServiceLang.Translate( "No found database connection from transaction id: [%s]", strTransactionID ) );        
+							ServiceLogger.logError( "-1001", ServiceLang.translate( "No found database connection from transaction id: [%s]", strTransactionID ) );        
 
 						}
 
 						Response.setContentType( ResponseFormat.getContentType() );
 						Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-						String strResponseBuffer = ResponseFormat.FormatSimpleMessage( "", "", -1001, ServiceLang.Translate( "Failed to commit transaction for id: [%s], see the log file for more details", strTransactionID ), true, strResponseFormatVersion, OwnerConfig.getConfigValue( ConstantsSystemCommitTransaction._Global_DateTime_Format ), OwnerConfig.getConfigValue( ConstantsSystemCommitTransaction._Global_Date_Format ), OwnerConfig.getConfigValue( ConstantsSystemCommitTransaction._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
+						String strResponseBuffer = ResponseFormat.formatSimpleMessage( "", "", -1001, ServiceLang.translate( "Failed to commit transaction for id: [%s], see the log file for more details", strTransactionID ), true, strResponseFormatVersion, (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_DateTime_Format, null ), (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_Date_Format, null ), (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_Time_Format, null ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 						Response.getWriter().print( strResponseBuffer );
 
 					}
@@ -335,9 +303,9 @@ public class CSystemCommitTransaction extends CAbstractService {
 				catch ( Exception Ex ) {
 
 					if ( ServiceLogger != null )
-						ServiceLogger.LogException( "-1020", Ex.getMessage(), Ex ); 
+						ServiceLogger.logException( "-1020", Ex.getMessage(), Ex ); 
 					else if ( OwnerLogger != null )
-						OwnerLogger.LogException( "-1020", Ex.getMessage(), Ex );
+						OwnerLogger.logException( "-1020", Ex.getMessage(), Ex );
 
 				}  
 
@@ -348,7 +316,7 @@ public class CSystemCommitTransaction extends CAbstractService {
 
 			}
 
-			CServicePostExecuteResult ServicePostExecuteResult = this.RunServicePostExecute( intEntryCode, Request, Response, strSecurityTokenID, RegisteredServices, ResponseFormat, strResponseFormatVersion );
+			CServicePostExecuteResult ServicePostExecuteResult = this.runServicePostExecute( intEntryCode, Request, Response, strSecurityTokenID, RegisteredServices, ResponseFormat, strResponseFormatVersion );
 
 			if ( ServicePostExecuteResult != null ) {
 

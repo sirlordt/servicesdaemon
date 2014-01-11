@@ -2,8 +2,8 @@ package SystemEndTransaction;
 
 public interface ConstantsSystemEndTransaction {
 
-	public static final String _Global_DateTime_Format = "Global_DateTime_Format";
-	public static final String _Global_Date_Format = "Global_Date_Format";
-	public static final String _Global_Time_Format = "Global_Time_Format";
+	public static final String _Main_File = "SystemEndTransaction";
+	public static final String _Conf_File = _Main_File + ".conf";
+	public static final String _Main_File_Log = _Main_File + ".log";
 	
 }

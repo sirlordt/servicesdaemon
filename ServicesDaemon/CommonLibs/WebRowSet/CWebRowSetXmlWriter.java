@@ -1,8 +1,6 @@
 package WebRowSet;
 
 import java.io.OutputStreamWriter;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -10,7 +8,7 @@ import java.sql.SQLException;
 import javax.sql.RowSet;
 import javax.sql.rowset.WebRowSet;
 
-import com.sun.rowset.internal.WebRowSetXmlWriter;
+import rowset.internal.WebRowSetXmlWriter;
 
 public class CWebRowSetXmlWriter extends WebRowSetXmlWriter {
 
@@ -19,7 +17,7 @@ public class CWebRowSetXmlWriter extends WebRowSetXmlWriter {
 	 */
 	private static final long serialVersionUID = -943096318023880256L;
 
-	protected Method startHeaderMethod = null;
+	/*protected Method startHeaderMethod = null;
 	protected Method endHeaderMethod = null;
 	protected Method writePropertiesMethod = null;
 	protected Method writeMetaDataMethod = null;
@@ -29,18 +27,18 @@ public class CWebRowSetXmlWriter extends WebRowSetXmlWriter {
 	protected Method endSectionMethodVoid = null;
 	protected Method beginTagMethod = null;
 	protected Method endTagMethod = null;
-	protected Method writeValueMethod = null;
+	protected Method writeValueMethod = null;*/
 	
-	@SuppressWarnings("rawtypes")
-	protected java.util.Stack stack;
+	//@SuppressWarnings("rawtypes")
+	//protected java.util.Stack stack;
 	
-	protected OutputStreamWriter writer; 
+	//protected OutputStreamWriter writer; 
 	
 	public CWebRowSetXmlWriter() {  
 		
 		super();
 		
-		try {
+		/*try {
 
 			//I hate the private method on Object Oriented Programming
 			//This suck because the stupid private members and method
@@ -79,7 +77,7 @@ public class CWebRowSetXmlWriter extends WebRowSetXmlWriter {
 			
 			Ex.printStackTrace();
 			
-		}
+		}*/
 		
 	}
 	
@@ -90,11 +88,12 @@ public class CWebRowSetXmlWriter extends WebRowSetXmlWriter {
 		
 	}
 
-	public OutputStreamWriter getInternalWriter() {
+	/*public OutputStreamWriter getInternalWriter() {
 		
-		return writer;
+		return (OutputStreamWriter) writer;
 		
-	}
+	}*/
+	
 	
     @SuppressWarnings({ "rawtypes" })
 	public void initStackAndWriter( java.io.OutputStream oStream ) {
@@ -103,7 +102,7 @@ public class CWebRowSetXmlWriter extends WebRowSetXmlWriter {
         stack = new java.util.Stack();
         writer = new OutputStreamWriter( oStream );
         
-        try {
+        /*try {
         	
         	//I hate the private members in Object Oriented Programming 
     		Field PrivateFieldClass = WebRowSetXmlWriter.class.getDeclaredField( "stack" );
@@ -119,9 +118,10 @@ public class CWebRowSetXmlWriter extends WebRowSetXmlWriter {
         	
         	Ex.printStackTrace();
         	
-        }
+        }*/
 		
 	}
+	
 	
 	public void initWriteXML( WebRowSet caller, java.io.OutputStream oStream ) throws SQLException {
 
@@ -147,10 +147,14 @@ public class CWebRowSetXmlWriter extends WebRowSetXmlWriter {
     	
         try {
 
-			startHeaderMethod.invoke( this );
+			startHeader();
+			writeProperties( caller );
+			writeMetaData( caller );
+			beginSection( "data" );
+        	/*startHeaderMethod.invoke( this );
 			writePropertiesMethod.invoke( this, caller );
             writeMetaDataMethod.invoke( this, caller );
-            beginSectionMethod.invoke( this, "data" );
+            beginSectionMethod.invoke( this, "data" );*/
 
         }
         catch ( Exception Ex ) {
@@ -183,8 +187,10 @@ public class CWebRowSetXmlWriter extends WebRowSetXmlWriter {
     	
         try {
 
-            endSectionMethod.invoke( this, "data" );
-            endHeaderMethod.invoke( this );
+        	super.endSection( "data" );
+        	super.endHeader();
+            //endSectionMethod.invoke( this, "data" );
+            //endHeaderMethod.invoke( this );
 
         } 
         catch ( Exception Ex ) {
@@ -196,7 +202,7 @@ public class CWebRowSetXmlWriter extends WebRowSetXmlWriter {
     	
     }
 	
-    private void writeData( WebRowSet caller ) throws java.io.IOException {
+    protected void writeData( WebRowSet caller ) throws java.io.IOException {
         
     	ResultSet rs;
 
@@ -216,22 +222,26 @@ public class CWebRowSetXmlWriter extends WebRowSetXmlWriter {
                 
             	if ( caller.rowDeleted() && caller.rowInserted() ) {
             		
-            		beginSectionMethod.invoke( this, "modifyRow" );
+            		beginSection( "modifyRow" );
+            		//beginSectionMethod.invoke( this, "modifyRow" );
             		
                 } 
             	else if (caller.rowDeleted()) {
                 	
-            		beginSectionMethod.invoke( this, "deleteRow" );
+            		beginSection( "deleteRow" );
+            		//beginSectionMethod.invoke( this, "deleteRow" );
             		
                 } 
                 else if (caller.rowInserted()) {
                 	
-                	beginSectionMethod.invoke( this, "insertRow" );
+            		beginSection( "insertRow" );
+                	//beginSectionMethod.invoke( this, "insertRow" );
                 	
                 } 
                 else {
                 	
-                	beginSectionMethod.invoke( this, "currentRow" );
+            		beginSection( "currentRow" );
+                	//beginSectionMethod.invoke( this, "currentRow" );
                 	
                 }
 
@@ -242,24 +252,37 @@ public class CWebRowSetXmlWriter extends WebRowSetXmlWriter {
                     	rs = caller.getOriginalRow();
                         rs.next();
                         
-                        beginTagMethod.invoke( this, "columnValue" );
-                        writeValueMethod.invoke( this, i, (RowSet)rs);
+                        beginTag( "columnValue" );
+                        writeValue( i, (RowSet) rs );
+                        endTag( "columnValue" );
+                        beginTag( "updateRow" );
+                        writeValue( i, caller );
+                        endTag( "updateRow" );
+                        /*beginTagMethod.invoke( this, "columnValue" );
+                        writeValueMethod.invoke( this, i, rs);
                         endTagMethod.invoke( this, "columnValue" );
                         beginTagMethod.invoke( this, "updateRow" );
                         writeValueMethod.invoke( this, i, caller);
-                        endTagMethod.invoke( this, "updateRow" );
+                        endTagMethod.invoke( this, "updateRow" );*/
                         
                     } 
                     else {
                         
+                    	beginTag( "columnValue" );
+                    	writeValue( i, caller );
+                    	endTag( "columnValue" );
+                    	
+                    	/*
                     	beginTagMethod.invoke( this, "columnValue" );
                         writeValueMethod.invoke( this, i, caller);
                         endTagMethod.invoke( this, "columnValue" );
+                        */
                         
                     }
                 }
 
-                endSectionMethodVoid.invoke( this ); // this is unchecked
+                endSection();
+                //endSectionMethodVoid.invoke( this ); // this is unchecked
             
             }
             

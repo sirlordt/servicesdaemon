@@ -24,8 +24,10 @@ import javax.sql.rowset.serial.SerialBlob;
 
 import net.maindataservices.Base64;
 
+import AbstractDBEngine.CAbstractDBConnection;
 import AbstractDBEngine.CAbstractDBEngine;
-import AbstractDBEngine.CDBEngineConfigConnection;
+import AbstractDBEngine.CDBEngineConfigNativeDBConnection;
+import AbstractDBEngine.CJDBConnection;
 import AbstractService.CInputServiceParameter.TParameterScope;
 import CommonClasses.CLanguage;
 import CommonClasses.CMemoryFieldData;
@@ -46,9 +48,9 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 	}
 	
 	@Override
-	public Connection getDBConnection( CDBEngineConfigConnection ConfigDBConnection, CExtendedLogger Logger, CLanguage Lang ) {
+	public CAbstractDBConnection getDBConnection( CDBEngineConfigNativeDBConnection ConfigDBConnection, CExtendedLogger Logger, CLanguage Lang ) {
 
-		Connection DBConnection = null;
+		CAbstractDBConnection DBConnection = null;
 		
 		try {
 			
@@ -56,17 +58,20 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 
             if ( Logger != null ) {
             	
-        		Logger.LogMessage( "1", Lang.Translate( "Trying to connect with the next URL: [%s] and user: [%s]", strDatabaseURL, ConfigDBConnection.strUser ) );        
+        		Logger.logMessage( "1", Lang.translate( "Trying to connect with the next URL: [%s] and user: [%s]", strDatabaseURL, ConfigDBConnection.strUser ) );        
             	
             }
 
             Class.forName( ConfigDBConnection.strDriver );
 
-            DBConnection = DriverManager.getConnection( strDatabaseURL, ConfigDBConnection.strUser, ConfigDBConnection.strPassword ); 
+            Connection JDBConnection = DriverManager.getConnection( strDatabaseURL, ConfigDBConnection.strUser, ConfigDBConnection.strPassword ); 
 			
+            DBConnection = new CJDBConnection();
+            DBConnection.setDBConnection( JDBConnection );
+            
             if ( Logger != null ) {
             	
-        		Logger.LogMessage( "1", Lang.Translate( "Database connection established to next URL: [%s] and user: [%s]", strDatabaseURL, ConfigDBConnection.strUser ) );        
+        		Logger.logMessage( "1", Lang.translate( "Database connection established to next URL: [%s] and user: [%s]", strDatabaseURL, ConfigDBConnection.strUser ) );        
             	
             }
 			
@@ -74,7 +79,7 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 		catch ( Exception Ex ) {
 			
 			if ( Logger != null )
-				Logger.LogException( "-1015", Ex.getMessage(), Ex ); 
+				Logger.logException( "-1015", Ex.getMessage(), Ex ); 
 			
 		}
 		
@@ -164,7 +169,7 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 						
 						        if ( Logger != null && Lang != null ) {
 						    	   
-						        	Logger.LogWarning( "-1", Lang.Translate( "Unkown Macro type [%s], field name [%s], field value [%s]", Integer.toString( intMacrosTypes[ intMacroIndex ] ), strFieldName, strMacrosValues[ intMacroIndex ] ) );
+						        	Logger.logWarning( "-1", Lang.translate( "Unkown Macro type [%s], field name [%s], field value [%s]", Integer.toString( intMacrosTypes[ intMacroIndex ] ), strFieldName, strMacrosValues[ intMacroIndex ] ) );
 						    	   
 						        } 
 		
@@ -183,7 +188,7 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 		catch ( Exception Ex ) {
 			
 			if ( Logger != null )
-				Logger.LogException( "-1015", Ex.getMessage(), Ex );
+				Logger.logException( "-1015", Ex.getMessage(), Ex );
 			
 		}
 		
@@ -191,6 +196,7 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 		
 	}
 	
+	@Override
 	public boolean setFieldValueToNamedPreparedStatement( CNamedPreparedStatement NamedPreparedStatement, int intFieldType, String strFieldName, String strFieldValue, String strDateFormat, String strTimeFormat, String strDateTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		boolean bResult =  false;
@@ -264,7 +270,7 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 						
 						       if ( Logger != null && Lang != null ) {
 						    	   
-									Logger.LogWarning( "-1", Lang.Translate( "Unkown SQL field type [%s], field name [%s], field value [%s]", Integer.toString( intFieldType ), strFieldName, strFieldValue ) );
+									Logger.logWarning( "-1", Lang.translate( "Unkown SQL field type [%s], field name [%s], field value [%s]", Integer.toString( intFieldType ), strFieldName, strFieldValue ) );
 						    	   
 						       } 
 						
@@ -283,7 +289,7 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 		catch ( Exception Ex ) {
 			
 			if ( Logger != null )
-				Logger.LogException( "-1015", Ex.getMessage(), Ex );
+				Logger.logException( "-1015", Ex.getMessage(), Ex );
 			
 		}
 		
@@ -291,6 +297,7 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 	
 	}
 	
+	@Override
 	public boolean setMacroValueToNamedCallableStatement( CNamedCallableStatement NamedCallableStatement, String strFieldName, int intMacroIndex, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		boolean bResult =  false;
@@ -372,7 +379,7 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 						
 						        if ( Logger != null && Lang != null ) {
 						    	   
-						        	Logger.LogWarning( "-1", Lang.Translate( "Unkown Macro type [%s], field name [%s], field value [%s]", Integer.toString( intMacrosTypes[ intMacroIndex ] ), strFieldName, strMacrosValues[ intMacroIndex ] ) );
+						        	Logger.logWarning( "-1", Lang.translate( "Unkown Macro type [%s], field name [%s], field value [%s]", Integer.toString( intMacrosTypes[ intMacroIndex ] ), strFieldName, strMacrosValues[ intMacroIndex ] ) );
 						    	   
 						        } 
 		
@@ -391,7 +398,7 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 		catch ( Exception Ex ) {
 			
 			if ( Logger != null )
-				Logger.LogException( "-1015", Ex.getMessage(), Ex );
+				Logger.logException( "-1015", Ex.getMessage(), Ex );
 			
 		}
 		
@@ -399,6 +406,7 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 		
 	}
 	
+	@Override
 	public boolean setFieldValueToNamedCallableStatement( CNamedCallableStatement NamedCallableStatement, TParameterScope FieldScope, int intFieldType, String strFieldName, String strFieldValue, String strDateFormat, String strTimeFormat, String strDateTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		boolean bResult =  false;
@@ -474,7 +482,7 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 							
 							       if ( Logger != null && Lang != null ) {
 							    	   
-										Logger.LogWarning( "-1", Lang.Translate( "Unkown SQL field type [%s], field name [%s], field value [%s]", Integer.toString( intFieldType ), strFieldName, strFieldValue ) );
+										Logger.logWarning( "-1", Lang.translate( "Unkown SQL field type [%s], field name [%s], field value [%s]", Integer.toString( intFieldType ), strFieldName, strFieldValue ) );
 							    	   
 							       } 
 							
@@ -502,7 +510,7 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 					
 					if ( Logger != null ) {
 						
-						Logger.LogException( "-1015", Ex.getMessage(), Ex );
+						Logger.logException( "-1015", Ex.getMessage(), Ex );
 					
 					}
 					
@@ -514,7 +522,7 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 		catch ( Exception Ex ) {
 			
 			if ( Logger != null )
-				Logger.LogException( "-1016", Ex.getMessage(), Ex );
+				Logger.logException( "-1016", Ex.getMessage(), Ex );
 			
 		}
 		
@@ -523,7 +531,7 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 	}
 	
 	@Override
-	public ResultSet ExecuteDummySQL( Connection DBConnection, String strOptionalDummySQL, CExtendedLogger Logger, CLanguage Lang ) {
+	public ResultSet executeDummyCommand( CAbstractDBConnection DBConnection, String strOptionalDummySQL, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		ResultSet Result = null;
 		
@@ -535,7 +543,7 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 				
 			}
 			
-			Statement SQLStatement = DBConnection.createStatement();			
+			Statement SQLStatement = ((Connection) DBConnection.getDBConnection()).createStatement();			
 			
 			Result = SQLStatement.executeQuery( strOptionalDummySQL );
 			
@@ -543,7 +551,7 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 		catch ( Exception Ex ) {
 
 			if ( Logger != null )
-				Logger.LogException( "-1015", Ex.getMessage(), Ex ); 
+				Logger.logException( "-1015", Ex.getMessage(), Ex ); 
 
 		}
 	
@@ -629,9 +637,9 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 								if ( Logger != null ) {
 									
 									if ( Lang != null )
-									    Logger.LogWarning( "-1", Lang.Translate( "Unknown SQL data type [%s]", Integer.toString( MemoryField.intSQLType ) ) );
+									    Logger.logWarning( "-1", Lang.translate( "Unknown SQL data type [%s]", Integer.toString( MemoryField.intSQLType ) ) );
 									else
-									    Logger.LogWarning( "-1", String.format( "Unknown SQL data type [%s]", Integer.toString( MemoryField.intSQLType ) ) );
+									    Logger.logWarning( "-1", String.format( "Unknown SQL data type [%s]", Integer.toString( MemoryField.intSQLType ) ) );
 									
 									
 								}
@@ -647,7 +655,7 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 
 						if ( Logger != null ) {
 							
-							Logger.LogException( "-1015", Ex.getMessage(), Ex );
+							Logger.logException( "-1015", Ex.getMessage(), Ex );
 						
 						}	
 
@@ -667,7 +675,7 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 						
 						if ( Logger != null ) {
 							
-							Logger.LogException( "-1015", Ex.getMessage(), Ex );
+							Logger.logException( "-1015", Ex.getMessage(), Ex );
 						
 						}
 						
@@ -763,9 +771,9 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 									if ( Logger != null ) {
 										
 										if ( Lang != null )
-										    Logger.LogWarning( "-1", Lang.Translate( "Unknown SQL data type [%s]", Integer.toString( MemoryField.intSQLType ) ) );
+										    Logger.logWarning( "-1", Lang.translate( "Unknown SQL data type [%s]", Integer.toString( MemoryField.intSQLType ) ) );
 										else
-										    Logger.LogWarning( "-1", String.format( "Unknown SQL data type [%s]", Integer.toString( MemoryField.intSQLType ) ) );
+										    Logger.logWarning( "-1", String.format( "Unknown SQL data type [%s]", Integer.toString( MemoryField.intSQLType ) ) );
 										
 										
 									}
@@ -781,7 +789,7 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 		
 							if ( Logger != null ) {
 								
-								Logger.LogException( "-1015", Ex.getMessage(), Ex );
+								Logger.logException( "-1015", Ex.getMessage(), Ex );
 							
 							}	
 		
@@ -801,7 +809,7 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 							
 							if ( Logger != null ) {
 								
-								Logger.LogException( "-1016", Ex.getMessage(), Ex );
+								Logger.logException( "-1016", Ex.getMessage(), Ex );
 							
 							}
 							
@@ -824,7 +832,7 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 					
 					if ( Logger != null ) {
 						
-						Logger.LogException( "-1017", Ex.getMessage(), Ex );
+						Logger.logException( "-1017", Ex.getMessage(), Ex );
 					
 					}
 					
@@ -839,7 +847,7 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 	}
 
 	@Override
-	public CachedRowSet BuildCachedRowSetFromFieldsScopeOut( CMemoryRowSet MemoryRowSet, CNamedCallableStatement NamedCallableStatement, CExtendedLogger Logger, CLanguage Lang ) {
+	public CachedRowSet buildCachedRowSetFromFieldsScopeOut( CMemoryRowSet MemoryRowSet, CNamedCallableStatement NamedCallableStatement, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		CachedRowSet Result = null;
 		
@@ -905,7 +913,7 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 			
 			if ( Logger != null ) {
 				
-				Logger.LogException( "-1016", Ex.getMessage(), Ex );
+				Logger.logException( "-1016", Ex.getMessage(), Ex );
 			
 			}	
 			
@@ -937,7 +945,8 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 	    
     }
 
-    public String getFieldValueAsString( int intFieldType, int intColumnIndex, ResultSet Resultset, String strDateFormat, String strTimeFormat, String strDateTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+    @Override
+	public String getFieldValueAsString( int intFieldType, int intColumnIndex, ResultSet Resultset, String strDateFormat, String strTimeFormat, String strDateTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
     	
 	    String strResult = "";
 
@@ -1003,7 +1012,7 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 	    catch ( Exception Ex ) {
 		   
 			if ( Logger != null )
-				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				Logger.logException( "-1010", Ex.getMessage(), Ex );
 		   
 	    }
 	   
@@ -1076,7 +1085,7 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 	    catch ( Exception Ex ) {
 		   
 			if ( Logger != null )
-				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				Logger.logException( "-1010", Ex.getMessage(), Ex );
 		   
 	    }
 	   
@@ -1084,7 +1093,8 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
     	
     }
 
-    public Object getFieldValueAsObject( int intFieldType, String strColumnName, ResultSet Resultset, CExtendedLogger Logger, CLanguage Lang ) {
+    @Override
+	public Object getFieldValueAsObject( int intFieldType, String strColumnName, ResultSet Resultset, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	Object Result = null;
     	
@@ -1125,7 +1135,7 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 	    catch ( Exception Ex ) {
 		   
 			if ( Logger != null )
-				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				Logger.logException( "-1010", Ex.getMessage(), Ex );
 		   
 	    }
     	
@@ -1133,7 +1143,8 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
     	
     }
 
-    public Object getFieldValueAsObject( int intFieldType, int intColumnIndex, ResultSet Resultset, CExtendedLogger Logger, CLanguage Lang ) {
+    @Override
+	public Object getFieldValueAsObject( int intFieldType, int intColumnIndex, ResultSet Resultset, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	Object Result = null;
     	
@@ -1174,7 +1185,7 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 	    catch ( Exception Ex ) {
 		   
 			if ( Logger != null )
-				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				Logger.logException( "-1010", Ex.getMessage(), Ex );
 		   
 	    }
     	

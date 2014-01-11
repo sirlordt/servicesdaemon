@@ -7,8 +7,8 @@
 <entry key="Allow log on and get a security token">Permite iniciar sesión y obtener un token de seguridad</entry>
 <entry key="Response format name, example: XML-DATAPACKET, CSV, JSON">Nombre del formato de respuesta, ejemplo: XML-DATAPACKET, CSV, JSON</entry>
 <entry key="Response format version, example: 1.1">Versión del formato de respuesta, ejemplo: 1.1</entry>
-<entry key="The [%s] attribute value [%s] is invalid, name not found in databases conections from manager config file, for the section [%s] at relative index [%s], ignoring the section">El [%s] atributo con el valor de [%s] es inválido, el nombre de la conexión a base de datos no fue encontrado en archivo de configuración del DBManager, para la sección [%s] en la posición relativa [%s], ignorando la sección></entry>
-<entry key="The [%s] attribute value [%s] is invalid, name duplicated config file, for the section [%s] at relative index [%s], ignoring the section">El [%s] atributo con el valor de [%s] es inválido, el nombre se encuentra duplicado en el archivo de configuración, para la sección [%s] en la posición relativa [%s], ignorando la sección></entry>
+<entry key="The [%s] attribute value [%s] is invalid, name not found in databases conections from manager config file, for the section [%s] at relative index [%s], ignoring the section">El [%s] atributo con el valor de [%s] es inválido, el nombre de la conexión a base de datos no fue encontrado en archivo de configuración del DBManager, para la sección [%s] en la posición relativa [%s], ignorando la sección</entry>
+<entry key="The [%s] attribute value [%s] is invalid, name duplicated config file, for the section [%s] at relative index [%s], ignoring the section">El [%s] atributo con el valor de [%s] es inválido, el nombre se encuentra duplicado en el archivo de configuración, para la sección [%s] en la posición relativa [%s], ignorando la sección</entry>
 <entry key="Added input parameter strName: [%s] bRequired: [%s] strDataType: [%s] strScope: [%s] intLength: [%s] strDescription: [%s]">Agregado el parámetro de entrada strName: [%s] bRequiered: [%s] strType: [%s] strSubType: [%s] intLength: [%s] strDescription: [%s]</entry>
 <entry key="Cannot add the input parameter some values ​​are missing or invalid, for the node [%s] at relative index [%s]">No puedo agregar el parámetro de entrada algunos valores faltan o son inválidos, para el nodo [%s] en la posición relativa [%s]</entry>
 <entry key="No valid input parameters defined, for the node [%s] at relative index [%s]">No hay parámetros de entrada válidos definidos, para el nodo [%s] en la posición relativa [%s]</entry>
@@ -66,7 +66,7 @@
 <entry key="Database connection closed">Conexión a base de datos cerrada</entry>
 <entry key="Cannot close database connection">No puedo cerrar la conexión a la base de datos</entry>
 <entry key="Database connection is invalid">La conexión a la base de datos es inválida</entry>
-<entry key="DBServicesManagerConfig is NULL">DBServicesManagerConfig es nulo</entry>
+<entry key="OwnerConfig is NULL">OwnerConfig es nulo</entry>
 
 <entry key="Unkown Macro type [%s], field name [%s], field value [%s]">Tipo del macro desconocido [%s], nombre del campo [%s], valor del campo [%s]</entry>
 <entry key="Unkown SQL field type [%s], field name [%s], field value [%s]">Tipo SQL del campo desconocido [%s], nombre del campo [%s], valor del campo [%s]</entry>

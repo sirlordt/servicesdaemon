@@ -15,13 +15,18 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
+import java.util.logging.SocketHandler;
 //import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 //This custom formatter formats parts of a log record to a single line
 class CExtendedLogXMLFormatter extends Formatter {
 
+	public String strLogFilePath = "";
+	public String strLogFileName = "";
+	
 	// This method is called for every log records
+	@Override
 	public String format( LogRecord rec ) {
     
         CExtendedLogRecord ExLogRecord = (CExtendedLogRecord) rec;
@@ -74,6 +79,7 @@ class CExtendedLogXMLFormatter extends Formatter {
 
 	// This method is called just after the handler using this
 	// formatter is created
+	@Override
 	public String getHead( Handler h ) {
 	   
 		DateFormat DFormat = new SimpleDateFormat( "dd/MM/yyyy" );
@@ -83,6 +89,12 @@ class CExtendedLogXMLFormatter extends Formatter {
         Date CurrentDateTime = new Date();
 
         StringBuffer strBuffer = new StringBuffer();
+        
+        if ( h instanceof SocketHandler ) {
+        	
+        	strBuffer.append( "Type=\"init\";FilePath=\"" + strLogFilePath + "\";FileName=\"" + strLogFileName + "\"\n" );
+        	
+        }
         
         strBuffer.append( "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" );
         strBuffer.append( "<logs>\n" );
@@ -95,6 +107,7 @@ class CExtendedLogXMLFormatter extends Formatter {
 
 	// This method is called just after the handler using this
 	// formatter is closed
+	@Override
 	public String getTail( Handler h ) {
 
 		DateFormat DFormat = new SimpleDateFormat( "dd/MM/yyyy" );
@@ -109,6 +122,12 @@ class CExtendedLogXMLFormatter extends Formatter {
 
         strBuffer.append( "</logs>\n" );
        
+        if ( h instanceof SocketHandler ) {
+        	
+        	strBuffer.append( "Type=\"end\";FilePath=\"" + strLogFilePath + "\";FileName=\"" + strLogFileName + "\"\n" );
+        	
+        }
+        
         return strBuffer.toString();
   
 	}

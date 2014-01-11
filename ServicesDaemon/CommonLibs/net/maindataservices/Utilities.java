@@ -11,10 +11,15 @@
 package net.maindataservices;
 
 import java.io.File;
+import java.lang.management.ManagementFactory;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.URLDecoder;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,11 +29,21 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 
+import com.sun.management.OperatingSystemMXBean;
+
 import CommonClasses.CLanguage;
 import ExtendedLogger.CExtendedLogger;
 
 public class Utilities {
 
+	public static final String _IPV4All = "0.0.0.0";
+	public static final String _IPV6All = "::";
+	public static final String _IPV6All1 = "0:0:0:0:0:0:0:0";
+
+	public static final String _IPV4Localhost = "127.0.0.1";
+	public static final String _IPV6Localhost = "::1";
+	public static final String _IPV6Localhost1 = "0:0:0:0:0:0:0:1";
+	
 	public static Pattern VALID_IPV4_PATTERN = null;
 	public static Pattern VALID_IPV6_PATTERN = null;
 	public static String ipv4Pattern = "(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])";
@@ -70,13 +85,13 @@ public class Utilities {
 	  
 	}
 	
-    public static boolean CheckDir( String strDirToCheck ) {
+    public static boolean checkDir( String strDirToCheck ) {
     	
-       return CheckDir( strDirToCheck, null, null );
+       return checkDir( strDirToCheck, null, null );
     
     }
     
-    public static boolean CheckDir( String strDirToCheck, CExtendedLogger Logger, CLanguage Lang ) {
+    public static boolean checkDir( String strDirToCheck, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	boolean bResult = false;
     	
@@ -96,9 +111,9 @@ public class Utilities {
 	    			else if ( Logger != null ) {
 
 	    				if ( Lang != null )  
-	    					Logger.LogError( "-1003", Lang.Translate( "The dir path [%s] not is dir", DirToCheck.getAbsolutePath() ) );        
+	    					Logger.logError( "-1003", Lang.translate( "The dir path [%s] not is dir", DirToCheck.getAbsolutePath() ) );        
 	    				else
-	    					Logger.LogError( "-1003", String.format( "The dir path [%s] not is dir", DirToCheck.getAbsolutePath() ) );        
+	    					Logger.logError( "-1003", String.format( "The dir path [%s] not is dir", DirToCheck.getAbsolutePath() ) );        
 	    				
 	    			}
               
@@ -106,9 +121,9 @@ public class Utilities {
 	    		else if ( Logger != null ) {
 
 	    			if ( Lang != null )  
-	    				Logger.LogError( "-1002", Lang.Translate( "The dir in the path [%s] cannot read, please check the owner and permissions", DirToCheck.getAbsolutePath() ) );
+	    				Logger.logError( "-1002", Lang.translate( "The dir in the path [%s] cannot read, please check the owner and permissions", DirToCheck.getAbsolutePath() ) );
 	    			else
-	    				Logger.LogError( "-1002", String.format( "The dir in the path [%s] cannot read, please check the owner and permissions", DirToCheck.getAbsolutePath() ) );
+	    				Logger.logError( "-1002", String.format( "The dir in the path [%s] cannot read, please check the owner and permissions", DirToCheck.getAbsolutePath() ) );
               
 	    		}
 	       
@@ -117,9 +132,9 @@ public class Utilities {
 	    	else if ( Logger != null ) {
 
 	    		if ( Lang != null )  
-	    		    Logger.LogError( "-1001", Lang.Translate( "The dir in the path [%s] not exists", DirToCheck.getAbsolutePath() ) );        
+	    		    Logger.logError( "-1001", Lang.translate( "The dir in the path [%s] not exists", DirToCheck.getAbsolutePath() ) );        
 	    		else
-	    		    Logger.LogError( "-1001", String.format( "The dir in the path [%s] not exists", DirToCheck.getAbsolutePath() ) );        
+	    		    Logger.logError( "-1001", String.format( "The dir in the path [%s] not exists", DirToCheck.getAbsolutePath() ) );        
 					
 	    	}
 	   
@@ -127,7 +142,7 @@ public class Utilities {
 	    catch ( Exception Ex ) {
 		
 			if ( Logger != null )   
-	    	    Logger.LogException( "-1000", Ex.getMessage(), Ex );        
+	    	    Logger.logException( "-1000", Ex.getMessage(), Ex );        
 	  
 	    }
 	   
@@ -135,13 +150,13 @@ public class Utilities {
     	
     }
 	
-    public static boolean CheckFile( String strFileToCheck ) {
+    public static boolean checkFile( String strFileToCheck ) {
 
-    	return CheckFile( strFileToCheck, null, null );
+    	return checkFile( strFileToCheck, null, null );
     
     }
     	
-    public static boolean CheckFile( String strFileToCheck, CExtendedLogger Logger, CLanguage Lang ) {
+    public static boolean checkFile( String strFileToCheck, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	boolean bResult = false;
     	
@@ -161,9 +176,9 @@ public class Utilities {
 	    			else if ( Logger != null ) {
             		
 	    				if ( Lang != null )   
-	    				    Logger.LogError( "-1003", Lang.Translate( "The file path [%s] not is dir", FileToCheck.getAbsolutePath() ) );        
+	    				    Logger.logError( "-1003", Lang.translate( "The file path [%s] not is dir", FileToCheck.getAbsolutePath() ) );        
 	    				else    
-	    				    Logger.LogError( "-1003", String.format( "The file path [%s] not is dir", FileToCheck.getAbsolutePath() ) );        
+	    				    Logger.logError( "-1003", String.format( "The file path [%s] not is dir", FileToCheck.getAbsolutePath() ) );        
 	    				
 	    			}
               
@@ -171,9 +186,9 @@ public class Utilities {
 	    		else if ( Logger != null ) {
             	
     				if ( Lang != null )   
-	    			    Logger.LogError( "-1002", Lang.Translate( "The file in the path [%s] cannot read, please check the owner and permissions", FileToCheck.getAbsolutePath() ) );
+	    			    Logger.logError( "-1002", Lang.translate( "The file in the path [%s] cannot read, please check the owner and permissions", FileToCheck.getAbsolutePath() ) );
     				else
-	    			    Logger.LogError( "-1002", String.format( "The file in the path [%s] cannot read, please check the owner and permissions", FileToCheck.getAbsolutePath() ) );
+	    			    Logger.logError( "-1002", String.format( "The file in the path [%s] cannot read, please check the owner and permissions", FileToCheck.getAbsolutePath() ) );
               
 	    		}
 	       
@@ -181,9 +196,9 @@ public class Utilities {
 	    	else if ( Logger != null ) {
 	    	   
 				if ( Lang != null )   
-	    		   Logger.LogError( "-1001", Lang.Translate( "The file in the path [%s] not exists", FileToCheck.getAbsolutePath() ) );        
+	    		   Logger.logError( "-1001", Lang.translate( "The file in the path [%s] not exists", FileToCheck.getAbsolutePath() ) );        
 				else
-		    	   Logger.LogError( "-1001", String.format( "The file in the path [%s] not exists", FileToCheck.getAbsolutePath() ) );        
+		    	   Logger.logError( "-1001", String.format( "The file in the path [%s] not exists", FileToCheck.getAbsolutePath() ) );        
 				
 	    	}
 	   
@@ -191,7 +206,7 @@ public class Utilities {
 	    catch ( Exception Ex ) {
 		
 			if ( Logger != null )   
-	    	   Logger.LogException( "-1000", Ex.getMessage(), Ex );        
+	    	   Logger.logException( "-1000", Ex.getMessage(), Ex );        
 	  
 	    }
 	   
@@ -199,13 +214,13 @@ public class Utilities {
     	
     }
 
-    public static int StrToInteger( String strStringToConvert ) {
+    public static int strToInteger( String strStringToConvert ) {
     
-    	return StrToInteger( strStringToConvert, null );
+    	return strToInteger( strStringToConvert, null );
     
     }
     
-    public static int StrToInteger( String strStringToConvert, CExtendedLogger Logger ) {
+    public static int strToInteger( String strStringToConvert, CExtendedLogger Logger ) {
     	
     	int intResult = 0;
     	
@@ -217,7 +232,7 @@ public class Utilities {
     	catch ( Exception Ex ) {
     		
     		if ( Logger != null )   
-    	       Logger.LogException( "-1015", Ex.getMessage(), Ex );        
+    	       Logger.logException( "-1015", Ex.getMessage(), Ex );        
     		
     	}
     	
@@ -225,7 +240,7 @@ public class Utilities {
     	
     }
     
-    public static boolean CheckStringIsInteger( String strStringToTest, CExtendedLogger Logger ) {
+    public static boolean checkStringIsInteger( String strStringToTest, CExtendedLogger Logger ) {
     	
     	boolean bResult = false;
     	
@@ -239,7 +254,7 @@ public class Utilities {
     	catch ( Exception Ex ) {
     		
     		if ( Logger != null )   
-    	       Logger.LogException( "-1015", Ex.getMessage(), Ex );        
+    	       Logger.logException( "-1015", Ex.getMessage(), Ex );        
     		
     	}
     	
@@ -247,7 +262,7 @@ public class Utilities {
     	
     }
     
-	public static int CompareVersions( String strVersion1, String strVersion2 ) {
+	public static int compareVersions( String strVersion1, String strVersion2 ) {
 		
 		CVersionTokenizer Tokenizer1 = new CVersionTokenizer( strVersion1 );
 		CVersionTokenizer Tokenizer2 = new CVersionTokenizer( strVersion2 );
@@ -346,23 +361,23 @@ public class Utilities {
 		
 	}
 	
-	public static boolean VersionGreaterEquals( String strVersion1, String strVersion2 ) {
+	public static boolean versionGreaterEquals( String strVersion1, String strVersion2 ) {
 		
-		int intResult = CompareVersions( strVersion1, strVersion2 );
+		int intResult = compareVersions( strVersion1, strVersion2 );
 		
 		return intResult >= 0;
 		
 	}  
 
-	public static boolean VersionLessEquals( String strVersion1, String strVersion2 ) {
+	public static boolean versionLessEquals( String strVersion1, String strVersion2 ) {
 		
-		int intResult = CompareVersions( strVersion1, strVersion2 );
+		int intResult = compareVersions( strVersion1, strVersion2 );
 		
 		return intResult <= 0;
 		
 	}  
 	
-	public static ArrayList<String> ParseTokensByTags( String strStartTag, String strEndTag, String strTagContained, boolean bIgnoreDuplicated, boolean bForceLowerCase ) {
+	public static ArrayList<String> parseTokensByTags( String strStartTag, String strEndTag, String strTagContained, boolean bIgnoreDuplicated, boolean bForceLowerCase ) {
 
 		ArrayList<String> ResultListTokens = new ArrayList<String>();
 		
@@ -403,15 +418,15 @@ public class Utilities {
 		
 	} 
 	
-	public static String GenerateString( String strCharacters, int intLength ) {
+	public static String generateString( String strCharacters, int intLength ) {
 	
 		Random RandomGenerator = new Random();
 		
-		return GenerateString( RandomGenerator, strCharacters, intLength );
+		return generateString( RandomGenerator, strCharacters, intLength );
 		
 	}
 	
-    public static String HashCrypt( String StringToCryptHash, String strHashAlgorithm, CExtendedLogger Logger ) {
+    public static String hashCrypt( String StringToCryptHash, String strHashAlgorithm, CExtendedLogger Logger ) {
     	   
         MessageDigest MsgDigest;
 
@@ -449,7 +464,7 @@ public class Utilities {
         catch ( Exception Ex ) {
             
     		if ( Logger != null )   
-     	       Logger.LogException( "-1015", Ex.getMessage(), Ex );        
+     	       Logger.logException( "-1015", Ex.getMessage(), Ex );        
 
         }
 
@@ -457,7 +472,7 @@ public class Utilities {
 
     }
 
-	public static boolean IsValidDateTimeFormat( String strDateTimeFormat, CExtendedLogger Logger ) {
+	public static boolean isValidDateTimeFormat( String strDateTimeFormat, CExtendedLogger Logger ) {
 		
 		boolean bResult = false;
 		
@@ -478,7 +493,7 @@ public class Utilities {
 		catch ( Exception Ex ) {
 			
     		if ( Logger != null )   
-      	       Logger.LogException( "-1015", Ex.getMessage(), Ex );        
+      	       Logger.logException( "-1015", Ex.getMessage(), Ex );        
 			
 		}
 		
@@ -486,7 +501,7 @@ public class Utilities {
 		
 	}
     
-	public static String GenerateString( Random RandomGenerator, String strCharacters, int intLength ) {
+	public static String generateString( Random RandomGenerator, String strCharacters, int intLength ) {
 	    
 		char[] strText = new char[ intLength ];
 	
@@ -500,7 +515,7 @@ public class Utilities {
 	    
 	}	
 
-    public static String CryptString( String strStringToCrypt, String strCryptAlgorithm, String strCryptKey, CExtendedLogger Logger ) {
+    public static String cryptString( String strStringToCrypt, String strCryptAlgorithm, String strCryptKey, CExtendedLogger Logger ) {
     	
         String strResult = strStringToCrypt;
     	
@@ -520,7 +535,7 @@ public class Utilities {
         catch ( Exception Ex ) {
             
     		if ( Logger != null )   
-     	       Logger.LogException( "-1015", Ex.getMessage(), Ex );        
+     	       Logger.logException( "-1015", Ex.getMessage(), Ex );        
 
         }
     	
@@ -528,7 +543,7 @@ public class Utilities {
     	
     }
     
-    public static String UncryptString( String strStringToUncrypt, String strUncryptAlgorithm, String strUncryptKey, CExtendedLogger Logger ) {
+    public static String uncryptString( String strStringToUncrypt, String strUncryptAlgorithm, String strUncryptKey, CExtendedLogger Logger ) {
     	
         String strResult = strStringToUncrypt;
     	
@@ -548,7 +563,7 @@ public class Utilities {
         catch ( Exception Ex ) {
             
     		if ( Logger != null )   
-     	       Logger.LogException( "-1015", Ex.getMessage(), Ex );        
+     	       Logger.logException( "-1015", Ex.getMessage(), Ex );        
 
         }
     	
@@ -598,7 +613,7 @@ public class Utilities {
 
      }
    
-	public static String UncryptString( String strPasswordCrypted, String strPasswordCryptedSep, String strDefaultCryptAlgorithm, String strCryptedPassword, CExtendedLogger Logger, CLanguage Lang ) {
+	public static String uncryptString( String strPasswordCrypted, String strPasswordCryptedSep, String strDefaultCryptAlgorithm, String strCryptedPassword, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		String strResult = strCryptedPassword;
 		
@@ -626,27 +641,27 @@ public class Utilities {
 			
 			String strCryptKeyIndex =  strResult.substring( 0, intIndexPassSep );
 			
-			int intCryptKeyIndex = Utilities.StrToInteger( strCryptKeyIndex );
+			int intCryptKeyIndex = Utilities.strToInteger( strCryptKeyIndex );
 			
 			if ( intCryptKeyIndex > 0 && intCryptKeyIndex <= strCryptKeys.length ) {
 				
 				strResult =  strResult.substring( intIndexPassSep + intPassCryptedSepLength, strResult.length() );
 				
 				//DefaultConstantsSystemStartSession.strDefaultCryptAlgorithm
-				strResult = Utilities.UncryptString( strResult, strDefaultCryptAlgorithm, strCryptKeys[ intCryptKeyIndex ], Logger );
+				strResult = Utilities.uncryptString( strResult, strDefaultCryptAlgorithm, strCryptKeys[ intCryptKeyIndex ], Logger );
 				
 				
 			}
 			else {
 				
-		    	Logger.LogError( "-1001", Lang.Translate( "The crypt key index [%s] is not valid", strCryptKeyIndex ) );        
+		    	Logger.logError( "-1001", Lang.translate( "The crypt key index [%s] is not valid", strCryptKeyIndex ) );        
 				
 			}
 			
 		}
 		else {
 			
-	    	Logger.LogWarning( "-1", Lang.Translate( "Using clear text password" ) );        
+	    	Logger.logWarning( "-1", Lang.translate( "Using clear text password" ) );        
 			
 		}
 		
@@ -654,7 +669,7 @@ public class Utilities {
 		
 	}
  
-	public static String ReplaceToHTMLEntity( String strToFindAndReplace ) {
+	public static String replaceToHTMLEntity( String strToFindAndReplace ) {
 		
         strToFindAndReplace = strToFindAndReplace.replaceAll( "&", "&amp;" );
         strToFindAndReplace = strToFindAndReplace.replaceAll( "<", "&lt;" );
@@ -666,4 +681,460 @@ public class Utilities {
 		
 	}
 	
+	public static ArrayList<String> extractTokens( String strStartToken, String strEndToken, String strExpression ) {
+		
+		ArrayList<String> Result = new ArrayList<String>();
+		
+		if ( strExpression.contains( strStartToken ) ) {
+			
+			String strTmp = strExpression;
+
+			int intStartIndex = strTmp.indexOf( strStartToken ); //"${" );
+			int intEndIndex = strTmp.indexOf( strEndToken ); //"}$" );
+			
+			while ( intStartIndex > 0 && intEndIndex > intStartIndex ) {
+			
+				if ( intEndIndex > intStartIndex ) {
+
+					String strCallToAdd = strTmp.substring( intStartIndex + strStartToken.length(), intEndIndex );
+					
+					Result.add( strCallToAdd );
+
+					strTmp = strTmp.replace( strStartToken + strCallToAdd + strEndToken, "" ); //"${" + strCallToAdd + "}$", "" );
+					
+				}
+			
+				intStartIndex = strTmp.indexOf( strStartToken ); // "${" );
+				intEndIndex = strTmp.indexOf( strEndToken ); //"}$" );
+				
+			}
+			
+		}
+		
+		return Result;
+		
+	}
+
+    public final static String getJarFolder( Class<?> ClassDef ) {
+
+    	String s = "";
+
+    	try {
+
+    		String name = ClassDef.getCanonicalName().replace( '.', '/' );
+
+    		s = ClassDef.getClass().getResource( "/" + name + ".class" ).toString();
+
+    		s = URLDecoder.decode( s, "UTF-8" );
+    		
+    		s = s.replace( '/', File.separatorChar );
+
+    		if ( s.indexOf(".jar") >= 0 )
+    			s = s.substring( 0, s.indexOf(".jar") + 4 );
+    		else
+    			s = s.substring( 0, s.indexOf(".class") );
+
+    		if ( s.indexOf( "jar:file:\\" )  == 0 ) { //Windows style path SO inside jar file 
+
+    			s = s.substring( 10 );
+
+    		}
+    		else if ( s.indexOf( "file:\\" )  == 0 ) { //Windows style path SO .class file
+
+    			s = s.substring( 6 );
+
+    		}
+    		else { //Unix family ( Linux/BSD/Mac/Solaris ) style path SO
+
+    			s = s.substring( s.lastIndexOf(':') + 1 );
+
+    		}
+
+    		s = s.substring( 0, s.lastIndexOf( File.separatorChar ) + 1 );
+
+    	}
+    	catch ( Exception Ex ) { 
+
+    		Ex.printStackTrace();
+
+    	}
+
+    	return s;
+    	
+    }
+
+    public final static String getJarFolder( Class<?> ClassDef, CExtendedLogger Logger ) {
+
+    	String s = "";
+
+    	try {
+
+    		String name = ClassDef.getCanonicalName().replace( '.', '/' );
+
+    		s = ClassDef.getClass().getResource( "/" + name + ".class" ).toString();
+
+    		s = URLDecoder.decode( s, "UTF-8" );
+    		
+    		s = s.replace( '/', File.separatorChar );
+
+    		if ( s.indexOf(".jar") >= 0 )
+    			s = s.substring( 0, s.indexOf(".jar") + 4 );
+    		else
+    			s = s.substring( 0, s.indexOf(".class") );
+
+    		if ( s.indexOf( "jar:file:\\" )  == 0 ) { //Windows style path SO inside jar file 
+
+    			s = s.substring( 10 );
+
+    		}
+    		else if ( s.indexOf( "file:\\" )  == 0 ) { //Windows style path SO .class file
+
+    			s = s.substring( 6 );
+
+    		}
+    		else { //Unix family ( Linux/BSD/Mac/Solaris ) style path SO
+
+    			s = s.substring( s.lastIndexOf(':') + 1 );
+
+    		}
+
+    		s = s.substring( 0, s.lastIndexOf( File.separatorChar ) + 1 );
+
+    	}
+    	catch ( Exception Ex ) { 
+
+    		if ( Logger != null )
+    			Logger.logException( "-1020" , Ex.getMessage(), Ex );
+
+    	}
+
+    	return s;
+    	
+    }
+    
+    public static int getSystemLoad( boolean bIncludeSystemMemoryUsage ) {
+    	
+    	int intSystemLoad = 0;
+    	
+    	OperatingSystemMXBean OperatingSystemMXBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+    	
+    	int intCPULoad = (int) OperatingSystemMXBean.getSystemCpuLoad() * 100;
+    	
+    	if ( bIncludeSystemMemoryUsage ) {
+    		
+    		int intMemoryUsage = 0;
+    		
+    		long lngTotalMemoryAvailable = OperatingSystemMXBean.getTotalPhysicalMemorySize();
+    		
+    		long lngUsedMemory = lngTotalMemoryAvailable - OperatingSystemMXBean.getFreePhysicalMemorySize();
+    		
+    		intMemoryUsage = (int) ( lngUsedMemory * 100 / lngTotalMemoryAvailable );
+    		
+    		if ( intMemoryUsage >= 70 && intMemoryUsage >= intCPULoad )
+    			intSystemLoad = intMemoryUsage;
+    		else if ( intCPULoad >= 70 )
+    			intSystemLoad = intCPULoad;
+    		else
+    			intSystemLoad = (( intCPULoad + intMemoryUsage ) / 2);
+    		
+    	}
+    	else {
+    		
+    		intSystemLoad = intCPULoad;
+    		
+    	}
+    	
+    	return intSystemLoad;
+    	
+    }
+    
+    public static ArrayList<String> getNetAddressList( CExtendedLogger Logger, boolean bIncludeLocalHost ) {
+    	
+    	ArrayList<String> Result = new ArrayList<String>();
+    	
+		try {
+			
+			Enumeration<NetworkInterface> DefinedNetworksInterfaces = NetworkInterface.getNetworkInterfaces(); 
+
+			while ( DefinedNetworksInterfaces.hasMoreElements() ) {
+
+				NetworkInterface NetInterface = DefinedNetworksInterfaces.nextElement();
+
+				if( NetInterface.isUp() ) {
+
+					Enumeration<InetAddress> DefinedNetAddress = NetInterface.getInetAddresses();
+
+					while ( DefinedNetAddress.hasMoreElements() ) {
+
+						InetAddress NetAddress = DefinedNetAddress.nextElement();
+
+						String strIP = NetAddress.toString();
+						
+						if ( bIncludeLocalHost == true || ( strIP.contains( _IPV4Localhost ) == false && strIP.contains( _IPV6Localhost ) == false && strIP.contains( _IPV6Localhost1 ) == false ) ) {
+
+							if ( strIP.startsWith( "/" ) )
+								Result.add( strIP.substring( 1 ) );
+							else
+								Result.add( strIP );
+							
+						}
+
+					}
+
+				}
+
+			}
+		
+		}
+		catch ( Exception Ex ) {
+			
+			if ( Logger != null ) {
+			
+				Logger.logException( "-1025" , Ex.getMessage(), Ex );
+				
+			}
+			
+		}
+    	
+    	return Result;
+    	
+    }
+    
+    public static ArrayList<String> getNetAddressList( CExtendedLogger Logger, boolean bIncludeLocalHost, boolean bOnlyIPV4, boolean bOnlyIPV6 ) {
+    	
+    	ArrayList<String> Result = new ArrayList<String>();
+    	
+		try {
+			
+			Enumeration<NetworkInterface> DefinedNetworksInterfaces = NetworkInterface.getNetworkInterfaces(); 
+
+			while ( DefinedNetworksInterfaces.hasMoreElements() ) {
+
+				NetworkInterface NetInterface = DefinedNetworksInterfaces.nextElement();
+
+				if( NetInterface.isUp() ) {
+
+					Enumeration<InetAddress> DefinedNetAddress = NetInterface.getInetAddresses();
+
+					while ( DefinedNetAddress.hasMoreElements() ) {
+
+						InetAddress NetAddress = DefinedNetAddress.nextElement();
+
+						String strIP = NetAddress.toString();
+						
+						if ( bIncludeLocalHost == true || ( strIP.contains( _IPV4Localhost ) == false && strIP.contains( _IPV6Localhost ) == false && strIP.contains( _IPV6Localhost1 ) == false ) ) {
+
+							if ( ( bOnlyIPV4 && isValidIPV4( strIP ) ) || ( bOnlyIPV6 && isValidIPV6( strIP ) ) ) {
+
+								if ( strIP.startsWith( "/" ) )
+									Result.add( strIP.substring( 1 ) );
+								else
+									Result.add( strIP );
+
+							}
+							
+						}
+
+					}
+
+				}
+
+			}
+		
+		}
+		catch ( Exception Ex ) {
+			
+			if ( Logger != null ) {
+			
+				Logger.logException( "-1025" , Ex.getMessage(), Ex );
+				
+			}
+			
+		}
+    	
+    	return Result;
+    	
+    }
+
+    public static boolean checkFileExt( File FileToTest, String strFileExtensions[] ) {
+    	
+    	if ( strFileExtensions != null ) {
+    	
+    		for ( int I = 0; I < strFileExtensions.length; I++ ) {
+
+    			if ( FileToTest.getAbsolutePath().endsWith( strFileExtensions[ I ] ) )
+    				return true;
+
+    		}
+    	
+    	}
+    	
+    	return false;
+    	
+    }
+    
+    public static void cleanupDirectory( File FileOrDirectory, String arrExcludesExt[], int intCurrentLevelDeep ) {
+    	
+    	try {
+
+    		if ( FileOrDirectory.isDirectory() ) {
+
+    			for ( File SubFileOrDirectory : FileOrDirectory.listFiles() ) {
+    				     
+    				if ( SubFileOrDirectory.isDirectory() ) {
+    				
+    					cleanupDirectory( SubFileOrDirectory, arrExcludesExt, intCurrentLevelDeep + 1 );
+    				
+    				}
+    				else {
+    					
+        				if ( checkFileExt( SubFileOrDirectory, arrExcludesExt ) == false ) {
+              				 
+        					SubFileOrDirectory.delete();
+
+        				}
+    					
+    				}
+    				
+    			}
+
+    		}    
+
+    		File Files[] = FileOrDirectory.listFiles();
+    		
+    		if ( intCurrentLevelDeep > 0 && ( Files == null || Files.length == 0 ) && checkFileExt( FileOrDirectory, arrExcludesExt ) == false ) {
+    		
+    			FileOrDirectory.delete();
+        
+    		}	
+    		
+    	}
+    	catch ( Error Err ) {
+
+    		
+    	}
+    	catch ( Exception Ex ) {
+    		
+    		
+    	}
+    	
+    }
+
+    public static boolean cleanupDirectory( File FileOrDirectory, String arrExcludesExt[], int intCurrentLevelDeep, CExtendedLogger Logger ) {
+    	
+    	try {
+
+    		if ( FileOrDirectory.isDirectory() ) {
+
+    			for ( File SubFileOrDirectory : FileOrDirectory.listFiles() ) {
+    				     
+    				if ( SubFileOrDirectory.isDirectory() ) {
+    				
+    					cleanupDirectory( SubFileOrDirectory, arrExcludesExt, intCurrentLevelDeep + 1, Logger );
+    				
+    				}
+    				else {
+    					
+        				if ( checkFileExt( SubFileOrDirectory, arrExcludesExt ) == false ) {
+              				 
+        					SubFileOrDirectory.delete();
+
+        				}
+    					
+    				}
+    				
+    			}
+
+    		}    
+
+    		File Files[] = FileOrDirectory.listFiles();
+    		
+    		if ( intCurrentLevelDeep > 0 && ( Files == null || Files.length == 0 ) && checkFileExt( FileOrDirectory, arrExcludesExt ) == false ) {
+    		
+    			FileOrDirectory.delete();
+        
+    		}	
+    		
+    	}
+    	catch ( Error Err ) {
+    		
+    		if ( Logger != null )   
+       	       Logger.logError( "-1015", Err.getMessage(), Err );        
+    		
+    	}
+    	catch ( Exception Ex ) {
+    		
+    		if ( Logger != null )   
+       	       Logger.logException( "-1015", Ex.getMessage(), Ex );        
+    		
+    	}
+    	
+    	return false;
+    	
+    }
+    
+    public static void recursiveDelete( File FileOrDirectory ) {
+        
+    	try {
+
+    		if ( FileOrDirectory.isDirectory() ) {
+
+    			for ( File SubFileOrDirectory : FileOrDirectory.listFiles() ) {
+
+    				SubFileOrDirectory.delete();
+
+    				recursiveDelete( SubFileOrDirectory );
+
+    			}
+
+    		}    
+
+    		FileOrDirectory.delete();
+        
+    	}
+    	catch ( Error Err ) {
+    		
+    		
+    	}
+    	catch ( Exception Ex ) {
+    		
+    		
+    	}
+    	
+    }   
+
+    public static void recursiveDelete( File FileOrDirectory, CExtendedLogger Logger ) {
+        
+    	try {
+
+    		if ( FileOrDirectory.isDirectory() ) {
+
+    			for ( File SubFileOrDirectory : FileOrDirectory.listFiles() ) {
+
+    				SubFileOrDirectory.delete();
+
+    				recursiveDelete( SubFileOrDirectory );
+
+    			}
+
+    		}    
+
+    		FileOrDirectory.delete();
+        
+    	}
+    	catch ( Error Err ) {
+    		
+    		if ( Logger != null )   
+       	       Logger.logError( "-1015", Err.getMessage(), Err );        
+    		
+    	}
+    	catch ( Exception Ex ) {
+    		
+    		if ( Logger != null )   
+       	       Logger.logException( "-1015", Ex.getMessage(), Ex );        
+    		
+    	}
+    	
+    }   
+    
 }

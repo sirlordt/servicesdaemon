@@ -20,10 +20,6 @@ import net.maindataservices.Base64;
 
 public class CMain {
 
-	public CMain() {
-		// TODO Auto-generated constructor stub
-	}
-
     public static String CryptString( String strStringToCrypt, String strCryptAlgorithm, String strCryptKey ) {
     	
         String strResult = strStringToCrypt;

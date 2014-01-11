@@ -15,8 +15,10 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+import AbstractDBEngine.CAbstractDBConnection;
 import AbstractDBEngine.CAbstractDBEngine;
-import AbstractDBEngine.CDBEngineConfigConnection;
+import AbstractDBEngine.CDBEngineConfigNativeDBConnection;
+import AbstractDBEngine.CJDBConnection;
 import CommonClasses.CLanguage;
 import ExtendedLogger.CExtendedLogger;
 
@@ -30,9 +32,9 @@ public class CFirebirdDBEngine extends CAbstractDBEngine {
 	}
 	
 	@Override
-	public synchronized Connection getDBConnection( CDBEngineConfigConnection ConfigDBConnection, CExtendedLogger Logger, CLanguage Lang ) {
+	public synchronized CAbstractDBConnection getDBConnection( CDBEngineConfigNativeDBConnection ConfigDBConnection, CExtendedLogger Logger, CLanguage Lang ) {
 
-		Connection DBConnection = null;
+		CAbstractDBConnection DBConnection = null;
 		
 		try {
 			
@@ -40,17 +42,20 @@ public class CFirebirdDBEngine extends CAbstractDBEngine {
 
             if ( Logger != null ) {
             	
-        		Logger.LogMessage( "1", Lang.Translate( "Trying to connect with the next URL: [%s] and user: [%s]", strDatabaseURL, ConfigDBConnection.strUser ) );        
+        		Logger.logMessage( "1", Lang.translate( "Trying to connect with the next URL: [%s] and user: [%s]", strDatabaseURL, ConfigDBConnection.strUser ) );        
             	
             }
 
             Class.forName( ConfigDBConnection.strDriver );
 
-            DBConnection = DriverManager.getConnection( strDatabaseURL, ConfigDBConnection.strUser, ConfigDBConnection.strPassword ); 
+            Connection JDBConnection = DriverManager.getConnection( strDatabaseURL, ConfigDBConnection.strUser, ConfigDBConnection.strPassword ); 
 			
+            DBConnection = new CJDBConnection();
+            DBConnection.setDBConnection( JDBConnection );
+            
             if ( Logger != null ) {
             	
-        		Logger.LogMessage( "1", Lang.Translate( "Database connection established to next URL: [%s] and user: [%s]", strDatabaseURL, ConfigDBConnection.strUser ) );        
+        		Logger.logMessage( "1", Lang.translate( "Database connection established to next URL: [%s] and user: [%s]", strDatabaseURL, ConfigDBConnection.strUser ) );        
             	
             }
 			
@@ -58,7 +63,7 @@ public class CFirebirdDBEngine extends CAbstractDBEngine {
 		catch ( Exception Ex ) {
 			
 			if ( Logger != null )
-				Logger.LogException( "-1015", Ex.getMessage(), Ex ); 
+				Logger.logException( "-1015", Ex.getMessage(), Ex ); 
 			
 		}
 		
@@ -67,7 +72,7 @@ public class CFirebirdDBEngine extends CAbstractDBEngine {
 	}
 	
 	@Override
-	public ResultSet ExecuteDummySQL( Connection DBConnection, String strOptionalDummySQL, CExtendedLogger Logger, CLanguage Lang ) {
+	public ResultSet executeDummyCommand( CAbstractDBConnection DBConnection, String strOptionalDummySQL, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		ResultSet Result = null;
 		
@@ -79,7 +84,7 @@ public class CFirebirdDBEngine extends CAbstractDBEngine {
 				
 			}
 			
-			Statement SQLStatement = DBConnection.createStatement();			
+			Statement SQLStatement = ((Connection) DBConnection.getDBConnection()).createStatement();			
 			
 			Result = SQLStatement.executeQuery( strOptionalDummySQL );
 			
@@ -87,12 +92,13 @@ public class CFirebirdDBEngine extends CAbstractDBEngine {
 		catch ( Exception Ex ) {
 
 			if ( Logger != null )
-				Logger.LogException( "-1015", Ex.getMessage(), Ex ); 
+				Logger.logException( "-1015", Ex.getMessage(), Ex ); 
 
 		}
 	
 		return Result;
 		
 	}
+
     
 }

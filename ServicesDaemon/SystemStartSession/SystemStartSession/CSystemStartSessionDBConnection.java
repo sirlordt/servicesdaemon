@@ -100,7 +100,7 @@ public class CSystemStartSessionDBConnection {
 		
 		CInputServiceParameter InputParameter = this.FindInputParameterByName( strName );
 		
-		if ( InputParameter == null ) {
+		if ( InputParameter != null ) {
 			
 			InputParameters.remove( InputParameter );
 			

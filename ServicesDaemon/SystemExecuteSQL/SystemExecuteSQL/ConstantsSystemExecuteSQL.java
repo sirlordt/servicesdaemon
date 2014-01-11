@@ -30,8 +30,13 @@ public interface ConstantsSystemExecuteSQL {
 	public static final int _Response_AffectedRows_TypeID  = Types.BIGINT;
 	public static final String _Response_AffectedRows_Type = "BigInt";
 	
-	public static final String _Global_DateTime_Format = "Global_DateTime_Format";
-	public static final String _Global_Date_Format = "Global_Date_Format";
-	public static final String _Global_Time_Format = "Global_Time_Format";
+	public static final String _Main_File = "SystemExecuteSQL";
+	public static final String _Conf_File = _Main_File + ".conf";
+	public static final String _Main_File_Log = _Main_File + ".log";
+	
+	public static final boolean _Log_SQL_Statement = false;
+	
+	//public static final String strDefaultPreExecuteDir = "PreExecute/";
+	//public static final String strDefaultPostExecuteDir = "PostExecute/";
 	
 }

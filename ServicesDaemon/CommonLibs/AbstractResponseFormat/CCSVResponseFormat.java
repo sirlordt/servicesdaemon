@@ -25,6 +25,7 @@ import CommonClasses.CLanguage;
 import CommonClasses.CMemoryFieldData;
 import CommonClasses.CMemoryRowSet;
 import CommonClasses.CResultSetResult;
+import CommonClasses.ConstantsMessagesCodes;
 import CommonClasses.NamesSQLTypes;
 import ExtendedLogger.CExtendedLogger;
 
@@ -43,7 +44,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 
 		CJSONResponseFormat NewInstance = new CJSONResponseFormat(); 
 		
-    	NewInstance.InitResponseFormat( this.ServicesDaemonConfig, this.OwnerConfig );
+    	NewInstance.initResponseFormat( this.ServicesDaemonConfig, this.OwnerConfig );
     	
     	return NewInstance;
 	
@@ -53,7 +54,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 	public String getContentType() {
 
 		if ( OwnerConfig != null )
-			return OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_ContentType );
+			return (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._CSV_ContentType, null );
 		else
 			return "";
 	
@@ -63,13 +64,13 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 	public String getCharacterEncoding() {
 
 		if ( OwnerConfig != null )
-			return OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_CharSet );
+			return (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._CSV_CharSet, null );
 		else
 			return "";
 	
 	}
 
-    public void DescribeService( CAbstractService Service, StringBuilder strResponseBuffer, boolean bFieldsQuote, String strSeparatorSymbol, CExtendedLogger Logger, CLanguage Lang ) {
+    public void describeService( CAbstractService Service, StringBuilder strResponseBuffer, boolean bFieldsQuote, String strSeparatorSymbol, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	if ( Service.getHiddenService() == false ) {
     		
@@ -84,7 +85,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 
 	        Iterator< Entry< String, ArrayList< CInputServiceParameter > > > It = GroupsInputParametersService.entrySet().iterator();
 
-	        Logger.LogMessage( "1", Lang.Translate( "Service [%s] input params count: [%s]", Service.getServiceName(), Integer.toString( GroupsInputParametersService.size() ) ) );
+	        Logger.logMessage( "1", Lang.translate( "Service [%s] input params count: [%s]", Service.getServiceName(), Integer.toString( GroupsInputParametersService.size() ) ) );
 	        
             while ( It.hasNext() ) {
 	        
@@ -219,7 +220,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
             	}
             	catch ( Exception Ex ) {
             		
-                	Logger.LogException( "-1010", Ex.getMessage(), Ex );
+                	Logger.logException( "-1010", Ex.getMessage(), Ex );
             		
             	}
             	
@@ -230,21 +231,21 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
     }
 
 	@Override
-	public String EnumerateServices( HashMap<String, CAbstractService> RegisteredServices, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+	public String enumerateServices( HashMap<String, CAbstractService> RegisteredServices, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 
 		String strResult = "";
 		
 		try {
 
-			if ( Utilities.VersionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.VersionLessEquals( strVersion, this.strMaxVersion ) ) {
+			if ( Utilities.versionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.versionLessEquals( strVersion, this.strMaxVersion ) ) {
 			
-				String strShowHeaders = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_ShowHeaders );
+				String strShowHeaders = (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._CSV_ShowHeaders, null );
 				
 				StringBuilder strResponseBuffer = new StringBuilder();
 				
-				String strSeparatorSymbol = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_SeparatorSymbol );
+				String strSeparatorSymbol = (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._CSV_SeparatorSymbol, null );
 
-				String strFieldsQuote = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_FieldsQuote );
+				String strFieldsQuote = (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._CSV_FieldsQuote, null );
 				
 				boolean bFieldsQuote = strFieldsQuote != null && strFieldsQuote.equals( "true" );
 				
@@ -322,12 +323,12 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 
 					Entry<String, CAbstractService> Pairs = it.next();
 
-					String strServName = (String) Pairs.getKey();
+					String strServName = Pairs.getKey();
 
 					CAbstractService Service = RegisteredServices.get( strServName );
 
 					if ( Service != null )
-						this.DescribeService( Service, strResponseBuffer, bFieldsQuote, strSeparatorSymbol, Logger, Lang );
+						this.describeService( Service, strResponseBuffer, bFieldsQuote, strSeparatorSymbol, Logger, Lang );
 
 				}
 
@@ -337,9 +338,9 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 			else {
 				
 				if ( Logger != null )
-				    Logger.LogError( "-1015", OwnerConfig.Lang.Translate( "Format version [%s] not supported", strVersion ) );
+				    Logger.logError( "-1015", OwnerConfig.Lang.translate( "Format version [%s] not supported", strVersion ) );
 				else if ( OwnerConfig != null && OwnerConfig.Logger != null )
-				    OwnerConfig.Logger.LogError( "-1015", OwnerConfig.Lang.Translate( "Format version [%s] not supported", strVersion ) );
+				    OwnerConfig.Logger.logError( "-1015", OwnerConfig.Lang.translate( "Format version [%s] not supported", strVersion ) );
 				
 			}
 			
@@ -347,9 +348,9 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 		catch ( Exception Ex ) {
 			
 			if ( Logger != null )
-				Logger.LogException( "-1016", Ex.getMessage(), Ex );
+				Logger.logException( "-1016", Ex.getMessage(), Ex );
 			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
-				OwnerConfig.Logger.LogException( "-1016", Ex.getMessage(), Ex );
+				OwnerConfig.Logger.logException( "-1016", Ex.getMessage(), Ex );
         	
 		}
 		
@@ -357,7 +358,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 	
 	}
 	
-	public void FormatCSVHeaders( ResultSet SQLDataSet, CAbstractDBEngine DBEngine, StringBuilder strResponseBuffer, boolean bFieldsQuote, String strSeparatorSymbol, CExtendedLogger Logger, CLanguage Lang  ) {
+	public void formatCSVHeaders( ResultSet SQLDataSet, CAbstractDBEngine DBEngine, StringBuilder strResponseBuffer, boolean bFieldsQuote, String strSeparatorSymbol, CExtendedLogger Logger, CLanguage Lang  ) {
 
 		try {
 		
@@ -417,15 +418,15 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 		catch ( Exception Ex ) {
 			
 			if ( Logger != null )
-				Logger.LogException( "-1016", Ex.getMessage(), Ex );
+				Logger.logException( "-1016", Ex.getMessage(), Ex );
 			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
-				OwnerConfig.Logger.LogException( "-1016", Ex.getMessage(), Ex );
+				OwnerConfig.Logger.logException( "-1016", Ex.getMessage(), Ex );
 			
 		}
 		
 	}
 	
-	public void FormatCSVHeaders( CMemoryRowSet MemoryRowSet, StringBuilder strResponseBuffer, boolean bFieldsQuote, String strSeparatorSymbol, CExtendedLogger Logger, CLanguage Lang  ) {
+	public void formatCSVHeaders( CMemoryRowSet MemoryRowSet, StringBuilder strResponseBuffer, boolean bFieldsQuote, String strSeparatorSymbol, CExtendedLogger Logger, CLanguage Lang  ) {
 		
 		try {
 			
@@ -479,15 +480,15 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 		catch ( Exception Ex ) {
 			
 			if ( Logger != null )
-				Logger.LogException( "-1016", Ex.getMessage(), Ex );
+				Logger.logException( "-1016", Ex.getMessage(), Ex );
 			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
-				OwnerConfig.Logger.LogException( "-1016", Ex.getMessage(), Ex );
+				OwnerConfig.Logger.logException( "-1016", Ex.getMessage(), Ex );
 			
 		}
 	
 	}
 
-	public void FormatCSVRowData( String strTempDir, String strTempFile, PrintWriter TempResponseFormatedFileWriter, OutputStream TempStreamResponseFormatedFile, ResultSet SQLDataSet, CAbstractDBEngine DBEngine, boolean bFieldsQuote, String strSeparatorSymbol, String strDateFormat, String strTimeFormat, String strDateTimeFormat, CExtendedLogger Logger, CLanguage Lang  ) {
+	public void formatCSVRowData( String strTempDir, String strTempFile, PrintWriter TempResponseFormatedFileWriter, OutputStream TempStreamResponseFormatedFile, ResultSet SQLDataSet, CAbstractDBEngine DBEngine, boolean bFieldsQuote, String strSeparatorSymbol, String strDateFormat, String strTimeFormat, String strDateTimeFormat, CExtendedLogger Logger, CLanguage Lang  ) {
 		
 		try {
 			
@@ -571,15 +572,15 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 		catch ( Exception Ex ) {
 			
 			if ( Logger != null )
-				Logger.LogException( "-1016", Ex.getMessage(), Ex );
+				Logger.logException( "-1016", Ex.getMessage(), Ex );
 			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
-				OwnerConfig.Logger.LogException( "-1016", Ex.getMessage(), Ex );
+				OwnerConfig.Logger.logException( "-1016", Ex.getMessage(), Ex );
 			
 		}
         
 	}
 
-	public void FormatCSVRowData( CMemoryRowSet MemoryRowSet, StringBuilder strResponseBuffer, boolean bFieldsQuote, String strSeparatorSymbol, String strDateFormat, String strTimeFormat, String strDateTimeFormat, CExtendedLogger Logger, CLanguage Lang  ) {
+	public void formatCSVRowData( CMemoryRowSet MemoryRowSet, StringBuilder strResponseBuffer, boolean bFieldsQuote, String strSeparatorSymbol, String strDateFormat, String strTimeFormat, String strDateTimeFormat, CExtendedLogger Logger, CLanguage Lang  ) {
 		
 		try {
 
@@ -598,9 +599,9 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 		catch ( Exception Ex ) {
 			
 			if ( Logger != null )
-				Logger.LogException( "-1016", Ex.getMessage(), Ex );
+				Logger.logException( "-1016", Ex.getMessage(), Ex );
 			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
-				OwnerConfig.Logger.LogException( "-1016", Ex.getMessage(), Ex );
+				OwnerConfig.Logger.logException( "-1016", Ex.getMessage(), Ex );
 			
 		}
 		
@@ -617,9 +618,9 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 
 				StringBuilder strResponseBuffer = new StringBuilder();
 				
-				String strShowHeaders = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_ShowHeaders );
-				String strSeparatorSymbol = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_SeparatorSymbol );
-				String strFieldsQuote = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_FieldsQuote );
+				String strShowHeaders = OwnerConfig.getConfigValue( ConstantsMessagesCodes._CSV_ShowHeaders );
+				String strSeparatorSymbol = OwnerConfig.getConfigValue( ConstantsMessagesCodes._CSV_SeparatorSymbol );
+				String strFieldsQuote = OwnerConfig.getConfigValue( ConstantsMessagesCodes._CSV_FieldsQuote );
 				
 				if ( strShowHeaders != null && strShowHeaders.equals( "true" ) )
 				   FormatCSVHeaders( SQLDataSet, DBEngine, strResponseBuffer, strFieldsQuote != null && strFieldsQuote.equals( "true" ), strSeparatorSymbol, Logger, Lang );
@@ -675,9 +676,9 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 
 				StringBuilder strResponseBuffer = new StringBuilder();
 				
-				String strShowHeaders = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_ShowHeaders );
-				String strSeparatorSymbol = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_SeparatorSymbol );
-				String strFieldsQuote = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_FieldsQuote );
+				String strShowHeaders = OwnerConfig.getConfigValue( ConstantsMessagesCodes._CSV_ShowHeaders );
+				String strSeparatorSymbol = OwnerConfig.getConfigValue( ConstantsMessagesCodes._CSV_SeparatorSymbol );
+				String strFieldsQuote = OwnerConfig.getConfigValue( ConstantsMessagesCodes._CSV_FieldsQuote );
 				
 				boolean bFieldsQuote = strFieldsQuote != null && strFieldsQuote.equals( "true" );
 				
@@ -730,7 +731,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 		
 	}*/
 
-	public void FormatDefaultHeaders( StringBuilder strResponseBuffer, boolean bFieldsQuote, String strSeparatorSymbol ) {
+	public void formatDefaultHeaders( StringBuilder strResponseBuffer, boolean bFieldsQuote, String strSeparatorSymbol ) {
 		
 		StringBuilder strFieldsName = new StringBuilder();
 		StringBuilder strFieldsType = new StringBuilder();
@@ -774,15 +775,15 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 	}
 	
 	@Override
-	public boolean FormatResultSet( HttpServletResponse Response, CResultSetResult SQLDataSetResult, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang ) { 
+	public boolean formatResultSet( HttpServletResponse Response, CResultSetResult SQLDataSetResult, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang ) { 
 		
     	boolean bResult = false;
     	
         try {
         	
-			if ( Utilities.VersionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.VersionLessEquals( strVersion, this.strMaxVersion ) ) {
+			if ( Utilities.versionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.versionLessEquals( strVersion, this.strMaxVersion ) ) {
 
-		        String strTempDir = OwnerConfig.getConfigValue( "Temp_Dir" );
+		        String strTempDir = (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Temp_Dir, null );
 		        
 		        String strTempResponseFormatedFilePath = strTempDir + UUID.randomUUID() + ".formated_response";
 	    		
@@ -790,9 +791,9 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 		        
 		        PrintWriter TempResponseFormatedFileWriter = new PrintWriter( OutStream ); // strTempResponseFormatedFilePath, this.getCharacterEncoding() );
 				
-				String strShowHeaders = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_ShowHeaders );
-				String strSeparatorSymbol = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_SeparatorSymbol );
-				String strFieldsQuote = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_FieldsQuote );
+				String strShowHeaders = (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._CSV_ShowHeaders, null );
+				String strSeparatorSymbol = (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._CSV_SeparatorSymbol, null );
+				String strFieldsQuote = (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._CSV_FieldsQuote, null );
 				
 				boolean bFieldsQuote = strFieldsQuote != null && strFieldsQuote.equals( "true" );
 				
@@ -804,7 +805,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 					
 						StringBuilder strResponseBuffer = new StringBuilder();
 
-						FormatCSVHeaders( SQLDataSetResult.Result, DBEngine, strResponseBuffer, bFieldsQuote, strSeparatorSymbol, Logger, Lang );
+						formatCSVHeaders( SQLDataSetResult.Result, DBEngine, strResponseBuffer, bFieldsQuote, strSeparatorSymbol, Logger, Lang );
 
 	        			TempResponseFormatedFileWriter.print( strResponseBuffer.toString() );
 	        			
@@ -812,7 +813,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 	        			
 					}
 					
-					FormatCSVRowData( strTempDir, strTempResponseFormatedFilePath, TempResponseFormatedFileWriter, OutStream, SQLDataSetResult.Result, DBEngine, bFieldsQuote, strSeparatorSymbol, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
+					formatCSVRowData( strTempDir, strTempResponseFormatedFilePath, TempResponseFormatedFileWriter, OutStream, SQLDataSetResult.Result, DBEngine, bFieldsQuote, strSeparatorSymbol, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
 
         			TempResponseFormatedFileWriter.close();
 
@@ -825,7 +826,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 					
 					if ( strShowHeaders != null && strShowHeaders.equals( "true" ) ) {
 
-						FormatDefaultHeaders( strResponseBuffer, bFieldsQuote, strSeparatorSymbol );
+						formatDefaultHeaders( strResponseBuffer, bFieldsQuote, strSeparatorSymbol );
 
 					}
 
@@ -875,17 +876,17 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 				if ( Logger != null ) {
 					
 					if ( Lang != null )
-						Logger.LogError( "-1015", Lang.Translate( "Format version [%s] not supported", strVersion ) );
+						Logger.logError( "-1015", Lang.translate( "Format version [%s] not supported", strVersion ) );
 					else
-						Logger.LogError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
+						Logger.logError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
 				    
 				}    
 				else if ( OwnerConfig != null && OwnerConfig.Logger != null ) {
 
 					if ( OwnerConfig.Lang != null )
-						OwnerConfig.Logger.LogError( "-1015", OwnerConfig.Lang.Translate( "Format version [%s] not supported", strVersion ) );
+						OwnerConfig.Logger.logError( "-1015", OwnerConfig.Lang.translate( "Format version [%s] not supported", strVersion ) );
 					else
-						OwnerConfig.Logger.LogError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
+						OwnerConfig.Logger.logError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
 
 				}    
 				
@@ -895,9 +896,9 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
         catch ( Exception Ex ) {
 
 			if ( Logger != null )
-				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				Logger.logException( "-1010", Ex.getMessage(), Ex );
 			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
-				OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				OwnerConfig.Logger.logException( "-1010", Ex.getMessage(), Ex );
 
         }
     	
@@ -906,17 +907,17 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 	}
 	
 	@Override
-	public boolean FormatResultsSets( HttpServletResponse Response, ArrayList<CResultSetResult> SQLDataSetResultList, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
+	public boolean formatResultsSets( HttpServletResponse Response, ArrayList<CResultSetResult> SQLDataSetResultList, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
 		
     	boolean bResult = false;
     	
         try {
 
-			if ( Utilities.VersionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.VersionLessEquals( strVersion, this.strMaxVersion ) ) {
+			if ( Utilities.versionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.versionLessEquals( strVersion, this.strMaxVersion ) ) {
         	
 				if ( SQLDataSetResultList.size() > 0 ) {
 
-			        String strTempDir = OwnerConfig.getConfigValue( "Temp_Dir" );
+			        String strTempDir = (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Temp_Dir, null );
 			        
 			        String strTempResponseFormatedFilePath = strTempDir + UUID.randomUUID() + ".formated_response";
 		    		
@@ -924,9 +925,9 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 			        
 			        PrintWriter TempResponseFormatedFileWriter = new PrintWriter( TempFileOutStream ); // strTempResponseFormatedFilePath, this.getCharacterEncoding() );
 					
-					String strShowHeaders = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_ShowHeaders );
-					String strSeparatorSymbol = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_SeparatorSymbol );
-					String strFieldsQuote = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_FieldsQuote );
+					String strShowHeaders = (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._CSV_ShowHeaders, null );
+					String strSeparatorSymbol = (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._CSV_SeparatorSymbol, null );
+					String strFieldsQuote = (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._CSV_FieldsQuote, null );
 					
 					boolean bFieldsQuote = strFieldsQuote != null && strFieldsQuote.equals( "true" );
 					
@@ -939,7 +940,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 						StringBuilder strResponseBuffer = new StringBuilder();
 
 						if ( strShowHeaders != null && strShowHeaders.equals( "true" ) )
-							FormatCSVHeaders( SQLDataSet, DBEngine, strResponseBuffer, bFieldsQuote, strSeparatorSymbol, Logger, Lang );
+							formatCSVHeaders( SQLDataSet, DBEngine, strResponseBuffer, bFieldsQuote, strSeparatorSymbol, Logger, Lang );
 
 	        			TempResponseFormatedFileWriter.print( strResponseBuffer.toString() );
 	        			
@@ -949,7 +950,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 
 							if ( SQLDataSetResultToAdd.Result != null ) {   
 
-								FormatCSVRowData( strTempDir, strTempResponseFormatedFilePath, TempResponseFormatedFileWriter, TempFileOutStream, SQLDataSetResultToAdd.Result, DBEngine, bFieldsQuote, strSeparatorSymbol, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
+								formatCSVRowData( strTempDir, strTempResponseFormatedFilePath, TempResponseFormatedFileWriter, TempFileOutStream, SQLDataSetResultToAdd.Result, DBEngine, bFieldsQuote, strSeparatorSymbol, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
 								
 							}
 
@@ -966,7 +967,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 						
 						if ( strShowHeaders != null && strShowHeaders.equals( "true" ) ) {
 
-							FormatDefaultHeaders( strResponseBuffer, bFieldsQuote, strSeparatorSymbol );
+							formatDefaultHeaders( strResponseBuffer, bFieldsQuote, strSeparatorSymbol );
 						
 						}
 						
@@ -1009,7 +1010,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 
 	    			File TempResponseFormatedFile = new File( strTempResponseFormatedFilePath ); 
 
-	    			this.CopyToResponseStream( Response, TempResponseFormatedFile, 10240, Logger, Lang );
+	    			this.copyToResponseStream( Response, TempResponseFormatedFile, 10240, Logger, Lang );
 
 	    			if ( bDeleteTempReponseFile )
 	    				TempResponseFormatedFile.delete();
@@ -1024,17 +1025,17 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 				if ( Logger != null ) {
 					
 					if ( Lang != null )
-						Logger.LogError( "-1015", Lang.Translate( "Format version [%s] not supported", strVersion ) );
+						Logger.logError( "-1015", Lang.translate( "Format version [%s] not supported", strVersion ) );
 					else
-						Logger.LogError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
+						Logger.logError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
 				    
 				}    
 				else if ( OwnerConfig != null && OwnerConfig.Logger != null ) {
 
 					if ( OwnerConfig.Lang != null )
-						OwnerConfig.Logger.LogError( "-1015", OwnerConfig.Lang.Translate( "Format version [%s] not supported", strVersion ) );
+						OwnerConfig.Logger.logError( "-1015", OwnerConfig.Lang.translate( "Format version [%s] not supported", strVersion ) );
 					else
-						OwnerConfig.Logger.LogError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
+						OwnerConfig.Logger.logError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
 
 				}    
 				
@@ -1044,9 +1045,9 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
         catch ( Exception Ex ) {
 
 			if ( Logger != null )
-				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				Logger.logException( "-1010", Ex.getMessage(), Ex );
 			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
-				OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				OwnerConfig.Logger.logException( "-1010", Ex.getMessage(), Ex );
 
         }
     	
@@ -1055,24 +1056,24 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 	}
 	
 	@Override
-	public String FormatMemoryRowSet( CMemoryRowSet MemoryRowSet, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+	public String formatMemoryRowSet( CMemoryRowSet MemoryRowSet, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		String strResult = "";
 
 		try {
 
-			if ( Utilities.VersionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.VersionLessEquals( strVersion, this.strMaxVersion ) ) {
+			if ( Utilities.versionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.versionLessEquals( strVersion, this.strMaxVersion ) ) {
 
 				StringBuilder strResponseBuffer = new StringBuilder();
 				
-				String strShowHeaders = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_ShowHeaders );
-				String strSeparatorSymbol = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_SeparatorSymbol );
-				String strFieldsQuote = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_FieldsQuote );
+				String strShowHeaders = (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._CSV_ShowHeaders, null );
+				String strSeparatorSymbol = (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._CSV_SeparatorSymbol, null );
+				String strFieldsQuote = (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._CSV_FieldsQuote, null );
 				
 				if ( strShowHeaders != null && strShowHeaders.equals( "true" ) )
-				   FormatCSVHeaders( MemoryRowSet, strResponseBuffer, strFieldsQuote != null && strFieldsQuote.equals( "true" ), strSeparatorSymbol, Logger, Lang );
+				   formatCSVHeaders( MemoryRowSet, strResponseBuffer, strFieldsQuote != null && strFieldsQuote.equals( "true" ), strSeparatorSymbol, Logger, Lang );
 				
-				FormatCSVRowData( MemoryRowSet, strResponseBuffer, strFieldsQuote != null && strFieldsQuote.equals( "true" ), (strSeparatorSymbol != null && strSeparatorSymbol.isEmpty() == false)?strSeparatorSymbol:";", strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
+				formatCSVRowData( MemoryRowSet, strResponseBuffer, strFieldsQuote != null && strFieldsQuote.equals( "true" ), (strSeparatorSymbol != null && strSeparatorSymbol.isEmpty() == false)?strSeparatorSymbol:";", strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
 				
 				strResult = strResponseBuffer.toString();
 
@@ -1082,17 +1083,17 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 				if ( Logger != null ) {
 					
 					if ( Lang != null )
-						Logger.LogError( "-1015", Lang.Translate( "Format version [%s] not supported", strVersion ) );
+						Logger.logError( "-1015", Lang.translate( "Format version [%s] not supported", strVersion ) );
 					else
-						Logger.LogError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
+						Logger.logError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
 				    
 				}    
 				else if ( OwnerConfig != null && OwnerConfig.Logger != null ) {
 
 					if ( OwnerConfig.Lang != null )
-						OwnerConfig.Logger.LogError( "-1015", OwnerConfig.Lang.Translate( "Format version [%s] not supported", strVersion ) );
+						OwnerConfig.Logger.logError( "-1015", OwnerConfig.Lang.translate( "Format version [%s] not supported", strVersion ) );
 					else
-						OwnerConfig.Logger.LogError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
+						OwnerConfig.Logger.logError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
 
 				}    
 				
@@ -1102,9 +1103,9 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 		catch ( Exception Ex ) {
 
 			if ( Logger != null )
-				Logger.LogException( "-1016", Ex.getMessage(), Ex );
+				Logger.logException( "-1016", Ex.getMessage(), Ex );
 			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
-				OwnerConfig.Logger.LogException( "-1016", Ex.getMessage(), Ex );
+				OwnerConfig.Logger.logException( "-1016", Ex.getMessage(), Ex );
 
 		}
 
@@ -1123,9 +1124,9 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 
 				StringBuilder strResponseBuffer = new StringBuilder();
 				
-				String strShowHeaders = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_ShowHeaders );
-				String strSeparatorSymbol = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_SeparatorSymbol );
-				String strFieldsQuote = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_FieldsQuote );
+				String strShowHeaders = OwnerConfig.getConfigValue( ConstantsMessagesCodes._CSV_ShowHeaders );
+				String strSeparatorSymbol = OwnerConfig.getConfigValue( ConstantsMessagesCodes._CSV_SeparatorSymbol );
+				String strFieldsQuote = OwnerConfig.getConfigValue( ConstantsMessagesCodes._CSV_FieldsQuote );
 				
 				boolean bFieldsQuote = strFieldsQuote != null && strFieldsQuote.equals( "true" );
 				
@@ -1179,21 +1180,21 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 	}*/
 	
 	@Override
-	public String FormatSimpleMessage( String strSecurityTokenID, String strTransactionID, int intCode, String strDescription, boolean bAttachToError, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+	public String formatSimpleMessage( String strSecurityTokenID, String strTransactionID, int intCode, String strDescription, boolean bAttachToError, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 
 		String strResult = "";
 		
 		try {
 
-			if ( Utilities.VersionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.VersionLessEquals( strVersion, this.strMaxVersion ) ) {
+			if ( Utilities.versionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.versionLessEquals( strVersion, this.strMaxVersion ) ) {
 			
-				String strShowHeaders = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_ShowHeaders );
+				String strShowHeaders = (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._CSV_ShowHeaders, null );
 				
 				StringBuilder strResponseBuffer = new StringBuilder();
 				
-				String strSeparatorSymbol = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_SeparatorSymbol );
+				String strSeparatorSymbol = (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._CSV_SeparatorSymbol, null );
 
-				String strFieldsQuote = OwnerConfig.getConfigValue( ConstantsResponseFormat._CSV_FieldsQuote );
+				String strFieldsQuote = (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._CSV_FieldsQuote, null );
 				
 				boolean bFieldsQuote = strFieldsQuote != null && strFieldsQuote.equals( "true" );
 				
@@ -1323,17 +1324,17 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 				if ( Logger != null ) {
 					
 					if ( Lang != null )
-						Logger.LogError( "-1015", Lang.Translate( "Format version [%s] not supported", strVersion ) );
+						Logger.logError( "-1015", Lang.translate( "Format version [%s] not supported", strVersion ) );
 					else
-						Logger.LogError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
+						Logger.logError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
 				    
 				}    
 				else if ( OwnerConfig != null && OwnerConfig.Logger != null ) {
 
 					if ( OwnerConfig.Lang != null )
-						OwnerConfig.Logger.LogError( "-1015", OwnerConfig.Lang.Translate( "Format version [%s] not supported", strVersion ) );
+						OwnerConfig.Logger.logError( "-1015", OwnerConfig.Lang.translate( "Format version [%s] not supported", strVersion ) );
 					else
-						OwnerConfig.Logger.LogError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
+						OwnerConfig.Logger.logError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
 
 				}    
 				
@@ -1343,9 +1344,9 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 		catch ( Exception Ex ) {
 			
 			if ( Logger != null )
-				Logger.LogException( "-1016", Ex.getMessage(), Ex );
+				Logger.logException( "-1016", Ex.getMessage(), Ex );
 			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
-				OwnerConfig.Logger.LogException( "-1016", Ex.getMessage(), Ex );
+				OwnerConfig.Logger.logException( "-1016", Ex.getMessage(), Ex );
         	
 		}
 		

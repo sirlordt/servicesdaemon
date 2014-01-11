@@ -446,6 +446,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param x
 	 * @throws SQLException
 	 */
+	@Override
 	public void setAsciiStream(String parameterName, InputStream x)
 			throws SQLException {
 		cs.setAsciiStream(getIndex(parameterName), x);
@@ -473,6 +474,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param length
 	 * @throws SQLException
 	 */
+	@Override
 	public void setAsciiStream(String parameterName, InputStream x, int length)
 			throws SQLException {
 		cs.setAsciiStream(getIndex(parameterName), x, length);
@@ -501,6 +503,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param length
 	 * @throws SQLException
 	 */
+	@Override
 	public void setAsciiStream(String parameterName, InputStream x, long length)
 			throws SQLException {
 		Integer idx = params.get(parameterName);
@@ -531,6 +534,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param x
 	 * @throws SQLException
 	 */
+	@Override
 	public void setBigDecimal(String parameterName, BigDecimal x)
 			throws SQLException {
 		cs.setBigDecimal(getIndex(parameterName), x);
@@ -558,6 +562,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param x
 	 * @throws SQLException
 	 */
+	@Override
 	public void setBinaryStream(String parameterName, InputStream x)
 			throws SQLException {
 		cs.setBinaryStream(getIndex(parameterName), x);
@@ -585,6 +590,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param length
 	 * @throws SQLException
 	 */
+	@Override
 	public void setBinaryStream(String parameterName, InputStream x, int length)
 			throws SQLException {
 		cs.setBinaryStream(getIndex(parameterName), x, length);
@@ -612,6 +618,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param length
 	 * @throws SQLException
 	 */
+	@Override
 	public void setBinaryStream(String parameterName, InputStream x, long length)
 			throws SQLException {
 		cs.setBinaryStream(getIndex(parameterName), x, length);
@@ -637,6 +644,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param x
 	 * @throws SQLException
 	 */
+	@Override
 	public void setBlob(String parameterName, Blob x) throws SQLException {
 		cs.setBlob(getIndex(parameterName), x);
 	}
@@ -662,6 +670,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param inputStream
 	 * @throws SQLException
 	 */
+	@Override
 	public void setBlob(String parameterName, InputStream inputStream)
 			throws SQLException {
 		cs.setBlob(getIndex(parameterName), inputStream);
@@ -689,6 +698,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param length
 	 * @throws SQLException
 	 */
+	@Override
 	public void setBlob(String parameterName, InputStream inputStream, long length)
 			throws SQLException {
 		cs.setBlob(getIndex(parameterName), inputStream, length);
@@ -714,6 +724,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param x
 	 * @throws SQLException
 	 */
+	@Override
 	public void setBoolean(String parameterName, boolean x) throws SQLException {
 		cs.setBoolean(getIndex(parameterName), x);
 	}
@@ -738,6 +749,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param x
 	 * @throws SQLException
 	 */
+	@Override
 	public void setByte(String parameterName, byte x) throws SQLException {
 		cs.setByte(getIndex(parameterName), x);
 	}
@@ -762,6 +774,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param x
 	 * @throws SQLException
 	 */
+	@Override
 	public void setBytes(String parameterName, byte[] x) throws SQLException {
 		cs.setBytes(getIndex(parameterName), x);
 	}
@@ -787,6 +800,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param reader
 	 * @throws SQLException
 	 */
+	@Override
 	public void setCharacterStream(String parameterName, Reader reader)
 			throws SQLException {
 		cs.setCharacterStream(getIndex(parameterName), reader);
@@ -814,6 +828,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param length
 	 * @throws SQLException
 	 */
+	@Override
 	public void setCharacterStream(String parameterName, Reader reader, int length)
 			throws SQLException {
 		cs.setCharacterStream(getIndex(parameterName), reader, length);
@@ -841,6 +856,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param length
 	 * @throws SQLException
 	 */
+	@Override
 	public void setCharacterStream(String parameterName, Reader reader,
 			long length) throws SQLException {
 		cs.setCharacterStream(getIndex(parameterName), reader, length);
@@ -866,6 +882,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param x
 	 * @throws SQLException
 	 */
+	@Override
 	public void setClob(String parameterName, Clob x) throws SQLException {
 		cs.setClob(getIndex(parameterName), x);
 	}
@@ -890,6 +907,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param reader
 	 * @throws SQLException
 	 */
+	@Override
 	public void setClob(String parameterName, Reader reader) throws SQLException {
 		cs.setClob(getIndex(parameterName), reader);    
 	}
@@ -916,6 +934,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param length
 	 * @throws SQLException
 	 */
+	@Override
 	public void setClob(String parameterName, Reader reader, long length)
 			throws SQLException {
 		cs.setClob(getIndex(parameterName), reader, length);
@@ -941,6 +960,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param x
 	 * @throws SQLException
 	 */
+	@Override
 	public void setDate(String parameterName, Date x) throws SQLException {
 		cs.setDate(getIndex(parameterName), x);
 	}
@@ -967,6 +987,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param cal
 	 * @throws SQLException
 	 */
+	@Override
 	public void setDate(String parameterName, Date x, Calendar cal)
 			throws SQLException {
 		cs.setDate(getIndex(parameterName), x, cal);
@@ -992,6 +1013,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param x
 	 * @throws SQLException
 	 */
+	@Override
 	public void setDouble(String parameterName, double x) throws SQLException {
 		cs.setDouble(getIndex(parameterName), x);
 	}
@@ -1016,6 +1038,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param x
 	 * @throws SQLException
 	 */
+	@Override
 	public void setFloat(String parameterName, float x) throws SQLException {
 		cs.setFloat(getIndex(parameterName), x);
 	}
@@ -1040,6 +1063,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param x
 	 * @throws SQLException
 	 */
+	@Override
 	public void setInt(String parameterName, int x) throws SQLException {
 		cs.setInt(getIndex(parameterName), x);
 	}
@@ -1064,6 +1088,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param x
 	 * @throws SQLException
 	 */
+	@Override
 	public void setLong(String parameterName, long x) throws SQLException {
 		cs.setLong(getIndex(parameterName), x);    
 	}
@@ -1089,6 +1114,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param value
 	 * @throws SQLException
 	 */
+	@Override
 	public void setNCharacterStream(String parameterName, Reader value)
 			throws SQLException {
 		cs.setNCharacterStream(getIndex(parameterName), value);    
@@ -1116,6 +1142,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param length
 	 * @throws SQLException
 	 */
+	@Override
 	public void setNCharacterStream(String parameterName, Reader value,
 			long length) throws SQLException {
 		cs.setNCharacterStream(getIndex(parameterName), value, length);
@@ -1141,6 +1168,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param value
 	 * @throws SQLException
 	 */
+	@Override
 	public void setNClob(String parameterName, NClob value) throws SQLException {
 		cs.setNClob(getIndex(parameterName), value);
 	}
@@ -1165,6 +1193,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param reader
 	 * @throws SQLException
 	 */
+	@Override
 	public void setNClob(String parameterName, Reader reader) throws SQLException {
 		cs.setNClob(getIndex(parameterName), reader);
 	}
@@ -1191,6 +1220,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param length
 	 * @throws SQLException
 	 */
+	@Override
 	public void setNClob(String parameterName, Reader reader, long length)
 			throws SQLException {
 		cs.setNClob(getIndex(parameterName), reader, length);
@@ -1217,6 +1247,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param value
 	 * @throws SQLException
 	 */
+	@Override
 	public void setNString(String parameterName, String value)
 			throws SQLException {
 		cs.setNString(getIndex(parameterName), value);
@@ -1242,6 +1273,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param sqlType
 	 * @throws SQLException
 	 */
+	@Override
 	public void setNull(String parameterName, int sqlType) throws SQLException {
 		cs.setNull(getIndex(parameterName), sqlType);
 	}
@@ -1268,6 +1300,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param typeName
 	 * @throws SQLException
 	 */
+	@Override
 	public void setNull(String parameterName, int sqlType, String typeName)
 			throws SQLException {
 		cs.setNull(getIndex(parameterName), sqlType, typeName);
@@ -1293,6 +1326,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param x
 	 * @throws SQLException
 	 */
+	@Override
 	public void setObject(String parameterName, Object x) throws SQLException {
 		cs.setObject(getIndex(parameterName), x);
 	}
@@ -1319,6 +1353,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param targetSqlType
 	 * @throws SQLException
 	 */
+	@Override
 	public void setObject(String parameterName, Object x, int targetSqlType)
 			throws SQLException {
 		cs.setObject(getIndex(parameterName), x, targetSqlType);
@@ -1347,6 +1382,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param scaleOrLength
 	 * @throws SQLException
 	 */
+	@Override
 	public void setObject(String parameterName, Object x, int targetSqlType,
 			int scaleOrLength) throws SQLException {
 		cs.setObject(getIndex(parameterName), x, targetSqlType, scaleOrLength);
@@ -1396,6 +1432,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param x
 	 * @throws SQLException
 	 */
+	@Override
 	public void setRowId(String parameterName, RowId x) throws SQLException {
 		cs.setRowId(getIndex(parameterName), x);
 	}
@@ -1421,6 +1458,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param xmlObject
 	 * @throws SQLException
 	 */
+	@Override
 	public void setSQLXML(String parameterName, SQLXML xmlObject)
 			throws SQLException {
 		cs.setSQLXML(getIndex(parameterName), xmlObject);
@@ -1446,6 +1484,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param x
 	 * @throws SQLException
 	 */
+	@Override
 	public void setShort(String parameterName, short x) throws SQLException {
 		cs.setShort(getIndex(parameterName), x);
 	}
@@ -1470,6 +1509,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param x
 	 * @throws SQLException
 	 */
+	@Override
 	public void setString(String parameterName, String x) throws SQLException {
 		cs.setString(getIndex(parameterName), x);
 	}
@@ -1494,6 +1534,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param x
 	 * @throws SQLException
 	 */
+	@Override
 	public void setTime(String parameterName, Time x) throws SQLException {
 		cs.setTime(getIndex(parameterName), x);
 	}
@@ -1520,6 +1561,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param cal
 	 * @throws SQLException
 	 */
+	@Override
 	public void setTime(String parameterName, Time x, Calendar cal)
 			throws SQLException {
 		cs.setTime(getIndex(parameterName), x, cal);
@@ -1546,6 +1588,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param x
 	 * @throws SQLException
 	 */
+	@Override
 	public void setTimestamp(String parameterName, Timestamp x)
 			throws SQLException {
 		cs.setTimestamp(getIndex(parameterName), x);
@@ -1573,6 +1616,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param cal
 	 * @throws SQLException
 	 */
+	@Override
 	public void setTimestamp(String parameterName, Timestamp x, Calendar cal)
 			throws SQLException {
 		cs.setTimestamp(getIndex(parameterName), x, cal);
@@ -1598,6 +1642,7 @@ public class CNamedCallableStatement implements CallableStatement {
 	 * @param x
 	 * @throws SQLException
 	 */
+	@Override
 	public void setURL(String parameterName, URL x) throws SQLException {
 		cs.setURL(getIndex(parameterName), x);
 	}
@@ -1607,8 +1652,8 @@ public class CNamedCallableStatement implements CallableStatement {
 	/**
 	 * @see java.sql.PreparedStatement#setUnicodeStream(int, java.io.InputStream, int)
 	 */
-	@SuppressWarnings("deprecation")
 	@Override
+	@Deprecated
 	public void setUnicodeStream(int parameterIndex, InputStream x, int length)	throws SQLException {
 	
 		cs.setUnicodeStream(parameterIndex, x, length);
@@ -2185,6 +2230,7 @@ public class CNamedCallableStatement implements CallableStatement {
 
 
 	@Override
+	@Deprecated
 	public BigDecimal getBigDecimal(int parameterIndex, int scale)
 			throws SQLException {
 		

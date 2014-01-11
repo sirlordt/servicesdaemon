@@ -31,6 +31,8 @@ public interface ConfigXMLTagsServicesDaemon {
 	public static final String _Exact_Match = "Exact_Match";
 	public static final String _Log_Missing_Translations = "Log_Missing_Translations";
 	public static final String _Level = "Level";
+	public static final String _Log_IP = "Log_IP";
+	public static final String _Log_Port = "Log_Port";
 	
 	public static final String _AccessControl = "AccessControl";
 	public static final String _From = "From";

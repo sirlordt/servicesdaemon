@@ -26,8 +26,8 @@ import CommonClasses.CAbstractConfigLoader;
 import CommonClasses.CLanguage;
 import CommonClasses.CMemoryRowSet;
 import CommonClasses.CResultSetResult;
-import CommonClasses.CServicesDaemonConfig;
-import DBServicesManager.DefaultConstantsDBServicesManager;
+import CommonClasses.CConfigServicesDaemon;
+import CommonClasses.ConstantsCommonClasses;
 import ExtendedLogger.CExtendedLogger;
 
 public abstract class CAbstractResponseFormat {
@@ -40,7 +40,7 @@ public abstract class CAbstractResponseFormat {
     protected String strMinVersion;
     protected String strMaxVersion;
 
-    protected CServicesDaemonConfig ServicesDaemonConfig; 
+    protected CConfigServicesDaemon ServicesDaemonConfig; 
     protected CAbstractConfigLoader OwnerConfig;
     
 	static {
@@ -62,7 +62,7 @@ public abstract class CAbstractResponseFormat {
 			
 			if ( ResponseFormat.strName.toLowerCase().equals( strName ) == true ) {
 			
-				if ( strVersion.equals( DefaultConstantsDBServicesManager.strDefaultVersionAny ) || ( Utilities.VersionGreaterEquals( strVersion, ResponseFormat.getMinVersion() ) && Utilities.VersionLessEquals( strVersion, ResponseFormat.getMaxVersion() ) ) ) {
+				if ( strVersion.equals( ConstantsCommonClasses._Version_Any ) || ( Utilities.versionGreaterEquals( strVersion, ResponseFormat.getMinVersion() ) && Utilities.versionLessEquals( strVersion, ResponseFormat.getMaxVersion() ) ) ) {
 				
 				   intResponseFormatSearchCodeResult = 0;
 				   Result = ResponseFormat;
@@ -97,7 +97,7 @@ public abstract class CAbstractResponseFormat {
 		
 	}
 
-	public static boolean ResigterResponseFormat( CAbstractResponseFormat ResponseFormat ) { 
+	public static boolean registerResponseFormat( CAbstractResponseFormat ResponseFormat ) { 
 		
 		boolean bResult = false;
 				
@@ -113,13 +113,13 @@ public abstract class CAbstractResponseFormat {
 		
 	}
     
-    public static void ClearRegisteredResponseFormat() {
+    public static void clearRegisteredResponseFormat() {
     	
     	RegisteredResponsesFormats.clear();
     	
     }
     
-    public static int GetCountRegisteredResponsesFormats() {
+    public static int getCountRegisteredResponsesFormats() {
     	
     	return RegisteredResponsesFormats.size();
     	
@@ -142,7 +142,7 @@ public abstract class CAbstractResponseFormat {
     	return this.strMaxVersion;
     }
         
-    public boolean InitResponseFormat( CServicesDaemonConfig ServicesDaemonConfig, CAbstractConfigLoader OwnerConfig ) {
+    public boolean initResponseFormat( CConfigServicesDaemon ServicesDaemonConfig, CAbstractConfigLoader OwnerConfig ) {
    
     	boolean bResult = true;
     	
@@ -156,16 +156,13 @@ public abstract class CAbstractResponseFormat {
     public abstract CAbstractResponseFormat getNewInstance();
     public abstract String getContentType();
     public abstract String getCharacterEncoding();
-    public abstract String EnumerateServices( HashMap<String,CAbstractService> RegisteredServices, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang );
-    //public abstract boolean FormatResultSet( HttpServletResponse Response, ResultSet SQLDataSet, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang );
-    //public abstract boolean FormatResultsSets( HttpServletResponse Response, ArrayList<ResultSet> SQLDataSetList, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang );
-    public abstract boolean FormatResultSet( HttpServletResponse Response, CResultSetResult SQLDataSetResult, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang );
-    public abstract boolean FormatResultsSets( HttpServletResponse Response, ArrayList<CResultSetResult> SQLDataSetResultList, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang, int intDummyParam );
-    public abstract String FormatMemoryRowSet( CMemoryRowSet MemoryRowSet, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang );
-    //public abstract String FormatMemoryRowSets( ArrayList<CMemoryRowSet> MemoryRowSetList, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang );
-    public abstract String FormatSimpleMessage( String strSecurityTokenID, String strTransactionID, int intCode, String strDescription, boolean bAttachToError, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang );
+    public abstract String enumerateServices( HashMap<String,CAbstractService> RegisteredServices, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang );
+    public abstract boolean formatResultSet( HttpServletResponse Response, CResultSetResult SQLDataSetResult, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang );
+    public abstract boolean formatResultsSets( HttpServletResponse Response, ArrayList<CResultSetResult> SQLDataSetResultList, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang, int intDummyParam );
+    public abstract String formatMemoryRowSet( CMemoryRowSet MemoryRowSet, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang );
+    public abstract String formatSimpleMessage( String strSecurityTokenID, String strTransactionID, int intCode, String strDescription, boolean bAttachToError, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang );
 
-    public boolean CopyToResponseStream( HttpServletResponse Response, File TempResponseFormatedFile, int intChunkSize, CExtendedLogger Logger, CLanguage Lang ) {
+    public boolean copyToResponseStream( HttpServletResponse Response, File TempResponseFormatedFile, int intChunkSize, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	boolean bResult = false;
     	
@@ -200,9 +197,9 @@ public abstract class CAbstractResponseFormat {
     	catch ( Exception Ex ) {
     		
 			if ( Logger != null )
-				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				Logger.logException( "-1010", Ex.getMessage(), Ex );
 			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
-				OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				OwnerConfig.Logger.logException( "-1010", Ex.getMessage(), Ex );
     		
     	}
     	

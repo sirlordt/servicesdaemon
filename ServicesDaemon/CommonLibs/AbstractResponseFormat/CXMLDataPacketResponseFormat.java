@@ -55,11 +55,12 @@ import org.w3c.dom.NodeList;
 import AbstractDBEngine.CAbstractDBEngine;
 import AbstractService.CAbstractService;
 import AbstractService.CInputServiceParameter;
-import AbstractService.ConstantsServicesTags;
 import CommonClasses.CLanguage;
 import CommonClasses.CMemoryFieldData;
 import CommonClasses.CMemoryRowSet;
 import CommonClasses.CResultSetResult;
+import CommonClasses.ConstantsCommonClasses;
+import CommonClasses.ConstantsMessagesCodes;
 import ExtendedLogger.CExtendedLogger;
 
 public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
@@ -72,7 +73,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 		
 	}
 
-    public String ConvertXMLDocumentToString( Document XMLDocument, boolean bOmitDeclaration, String strEnconding, boolean bIndent, CExtendedLogger Logger, CLanguage Lang ) {
+    public String convertXMLDocumentToString( Document XMLDocument, boolean bOmitDeclaration, String strEnconding, boolean bIndent, CExtendedLogger Logger, CLanguage Lang ) {
         
         String strResult = "";
         
@@ -110,9 +111,9 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
         catch ( Exception Ex ) {
             
 			if ( Logger != null )
-				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				Logger.logException( "-1010", Ex.getMessage(), Ex );
 			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
-				OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				OwnerConfig.Logger.logException( "-1010", Ex.getMessage(), Ex );
         
         }
         
@@ -120,37 +121,37 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     
     }
 
-    public String ConvertXMLDocumentToString( Document XMLDocument, boolean bOmitDeclaration, String strEnconding, CExtendedLogger Logger, CLanguage Lang ) {
+    public String convertXMLDocumentToString( Document XMLDocument, boolean bOmitDeclaration, String strEnconding, CExtendedLogger Logger, CLanguage Lang ) {
 
-       return ConvertXMLDocumentToString( XMLDocument, bOmitDeclaration, strEnconding, true, Logger, Lang );
-
-    }
-
-    public String ConvertXMLDocumentToString( Document XMLDocument, boolean bOmitDeclaration, boolean bIndent, CExtendedLogger Logger, CLanguage Lang ) {
-
-       return ConvertXMLDocumentToString( XMLDocument, bOmitDeclaration, OwnerConfig.getConfigValue( ConstantsResponseFormat._XML_DataPacket_CharSet ), bIndent, Logger, Lang );
+       return convertXMLDocumentToString( XMLDocument, bOmitDeclaration, strEnconding, true, Logger, Lang );
 
     }
 
-    public String ConvertXMLDocumentToString( Document XMLDocument, boolean bOmitDeclaration, CExtendedLogger Logger, CLanguage Lang ) {
+    public String convertXMLDocumentToString( Document XMLDocument, boolean bOmitDeclaration, boolean bIndent, CExtendedLogger Logger, CLanguage Lang ) {
 
-       return ConvertXMLDocumentToString( XMLDocument, bOmitDeclaration, OwnerConfig.getConfigValue( ConstantsResponseFormat._XML_DataPacket_CharSet ), true, Logger, Lang );
-
-    }
-
-    public String ConvertXMLDocumentToString( Document XMLDocument, String strEnconding, CExtendedLogger Logger, CLanguage Lang ) {
-
-       return ConvertXMLDocumentToString( XMLDocument, false, strEnconding, true, Logger, Lang );
+       return convertXMLDocumentToString( XMLDocument, bOmitDeclaration, (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._XML_DataPacket_CharSet, null ), bIndent, Logger, Lang );
 
     }
 
-    public String ConvertXMLDocumentToString( Document XMLDocument, CExtendedLogger Logger, CLanguage Lang ) {
+    public String convertXMLDocumentToString( Document XMLDocument, boolean bOmitDeclaration, CExtendedLogger Logger, CLanguage Lang ) {
 
-       return ConvertXMLDocumentToString( XMLDocument, false, OwnerConfig.getConfigValue( ConstantsResponseFormat._XML_DataPacket_CharSet ), true, Logger, Lang );
+       return convertXMLDocumentToString( XMLDocument, bOmitDeclaration, (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._XML_DataPacket_CharSet, null ), true, Logger, Lang );
 
     }
 
-    public Document BuildBasicResponseXMLStruct( String strVersion, boolean  bAttachErrorNode, CExtendedLogger Logger, CLanguage Lang ) {
+    public String convertXMLDocumentToString( Document XMLDocument, String strEnconding, CExtendedLogger Logger, CLanguage Lang ) {
+
+       return convertXMLDocumentToString( XMLDocument, false, strEnconding, true, Logger, Lang );
+
+    }
+
+    public String convertXMLDocumentToString( Document XMLDocument, CExtendedLogger Logger, CLanguage Lang ) {
+
+       return convertXMLDocumentToString( XMLDocument, false, (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._XML_DataPacket_CharSet, null ), true, Logger, Lang );
+
+    }
+
+    public Document buildBasicResponseXMLStruct( String strVersion, boolean  bAttachErrorNode, CExtendedLogger Logger, CLanguage Lang ) {
 
         Document XMLDocument = null;
 
@@ -210,9 +211,9 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
         catch ( Exception Ex ) {
 
 			if ( Logger != null )
-				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				Logger.logException( "-1010", Ex.getMessage(), Ex );
 			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
-				OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				OwnerConfig.Logger.logException( "-1010", Ex.getMessage(), Ex );
 
         }
 
@@ -220,15 +221,15 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	
     }
     
-    public Document BuildBasicResponseXMLStruct( String strVersion, CExtendedLogger Logger, CLanguage Lang ) {
+    public Document buildBasicResponseXMLStruct( String strVersion, CExtendedLogger Logger, CLanguage Lang ) {
 
-    	return BuildBasicResponseXMLStruct( strVersion, true, Logger, Lang );
+    	return buildBasicResponseXMLStruct( strVersion, true, Logger, Lang );
 
     }
 
-    public Document BuildXMLSimpleMessageStruct( String strSecurityToken, String strTransactionID, int intCode, String strDescription, boolean bAttachToError, String strVersion, CExtendedLogger Logger, CLanguage Lang ) {
+    public Document buildXMLSimpleMessageStruct( String strSecurityToken, String strTransactionID, int intCode, String strDescription, boolean bAttachToError, String strVersion, CExtendedLogger Logger, CLanguage Lang ) {
 
-        Document XMLDocument = BuildBasicResponseXMLStruct( strVersion, Logger, Lang );
+        Document XMLDocument = buildBasicResponseXMLStruct( strVersion, Logger, Lang );
 
         try {
 
@@ -339,9 +340,9 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
         catch ( Exception Ex ) {
 
 			if ( Logger != null )
-				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				Logger.logException( "-1010", Ex.getMessage(), Ex );
 			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
-				OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				OwnerConfig.Logger.logException( "-1010", Ex.getMessage(), Ex );
 
         }
 
@@ -367,9 +368,9 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	
     }
     
-    public Document BuildXMLFieldDefinedStruct( ArrayList<CSimpleXMLFieldDefinition> FieldDefinitions, String strVersion, CExtendedLogger Logger, CLanguage Lang ) {
+    public Document buildXMLFieldDefinedStruct( ArrayList<CSimpleXMLFieldDefinition> FieldDefinitions, String strVersion, CExtendedLogger Logger, CLanguage Lang ) {
 
-        Document XMLDocument = BuildBasicResponseXMLStruct( strVersion, false, Logger, Lang );
+        Document XMLDocument = buildBasicResponseXMLStruct( strVersion, false, Logger, Lang );
 
         try {
 
@@ -418,9 +419,9 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
         catch ( Exception Ex ) {
 
 			if ( Logger != null )
-				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				Logger.logException( "-1010", Ex.getMessage(), Ex );
 			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
-				OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				OwnerConfig.Logger.logException( "-1010", Ex.getMessage(), Ex );
 
         }
 
@@ -428,7 +429,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
     }
     
-    public Document AddXMLToErrorSection( Document XMLDocument, LinkedHashMap<String,String> FieldValues, String strVersion, boolean bIncrementErrorCount ) {
+    public Document addXMLToErrorSection( Document XMLDocument, LinkedHashMap<String,String> FieldValues, String strVersion, boolean bIncrementErrorCount ) {
 
         NodeList XML_ErrorsSection = XMLDocument.getElementsByTagName( XMLDataPacketTags._Errors );
 
@@ -443,7 +444,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
         		int intCountError = 0;
 
         		if ( strCountError != null )
-        			intCountError = net.maindataservices.Utilities.StrToInteger( strCountError ) + 1;
+        			intCountError = net.maindataservices.Utilities.strToInteger( strCountError ) + 1;
 
         		( (Element) XML_ErrorsSection.item( 0 ) ).setAttribute( XMLDataPacketTags._ErrorCount, Integer.toString( intCountError ) );
 
@@ -494,7 +495,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	
     }
     
-    public Document AddXMLToErrorSection( Document XMLDocument, int intCode, String strDescription, String strVersion, boolean bIncrementErrorCount ) {
+    public Document addXMLToErrorSection( Document XMLDocument, int intCode, String strDescription, String strVersion, boolean bIncrementErrorCount ) {
     	
         NodeList XML_ErrorsSection = XMLDocument.getElementsByTagName( XMLDataPacketTags._Errors );
 
@@ -509,7 +510,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
         		int intCountError = 0;
 
         		if ( strCountError != null )
-        			intCountError = net.maindataservices.Utilities.StrToInteger( strCountError ) + 1;
+        			intCountError = net.maindataservices.Utilities.strToInteger( strCountError ) + 1;
 
         		( (Element) XML_ErrorsSection.item( 0 ) ).setAttribute( XMLDataPacketTags._ErrorCount, Integer.toString( intCountError ) );
 
@@ -544,7 +545,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	
     }
     
-    public Document AddXMLSimpleMessage( Document XMLDocument, int intCode, String strDescription, String strVersion, boolean bAttachToError, CExtendedLogger Logger, CLanguage Lang ) {
+    public Document addXMLSimpleMessage( Document XMLDocument, int intCode, String strDescription, String strVersion, boolean bAttachToError, CExtendedLogger Logger, CLanguage Lang ) {
     	
         NodeList XML_RowDataSection = XMLDocument.getElementsByTagName( XMLDataPacketTags._RowData );
 
@@ -559,7 +560,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
          	   int intCurrentRowCount = 0;
          	   
          	   if ( strCurrentRowCount != null )
-         	       intCurrentRowCount = net.maindataservices.Utilities.StrToInteger( strCurrentRowCount );
+         	       intCurrentRowCount = net.maindataservices.Utilities.strToInteger( strCurrentRowCount );
             		
                ((Element) XML_ParamsSection.item( 0 )).setAttribute( XMLDataPacketTags._RowCount , Integer.toString( intCurrentRowCount + 1 ) );
 
@@ -576,7 +577,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	
         if ( bAttachToError == true ) {
         	
-        	XMLDocument = AddXMLToErrorSection( XMLDocument, intCode, strDescription, strVersion, true );
+        	XMLDocument = addXMLToErrorSection( XMLDocument, intCode, strDescription, strVersion, true );
         	
         }
         
@@ -584,7 +585,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	
     }
 
-    public Document AddXMLSimpleMessage( Document XMLDocument, LinkedHashMap<String,String> FieldValues, String strVersion, boolean bAttachToError, CExtendedLogger Logger, CLanguage Lang ) {
+    public Document addXMLSimpleMessage( Document XMLDocument, LinkedHashMap<String,String> FieldValues, String strVersion, boolean bAttachToError, CExtendedLogger Logger, CLanguage Lang ) {
     	
         NodeList XML_RowDataSection = XMLDocument.getElementsByTagName( XMLDataPacketTags._RowData );
 
@@ -599,7 +600,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
          	   int intCurrentRowCount = 0;
          	   
          	   if ( strCurrentRowCount != null )
-         	       intCurrentRowCount = net.maindataservices.Utilities.StrToInteger( strCurrentRowCount );
+         	       intCurrentRowCount = net.maindataservices.Utilities.strToInteger( strCurrentRowCount );
             		
                ((Element) XML_ParamsSection.item( 0 )).setAttribute( XMLDataPacketTags._RowCount , Integer.toString( intCurrentRowCount + 1 ) );
 
@@ -623,7 +624,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	
         if ( bAttachToError == true ) {
         	
-        	XMLDocument = AddXMLToErrorSection( XMLDocument, FieldValues, strVersion, true );
+        	XMLDocument = addXMLToErrorSection( XMLDocument, FieldValues, strVersion, true );
         	
         }
         
@@ -631,11 +632,11 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	
     }
     
-    public String BuildXMLSimpleMessage( String strSecurityToken, String strTransactionID, int intCode, String strDescription, boolean bAttachToError, String strVersion, CExtendedLogger Logger, CLanguage Lang ) {
+    public String buildXMLSimpleMessage( String strSecurityToken, String strTransactionID, int intCode, String strDescription, boolean bAttachToError, String strVersion, CExtendedLogger Logger, CLanguage Lang ) {
 
-        Document XMLDocument = BuildXMLSimpleMessageStruct( strSecurityToken, strTransactionID, intCode, strDescription, bAttachToError, strVersion, Logger, Lang );
+        Document XMLDocument = buildXMLSimpleMessageStruct( strSecurityToken, strTransactionID, intCode, strDescription, bAttachToError, strVersion, Logger, Lang );
 
-        String strXMLBuffer = ConvertXMLDocumentToString( XMLDocument, false, OwnerConfig.getConfigValue( ConstantsResponseFormat._XML_DataPacket_CharSet ), true, Logger, Lang );
+        String strXMLBuffer = convertXMLDocumentToString( XMLDocument, false, (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._XML_DataPacket_CharSet, null ), true, Logger, Lang );
 
         return strXMLBuffer;
 
@@ -764,13 +765,13 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
     }*/
     
-    public void PrintXMLHeader( PrintWriter TempResponseFormatedFileWriter, String strCharacterEncoding ) {
+    public void printXMLHeader( PrintWriter TempResponseFormatedFileWriter, String strCharacterEncoding ) {
     
 		TempResponseFormatedFileWriter.println( "<?xml version=\"1.0\" encoding=\"" + strCharacterEncoding + "\"?>" );
     
     }
     
-    public void PrintXMLDataPacketSection( PrintWriter TempResponseFormatedFileWriter, String strVersion, boolean bOpen ) {
+    public void printXMLDataPacketSection( PrintWriter TempResponseFormatedFileWriter, String strVersion, boolean bOpen ) {
 
 		if ( bOpen )  
 			TempResponseFormatedFileWriter.println( "<" + XMLDataPacketTags._DataPacket + " " + XMLDataPacketTags._DPVersion + "=\"" + strVersion + "\">" );
@@ -779,7 +780,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	
     }
     
-    public void PrintXMLRowDataSection( PrintWriter TempResponseFormatedFile, boolean bOpen ) {
+    public void printXMLRowDataSection( PrintWriter TempResponseFormatedFile, boolean bOpen ) {
     	
 		if ( bOpen )  
 			TempResponseFormatedFile.println( "  <" + XMLDataPacketTags._RowData + ">" );
@@ -788,7 +789,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	
     }
 
-    public boolean PrintXMLMetaDataSection( PrintWriter TempResponseFormatedFile, ResultSetMetaData DataSetMetaData, CAbstractDBEngine DBEngine, CExtendedLogger Logger, CLanguage Lang ) {
+    public boolean printXMLMetaDataSection( PrintWriter TempResponseFormatedFile, ResultSetMetaData DataSetMetaData, CAbstractDBEngine DBEngine, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	boolean bResult = false;
     	
@@ -877,9 +878,9 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	catch ( Exception Ex ) {
 
     		if ( Logger != null )
-    			Logger.LogException( "-1010", Ex.getMessage(), Ex );
+    			Logger.logException( "-1010", Ex.getMessage(), Ex );
     		else if ( OwnerConfig != null && OwnerConfig.Logger != null )
-    			OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+    			OwnerConfig.Logger.logException( "-1010", Ex.getMessage(), Ex );
 
     	}
 
@@ -887,7 +888,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	
     }
     
-    public long PrintAddXMLToRowDataSection( String strTempDir, String strTempFile, PrintWriter TempResponseFormatedFileWriter, OutputStream TempStreamResponseFormatedFile, ResultSet SQLDataSet, CAbstractDBEngine DBEngine, CExtendedLogger Logger, CLanguage Lang ) {
+    public long printAddXMLToRowDataSection( String strTempDir, String strTempFile, PrintWriter TempResponseFormatedFileWriter, OutputStream TempStreamResponseFormatedFile, ResultSet SQLDataSet, CAbstractDBEngine DBEngine, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	long longRowCount = 0; 
 
@@ -952,9 +953,9 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	catch ( Exception Ex ) {
 
     		if ( Logger != null )
-    			Logger.LogException( "-1010", Ex.getMessage(), Ex );
+    			Logger.logException( "-1010", Ex.getMessage(), Ex );
     		else if ( OwnerConfig != null && OwnerConfig.Logger != null )
-    			OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+    			OwnerConfig.Logger.logException( "-1010", Ex.getMessage(), Ex );
 
     	}
 
@@ -962,7 +963,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	   
     }
 
-    public boolean PrintXMLErrorsSection( PrintWriter TempResponseFormatedFile, ArrayList<String> strErrorCodeDescription, String strVersion ) {
+    public boolean printXMLErrorsSection( PrintWriter TempResponseFormatedFile, ArrayList<String> strErrorCodeDescription, String strVersion ) {
     	
     	boolean bResult = false;
     	
@@ -1003,7 +1004,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	
     }    
     
-    public boolean PrintParamsSectionRowCount( String strTempFile, long lngRowCount, CExtendedLogger Logger, CLanguage Lang ) {
+    public boolean printParamsSectionRowCount( String strTempFile, long lngRowCount, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	boolean bResult = false;
 
@@ -1047,9 +1048,9 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 		catch ( Exception Ex ) {
 
     		if ( Logger != null )
-    			Logger.LogException( "-1010", Ex.getMessage(), Ex );
+    			Logger.logException( "-1010", Ex.getMessage(), Ex );
     		else if ( OwnerConfig != null && OwnerConfig.Logger != null )
-    			OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+    			OwnerConfig.Logger.logException( "-1010", Ex.getMessage(), Ex );
 			
 		}
     	
@@ -1144,7 +1145,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
     }*/
     
-    public Document BuildXMLMetaData( Document XMLDocument, CMemoryRowSet MemoryRowSet, CExtendedLogger Logger, CLanguage Lang ) {
+    public Document buildXMLMetaData( Document XMLDocument, CMemoryRowSet MemoryRowSet, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	try {
     
@@ -1225,9 +1226,9 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	catch ( Exception Ex ) {
 
 			if ( Logger != null )
-				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				Logger.logException( "-1010", Ex.getMessage(), Ex );
 			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
-				OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				OwnerConfig.Logger.logException( "-1010", Ex.getMessage(), Ex );
 
     	}
 
@@ -1235,7 +1236,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     
     }
     
-    public Document AddXMLToRowDataSection( Document XMLDocument, CMemoryRowSet MemoryRowSet, CExtendedLogger Logger, CLanguage Lang ) {
+    public Document addXMLToRowDataSection( Document XMLDocument, CMemoryRowSet MemoryRowSet, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	try {
 
@@ -1351,7 +1352,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
          	   int intCurrentRowCount = 0;
          	   
          	   if ( strCurrentRowCount != null )
-         	       intCurrentRowCount = net.maindataservices.Utilities.StrToInteger( strCurrentRowCount );
+         	       intCurrentRowCount = net.maindataservices.Utilities.strToInteger( strCurrentRowCount );
             		
                ((Element) XML_ParamsSection.item( 0 )).setAttribute( XMLDataPacketTags._RowCount , Integer.toString( intCurrentRowCount + intRowCount ) );
 
@@ -1361,9 +1362,9 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	catch ( Exception Ex ) {
 
 			if ( Logger != null )
-				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				Logger.logException( "-1010", Ex.getMessage(), Ex );
 			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
-				OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				OwnerConfig.Logger.logException( "-1010", Ex.getMessage(), Ex );
 
     	}
 
@@ -1371,11 +1372,12 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	
     }
 
-    public CAbstractResponseFormat getNewInstance() {
+    @Override
+	public CAbstractResponseFormat getNewInstance() {
     	
     	CXMLDataPacketResponseFormat NewInstance = new CXMLDataPacketResponseFormat();
     	
-    	NewInstance.InitResponseFormat( this.ServicesDaemonConfig, this.OwnerConfig );
+    	NewInstance.initResponseFormat( this.ServicesDaemonConfig, this.OwnerConfig );
     	
     	return NewInstance;
     	
@@ -1385,7 +1387,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     public String getContentType() {
     	
     	if ( OwnerConfig != null )
-    	   return OwnerConfig.getConfigValue( ConstantsResponseFormat._XML_DataPacket_ContentType );
+    	   return (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._XML_DataPacket_ContentType, null );
     	else
     	   return ""; 
     	
@@ -1395,13 +1397,13 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     public String getCharacterEncoding() {
     	
     	if ( OwnerConfig != null )
-    	   return OwnerConfig.getConfigValue( ConstantsResponseFormat._XML_DataPacket_CharSet );
+    	   return (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._XML_DataPacket_CharSet, null );
     	else
     	   return ""; 
     	
     }
 
-    public int DescribeService( CAbstractService Service, Element XMLNode_RowDataSection, CExtendedLogger Logger, CLanguage Lang ) {
+    public int describeService( CAbstractService Service, Element XMLNode_RowDataSection, CExtendedLogger Logger, CLanguage Lang ) {
 	   
     	int intResult = 0;
     	
@@ -1423,17 +1425,17 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 			if ( Logger != null ) {
 
 				if ( Lang != null )
-					Logger.LogMessage( "1", Lang.Translate( "Service [%s] input params count: [%s]", Service.getServiceName(), Integer.toString( GroupsInputParametersService.size() ) ) );
+					Logger.logMessage( "1", Lang.translate( "Service [%s] input params count: [%s]", Service.getServiceName(), Integer.toString( GroupsInputParametersService.size() ) ) );
 				else
-					Logger.LogMessage( "1", String.format( "Service [%s] input params count: [%s]", Service.getServiceName(), Integer.toString( GroupsInputParametersService.size() ) ) );
+					Logger.logMessage( "1", String.format( "Service [%s] input params count: [%s]", Service.getServiceName(), Integer.toString( GroupsInputParametersService.size() ) ) );
 				
 			}    
 			else if ( OwnerConfig != null && OwnerConfig.Logger != null ) {
 	            
 				if ( OwnerConfig.Lang != null )
-					OwnerConfig.Logger.LogMessage( "1", OwnerConfig.Lang.Translate( "Service [%s] input params count: [%s]", Service.getServiceName(), Integer.toString( GroupsInputParametersService.size() ) ) );
+					OwnerConfig.Logger.logMessage( "1", OwnerConfig.Lang.translate( "Service [%s] input params count: [%s]", Service.getServiceName(), Integer.toString( GroupsInputParametersService.size() ) ) );
 				else
-					OwnerConfig.Logger.LogMessage( "1", String.format( "Service [%s] input params count: [%s]", Service.getServiceName(), Integer.toString( GroupsInputParametersService.size() ) ) );
+					OwnerConfig.Logger.logMessage( "1", String.format( "Service [%s] input params count: [%s]", Service.getServiceName(), Integer.toString( GroupsInputParametersService.size() ) ) );
 					
 			}    
 	        
@@ -1466,7 +1468,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
             	
     			String strKey = GroupIPSEntry.getKey();
 
-            	if ( strKey.toLowerCase().equals( ConstantsServicesTags._Default ) == false ) {
+            	if ( strKey.toLowerCase().equals( ConstantsCommonClasses._Default ) == false ) {
             		
             		XMLNode_InputParameters.setAttribute(  XMLDataPacketTags._XML_StructParamSetName, strKey ); 
             	
@@ -1503,9 +1505,9 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
      }
 
     @Override 
-    public String EnumerateServices( HashMap<String,CAbstractService> RegisteredServices, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+    public String enumerateServices( HashMap<String,CAbstractService> RegisteredServices, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 
-        Document XMLDocument = this.BuildBasicResponseXMLStruct( strVersion, Logger, Lang );
+        Document XMLDocument = this.buildBasicResponseXMLStruct( strVersion, Logger, Lang );
 
         NodeList XML_FieldsSection = XMLDocument.getElementsByTagName( XMLDataPacketTags._Fields );
 
@@ -1614,12 +1616,12 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
               Entry<String, CAbstractService> Pairs = it.next();
 
-              String strServName = (String) Pairs.getKey();
+              String strServName = Pairs.getKey();
 
               CAbstractService Service = RegisteredServices.get( strServName );
               
               if ( Service != null )
-                 intRowCount += this.DescribeService( Service, (Element) XML_RowDataSection.item( 0 ), Logger, Lang );
+                 intRowCount += this.describeService( Service, (Element) XML_RowDataSection.item( 0 ), Logger, Lang );
         
            }
 
@@ -1633,7 +1635,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
         }
 
-    	return ConvertXMLDocumentToString( XMLDocument, true, this.getCharacterEncoding(), Logger, Lang );
+    	return convertXMLDocumentToString( XMLDocument, true, this.getCharacterEncoding(), Logger, Lang );
     	
     }
     
@@ -1651,7 +1653,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 	        ArrayList<String> arrIncludedFields = new ArrayList<String>();
 	        ArrayList<String> arrExcludedFields = new ArrayList<String>();
 	
-	        String strTempDir = OwnerConfig.getConfigValue( "Temp_Dir" );
+	        String strTempDir = (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Temp_Dir );
 	        
 	        String strTempResponseFormatedFilePath = strTempDir + UUID.randomUUID();
 	        
@@ -1723,15 +1725,15 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     }*/
 
     @Override
-    public boolean FormatResultSet( HttpServletResponse Response, CResultSetResult SQLDataSetResult, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang ) {
+    public boolean formatResultSet( HttpServletResponse Response, CResultSetResult SQLDataSetResult, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	boolean bResult = false;
     	
         try {
 
-        	if ( Utilities.VersionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.VersionLessEquals( strVersion, this.strMaxVersion ) ) {
+        	if ( Utilities.versionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.versionLessEquals( strVersion, this.strMaxVersion ) ) {
 
-        		String strTempDir = OwnerConfig.getConfigValue( "Temp_Dir" );
+        		String strTempDir = (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Temp_Dir, null );
 
         		String strTempResponseFormatedFilePath = strTempDir + UUID.randomUUID() + ".formated_response";
 
@@ -1741,26 +1743,26 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
         		if ( SQLDataSetResult.Result != null && SQLDataSetResult.intCode >= 0 ) {
 
-        			this.PrintXMLHeader( TempResponseFormatedFileWriter, this.getCharacterEncoding() );
+        			this.printXMLHeader( TempResponseFormatedFileWriter, this.getCharacterEncoding() );
 
-        			this.PrintXMLDataPacketSection( TempResponseFormatedFileWriter, strVersion, true );
+        			this.printXMLDataPacketSection( TempResponseFormatedFileWriter, strVersion, true );
 
         			//long lngRowCount = -1;
 
-        			if ( this.PrintXMLMetaDataSection( TempResponseFormatedFileWriter, SQLDataSetResult.Result.getMetaData(), DBEngine, Logger, Lang ) ) {
+        			if ( this.printXMLMetaDataSection( TempResponseFormatedFileWriter, SQLDataSetResult.Result.getMetaData(), DBEngine, Logger, Lang ) ) {
 
-        				this.PrintXMLRowDataSection( TempResponseFormatedFileWriter, true );
+        				this.printXMLRowDataSection( TempResponseFormatedFileWriter, true );
         				//lngRowCount = 
-        				this.PrintAddXMLToRowDataSection( strTempDir, strTempResponseFormatedFilePath, TempResponseFormatedFileWriter, OutStream, SQLDataSetResult.Result, DBEngine, Logger, Lang );    	        	
-        				this.PrintXMLRowDataSection( TempResponseFormatedFileWriter, false );
+        				this.printAddXMLToRowDataSection( strTempDir, strTempResponseFormatedFilePath, TempResponseFormatedFileWriter, OutStream, SQLDataSetResult.Result, DBEngine, Logger, Lang );    	        	
+        				this.printXMLRowDataSection( TempResponseFormatedFileWriter, false );
 
         				ArrayList<String> strErrorCodeDescription = new ArrayList<String>();
 
-        				this.PrintXMLErrorsSection( TempResponseFormatedFileWriter, strErrorCodeDescription, strVersion );
+        				this.printXMLErrorsSection( TempResponseFormatedFileWriter, strErrorCodeDescription, strVersion );
 
         			}
 
-        			this.PrintXMLDataPacketSection( TempResponseFormatedFileWriter, strVersion, false );
+        			this.printXMLDataPacketSection( TempResponseFormatedFileWriter, strVersion, false );
 
         			TempResponseFormatedFileWriter.close();
 
@@ -1792,7 +1794,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
         			FieldDefinitons.add( new CSimpleXMLFieldDefinition( XMLDataPacketTags._XML_StructCode, XMLDataPacketTags._FieldTypeInteger, "", "" ) );
         			FieldDefinitons.add( new CSimpleXMLFieldDefinition( XMLDataPacketTags._XML_StructDescription, XMLDataPacketTags._FieldTypeString, "", XMLDataPacketTags._XML_StructDescriptionLength ) );
 
-        			XMLDocument = this.BuildXMLFieldDefinedStruct( FieldDefinitons, strVersion, Logger, Lang );
+        			XMLDocument = this.buildXMLFieldDefinedStruct( FieldDefinitons, strVersion, Logger, Lang );
 
         			LinkedHashMap<String,String> FieldValues = new LinkedHashMap<String,String>();
 
@@ -1801,11 +1803,11 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
         			FieldValues.put( XMLDataPacketTags._XML_StructDescription, SQLDataSetResult.strDescription );
 
         			if ( SQLDataSetResult.intCode >= 0 )
-        				XMLDocument = AddXMLSimpleMessage( XMLDocument, FieldValues, strVersion, false, Logger, Lang );
+        				XMLDocument = addXMLSimpleMessage( XMLDocument, FieldValues, strVersion, false, Logger, Lang );
         			else
-        				XMLDocument = AddXMLSimpleMessage( XMLDocument, FieldValues, strVersion, true, Logger, Lang );
+        				XMLDocument = addXMLSimpleMessage( XMLDocument, FieldValues, strVersion, true, Logger, Lang );
 
-        			TempResponseFormatedFileWriter.print( this.ConvertXMLDocumentToString( XMLDocument, this.getCharacterEncoding(), Logger, Lang ) );
+        			TempResponseFormatedFileWriter.print( this.convertXMLDocumentToString( XMLDocument, this.getCharacterEncoding(), Logger, Lang ) );
 
         			TempResponseFormatedFileWriter.close();
 
@@ -1830,17 +1832,17 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
         		if ( Logger != null ) {
 
         			if ( Lang != null )
-        				Logger.LogError( "-1015", Lang.Translate( "Format version [%s] not supported", strVersion ) );
+        				Logger.logError( "-1015", Lang.translate( "Format version [%s] not supported", strVersion ) );
         			else
-        				Logger.LogError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
+        				Logger.logError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
 
         		}    
         		else if ( OwnerConfig != null && OwnerConfig.Logger != null ) {
 
         			if ( OwnerConfig.Lang != null )
-        				OwnerConfig.Logger.LogError( "-1015", OwnerConfig.Lang.Translate( "Format version [%s] not supported", strVersion ) );
+        				OwnerConfig.Logger.logError( "-1015", OwnerConfig.Lang.translate( "Format version [%s] not supported", strVersion ) );
         			else
-        				OwnerConfig.Logger.LogError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
+        				OwnerConfig.Logger.logError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
 
         		}    
 
@@ -1850,9 +1852,9 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
         catch ( Exception Ex ) {
 
 			if ( Logger != null )
-				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				Logger.logException( "-1010", Ex.getMessage(), Ex );
 			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
-				OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				OwnerConfig.Logger.logException( "-1010", Ex.getMessage(), Ex );
 
         }
     	
@@ -1861,17 +1863,17 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     }
 
     @Override
-    public boolean FormatResultsSets( HttpServletResponse Response, ArrayList<CResultSetResult> SQLDataSetResultList, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
+    public boolean formatResultsSets( HttpServletResponse Response, ArrayList<CResultSetResult> SQLDataSetResultList, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
     	
     	boolean bResult = false;
     	
         try {
 
-			if ( Utilities.VersionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.VersionLessEquals( strVersion, this.strMaxVersion ) ) {
+			if ( Utilities.versionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.versionLessEquals( strVersion, this.strMaxVersion ) ) {
 
 				if ( SQLDataSetResultList.size() > 0 ) {
 
-					String strTempDir = OwnerConfig.getConfigValue( "Temp_Dir" );
+					String strTempDir = (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Temp_Dir, null );
 
 					String strTempResponseFormatedFilePath = strTempDir + UUID.randomUUID() + ".formated_response";
 
@@ -1887,17 +1889,17 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
 					if ( SQLDataSet != null ) {
 
-						this.PrintXMLHeader( TempResponseFormatedFileWriter, this.getCharacterEncoding() );
+						this.printXMLHeader( TempResponseFormatedFileWriter, this.getCharacterEncoding() );
 
-						this.PrintXMLDataPacketSection( TempResponseFormatedFileWriter, strVersion, true );
+						this.printXMLDataPacketSection( TempResponseFormatedFileWriter, strVersion, true );
 
 						long lngRowCount = -1;
 
-						if ( this.PrintXMLMetaDataSection( TempResponseFormatedFileWriter, SQLDataSet.getMetaData(), DBEngine, Logger, Lang ) ) {
+						if ( this.printXMLMetaDataSection( TempResponseFormatedFileWriter, SQLDataSet.getMetaData(), DBEngine, Logger, Lang ) ) {
 
 							ArrayList<String> strErrorCodeDescription = new ArrayList<String>();
 
-							this.PrintXMLRowDataSection( TempResponseFormatedFileWriter, true );
+							this.printXMLRowDataSection( TempResponseFormatedFileWriter, true );
 
 							for ( CResultSetResult SQLDataSetResultToAdd: SQLDataSetResultList ) { 
 
@@ -1906,7 +1908,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 									if ( lngRowCount < 0 )
 										lngRowCount = 0;
 
-									lngRowCount += this.PrintAddXMLToRowDataSection( strTempDir, strTempResponseFormatedFilePath, TempResponseFormatedFileWriter, OutStream, SQLDataSetResultToAdd.Result, DBEngine, Logger, Lang );    	        	
+									lngRowCount += this.printAddXMLToRowDataSection( strTempDir, strTempResponseFormatedFilePath, TempResponseFormatedFileWriter, OutStream, SQLDataSetResultToAdd.Result, DBEngine, Logger, Lang );    	        	
 
 								}
 								else {
@@ -1917,13 +1919,13 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
 							};
 
-							this.PrintXMLRowDataSection( TempResponseFormatedFileWriter, false );
+							this.printXMLRowDataSection( TempResponseFormatedFileWriter, false );
 
-							this.PrintXMLErrorsSection( TempResponseFormatedFileWriter, strErrorCodeDescription, strVersion );
+							this.printXMLErrorsSection( TempResponseFormatedFileWriter, strErrorCodeDescription, strVersion );
 
 						}
 
-						this.PrintXMLDataPacketSection( TempResponseFormatedFileWriter, strVersion, false );
+						this.printXMLDataPacketSection( TempResponseFormatedFileWriter, strVersion, false );
 
 						TempResponseFormatedFileWriter.close();
 
@@ -1944,7 +1946,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 						FieldDefinitons.add( new CSimpleXMLFieldDefinition( XMLDataPacketTags._XML_StructCode, XMLDataPacketTags._FieldTypeInteger, "", "" ) );
 						FieldDefinitons.add( new CSimpleXMLFieldDefinition( XMLDataPacketTags._XML_StructDescription, XMLDataPacketTags._FieldTypeString, "", XMLDataPacketTags._XML_StructDescriptionLength ) );
 
-						XMLDocument = this.BuildXMLFieldDefinedStruct( FieldDefinitons, strVersion, Logger, Lang );
+						XMLDocument = this.buildXMLFieldDefinedStruct( FieldDefinitons, strVersion, Logger, Lang );
 
 						LinkedHashMap<String,String> FieldValues = new LinkedHashMap<String,String>();
 
@@ -1956,12 +1958,12 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
 							if ( ResultSetResultToAdd.intCode >= 0 ) {
 
-								XMLDocument = AddXMLSimpleMessage( XMLDocument, FieldValues, strVersion, false, Logger, Lang );
+								XMLDocument = addXMLSimpleMessage( XMLDocument, FieldValues, strVersion, false, Logger, Lang );
 
 							}	
 							else {
 
-								XMLDocument = AddXMLSimpleMessage( XMLDocument, FieldValues, strVersion, true, Logger, Lang );
+								XMLDocument = addXMLSimpleMessage( XMLDocument, FieldValues, strVersion, true, Logger, Lang );
 
 								bNodeErrorAdded = true;
 
@@ -1971,11 +1973,11 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
 						if ( bNodeErrorAdded == false ) { //Add the default node error
 
-							XMLDocument = this.AddXMLToErrorSection( XMLDocument, 0, "", strVersion, false );
+							XMLDocument = this.addXMLToErrorSection( XMLDocument, 0, "", strVersion, false );
 
 						}
 
-						TempResponseFormatedFileWriter.print( this.ConvertXMLDocumentToString( XMLDocument, this.getCharacterEncoding(), Logger, Lang ) );
+						TempResponseFormatedFileWriter.print( this.convertXMLDocumentToString( XMLDocument, this.getCharacterEncoding(), Logger, Lang ) );
 
 						TempResponseFormatedFileWriter.close();
 
@@ -1985,7 +1987,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
 					File TempResponseFormatedFile = new File( strTempResponseFormatedFilePath ); 
 
-					this.CopyToResponseStream( Response, TempResponseFormatedFile, 10240, Logger, Lang );
+					this.copyToResponseStream( Response, TempResponseFormatedFile, 10240, Logger, Lang );
 
 					if ( bDeleteTempReponseFile )
 						TempResponseFormatedFile.delete();
@@ -1998,17 +2000,17 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 				if ( Logger != null ) {
 					
 					if ( Lang != null )
-						Logger.LogError( "-1015", Lang.Translate( "Format version [%s] not supported", strVersion ) );
+						Logger.logError( "-1015", Lang.translate( "Format version [%s] not supported", strVersion ) );
 					else
-						Logger.LogError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
+						Logger.logError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
 				    
 				}    
 				else if ( OwnerConfig != null && OwnerConfig.Logger != null ) {
 
 					if ( OwnerConfig.Lang != null )
-						OwnerConfig.Logger.LogError( "-1015", OwnerConfig.Lang.Translate( "Format version [%s] not supported", strVersion ) );
+						OwnerConfig.Logger.logError( "-1015", OwnerConfig.Lang.translate( "Format version [%s] not supported", strVersion ) );
 					else
-						OwnerConfig.Logger.LogError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
+						OwnerConfig.Logger.logError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
 
 				}    
 				
@@ -2018,9 +2020,9 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
         catch ( Exception Ex ) {
 
 			if ( Logger != null )
-				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				Logger.logException( "-1010", Ex.getMessage(), Ex );
 			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
-				OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				OwnerConfig.Logger.logException( "-1010", Ex.getMessage(), Ex );
 
         }
     	
@@ -2029,27 +2031,27 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     }
 
     @Override
-    public String FormatMemoryRowSet( CMemoryRowSet MemoryRowSet, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+    public String formatMemoryRowSet( CMemoryRowSet MemoryRowSet, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	String strResult = "";
     	
         try {
 
-	        Document XMLDocument = this.BuildBasicResponseXMLStruct( strVersion, Logger, Lang );
+	        Document XMLDocument = this.buildBasicResponseXMLStruct( strVersion, Logger, Lang );
 	
-	        XMLDocument = BuildXMLMetaData( XMLDocument, MemoryRowSet, Logger, Lang );
+	        XMLDocument = buildXMLMetaData( XMLDocument, MemoryRowSet, Logger, Lang );
 	
-	        XMLDocument = AddXMLToRowDataSection( XMLDocument, MemoryRowSet, Logger, Lang );
+	        XMLDocument = addXMLToRowDataSection( XMLDocument, MemoryRowSet, Logger, Lang );
 
-            strResult = this.ConvertXMLDocumentToString( XMLDocument, this.getCharacterEncoding(), Logger, Lang );
+            strResult = this.convertXMLDocumentToString( XMLDocument, this.getCharacterEncoding(), Logger, Lang );
 
         }
         catch ( Exception Ex ) {
 
 			if ( Logger != null )
-				Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				Logger.logException( "-1010", Ex.getMessage(), Ex );
 			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
-				OwnerConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+				OwnerConfig.Logger.logException( "-1010", Ex.getMessage(), Ex );
 
         }
 
@@ -2097,9 +2099,9 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     }*/
     
     @Override
-    public String FormatSimpleMessage( String strSecurityTokenID, String strTransactionID, int intCode, String strDescription, boolean bAttachToError, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+    public String formatSimpleMessage( String strSecurityTokenID, String strTransactionID, int intCode, String strDescription, boolean bAttachToError, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
     	
-    	return BuildXMLSimpleMessage( strSecurityTokenID, strTransactionID, intCode, strDescription, bAttachToError, strVersion, Logger, Lang );
+    	return buildXMLSimpleMessage( strSecurityTokenID, strTransactionID, intCode, strDescription, bAttachToError, strVersion, Logger, Lang );
     	
     }
 

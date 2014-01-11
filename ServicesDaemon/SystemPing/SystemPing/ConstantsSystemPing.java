@@ -12,15 +12,15 @@ package SystemPing;
 
 public interface ConstantsSystemPing {
 
-	public static final String _RequestPing         = "Ping";
-	public final static String _RequestPingType     = "BigInt";
+	public static final String _Request_Ping          = "Ping";
+	public final static String _Request_Ping_Type     = "Bigint";
 
-	public static final String _ResponsePong        = "Pong";
-	public static final String _ResponseDateRequest = "DateRequest";
-	public static final String _ResponseTimeRequest = "TimeRequest";
+	public static final String _Response_Pong         = "Pong";
+	public static final String _Response_Date_Request = "DateRequest";
+	public static final String _Response_Time_Request = "TimeRequest";
 
-	public static final String _Global_DateTime_Format = "Global_DateTime_Format";
-	public static final String _Global_Date_Format = "Global_Date_Format";
-	public static final String _Global_Time_Format = "Global_Time_Format";
+	public static final String _Main_File = "SystemPing";
+	public static final String _Conf_File = _Main_File + ".conf";
+	public static final String _Main_File_Log = _Main_File + ".log";
 	   
 }

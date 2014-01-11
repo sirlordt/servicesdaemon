@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import AbstractResponseFormat.CAbstractResponseFormat;
 import CommonClasses.CLanguage;
-import CommonClasses.CServicesDaemonConfig;
+import CommonClasses.CConfigServicesDaemon;
 import ExtendedLogger.CExtendedLogger;
 
 public abstract class CAbstractServicePreExecute {
@@ -51,7 +51,7 @@ public abstract class CAbstractServicePreExecute {
 		
 	}
 
-	public abstract boolean InitializePreExecute( String strOwnerServiceName, CServicesDaemonConfig ServicesDaemonConfig, CExtendedLogger OwnerLogger, CLanguage OwnerLang, CExtendedLogger ServiceLogger, CLanguage ServiceLang );
-	public abstract CServicePreExecuteResult PreExecute( int intEntryCode, String strServiceName, HttpServletRequest Request, HttpServletResponse Response, String strSecurityTokenID, HashMap<String,CAbstractService> RegisteredServices, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion );
+	public abstract boolean initializePreExecute( String strOwnerServiceName, CConfigServicesDaemon ServicesDaemonConfig, CExtendedLogger OwnerLogger, CLanguage OwnerLang, CExtendedLogger ServiceLogger, CLanguage ServiceLang );
+	public abstract CServicePreExecuteResult preExecute( int intEntryCode, String strServiceName, HttpServletRequest Request, HttpServletResponse Response, String strSecurityTokenID, HashMap<String,CAbstractService> RegisteredServices, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion );
 	
 }

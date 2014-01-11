@@ -1,0 +1,998 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ServicesDaemon" default="00_Build-All" basedir=".">
+ 
+    <target name="00_Build-All" depends="01_Init, 02_Create_Bin_Folders_And_Files_ServicesDaemon, 03_Compile-CommonLibs-Source, 04_Create_CommonLibs.Jar, 05_Create_Distro-Bin_Folders_And_Files_ServicesDaemon, 06_Compile-ServicesDaemon-Source, 07_Compile-CryptPasswordSD-Source, 08_Create-CryptPasswordSD.jar, 09_Create-ServicesDaemon.jar, 10_Create_Bin_Folders_And_Files_DBServicesManager, 11_Create_Distro-Bin_Folders_And_Files_DBServicesManager, 12_Compile-DBCommonLibs-Source, 13_Generate-DBCommonLibs.jar, 14_Compile-DBServicesManager-Source, 15_Generate-DBServicesManager.jar, 16_Compile-DBEngines-Source, 17_Generate-DBEngines.jar, 18_Compile-DBServices-Source, 19_Generate-DBServices-Jar-Files" description="Compile ALL and package ALL">
+        <echo message="Compile ALL and create ALL .jar file" />
+    </target>
+ 
+    <target name="01_Init">
+        <tstamp />
+    	
+        <property name="distro-bin" value="distro-bin/" />
+        <property name="bin" value="bin/" />
+        
+    	<property name="distro-bin-ServicesDaemon" value="${distro-bin}ServicesDaemon/" />
+        
+    	<property name="bin-ServicesDaemon" value="${bin}ServicesDaemon/" />
+        <property name="src-ServicesDaemon" value="ServicesDaemon/ServicesDaemon/" />
+
+        <property name="net-maindataservices" value="net/maindataservices/" />
+    	
+        <property name="bin-CryptPasswordSD" value="${bin}CryptPasswordSD/" />
+        <property name="src-CryptPasswordSD" value="CryptPasswordSD/CryptPasswordSD/" />
+
+    	<property name="src-CommonLibs" value="CommonLibs/" />
+
+        <property name="src-AbstractDBEngine" value="CommonLibs/AbstractDBEngine/" />
+
+        <property name="AbstractDBEngineName" value="AbstractDBEngine" />
+
+        <property name="src-AbstractResponseFormat" value="CommonLibs/AbstractResponseFormat/" />
+
+        <property name="AbstractResponseFormatName" value="AbstractResponseFormat" />
+
+        <property name="src-AbstractService" value="CommonLibs/AbstractService/" />
+
+        <property name="AbstractServiceName" value="AbstractService" />
+
+        <property name="src-AbstractServicesManager" value="CommonLibs/AbstractServicesManager/" />
+
+        <property name="AbstractServicesManagerName" value="AbstractServicesManager" />
+
+        <property name="src-CommonClasses" value="CommonLibs/CommonClasses/" />
+
+        <property name="CommonClassesName" value="CommonClasses" />
+
+        <property name="src-ExtendedLogger" value="CommonLibs/ExtendedLogger/" />
+
+        <property name="ExtendedLoggerName" value="ExtendedLogger" />
+
+        <property name="src-Net-MainDataServices" value="CommonLibs/net/" />
+
+        <property name="Net-MainDataServicesName" value="net" />
+
+        <property name="bin-Org-Json" value="${bin}org/" />
+        <property name="src-Org-Json" value="CommonLibs/org/" />
+
+        <property name="Org-JsonName" value="org" />
+
+        <property name="bin-WebRowSet" value="${bin}WebRowSet/" />
+        <property name="src-WebRowSet" value="CommonLibs/WebRowSet/" />
+
+        <property name="RowSetName" value="rowset" />
+    	
+        <property name="bin-RowSet" value="${bin}rowset/" />
+        <property name="src-RowSet" value="CommonLibs/rowset/" />
+
+        <property name="WebRowSetName" value="WebRowSet" />
+
+        <property name="CommonLibsName" value="CommonLibs" />
+        <property name="CommonLibsVersion" value="0.0.0.1" />
+    	
+    	<property name="CryptPasswordSDName" value="CryptPasswordSD" />
+        <property name="CryptPasswordSDVersion" value="0.0.0.1" />
+    	
+    	<property name="ServicesDaemonName" value="ServicesDaemon" />
+        <property name="ServicesDaemonVersion" value="0.0.0.1" />
+    	
+    	<property name="DBServicesManagerName" value="DBServicesManager" />
+        <property name="DBServicesManagerVersion" value="0.0.0.1" />
+    	
+        <property name="bin-DBServicesManager" value="${bin}/DBServicesManager/" />
+        <property name="src-DBServicesManager" value="DBServicesManager/DBServicesManager/" />
+    	
+        <property name="distro-bin-DBServicesManager" value="${distro-bin-ServicesDaemon}/Managers/02_DBServicesManager/" />
+
+        <property name="bin-DBCommonLibs" value="${bin}DBCommonLibs/" />
+        <property name="src-DBCommonLibs" value="DBCommonLibs/" />
+
+    	<property name="DBCommonLibsName" value="DBCommonLibs" />
+        <property name="DBCommonLibsVersion" value="0.0.0.1" />
+    	
+        <property name="DBCommonClassesName" value="DBCommonClasses" />
+    	
+        <property name="bin-MySQLDBEngine" value="${bin}/MySQLDBEngine/" />
+        <property name="src-MySQLDBEngine" value="MySQLDBEngine/MySQLDBEngine" />
+
+        <property name="MySQLDBEngineName" value="MySQLDBEngine" />
+        <property name="MySQLDBEngineVersion" value="0.0.0.1" />
+        
+        <property name="bin-PGSQLDBEngine" value="${bin}/PGSQLDBEngine/" />
+        <property name="src-PGSQLDBEngine" value="PGSQLDBEngine/PGSQLDBEngine" />
+
+        <property name="PGSQLDBEngineName" value="PGSQLDBEngine" />
+        <property name="PGSQLDBEngineVersion" value="0.0.0.1" />
+
+        <property name="bin-SQLServerDBEngine" value="${bin}/SQLServerDBEngine/" />
+        <property name="src-SQLServerDBEngine" value="SQLServerDBEngine/SQLServerDBEngine" />
+
+        <property name="SQLServerDBEngineName" value="SQLServerDBEngine" />
+        <property name="SQLServerDBEngineVersion" value="0.0.0.1" />
+
+        <property name="bin-FirebirdDBEngine" value="${bin}/FirebirdDBEngine/" />
+        <property name="src-FirebirdDBEngine" value="FirebirdDBEngine/FirebirdDBEngine" />
+
+        <property name="FirebirdDBEngineName" value="FirebirdDBEngine" />
+        <property name="FirebirdDBEngineVersion" value="0.0.0.1" />
+
+        <property name="bin-SystemEnumServices" value="${bin}/SystemEnumServices/" />
+        <property name="src-SystemEnumServices" value="SystemEnumServices/SystemEnumServices" />
+
+        <property name="SystemEnumServicesName" value="SystemEnumServices" />
+        <property name="SystemEnumServicesVersion" value="0.0.0.1" />
+        
+        <property name="bin-SystemPing" value="${bin}/SystemPing/" />
+        <property name="src-SystemPing" value="SystemPing/SystemPing" />
+
+        <property name="SystemPingName" value="SystemPing" />
+        <property name="SystemPingVersion" value="0.0.0.1" />
+
+        <property name="bin-SystemStartSession" value="${bin}/SystemStartSession/" />
+        <property name="src-SystemStartSession" value="SystemStartSession/SystemStartSession" />
+
+        <property name="SystemStartSessionName" value="SystemStartSession" />
+        <property name="SystemStartSessionVersion" value="0.0.0.1" />
+
+        <property name="bin-SystemStartTransaction" value="${bin}/SystemStartTransaction/" />
+        <property name="src-SystemStartTransaction" value="SystemStartTransaction/SystemStartTransaction" />
+        
+        <property name="SystemStartTransactionName" value="SystemStartTransaction" />
+        <property name="SystemStartTransactionVersion" value="0.0.0.1" />
+
+        <property name="bin-SystemCommitTransaction" value="${bin}/SystemCommitTransaction/" />
+        <property name="src-SystemCommitTransaction" value="SystemCommitTransaction/SystemCommitTransaction" />
+
+        <property name="SystemCommitTransactionName" value="SystemCommitTransaction" />
+        <property name="SystemCommitTransactionVersion" value="0.0.0.1" />
+
+        <property name="bin-SystemRollbackTransaction" value="${bin}/SystemRollbackTransaction/" />
+        <property name="src-SystemRollbackTransaction" value="SystemRollbackTransaction/SystemRollbackTransaction" />
+
+        <property name="SystemRollbackTransactionName" value="SystemRollbackTransaction" />
+        <property name="SystemRollbackTransactionVersion" value="0.0.0.1" />
+
+        <property name="bin-SystemEndTransaction" value="${bin}/SystemEndTransaction/" />
+        <property name="src-SystemEndTransaction" value="SystemEndTransaction/SystemEndTransaction" />
+
+        <property name="SystemEndTransactionName" value="SystemEndTransaction" />
+        <property name="SystemEndTransactionVersion" value="0.0.0.1" />
+
+        <property name="bin-SystemEndSession" value="${bin}/SystemEndSession/" />
+        <property name="src-SystemEndSession" value="SystemEndSession/SystemEndSession" />
+
+        <property name="SystemEndSessionName" value="SystemEndSession" />
+        <property name="SystemEndSessionVersion" value="0.0.0.1" />
+
+        <property name="bin-SystemExecuteSQL" value="${bin}/SystemExecuteSQL/" />
+        <property name="src-SystemExecuteSQL" value="SystemExecuteSQL/SystemExecuteSQL" />
+
+        <property name="SystemExecuteSQLName" value="SystemExecuteSQL" />
+        <property name="SystemExecuteSQLVersion" value="0.0.0.1" />
+
+        <property name="bin-SystemObjectExists" value="${bin}/SystemObjectExists/" />
+        <property name="src-SystemObjectExists" value="SystemObjectExists/SystemObjectExists" />
+
+        <property name="SystemObjectExistsName" value="SystemObjectExists" />
+        <property name="SystemObjectExistsVersion" value="0.0.0.1" />
+
+        <property name="bin-SystemListObjects" value="${bin}/SystemListObjects/" />
+        <property name="src-SystemListObjects" value="SystemListObjects/SystemListObjects" />
+
+        <property name="SystemListObjectsName" value="SystemListObjects" />
+        <property name="SystemListObjectsVersion" value="0.0.0.1" />
+
+        <property name="bin-SystemDescribeObject" value="${bin}/SystemDescribeObject/" />
+        <property name="src-SystemDescribeObject" value="SystemDescribeObject/SystemDescribeObject" />
+
+        <property name="SystemDescribeObjectName" value="SystemDescribeObject" />
+        <property name="SystemDescribeObjectVersion" value="0.0.0.1" />
+
+        <property name="bin-SystemDatabaseInfo" value="${bin}/SystemDatabaseInfo/" />
+        <property name="src-SystemDatabaseInfo" value="SystemDatabaseInfo/SystemDatabaseInfo" />
+
+        <property name="SystemDatabaseInfoName" value="SystemDatabaseInfo" />
+        <property name="SystemDatabaseInfoVersion" value="0.0.0.1" />
+    	
+        <property name="EnableDebug" value="true" />
+    	
+    	<path id="class_path_jars">
+    	        
+    	        <fileset dir="${src-ServicesDaemon}/Libs">
+    	            <include name="**/*.jar" />
+    	        </fileset>
+    	        
+    	</path> 
+    	
+    </target>
+ 
+    <target name="02_Create_Bin_Folders_And_Files_ServicesDaemon" depends="01_Init" description="Generate all struct need for bin folder">
+        
+        <mkdir dir="${bin-ServicesDaemon}"/>
+        <mkdir dir="${bin-ServicesDaemon}/Libs"/>
+        <mkdir dir="${bin-ServicesDaemon}/Langs"/>
+        <mkdir dir="${bin-ServicesDaemon}/CacheEngines"/>
+        <mkdir dir="${bin-ServicesDaemon}/Managers"/>
+        <mkdir dir="${bin-ServicesDaemon}/Logs"/>
+        <copy file="${src-ServicesDaemon}ServicesDaemon.conf" todir="${bin-ServicesDaemon}" overwrite="true"/>
+        <copy file="${src-ServicesDaemon}ServicesDaemon.keystore" todir="${bin-ServicesDaemon}" overwrite="true"/>
+        <copy file="${src-ServicesDaemon}/Langs/Common.init.lang.xml" todir="${bin-ServicesDaemon}/Langs" overwrite="true"/>
+        <copy file="${src-ServicesDaemon}/Langs/ServicesDaemon.init.lang.xml" todir="${bin-ServicesDaemon}/Langs" overwrite="true"/>
+        
+        <delete file="${bin-ServicesDaemon}/CacheEngines/readme.txt" />
+    	
+        <touch file="${bin-ServicesDaemon}/CacheEngines/readme.txt"/>
+
+        <echo file="${bin-ServicesDaemon}/CacheEngines/readme.txt" append="true" message="Here you can put all the (*.jar) files that implement the CAbstractCacheEngine class to extend cache engines in system.${line.separator}${line.separator}The directory must exist.${line.separator}"/>
+    	
+    </target>   
+	
+    <target name="03_Compile-CommonLibs-Source" depends="01_Init" description="Only compile CommonLibs source folder">
+        <mkdir dir="${bin}"/>
+        <javac includeantruntime="false" destdir="${bin}" debug="${EnableDebug}">
+            <src path="${src-ExtendedLogger}" />
+            <src path="${src-Net-MainDataServices}" />
+            <src path="${src-AbstractDBEngine}" />
+            <src path="${src-CommonClasses}" />
+            <src path="${src-Net-MainDataServices}" />
+            <src path="${src-AbstractService}" />
+            <src path="${src-AbstractServicesManager}" />
+            <src path="${src-AbstractResponseFormat}" />
+            <src path="${src-Org-Json}" />
+            <src path="${src-RowSet}" />
+            <src path="${src-WebRowSet}" />
+            <classpath refid="class_path_jars"/>
+            <!-- compilerarg value = "-XDignore.symbol.file " --> 
+        </javac>    
+    </target>
+
+    <target name="04_Create_CommonLibs.Jar" depends="01_Init" description="Generate CommonLibs.Jar in [workspace]/ServicesDaemon/ServicesDaemon/libs source folder">
+
+        <!-- fileset id="list" dir="${bin}" includes="${Org-JsonName}/**/*.class"/ -->
+    	<!-- echo message="My build-path is ${toString:list}" -->
+    	
+        <delete file="${src-ServicesDaemon}Libs/${CommonLibsName}.jar"/>
+    	
+        <jar jarfile="${src-ServicesDaemon}Libs/${CommonLibsName}.jar" index="no" compress="yes" update="true">
+            <fileset dir="${bin}" includes="${AbstractDBEngineName}/*.class"/>
+            <fileset dir="${bin}" includes="${AbstractResponseFormatName}/*.class"/>
+            <fileset dir="${bin}" includes="${AbstractServiceName}/*.class"/>
+            <fileset dir="${bin}" includes="${AbstractServicesManagerName}/*.class"/>
+            <fileset dir="${bin}" includes="${CommonClassesName}/*.class"/>
+            <fileset dir="${bin}" includes="${ExtendedLoggerName}/*.class"/>
+            <fileset dir="${bin}" includes="${Net-MainDataServicesName}/**/*.class"/>
+            <fileset dir="${bin}" includes="${Org-JsonName}/**/*.class"/>
+            <fileset dir="${bin}" includes="${RowSetName}/*.class"/>
+            <fileset dir="${bin}" includes="${WebRowSetName}/*.class"/>
+            <manifest>
+                <attribute name="Built-By" value="${user.name}" />
+                <attribute name="Specification-Title" value="${CommonLibsName}" />
+                <attribute name="Specification-Version" value="${CommonLibsVersion}" />
+           </manifest>
+        </jar>
+
+    </target>
+	
+    <target name="05_Create_Distro-Bin_Folders_And_Files_ServicesDaemon" depends="01_Init" description="Generate folder struct for distro-bin">
+        
+        <mkdir dir="${distro-bin}"/>
+        <mkdir dir="${distro-bin-ServicesDaemon}"/>
+        <mkdir dir="${distro-bin-ServicesDaemon}/Libs"/>
+        <mkdir dir="${distro-bin-ServicesDaemon}/Langs"/>
+        <mkdir dir="${distro-bin-ServicesDaemon}/CacheEngines"/>
+        <mkdir dir="${distro-bin-ServicesDaemon}/CacheEngines/MemCachedEngine"/>
+        <mkdir dir="${distro-bin-ServicesDaemon}/Managers"/>
+        <mkdir dir="${distro-bin-ServicesDaemon}/Logs"/>
+
+        <copy file="${src-ServicesDaemon}ServicesDaemon.conf" todir="${distro-bin-ServicesDaemon}" overwrite="true"/>
+        <copy file="${src-ServicesDaemon}ServicesDaemon.keystore" todir="${distro-bin-ServicesDaemon}" overwrite="true"/>
+        <copy file="${src-ServicesDaemon}/Langs/Common.init.lang.xml" todir="${distro-bin-ServicesDaemon}/Langs" overwrite="true"/>
+        <copy file="${src-ServicesDaemon}/Langs/ServicesDaemon.init.lang.xml" todir="${distro-bin-ServicesDaemon}/Langs" overwrite="true"/>
+
+    	<copy todir="${distro-bin-ServicesDaemon}/Libs" overwrite="true" >
+            <fileset dir="${src-ServicesDaemon}/Libs" includes="**/*.jar"/>
+    	</copy>
+        <!-- copy file="${src-ServicesDaemon}/Libs/javax.servlet-api-3.0.1.jar" tofile="${distro-bin-ServicesDaemon}/Libs/javax-servlet-api-3.jar" overwrite="true" -->
+        <!-- copy file="${src-ServicesDaemon}/Libs/jetty-all-server-8.1.11.v20130520.jar" tofile="${distro-bin-ServicesDaemon}/Libs/jetty-all-server-8.jar" overwrite="true" -->
+        
+        <delete file="${distro-bin-ServiceDaemon}/${ServiceDaemonName}.jar"/>
+        
+        <delete file="${distro-bin-ServicesDaemon}/run.sh"/>
+        
+        <touch file="${distro-bin-ServicesDaemon}/run.sh"/>
+        
+        <echo file="${distro-bin-ServicesDaemon}/run.sh" append="true" message="#!/bin/sh${line.separator}${line.separator}java -jar ServicesDaemon.jar${line.separator}"/>
+        
+        <chmod file="${distro-bin-ServicesDaemon}/run.sh" perm="ugo+x"/>
+        
+        <delete file="${distro-bin-ServicesDaemon}/run.bat" />
+        
+        <touch file="${distro-bin-ServicesDaemon}/run.bat"/>
+
+        <echo file="${distro-bin-ServicesDaemon}/run.bat" append="true" message="java -jar ServicesDaemon.jar${line.separator}"/>
+    
+        <delete file="${distro-bin-ServicesDaemon}/CacheEngines/readme.txt" />
+        
+        <touch file="${distro-bin-ServicesDaemon}/CacheEngines/readme.txt"/>
+
+        <echo file="${distro-bin-ServicesDaemon}/CacheEngines/readme.txt" append="true" message="Here you can put all the (*.jar) files that implement the CAbstractCacheEngine class to extend cache engines in system.${line.separator}${line.separator}The directory must exist.${line.separator}"/>
+    	
+    </target>
+	
+    <target name="06_Compile-ServicesDaemon-Source" depends="01_Init"  description="Only compile ServicesDaemon source folder">
+        <mkdir dir="${bin}"/>
+        <mkdir dir="${bin-ServicesDaemon}"/>
+        <javac includeantruntime="false" srcdir="${src-ServicesDaemon}" destdir="${bin}" debug="${EnableDebug}">
+            <classpath refid="class_path_jars"/>
+        </javac>    
+    </target>
+	
+    <target name="07_Compile-CryptPasswordSD-Source" depends="01_Init"  description="Only compile CryptPasswordSD source folder">
+        <mkdir dir="${bin}"/>
+        <mkdir dir="${bin-CryptPasswordSD}"/>
+        <javac includeantruntime="false" srcdir="${src-CryptPasswordSD}" destdir="${bin}" debug="${EnableDebug}">
+            <classpath refid="class_path_jars"/>
+        </javac>    
+    </target>
+	
+    <target name="08_Create-CryptPasswordSD.jar" depends="01_Init" description="Generate CryptPasswordSD.jar file for [Workspace]/distro-bin folder">
+    	
+        <delete file="${distro-bin-ServicesDaemon}/${CryptPasswordSDName}.jar" />
+    	
+        <jar jarfile="${distro-bin-ServicesDaemon}/${CryptPasswordSDName}.jar" index="no" compress="yes" update="true">
+        	<fileset dir="${bin}" includes="${CryptPasswordSDName}/*.class"/>
+            <fileset dir="${bin}" includes="${Net-MainDataServicesName}/**/*.class"/>
+            <manifest>
+                <attribute name="Built-By" value="${user.name}" />
+                <attribute name="Specification-Title" value="${CryptPasswordSDName}" />
+                <attribute name="Specification-Version" value="${CryptPasswordSDVersion}" />
+                <attribute name="Main-Class" value="${CryptPasswordSDName}.ServicesDaemon" />
+            </manifest>
+        </jar>
+    	
+    </target>
+ 
+    <target name="09_Create-ServicesDaemon.jar" depends="01_Init" description="Generate ServicesDaemon.jar file for [Workspace]/distro-bin folder">
+        
+    	<delete file="${distro-bin-ServicesDaemon}/${ServicesDaemonName}.jar"/>
+    	
+        <jar jarfile="${distro-bin-ServicesDaemon}/${ServicesDaemonName}.jar" index="no" compress="yes" update="true">
+            <fileset dir="${bin}" includes="${ServicesDaemonName}/*.class"/>
+            <manifest>
+                <attribute name="Built-By" value="${user.name}" />
+                <attribute name="Specification-Title" value="${ServicesDaemonName}" />
+                <attribute name="Specification-Version" value="${ServicesDaemonVersion}" />
+                <attribute name="Main-Class" value="${ServicesDaemonName}.CBootstrap" />
+                <!-- attribute name="Class-Path" value="Libs/jetty-all-server-8.jar Libs/javax-servlet-api-3.jar Libs/CommonLibs.jar" -->
+            </manifest>
+        </jar>
+    	
+	</target>
+
+    <target name="10_Create_Bin_Folders_And_Files_DBServicesManager" depends="01_Init" description="Generate folder struct for bin">
+        
+        <mkdir dir="${bin-ServicesDaemon}/Managers/02_DBServicesManager"/>
+        <mkdir dir="${bin-DBServicesManager}/"/>
+        <mkdir dir="${bin-DBServicesManager}/DBDrivers"/>
+        <mkdir dir="${bin-DBServicesManager}/DBEngines"/>
+        <mkdir dir="${bin-DBServicesManager}/DBServices"/>
+        <mkdir dir="${bin-DBServicesManager}/Langs"/>
+        <mkdir dir="${bin-DBServicesManager}/Libs"/>
+        <mkdir dir="${bin-DBServicesManager}/Logs"/>
+        <mkdir dir="${bin-DBServicesManager}/ResponsesFormats"/>
+        <mkdir dir="${bin-DBServicesManager}/Temp"/>
+
+        <copy todir="${bin-DBServicesManager}/DBDrivers" overwrite="true">
+        	<fileset dir="${src-DBServicesManager}/DBDrivers"/>
+        </copy>	
+    	
+        <copy file="${src-DBServicesManager}/DBServicesManager.conf" todir="${bin-DBServicesManager}" overwrite="true"/>
+        <copy file="${src-DBServicesManager}/Langs/DBServicesManager.init.lang.xml" todir="${bin-DBServicesManager}/Langs" overwrite="true"/>
+
+        <delete file="${bin-DBServicesManager}/Libs/readme.txt"/>
+        <delete file="${bin-DBServicesManager}/ResponsesFormats/readme.txt"/>
+        <delete file="${bin-DBServicesManager}/Temp/readme.txt"/>
+    	
+        <touch file="${bin-DBServicesManager}/Libs/readme.txt"/>
+        <touch file="${bin-DBServicesManager}/ResponsesFormats/readme.txt"/>
+        <touch file="${bin-DBServicesManager}/Temp/readme.txt"/>
+    	
+        <echo file="${bin-DBServicesManager}/Libs/readme.txt" append="true" message="Folder for support library (*.jar) files need for run the manager${line.separator}"/>
+        <echo file="${bin-DBServicesManager}/ResponsesFormats/readme.txt" append="true" message="Here you can put all the (*.jar) files that implement the CAbstractResponseFormat class to extend formats reponses embedded in system.${line.separator}${line.separator}The directory must exist.${line.separator}"/>
+        <echo file="${bin-DBServicesManager}/Temp/readme.txt" append="true" message="Temporal storage for multiple purposes${line.separator}"/>
+    	
+    </target>
+
+	<target name="11_Create_Distro-Bin_Folders_And_Files_DBServicesManager" depends="01_Init" description="Generate folder struct for distro-bin">
+        
+        <mkdir dir="${distro-bin-DBServicesManager}"/>
+        <mkdir dir="${distro-bin-DBServicesManager}/DBDrivers"/>
+        <mkdir dir="${distro-bin-DBServicesManager}/DBEngines"/>
+        <mkdir dir="${distro-bin-DBServicesManager}/DBServices"/>
+        <mkdir dir="${distro-bin-DBServicesManager}/Langs"/>
+        <mkdir dir="${distro-bin-DBServicesManager}/Libs"/>
+        <mkdir dir="${distro-bin-DBServicesManager}/Logs"/>
+        <mkdir dir="${distro-bin-DBServicesManager}/ResponsesFormats"/>
+        <mkdir dir="${distro-bin-DBServicesManager}/Temp"/>
+
+        <copy todir="${distro-bin-DBServicesManager}/DBDrivers" overwrite="true">
+            <fileset dir="${src-DBServicesManager}/DBDrivers"/>
+        </copy> 
+		
+        <copy file="${src-DBServicesManager}/DBServicesManager.conf" todir="${distro-bin-DBServicesManager}" overwrite="true"/>
+        <copy file="${src-DBServicesManager}/Langs/DBServicesManager.init.lang.xml" todir="${distro-bin-DBServicesManager}/Langs" overwrite="true"/>
+		
+        <delete file="${distro-bin-DBServicesManager}/Libs/readme.txt"/>
+        <delete file="${distro-bin-DBServicesManager}/ResponsesFormats/readme.txt"/>
+        <delete file="${distro-bin-DBServicesManager}/Temp/readme.txt"/>
+        
+        <touch file="${distro-bin-DBServicesManager}/Libs/readme.txt"/>
+        <touch file="${distro-bin-DBServicesManager}/ResponsesFormats/readme.txt"/>
+        <touch file="${distro-bin-DBServicesManager}/Temp/readme.txt"/>
+        
+        <echo file="${distro-bin-DBServicesManager}/Libs/readme.txt" append="true" message="Folder for support library (*.jar) files need for run the manager${line.separator}"/>
+        <echo file="${distro-bin-DBServicesManager}/ResponsesFormats/readme.txt" append="true" message="Here you can put all the (*.jar) files that implement the CAbstractResponseFormat class to extend formats reponses embedded in system.${line.separator}${line.separator}The directory must exist.${line.separator}"/>
+        <echo file="${distro-bin-DBServicesManager}/Temp/readme.txt" append="true" message="Temporal storage for very large blob files${line.separator}"/>
+		
+	</target>
+
+	<target name="12_Compile-DBCommonLibs-Source" depends="01_Init"  description="Only compile DBCommonLibs source folder">
+        
+		<mkdir dir="${bin}"/>
+        
+		<javac includeantruntime="false" srcdir="${src-DBCommonLibs}" includes="**/*.java" destdir="${bin}" debug="${EnableDebug}">
+        	<classpath refid="class_path_jars"/>
+        </javac>
+		
+    </target>
+
+    <target name="13_Generate-DBCommonLibs.jar" depends="01_Init" description="Generate DBCommonLibs.jar file in [Workspace]/distro-bin/ServicesDaemon/Managers/02_DBServicesManager/Libs folder">
+
+        <delete file="${distro-bin-DBServicesManager}/Libs/${DBCommonLibsName}.jar"/>
+    	
+        <jar jarfile="${distro-bin-DBServicesManager}/Libs/${DBCommonLibsName}.jar" index="no" compress="yes" update="true">
+            <fileset dir="${bin}" includes="${DBCommonClassesName}/**/*.class"/>
+            <manifest>
+                <attribute name="Built-By" value="${user.name}" />
+                <attribute name="Specification-Title" value="${DBCommonLibsName}" />
+                <attribute name="Specification-Version" value="${DBCommonLibsVersion}" />
+            </manifest>
+        </jar>
+    
+    </target>
+
+	<target name="14_Compile-DBServicesManager-Source" depends="01_Init"  description="Only compile DBServicesManager source folder">
+        
+		<mkdir dir="${bin}"/>
+        <mkdir dir="${bin-DBServicesManager}"/>
+        <!-- Include en el class path the DBCommonLibs.jar -->
+        <path id="class_path_DBCommonLibs.jar">
+                
+                <fileset dir="${distro-bin-DBServicesManager}/Libs/">
+                    <include name="**/*.jar" />
+                </fileset>
+                
+        </path> 
+		
+		<javac includeantruntime="false" srcdir="${src-DBServicesManager}" destdir="${bin}" debug="${EnableDebug}">
+            <classpath refid="class_path_jars"/>
+	        <!-- Include en el class path the DBCommonLibs.jar -->
+            <classpath refid="class_path_DBCommonLibs.jar"/>
+        </javac>
+		
+    </target>
+
+    <target name="15_Generate-DBServicesManager.jar" depends="01_Init" description="Generate DBServicesManager.jar file in [Workspace]/distro-bin/ServicesDaemon/Managers/02_DBServicesManager folder">
+
+        <delete file="${distro-bin-DBServicesManager}/${DBServicesManagerName}.jar"/>
+    	
+        <jar jarfile="${distro-bin-DBServicesManager}/${DBServicesManagerName}.jar" index="no" compress="yes" update="true">
+            <fileset dir="${bin}" includes="${DBServicesManagerName}/**/*.class"/>
+            <manifest>
+                <attribute name="Built-By" value="${user.name}" />
+                <attribute name="Specification-Title" value="${DBServicesManagerName}" />
+                <attribute name="Specification-Version" value="${DBServicesManagerVersion}" />
+            </manifest>
+        	<service type="AbstractServicesManager.CAbstractServicesManager">
+        		<provider classname="DBServicesManager.CServicesManager"/>
+        	</service>	
+        </jar>
+    
+        <copy file="${distro-bin-DBServicesManager}/${DBServicesManagerName}.jar" todir="${bin-ServicesDaemon}/Managers/02_DBServicesManager" overwrite="true"/>
+    	
+    </target>
+	
+    <target name="16_Compile-DBEngines-Source" depends="01_Init"  description="Only compile MySQLDBEngine, PGSQLDBEngine, SQLServerDBEngine, FirebirdDBEngine source folder">
+    	
+        <mkdir dir="${bin}"/>
+        <mkdir dir="${bin}/${MySQLDBEngineName}"/>
+        <mkdir dir="${bin}/${PGSQLDBEngineName}"/>
+        <mkdir dir="${bin}/${SQLServerDBEngineName}"/>
+        <mkdir dir="${bin}/${FirebirdDBEngineName}"/>
+        
+        <javac includeantruntime="false" destdir="${bin}" includes="**/*.java" debug="${EnableDebug}">
+            <src path="${src-MySQLDBEngine}"/>
+            <src path="${src-PGSQLDBEngine}"/>
+            <src path="${src-SQLServerDBEngine}"/>
+            <src path="${src-FirebirdDBEngine}"/>
+            <classpath refid="class_path_jars"/>
+        </javac>
+    	
+    </target>
+	
+	<target name="17_Generate-DBEngines.jar" depends="01_Init"  description="Generate MySQLDBEngine.jar, PGSQLDBEngine.jar, SQLServerDBEngine.jar, FirebirdDBEngine.jar files in [Workspace]/distro-bin/ServicesDaemon/Managers/02_DBServicesManager/DBDrivers folder">
+  
+        <delete file="${distro-bin-DBServicesManager}/DBEngines/${MySQLDBEngineName}.jar"/>
+		
+        <jar jarfile="${distro-bin-DBServicesManager}/DBEngines/${MySQLDBEngineName}.jar" index="no" compress="yes" update="true">
+            <fileset dir="${bin}" includes="${MySQLDBEngineName}/**/*.class"/>
+            <manifest>
+                <attribute name="Built-By" value="${user.name}" />
+                <attribute name="Specification-Title" value="${MySQLDBEngineName}" />
+                <attribute name="Specification-Version" value="${MySQLDBEngineVersion}" />
+            </manifest>
+            <service type="AbstractDBEngine.CAbstractDBEngine">
+                <provider classname="MySQLDBEngine.CMySQLDBEngine"/>
+            </service>  
+        </jar>
+    
+        <copy file="${distro-bin-DBServicesManager}/DBEngines/${MySQLDBEngineName}.jar" todir="${bin-DBServicesManager}/DBEngines" overwrite="true"/>
+		
+        <delete file="${distro-bin-DBServicesManager}/DBEngines/${PGSQLDBEngineName}.jar"/>
+		
+        <jar jarfile="${distro-bin-DBServicesManager}/DBEngines/${PGSQLDBEngineName}.jar" index="no" compress="yes" update="true">
+            <fileset dir="${bin}" includes="${PGSQLDBEngineName}/**/*.class"/>
+            <manifest>
+                <attribute name="Built-By" value="${user.name}" />
+                <attribute name="Specification-Title" value="${PGSQLDBEngineName}" />
+                <attribute name="Specification-Version" value="${PGSQLDBEngineVersion}" />
+            </manifest>
+            <service type="AbstractDBEngine.CAbstractDBEngine">
+                <provider classname="PGSQLDBEngine.CPGSQLDBEngine"/>
+            </service>  
+        </jar>
+    
+        <copy file="${distro-bin-DBServicesManager}/DBEngines/${PGSQLDBEngineName}.jar" todir="${bin-DBServicesManager}/DBEngines" overwrite="true"/>
+
+        <delete file="${distro-bin-DBServicesManager}/DBEngines/${SQLServerDBEngineName}.jar"/>
+		
+        <jar jarfile="${distro-bin-DBServicesManager}/DBEngines/${SQLServerDBEngineName}.jar" index="no" compress="yes" update="true">
+            <fileset dir="${bin}" includes="${SQLServerDBEngineName}/**/*.class"/>
+            <manifest>
+                <attribute name="Built-By" value="${user.name}" />
+                <attribute name="Specification-Title" value="${SQLServerDBEngineName}" />
+                <attribute name="Specification-Version" value="${SQLServerDBEngineVersion}" />
+            </manifest>
+            <service type="AbstractDBEngine.CAbstractDBEngine">
+                <provider classname="SQLServerDBEngine.CSQLServerDBEngine"/>
+            </service>  
+        </jar>
+    
+        <copy file="${distro-bin-DBServicesManager}/DBEngines/${SQLServerDBEngineName}.jar" todir="${bin-DBServicesManager}/DBEngines" overwrite="true"/>
+		
+        <delete file="${distro-bin-DBServicesManager}/DBEngines/${FirebirdDBEngineName}.jar"/>
+		
+        <jar jarfile="${distro-bin-DBServicesManager}/DBEngines/${FirebirdDBEngineName}.jar" index="no" compress="yes" update="true">
+            <fileset dir="${bin}" includes="${FirebirdDBEngineName}/**/*.class"/>
+            <manifest>
+                <attribute name="Built-By" value="${user.name}" />
+                <attribute name="Specification-Title" value="${FirebirdDBEngineName}" />
+                <attribute name="Specification-Version" value="${FirebirdDBEngineVersion}" />
+            </manifest>
+            <service type="AbstractDBEngine.CAbstractDBEngine">
+                <provider classname="FirebirdDBEngine.CFirebirdDBEngine"/>
+            </service>  
+        </jar>
+    
+        <copy file="${distro-bin-DBServicesManager}/DBEngines/${FirebirdDBEngineName}.jar" todir="${bin-DBServicesManager}/DBEngines" overwrite="true"/>
+		
+	</target>	
+	
+    <target name="18_Compile-DBServices-Source" depends="01_Init"  description="Only compile DBServices System.Enum.Services, SystemPing, SystemStartSession, SystemStartTransaction, SystemCommitTransaction, SystemRollbackTransaction, SystemEndTransaction, SystemEndSession, SystemExecuteSQL, SystemObjectExists, SystemListObjects, SystemDescribeObject, SystemDatabaseInfo source folder">
+    	
+    	<mkdir dir="${bin}"/>
+        <!-- mkdir dir="${bin-SystemEnumServices}" -->
+        <!-- Include en el class path the DBCommonLibs.jar -->
+        <path id="class_path_DBCommonLibs.jar">
+                
+                <fileset dir="${distro-bin-DBServicesManager}/Libs/">
+                    <include name="**/*.jar" />
+                </fileset>
+                
+        </path> 
+        
+        <javac includeantruntime="false" destdir="${bin}" includes="**/*.java" debug="${EnableDebug}">
+            <src path="${src-SystemEnumServices}" />
+            <src path="${src-SystemPing}" />
+            <src path="${src-SystemStartSession}" />
+            <src path="${src-SystemStartTransaction}" />
+            <src path="${src-SystemCommitTransaction}" />
+            <src path="${src-SystemRollbackTransaction}" />
+            <src path="${src-SystemEndTransaction}" />
+            <src path="${src-SystemEndSession}" />
+            <src path="${src-SystemExecuteSQL}" />
+            <src path="${src-SystemObjectExists}" />
+            <src path="${src-SystemListObjects}" />
+            <src path="${src-SystemDescribeObject}" />
+            <src path="${src-SystemDatabaseInfo}" />
+            <classpath refid="class_path_jars"/>
+            <!-- Include en el class path the DBCommonLibs.jar -->
+            <classpath refid="class_path_DBCommonLibs.jar"/>
+        </javac>
+
+        <copy todir="${bin-SystemEnumServices}/Langs" overwrite="true">
+            <fileset dir="${src-SystemEnumServices}/Langs/">
+                <include name="**/*.lang.xml" />
+            </fileset>
+        </copy>	
+
+        <copy todir="${bin-SystemPing}/Langs" overwrite="true">
+            <fileset dir="${src-SystemPing}/Langs/">
+                <include name="**/*.lang.xml" />
+            </fileset>
+        </copy> 
+
+        <copy todir="${bin-SystemStartSession}/Langs" overwrite="true">
+            <fileset dir="${src-SystemStartSession}/Langs/">
+                <include name="**/*.lang.xml" />
+            </fileset>
+        </copy> 
+
+        <copy file="${src-SystemStartSession}/${SystemStartSessionName}.conf" todir="${bin-SystemStartSession}/" overwrite="true"/>
+    	
+        <copy todir="${bin-SystemStartTransaction}/Langs" overwrite="true">
+            <fileset dir="${src-SystemStartTransaction}/Langs/">
+                <include name="**/*.lang.xml" />
+            </fileset>
+        </copy> 
+
+        <copy todir="${bin-SystemCommitTransaction}/Langs" overwrite="true">
+            <fileset dir="${src-SystemCommitTransaction}/Langs/">
+                <include name="**/*.lang.xml" />
+            </fileset>
+        </copy> 
+
+        <copy todir="${bin-SystemRollbackTransaction}/Langs" overwrite="true">
+            <fileset dir="${src-SystemRollbackTransaction}/Langs/">
+                <include name="**/*.lang.xml" />
+            </fileset>
+        </copy> 
+
+        <copy todir="${bin-SystemEndTransaction}/Langs" overwrite="true">
+            <fileset dir="${src-SystemEndTransaction}/Langs/">
+                <include name="**/*.lang.xml" />
+            </fileset>
+        </copy> 
+
+        <copy todir="${bin-SystemEndSession}/Langs" overwrite="true">
+            <fileset dir="${src-SystemEndSession}/Langs/">
+                <include name="**/*.lang.xml" />
+            </fileset>
+        </copy> 
+
+        <copy todir="${bin-SystemExecuteSQL}/Langs" overwrite="true">
+            <fileset dir="${src-SystemExecuteSQL}/Langs/">
+                <include name="**/*.lang.xml" />
+            </fileset>
+        </copy> 
+    	
+        <copy file="${src-SystemExecuteSQL}/${SystemExecuteSQLName}.conf" todir="${bin-SystemExecuteSQL}/" overwrite="true"/>
+
+        <copy todir="${bin-SystemObjectExists}/Langs" overwrite="true">
+            <fileset dir="${src-SystemObjectExists}/Langs/">
+                <include name="**/*.lang.xml" />
+            </fileset>
+        </copy> 
+
+        <copy todir="${bin-SystemListObjects}/Langs" overwrite="true">
+            <fileset dir="${src-SystemListObjects}/Langs/">
+                <include name="**/*.lang.xml" />
+            </fileset>
+        </copy> 
+
+        <copy todir="${bin-SystemDescribeObject}/Langs" overwrite="true">
+            <fileset dir="${src-SystemDescribeObject}/Langs/">
+                <include name="**/*.lang.xml" />
+            </fileset>
+        </copy> 
+
+        <copy todir="${bin-SystemDatabaseInfo}/Langs" overwrite="true">
+            <fileset dir="${src-SystemDatabaseInfo}/Langs/">
+                <include name="**/*.lang.xml" />
+            </fileset>
+        </copy> 
+    	
+    </target>
+	
+    <target name="19_Generate-DBServices-Jar-Files" depends="01_Init"  description="Generate System.Enum.Services.jar, SystemPing.jar, SystemStartSession.jar, SystemStartTransaction.jar, SystemCommitTransaction.jar, SystemRollbackTransaction.jar, SystemEndTransaction.jar, SystemEndSession.jar, SystemExecuteSQL.jar, SystemObjectExists.jar, SystemListObjects.jar, SystemDescribeObject.jar, SystemDatabaseInfo.jar from source folder">
+	
+        <delete file="${distro-bin-DBServicesManager}/DBServices/System.Enum.Services/${SystemEnumServicesName}.jar"/>
+    	
+        <jar jarfile="${distro-bin-DBServicesManager}/DBServices/System.Enum.Services/${SystemEnumServicesName}.jar" index="no" compress="yes" update="true">
+            <fileset dir="${bin}" includes="${SystemEnumServicesName}/**/*.class"/>
+            <manifest>
+                <attribute name="Built-By" value="${user.name}" />
+                <attribute name="Specification-Title" value="${SystemEnumServicesName}" />
+                <attribute name="Specification-Version" value="${SystemEnumServicesVersion}" />
+            </manifest>
+            <service type="DBCommonClasses.CDBAbstractService">
+                <provider classname="SystemEnumServices.CSystemEnumServices"/>
+            </service>  
+        </jar>
+    
+        <copy file="${distro-bin-DBServicesManager}/DBServices/System.Enum.Services/${SystemEnumServicesName}.jar" todir="${bin-DBServicesManager}/DBServices/System.Enum.Services" overwrite="true"/>
+
+        <copy todir="${distro-bin-DBServicesManager}/DBServices/System.Enum.Services/Langs/" overwrite="true">
+            <fileset dir="${src-SystemEnumServices}/Langs">
+                <include name="**/*.lang.xml" />
+            </fileset>
+        </copy> 
+    	
+        <delete file="${distro-bin-DBServicesManager}/DBServices/System.Ping/${SystemPingName}.jar"/>
+    	
+        <jar jarfile="${distro-bin-DBServicesManager}/DBServices/System.Ping/${SystemPingName}.jar" index="no" compress="yes" update="true">
+            <fileset dir="${bin}" includes="${SystemPingName}/**/*.class"/>
+            <manifest>
+                <attribute name="Built-By" value="${user.name}" />
+                <attribute name="Specification-Title" value="${SystemPingName}" />
+                <attribute name="Specification-Version" value="${SystemPingVersion}" />
+            </manifest>
+            <service type="DBCommonClasses.CDBAbstractService">
+                <provider classname="SystemPing.CSystemPing"/>
+            </service>  
+        </jar>
+    
+        <copy file="${distro-bin-DBServicesManager}/DBServices/System.Ping/${SystemPingName}.jar" todir="${bin-DBServicesManager}/DBServices/System.Ping" overwrite="true"/>
+    	
+        <copy todir="${distro-bin-DBServicesManager}/DBServices/System.Ping/Langs/" overwrite="true">
+            <fileset dir="${src-SystemPing}/Langs">
+                <include name="**/*.lang.xml" />
+            </fileset>
+        </copy> 
+    	
+        <delete file="${distro-bin-DBServicesManager}/DBServices/System.Start.Session/${SystemStartSessionName}.jar"/>
+    	
+        <jar jarfile="${distro-bin-DBServicesManager}/DBServices/System.Start.Session/${SystemStartSessionName}.jar" index="no" compress="yes" update="true">
+            <fileset dir="${bin}" includes="${SystemStartSessionName}/**/*.class"/>
+            <manifest>
+                <attribute name="Built-By" value="${user.name}" />
+                <attribute name="Specification-Title" value="${SystemStartSessionName}" />
+                <attribute name="Specification-Version" value="${SystemStartSessionVersion}" />
+            </manifest>
+            <service type="DBCommonClasses.CDBAbstractService">
+                <provider classname="SystemStartSession.CSystemStartSession"/>
+            </service>  
+        </jar>
+    	
+        <copy file="${distro-bin-DBServicesManager}/DBServices/System.Start.Session/${SystemStartSessionName}.jar" todir="${bin-DBServicesManager}/DBServices/System.Start.Session" overwrite="true"/>
+        <copy file="${src-SystemStartSession}/${SystemStartSessionName}.conf" todir="${distro-bin-DBServicesManager}/DBServices/System.Start.Session/" overwrite="true"/>
+
+        <copy todir="${distro-bin-DBServicesManager}/DBServices/System.Start.Session/Langs/" overwrite="true">
+            <fileset dir="${src-SystemStartSession}/Langs">
+                <include name="**/*.lang.xml" />
+            </fileset>
+        </copy> 
+    	
+        <delete file="${distro-bin-DBServicesManager}/DBServices/System.Start.Transaction/${SystemStartTransactionName}.jar"/>
+    	
+        <jar jarfile="${distro-bin-DBServicesManager}/DBServices/System.Start.Transaction/${SystemStartTransactionName}.jar" index="no" compress="yes" update="true">
+            <fileset dir="${bin}" includes="${SystemStartTransactionName}/**/*.class"/>
+            <manifest>
+                <attribute name="Built-By" value="${user.name}" />
+                <attribute name="Specification-Title" value="${SystemStartTransactionName}" />
+                <attribute name="Specification-Version" value="${SystemStartTransactionVersion}" />
+            </manifest>
+            <service type="DBCommonClasses.CDBAbstractService">
+                <provider classname="SystemStartTransaction.CSystemStartTransaction"/>
+            </service>  
+        </jar>
+    
+        <copy file="${distro-bin-DBServicesManager}/DBServices/System.Start.Transaction/${SystemStartTransactionName}.jar" todir="${bin-DBServicesManager}/DBServices/System.Start.Transaction" overwrite="true"/>
+
+        <copy todir="${distro-bin-DBServicesManager}/DBServices/System.Start.Transaction/Langs/" overwrite="true">
+            <fileset dir="${src-SystemStartTransaction}/Langs">
+                <include name="**/*.lang.xml" />
+            </fileset>
+        </copy> 
+    	
+        <delete file="${distro-bin-DBServicesManager}/DBServices/System.Commit.Transaction/${SystemCommitTransactionName}.jar"/>
+    	
+        <jar jarfile="${distro-bin-DBServicesManager}/DBServices/System.Commit.Transaction/${SystemCommitTransactionName}.jar" index="no" compress="yes" update="true">
+            <fileset dir="${bin}" includes="${SystemCommitTransactionName}/**/*.class"/>
+            <manifest>
+                <attribute name="Built-By" value="${user.name}" />
+                <attribute name="Specification-Title" value="${SystemCommitTransactionName}" />
+                <attribute name="Specification-Version" value="${SystemCommitTransactionVersion}" />
+            </manifest>
+            <service type="DBCommonClasses.CDBAbstractService">
+                <provider classname="SystemCommitTransaction.CSystemCommitTransaction"/>
+            </service>  
+        </jar>
+    
+        <copy file="${distro-bin-DBServicesManager}/DBServices/System.Commit.Transaction/${SystemCommitTransactionName}.jar" todir="${bin-DBServicesManager}/DBServices/System.Commit.Transaction" overwrite="true"/>
+    	
+        <copy todir="${distro-bin-DBServicesManager}/DBServices/System.Commit.Transaction/Langs/" overwrite="true">
+            <fileset dir="${src-SystemCommitTransaction}/Langs">
+                <include name="**/*.lang.xml" />
+            </fileset>
+        </copy> 
+    	
+        <delete file="${distro-bin-DBServicesManager}/DBServices/System.Rollback.Transaction/${SystemRollbackTransactionName}.jar"/>
+    	
+        <jar jarfile="${distro-bin-DBServicesManager}/DBServices/System.Rollback.Transaction/${SystemRollbackTransactionName}.jar" index="no" compress="yes" update="true">
+            <fileset dir="${bin}" includes="${SystemRollbackTransactionName}/**/*.class"/>
+            <manifest>
+                <attribute name="Built-By" value="${user.name}" />
+                <attribute name="Specification-Title" value="${SystemRollbackTransactionName}" />
+                <attribute name="Specification-Version" value="${SystemRollbackTransactionVersion}" />
+            </manifest>
+            <service type="DBCommonClasses.CDBAbstractService">
+                <provider classname="SystemRollbackTransaction.CSystemRollbackTransaction"/>
+            </service>  
+        </jar>
+    
+        <copy file="${distro-bin-DBServicesManager}/DBServices/System.Rollback.Transaction/${SystemRollbackTransactionName}.jar" todir="${bin-DBServicesManager}/DBServices/System.Rollback.Transaction" overwrite="true"/>
+
+        <copy todir="${distro-bin-DBServicesManager}/DBServices/System.Rollback.Transaction/Langs/" overwrite="true">
+            <fileset dir="${src-SystemRollbackTransaction}/Langs">
+                <include name="**/*.lang.xml" />
+            </fileset>
+        </copy> 
+    	
+        <delete file="${distro-bin-DBServicesManager}/DBServices/System.End.Transaction/${SystemEndTransactionName}.jar"/>
+    	
+        <jar jarfile="${distro-bin-DBServicesManager}/DBServices/System.End.Transaction/${SystemEndTransactionName}.jar" index="no" compress="yes" update="true">
+            <fileset dir="${bin}" includes="${SystemEndTransactionName}/**/*.class"/>
+            <manifest>
+                <attribute name="Built-By" value="${user.name}" />
+                <attribute name="Specification-Title" value="${SystemEndTransactionName}" />
+                <attribute name="Specification-Version" value="${SystemEndTransactionVersion}" />
+            </manifest>
+            <service type="DBCommonClasses.CDBAbstractService">
+                <provider classname="SystemEndTransaction.CSystemEndTransaction"/>
+            </service>  
+        </jar>
+    
+        <copy file="${distro-bin-DBServicesManager}/DBServices/System.End.Transaction/${SystemEndTransactionName}.jar" todir="${bin-DBServicesManager}/DBServices/System.End.Transaction" overwrite="true"/>
+
+        <copy todir="${distro-bin-DBServicesManager}/DBServices/System.End.Transaction/Langs/" overwrite="true">
+            <fileset dir="${src-SystemEndTransaction}/Langs">
+                <include name="**/*.lang.xml" />
+            </fileset>
+        </copy> 
+    	
+        <delete file="${distro-bin-DBServicesManager}/DBServices/System.End.Session/${SystemEndSessionName}.jar"/>
+    	
+        <jar jarfile="${distro-bin-DBServicesManager}/DBServices/System.End.Session/${SystemEndSessionName}.jar" index="no" compress="yes" update="true">
+            <fileset dir="${bin}" includes="${SystemEndSessionName}/**/*.class"/>
+            <manifest>
+                <attribute name="Built-By" value="${user.name}" />
+                <attribute name="Specification-Title" value="${SystemEndSessionName}" />
+                <attribute name="Specification-Version" value="${SystemEndSessionVersion}" />
+            </manifest>
+            <service type="DBCommonClasses.CDBAbstractService">
+                <provider classname="SystemEndSession.CSystemEndSession"/>
+            </service>  
+        </jar>
+    
+        <copy file="${distro-bin-DBServicesManager}/DBServices/System.End.Session/${SystemEndSessionName}.jar" todir="${bin-DBServicesManager}/DBServices/System.End.Session" overwrite="true"/>
+    	
+        <copy todir="${distro-bin-DBServicesManager}/DBServices/System.End.Session/Langs/" overwrite="true">
+            <fileset dir="${src-SystemEndSession}/Langs">
+                <include name="**/*.lang.xml" />
+            </fileset>
+        </copy> 
+    	
+        <delete file="${distro-bin-DBServicesManager}/DBServices/System.Execute.SQL/${SystemExecuteSQLName}.jar"/>
+    	
+        <jar jarfile="${distro-bin-DBServicesManager}/DBServices/System.Execute.SQL/${SystemExecuteSQLName}.jar" index="no" compress="yes" update="true">
+            <fileset dir="${bin}" includes="${SystemExecuteSQLName}/**/*.class"/>
+            <manifest>
+                <attribute name="Built-By" value="${user.name}" />
+                <attribute name="Specification-Title" value="${SystemExecuteSQLName}" />
+                <attribute name="Specification-Version" value="${SystemExecuteSQLVersion}" />
+            </manifest>
+            <service type="DBCommonClasses.CDBAbstractService">
+                <provider classname="SystemExecuteSQL.CSystemExecuteSQL"/>
+            </service>  
+        </jar>
+    
+        <copy file="${distro-bin-DBServicesManager}/DBServices/System.Execute.SQL/${SystemExecuteSQLName}.jar" todir="${bin-DBServicesManager}/DBServices/System.Execute.SQL" overwrite="true"/>
+        <copy file="${src-SystemExecuteSQL}/${SystemExecuteSQLName}.conf" todir="${distro-bin-DBServicesManager}/DBServices/System.Execute.SQL/" overwrite="true"/>
+    	
+        <copy todir="${distro-bin-DBServicesManager}/DBServices/System.Execute.SQL/Langs/" overwrite="true">
+            <fileset dir="${src-SystemExecuteSQL}/Langs">
+                <include name="**/*.lang.xml" />
+            </fileset>
+        </copy> 
+    	
+        <delete file="${distro-bin-DBServicesManager}/DBServices/System.Object.Exists/${SystemObjectExistsName}.jar"/>
+    	
+        <jar jarfile="${distro-bin-DBServicesManager}/DBServices/System.Object.Exists/${SystemObjectExistsName}.jar" index="no" compress="yes" update="true">
+            <fileset dir="${bin}" includes="${SystemObjectExistsName}/**/*.class"/>
+            <manifest>
+                <attribute name="Built-By" value="${user.name}" />
+                <attribute name="Specification-Title" value="${SystemObjectExistsName}" />
+                <attribute name="Specification-Version" value="${SystemObjectExistsVersion}" />
+            </manifest>
+            <service type="DBCommonClasses.CDBAbstractService">
+                <provider classname="SystemObjectExists.CSystemObjectExists"/>
+            </service>  
+        </jar>
+    
+        <copy file="${distro-bin-DBServicesManager}/DBServices/System.Object.Exists/${SystemObjectExistsName}.jar" todir="${bin-DBServicesManager}/DBServices/System.Object.Exists" overwrite="true"/>
+
+        <copy todir="${distro-bin-DBServicesManager}/DBServices/System.Object.Exists/Langs/" overwrite="true">
+            <fileset dir="${src-SystemObjectExists}/Langs">
+                <include name="**/*.lang.xml" />
+            </fileset>
+        </copy> 
+    	
+        <delete file="${distro-bin-DBServicesManager}/DBServices/System.List.Objects/${SystemListObjectsName}.jar"/>
+    	
+        <jar jarfile="${distro-bin-DBServicesManager}/DBServices/System.List.Objects/${SystemListObjectsName}.jar" index="no" compress="yes" update="true">
+            <fileset dir="${bin}" includes="${SystemListObjectsName}/**/*.class"/>
+            <manifest>
+                <attribute name="Built-By" value="${user.name}" />
+                <attribute name="Specification-Title" value="${SystemListObjectsName}" />
+                <attribute name="Specification-Version" value="${SystemListObjectsVersion}" />
+            </manifest>
+            <service type="DBCommonClasses.CDBAbstractService">
+                <provider classname="SystemListObjects.CSystemListObjects"/>
+            </service>  
+        </jar>
+    
+        <copy file="${distro-bin-DBServicesManager}/DBServices/System.List.Objects/${SystemListObjectsName}.jar" todir="${bin-DBServicesManager}/DBServices/System.List.Objects" overwrite="true"/>
+
+        <copy todir="${distro-bin-DBServicesManager}/DBServices/System.List.Objects/Langs/" overwrite="true">
+            <fileset dir="${src-SystemListObjects}/Langs">
+                <include name="**/*.lang.xml" />
+            </fileset>
+        </copy> 
+    	
+        <delete file="${distro-bin-DBServicesManager}/DBServices/System.Describe.Object/${SystemDescribeObjectName}.jar"/>
+    	
+        <jar jarfile="${distro-bin-DBServicesManager}/DBServices/System.Describe.Object/${SystemDescribeObjectName}.jar" index="no" compress="yes" update="true">
+            <fileset dir="${bin}" includes="${SystemDescribeObjectName}/**/*.class"/>
+            <manifest>
+                <attribute name="Built-By" value="${user.name}" />
+                <attribute name="Specification-Title" value="${SystemDescribeObjectName}" />
+                <attribute name="Specification-Version" value="${SystemDescribeObjectVersion}" />
+            </manifest>
+            <service type="DBCommonClasses.CDBAbstractService">
+                <provider classname="SystemDescribeObject.CSystemDescribeObject"/>
+            </service>  
+        </jar>
+    
+        <copy file="${distro-bin-DBServicesManager}/DBServices/System.Describe.Object/${SystemDescribeObjectName}.jar" todir="${bin-DBServicesManager}/DBServices/System.Describe.Object" overwrite="true"/>
+
+        <copy todir="${distro-bin-DBServicesManager}/DBServices/System.Describe.Object/Langs/" overwrite="true">
+            <fileset dir="${src-SystemDescribeObject}/Langs">
+                <include name="**/*.lang.xml" />
+            </fileset>
+        </copy> 
+    	
+        <delete file="${distro-bin-DBServicesManager}/DBServices/System.Database.Info/${SystemDatabaseInfoName}.jar"/>
+    	
+        <jar jarfile="${distro-bin-DBServicesManager}/DBServices/System.Database.Info/${SystemDatabaseInfoName}.jar" index="no" compress="yes" update="true">
+            <fileset dir="${bin}" includes="${SystemDatabaseInfoName}/**/*.class"/>
+            <manifest>
+                <attribute name="Built-By" value="${user.name}" />
+                <attribute name="Specification-Title" value="${SystemDatabaseInfoName}" />
+                <attribute name="Specification-Version" value="${SystemDatabaseInfoVersion}" />
+            </manifest>
+            <service type="DBCommonClasses.CDBAbstractService">
+                <provider classname="SystemDatabaseInfo.CSystemDatabaseInfo"/>
+            </service>  
+        </jar>
+    
+        <copy file="${distro-bin-DBServicesManager}/DBServices/System.Database.Info/${SystemDatabaseInfoName}.jar" todir="${bin-DBServicesManager}/DBServices/System.Database.Info" overwrite="true"/>
+    	
+        <copy todir="${distro-bin-DBServicesManager}/DBServices/System.Database.Info/Langs/" overwrite="true">
+            <fileset dir="${src-SystemDatabaseInfo}/Langs">
+                <include name="**/*.lang.xml" />
+            </fileset>
+        </copy> 
+    	
+    </target>
+	
+</project>

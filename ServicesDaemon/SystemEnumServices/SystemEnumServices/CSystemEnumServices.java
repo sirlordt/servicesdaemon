@@ -10,7 +10,6 @@
  ******************************************************************************/
 package SystemEnumServices;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -21,95 +20,67 @@ import AbstractResponseFormat.CAbstractResponseFormat;
 import AbstractService.CAbstractService;
 import AbstractService.CInputServiceParameter;
 import AbstractService.CServicePreExecuteResult;
-import AbstractService.ConstantsServicesTags;
-import AbstractService.DefaultConstantsServices;
 import AbstractService.CInputServiceParameter.TParameterScope;
 import CommonClasses.CAbstractConfigLoader;
 import CommonClasses.CClassPathLoader;
 import CommonClasses.CServicePostExecuteResult;
-import CommonClasses.CServicesDaemonConfig;
-import CommonClasses.DefaultConstantsServicesDaemon;
+import CommonClasses.CConfigServicesDaemon;
+import CommonClasses.ConstantsCommonClasses;
+import CommonClasses.ConstantsMessagesCodes;
+import DBCommonClasses.CDBAbstractService;
 
-public class CSystemEnumServices extends CAbstractService {
+public class CSystemEnumServices extends CDBAbstractService {
 
-    public final static String getJarFolder() {
-
-        String name =  CSystemEnumServices.class.getCanonicalName().replace( '.', '/' );
-
-        String s = CSystemEnumServices.class.getClass().getResource( "/" + name + ".class" ).toString();
-
-        s = s.replace( '/', File.separatorChar );
-
-        if ( s.indexOf(".jar") >= 0 )
-           s = s.substring( 0, s.indexOf(".jar") + 4 );
-        else
-           s = s.substring( 0, s.indexOf(".class") );
-
-        if ( s.indexOf( "jar:file:\\" )  == 0 ) { //Windows style path SO inside jar file 
-
-        	s = s.substring( 10 );
-
-        }
-        else if ( s.indexOf( "file:\\" )  == 0 ) { //Windows style path SO .class file
-
-        	s = s.substring( 6 );
-
-        }
-        else { //Unix family ( Linux/BSD/Mac/Solaris ) style path SO
-
-            s = s.substring( s.lastIndexOf(':') + 1 );
-
-        }
-
-        return s.substring( 0, s.lastIndexOf( File.separatorChar ) + 1 );
-
+    public CSystemEnumServices() {
+    	
+    	super();
+    	
     }
-
+    
 	@Override
-	public boolean InitializeService( CServicesDaemonConfig ServicesDaemonConfig, CAbstractConfigLoader OwnerConfig ) { // Alternate manual contructor
+	public boolean initializeService( CConfigServicesDaemon ServicesDaemonConfig, CAbstractConfigLoader OwnerConfig ) { // Alternate manual contructor
 
-		boolean bResult = super.InitializeService( ServicesDaemonConfig, OwnerConfig );
+		boolean bResult = super.initializeService( ServicesDaemonConfig, OwnerConfig );
 
 		try {
 		
 			this.bAuthRequired = false;
-			this.strJarRunningPath = getJarFolder();
-			DefaultConstantsSystemEnumServices.strDefaultRunningPath = this.strJarRunningPath;
+			this.strRunningPath = net.maindataservices.Utilities.getJarFolder( this.getClass() );
 			this.strServiceName = "System.Enum.Services";
 			this.strServiceVersion = "0.0.0.1";
 
-			this.SetupService( DefaultConstantsSystemEnumServices.strDefaultMainFileLog, DefaultConstantsSystemEnumServices.strDefaultRunningPath + DefaultConstantsServices.strDefaultLangsDir + DefaultConstantsSystemEnumServices.strDefaultMainFile + "." + ServicesDaemonConfig.strDefaultLang ); //Init the Logger and Lang
+			this.setupService( ConstantsSystemEnumServices._Main_File_Log, this.strRunningPath + ConstantsCommonClasses._Langs_Dir + ConstantsSystemEnumServices._Main_File + "." + ConstantsCommonClasses._Lang_Ext ); //Init the Logger and Lang
 
-			ServiceLogger.LogMessage( "1", ServiceLang.Translate( "Running dir: [%s]", this.strJarRunningPath ) );        
-			ServiceLogger.LogMessage( "1", ServiceLang.Translate( "Version: [%s]", this.strServiceVersion ) );        
+			ServiceLogger.logMessage( "1", ServiceLang.translate( "Running dir: [%s]", this.strRunningPath ) );        
+			ServiceLogger.logMessage( "1", ServiceLang.translate( "Version: [%s]", this.strServiceVersion ) );        
 
-			CClassPathLoader ClassPathLoader = new CClassPathLoader( ServiceLogger, ServiceLang );
+			CClassPathLoader ClassPathLoader = new CClassPathLoader();
 
-			ClassPathLoader.LoadClassFiles( this.strJarRunningPath + DefaultConstantsServices.strDefaultPreExecuteDir, DefaultConstantsServicesDaemon.strDefaultLibsExt, 2 );
+			ClassPathLoader.LoadClassFiles( this.strRunningPath + ConstantsCommonClasses._Pre_Execute_Dir, ConstantsCommonClasses._Lib_Ext, 2, ServiceLogger, ServiceLang  );
 
-			this.LoadAndRegisterServicePreExecute();
+			this.loadAndRegisterServicePreExecute();
 
-			ClassPathLoader.LoadClassFiles( this.strJarRunningPath + DefaultConstantsServices.strDefaultPostExecuteDir, DefaultConstantsServicesDaemon.strDefaultLibsExt, 2 );
+			ClassPathLoader.LoadClassFiles( this.strRunningPath + ConstantsCommonClasses._Post_Execute_Dir, ConstantsCommonClasses._Lib_Ext, 2, ServiceLogger, ServiceLang  );
 
-			this.LoadAndRegisterServicePostExecute();
+			this.loadAndRegisterServicePostExecute();
 
-			this.strServiceDescription = ServiceLang.Translate( "Lets list all registered services" );
+			this.strServiceDescription = ServiceLang.translate( "Lets list all registered services" );
 
 			ArrayList< CInputServiceParameter > ServiceInputParameters = new ArrayList< CInputServiceParameter >();
 
-			CInputServiceParameter InputParameter = new CInputServiceParameter( ConstantsServicesTags._RequestResponseFormat, false, ConstantsServicesTags._RequestResponseFormatType, ConstantsServicesTags._RequestResponseFormatLength, TParameterScope.IN, ServiceLang.Translate( "Response format name, example: XML-DATAPACKET, CSV, JSON" ) );
+			CInputServiceParameter InputParameter = new CInputServiceParameter( ConstantsCommonClasses._Request_ResponseFormat, false, ConstantsCommonClasses._Request_ResponseFormat_Type, ConstantsCommonClasses._Request_ResponseFormat_Length, TParameterScope.IN, ServiceLang.translate( "Response format name, example: XML-DATAPACKET, CSV, JSON" ) );
 
 			ServiceInputParameters.add( InputParameter ); 	
 
-			InputParameter = new CInputServiceParameter( ConstantsServicesTags._RequestResponseFormatVersion, false, ConstantsServicesTags._RequestResponseFormatVersionType, ConstantsServicesTags._RequestResponseFormatVersionLength, TParameterScope.IN, ServiceLang.Translate( "Response format version, example: 1.1" ) );
+			InputParameter = new CInputServiceParameter( ConstantsCommonClasses._Request_ResponseFormatVersion, false, ConstantsCommonClasses._Request_ResponseFormatVersion_Type, ConstantsCommonClasses._Request_ResponseFormatVersion_Length, TParameterScope.IN, ServiceLang.translate( "Response format version, example: 1.1" ) );
 
 			ServiceInputParameters.add( InputParameter ); 	
 
-			InputParameter = new CInputServiceParameter( ConstantsServicesTags._RequestServiceName, true, ConstantsServicesTags._RequestServiceNameType, ConstantsServicesTags._RequestServiceNameLength, TParameterScope.IN, ServiceLang.Translate( "Service Name" ) );
+			InputParameter = new CInputServiceParameter( ConstantsCommonClasses._Request_ServiceName, true, ConstantsCommonClasses._Request_ServiceName_Type, ConstantsCommonClasses._Request_ServiceName_Length, TParameterScope.IN, ServiceLang.translate( "Service Name" ) );
 
 			ServiceInputParameters.add( InputParameter );
 
-			GroupsInputParametersService.put( ConstantsServicesTags._Default, ServiceInputParameters );
+			GroupsInputParametersService.put( ConstantsCommonClasses._Default, ServiceInputParameters );
 		
 		}
 		catch ( Exception Ex ) {
@@ -117,7 +88,7 @@ public class CSystemEnumServices extends CAbstractService {
 			bResult = false;
 			
 			if ( OwnerLogger != null )
-        		OwnerLogger.LogException( "-1010", Ex.getMessage(), Ex );
+        		OwnerLogger.logException( "-1010", Ex.getMessage(), Ex );
 			
 		}
         
@@ -126,13 +97,13 @@ public class CSystemEnumServices extends CAbstractService {
 	}
 	
 	@Override
-	public int ExecuteService( int intEntryCode, HttpServletRequest Request, HttpServletResponse Response, String strSecurityTokenID, HashMap<String,CAbstractService> RegisteredServices, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion ) {
+	public int executeService( int intEntryCode, HttpServletRequest Request, HttpServletResponse Response, String strSecurityTokenID, HashMap<String,CAbstractService> RegisteredServices, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion ) {
 
 		int intResultCode = -1000;
 
-		if ( this.CheckServiceInputParameters( GroupsInputParametersService.get( ConstantsServicesTags._Default ), Request, Response, ResponseFormat, strResponseFormatVersion, OwnerConfig.getConfigValue( ConstantsSystemEnumServices._Global_DateTime_Format ) , OwnerConfig.getConfigValue( ConstantsSystemEnumServices._Global_Date_Format ), OwnerConfig.getConfigValue( ConstantsSystemEnumServices._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang ) == true ) {
+		if ( this.checkServiceInputParameters( GroupsInputParametersService.get( ConstantsCommonClasses._Default ), Request, Response, ResponseFormat, strResponseFormatVersion, (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_DateTime_Format, null ) , (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_Date_Format, null ), (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_Time_Format, null ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang ) == true ) {
 
-			CServicePreExecuteResult ServicePreExecuteResult = this.RunServicePreExecute( intEntryCode, Request, Response, strSecurityTokenID, RegisteredServices, ResponseFormat, strResponseFormatVersion );
+			CServicePreExecuteResult ServicePreExecuteResult = this.runServicePreExecute( intEntryCode, Request, Response, strSecurityTokenID, RegisteredServices, ResponseFormat, strResponseFormatVersion );
 
 			if ( ServicePreExecuteResult == null || ServicePreExecuteResult.bStopExecuteService == false ) {
 
@@ -141,7 +112,7 @@ public class CSystemEnumServices extends CAbstractService {
 
 				try {
 
-					String strResponseBuffer = ResponseFormat.EnumerateServices( RegisteredServices, strResponseFormatVersion, OwnerConfig.getConfigValue( ConstantsSystemEnumServices._Global_DateTime_Format ) , OwnerConfig.getConfigValue( ConstantsSystemEnumServices._Global_Date_Format ), OwnerConfig.getConfigValue( ConstantsSystemEnumServices._Global_Time_Format ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
+					String strResponseBuffer = ResponseFormat.enumerateServices( RegisteredServices, strResponseFormatVersion, (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_DateTime_Format, null ) , (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_Date_Format, null ), (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_Time_Format, null ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 
 					Response.getWriter().print( strResponseBuffer );
 
@@ -151,9 +122,9 @@ public class CSystemEnumServices extends CAbstractService {
 				catch ( Exception Ex ) {
 
 					if ( ServiceLogger != null )
-						ServiceLogger.LogException( "-1010", Ex.getMessage(), Ex ); 
+						ServiceLogger.logException( "-1010", Ex.getMessage(), Ex ); 
 					else if ( OwnerLogger != null )
-						OwnerLogger.LogException( "-1010", Ex.getMessage(), Ex );
+						OwnerLogger.logException( "-1010", Ex.getMessage(), Ex );
 
 				}
 
@@ -164,7 +135,7 @@ public class CSystemEnumServices extends CAbstractService {
 
 			}
 
-			CServicePostExecuteResult ServicePostExecuteResult = this.RunServicePostExecute( intEntryCode, Request, Response, strSecurityTokenID, RegisteredServices, ResponseFormat, strResponseFormatVersion );
+			CServicePostExecuteResult ServicePostExecuteResult = this.runServicePostExecute( intEntryCode, Request, Response, strSecurityTokenID, RegisteredServices, ResponseFormat, strResponseFormatVersion );
 
 			if ( ServicePostExecuteResult != null ) {
 

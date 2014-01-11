@@ -26,7 +26,8 @@ public class CBlankServicesManager extends CAbstractServicesManager {
 		
 	}
 	
-    protected void doGet( HttpServletRequest request, HttpServletResponse response ) {
+    @Override
+	protected void doGet( HttpServletRequest request, HttpServletResponse response ) {
     	
 	   try {
     	
@@ -36,13 +37,14 @@ public class CBlankServicesManager extends CAbstractServicesManager {
 	   }
 	   catch ( Exception Ex ) {
   
-		   ServicesDaemonConfig.Logger.LogException( "-1010", Ex.getMessage(), Ex );
+		   ServicesDaemonConfig.Logger.logException( "-1010", Ex.getMessage(), Ex );
 		   
 	   }
         
     }
 
-    protected void doPost( HttpServletRequest request, HttpServletResponse response ) {
+    @Override
+	protected void doPost( HttpServletRequest request, HttpServletResponse response ) {
 	
     	doGet( request, response );
     	

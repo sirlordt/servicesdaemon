@@ -63,7 +63,7 @@ public class CLanguage {
 		boolean bResult = false;
 		
 		if ( Logger == null )
-		    Logger = CExtendedLogger.getLogger( DefaultConstantsServicesDaemon.strDefaultLoggerName );
+		    Logger = CExtendedLogger.getLogger( ConstantsCommonClasses._Logger_Name );
 
 		if ( this.strLanguageFileName.equals( strLanguageFileName ) == false ) { //Check first language class name diferent
 
@@ -79,7 +79,7 @@ public class CLanguage {
 	
 				if ( new File( strLanguageFileName ).isAbsolute() == false ) {
 					
-					XMLLanguageFile = new File( DefaultConstantsServicesDaemon.strDefaultRunningPath + DefaultConstantsServicesDaemon.strDefaultLangsDir + strLanguageFileName + ".xml" );
+					XMLLanguageFile = new File( ConstantsCommonClasses._Langs_Dir + strLanguageFileName + ".xml" );
 					
 				}
 				else {
@@ -112,7 +112,7 @@ public class CLanguage {
 							
 							//Log error message path is not file
 							if ( Logger != null )
-							    Logger.LogError( "-1004", String.format( "The language path [%s] not is file", XMLLanguageFile.getAbsoluteFile() ) );        
+							    Logger.logError( "-1004", String.format( "The language path [%s] not is file", XMLLanguageFile.getAbsoluteFile() ) );        
 
 						}
 					
@@ -121,7 +121,7 @@ public class CLanguage {
 						
 						//Log error message file cannot read
  						if ( Logger != null )
-					 	    Logger.LogError( "-1003", String.format( "The language file in the path [%s] cannot read, please check the owner and permissions", XMLLanguageFile.getAbsoluteFile() ) );        
+					 	    Logger.logError( "-1003", String.format( "The language file in the path [%s] cannot read, please check the owner and permissions", XMLLanguageFile.getAbsoluteFile() ) );        
 						
 					}
 					
@@ -130,7 +130,7 @@ public class CLanguage {
 					
 					//Log error message file no exists
 					if ( Logger != null )
-					    Logger.LogError( "-1002", String.format( "The language file in the path [%s] not exists", XMLLanguageFile.getAbsoluteFile() ) );        
+					    Logger.logError( "-1002", String.format( "The language file in the path [%s] not exists", XMLLanguageFile.getAbsoluteFile() ) );        
 					
 				}
 				
@@ -139,14 +139,14 @@ public class CLanguage {
 		    
 				//Log the error
 				if ( Logger != null )
-    			    Logger.LogException( "-1001", Ex.getMessage(), Ex );        
+    			    Logger.logException( "-1001", Ex.getMessage(), Ex );        
 				
 			}
 			
 			if ( this.strLanguageFileName.equals( strLanguageFileName ) == false ) {
 				
 				if ( Logger != null )
-				    Logger.LogError( "-1005", String.format( "Cannot assign the new languaje name: [%s] falling back to old lenguaje name: [%s]", strLanguageFileName, this.strLanguageFileName ) );        
+				    Logger.logError( "-1005", String.format( "Cannot assign the new languaje name: [%s] falling back to old lenguaje name: [%s]", strLanguageFileName, this.strLanguageFileName ) );        
 
 			}
 		
@@ -207,7 +207,7 @@ public class CLanguage {
 		
 	}
 	
-	public String Translate( String strKeyMessage, String ... strVariables ) {
+	public String translate( String strKeyMessage, String ... strVariables ) {
 		
 		String strResult = null; //strKeyMessage;
 		
@@ -236,7 +236,7 @@ public class CLanguage {
 		
 			if ( LoggerMissingTranslations != null ) {
 				
-				LoggerMissingTranslations.LogWarning( "-1", "Missing translation: [" + strKeyMessage + "] in file: [" + this.strLanguageFileName + "]" );
+				LoggerMissingTranslations.logWarning( "-1", "Missing translation: [" + strKeyMessage + "] in file: [" + this.strLanguageFileName + "]" );
 				
 			}
 			
@@ -251,7 +251,7 @@ public class CLanguage {
 	    catch ( Exception Ex ) {
 	    	
 			if ( Logger != null )
-				Logger.LogException("-1000", Ex.getMessage(), Ex );
+				Logger.logException("-1000", Ex.getMessage(), Ex );
 	    	
 	    }
 		

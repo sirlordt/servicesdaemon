@@ -20,7 +20,7 @@ import AbstractService.CAbstractService;
 import AbstractService.CAbstractServicePreExecute;
 import AbstractService.CServicePreExecuteResult;
 import CommonClasses.CLanguage;
-import CommonClasses.CServicesDaemonConfig;
+import CommonClasses.CConfigServicesDaemon;
 import ExtendedLogger.CExtendedLogger;
 
 public class CPreExecuteServiceTest extends CAbstractServicePreExecute {
@@ -39,7 +39,7 @@ public class CPreExecuteServiceTest extends CAbstractServicePreExecute {
 	}
 
 	@Override
-	public boolean InitializePreExecute( String strOwnerServiceName, CServicesDaemonConfig ServicesDaemonConfig, CExtendedLogger OwnerLogger, CLanguage OwnerLang, CExtendedLogger ServiceLogger, CLanguage ServiceLang) { 
+	public boolean initializePreExecute( String strOwnerServiceName, CConfigServicesDaemon ServicesDaemonConfig, CExtendedLogger OwnerLogger, CLanguage OwnerLang, CExtendedLogger ServiceLogger, CLanguage ServiceLang) { 
 		
 		if ( this.strOwnerServiceName.contains( strOwnerServiceName ) ) {
 		
@@ -54,14 +54,14 @@ public class CPreExecuteServiceTest extends CAbstractServicePreExecute {
 	}
 
 	@Override
-	public CServicePreExecuteResult PreExecute( int intEntryCode, String strServiceName, HttpServletRequest Request, HttpServletResponse Response, String strSecurityTokenID, HashMap<String, CAbstractService> RegisteredServices, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion) { 
+	public CServicePreExecuteResult preExecute( int intEntryCode, String strServiceName, HttpServletRequest Request, HttpServletResponse Response, String strSecurityTokenID, HashMap<String, CAbstractService> RegisteredServices, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion) { 
 
 		CServicePreExecuteResult Result = new CServicePreExecuteResult();
 
 		Result.intResultCode = 1;
 		
 		if ( ServiceLogger != null )
-			ServiceLogger.LogMessage( "1", this.strName + " " + this.strVersion );
+			ServiceLogger.logMessage( "1", this.strName + " " + this.strVersion );
 		
 		return Result;
 		

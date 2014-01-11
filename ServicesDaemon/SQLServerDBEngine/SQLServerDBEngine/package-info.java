@@ -1,8 +1,0 @@
-/**
- * 
- */
-/**
- * @author dsistemas
- *
- */
-package SQLServerDBEngine;

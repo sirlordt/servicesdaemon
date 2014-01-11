@@ -106,7 +106,7 @@ public class CExpresionsFilters {
 		catch ( Exception Ex ) {
 			
 			if ( Logger != null )
-				Logger.LogException( "-1020", Ex.getMessage(), Ex ); 
+				Logger.logException( "-1020", Ex.getMessage(), Ex ); 
 			
 		}
 		

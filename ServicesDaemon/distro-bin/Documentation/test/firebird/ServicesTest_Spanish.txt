@@ -436,7 +436,7 @@ ObjectType=1
 
 Prueba 14 Caso 3 (Listar los campos que pertenecen a un objeto Tabla = 1, Vista = 2, Función = 3 o Procedimiento Almacenado = 4), para ver la salida del servicio vea el archivo test14_service_output_case3.xml
 
-ServiceName=System.List.Objects
+ServiceName=System.Describe.Object
 ResponseFormat=XML-DATAPACKET
 ResponseFormatVersion=1.1
 SecurityTokenID=8876415734354505252
@@ -445,7 +445,7 @@ ObjectName=tblUsersDB
 
 Prueba 14 Caso 4 (Obtener informción de la base de datos), para ver la salida del servicio vea el archivo test14_service_output_case4.xml
 
-ServiceName=System.List.Objects
+ServiceName=System.Database.Info
 ResponseFormat=XML-DATAPACKET
 ResponseFormatVersion=1.1
 SecurityTokenID=8876415734354505252

@@ -16,12 +16,26 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
+import java.util.logging.SocketHandler;
 
 public class CExtendedLogger extends Logger {
 
 	protected int intInternalSequence;
 	protected boolean bSetupSet = false;
 	protected int intCallStackLevel = 3; //Adjust call stack index for precise info
+	
+	protected String strLogIP = "";
+	protected int intLogPort = -1;
+	protected boolean bSocketHandActive = false;
+	
+	protected SocketHandler SocketHand = null;
+	protected FileHandler FileHand = null;
+	protected ConsoleHandler ConsoleHand = null;
+	
+	protected CExtendedLogXMLFormatter ExXmlFormatter = null;
+	
+	public static int intMinPort = 1; 
+	public static int intMaxPort = 65535; 
 	
 	public CExtendedLogger( String strName ) {
 
@@ -49,7 +63,27 @@ public class CExtendedLogger extends Logger {
 		
 	}	
 	
-    public void SetupLogger( boolean bLogToScreen, String strLogPath, String strLogFile, String strLogFilters, boolean bExactMatch, String strLogLevel ) {
+    public void setupLogger( boolean bLogToScreen, String strLogPath, String strLogFile, String strLogFilters, boolean bExactMatch, String strLogLevel, String strLogIP, int intLogPort ) {
+    	
+    	try {
+
+    		if ( strLogIP.isEmpty() == false && intLogPort >= intMinPort && intLogPort <= intMaxPort ) {
+    		 
+    			SocketHand = new SocketHandler( strLogIP, intLogPort );
+    			
+    			this.strLogIP = strLogIP;
+    			this.intLogPort = intLogPort;
+    			this.bSocketHandActive = true;
+    			
+    		}     
+    		
+    	}
+    	catch ( Exception Ex ) {
+    		
+    		SocketHand = null;
+			Ex.printStackTrace();
+    		
+    	}
     	
 		try { 
     	  
@@ -61,12 +95,13 @@ public class CExtendedLogger extends Logger {
 				
 			}
 			
-			FileHandler FileHand = new FileHandler( strLogPath + strLogFile, 2048576, 50, false );
+			FileHand = new FileHandler( strLogPath + strLogFile, 2048576, 50, false );
 		 
-			ConsoleHandler ConsoleHand = null;
-			
-			CExtendedLogXMLFormatter ExXmlFormatter = new CExtendedLogXMLFormatter();
+			ExXmlFormatter = new CExtendedLogXMLFormatter();
 
+			ExXmlFormatter.strLogFilePath = strLogPath;
+			ExXmlFormatter.strLogFileName = strLogFile;
+			
 			FileHand.setFormatter( ExXmlFormatter );
 
 			if ( bLogToScreen == true ) {   
@@ -85,6 +120,14 @@ public class CExtendedLogger extends Logger {
 			   this.addHandler( ConsoleHand ); 
 		
 			this.addHandler( FileHand );
+			
+			if ( SocketHand != null ) {
+			
+				SocketHand.setFormatter( ExXmlFormatter );
+				
+				this.addHandler( SocketHand );
+				
+			}	
 			
 			bSetupSet = true;
 			
@@ -127,7 +170,7 @@ public class CExtendedLogger extends Logger {
 		
 	}
 	
-	protected void InternalLog( String strLogType, String strCode, String strMessage, Throwable Thrown, Level ... level ) {
+	protected void internalLog( String strLogType, String strCode, String strMessage, Throwable Thrown, Level ... level ) {
 		  
 		CExtendedLogRecord LogRecord = null;
 		   
@@ -170,103 +213,103 @@ public class CExtendedLogger extends Logger {
 	
 	}	
 		
-	public void LogEntry( String strLogType, String strCode, String strMessage, Level ... level ) {
+	public void logEntry( String strLogType, String strCode, String strMessage, Level ... level ) {
 		
-		InternalLog( strLogType, strCode, strMessage, null, level );		
+		internalLog( strLogType, strCode, strMessage, null, level );		
 		
 	}
 
-	public void LogEntry( String strLogType, String strCode, String strMessage, Throwable Thrown, Level ... level ) {
+	public void logEntry( String strLogType, String strCode, String strMessage, Throwable Thrown, Level ... level ) {
 		
-		InternalLog( strLogType, strCode, strMessage, Thrown, level );		
+		internalLog( strLogType, strCode, strMessage, Thrown, level );		
 		
 	}
 	
-	public void LogMessage( String strCode, String strMessage, Level ... level ) {
+	public void logMessage( String strCode, String strMessage, Level ... level ) {
 		
-		InternalLog( "Message", strCode, strMessage, null, level );		
-		
-	}
-	
-	public void LogMessage( String strCode, String strMessage, Throwable Thrown, Level ... level ) {
-		
-		InternalLog( "Message", strCode, strMessage, Thrown, level );		
-		
-	}
-
-	public void LogInfo( String strCode, String strMessage, Level ... level ) {
-		
-		InternalLog( "Info", strCode, strMessage, null, level );		
+		internalLog( "Message", strCode, strMessage, null, level );		
 		
 	}
 	
-	public void LogInfo( String strCode, String strMessage, Throwable Thrown, Level ... level ) {
+	public void logMessage( String strCode, String strMessage, Throwable Thrown, Level ... level ) {
 		
-		InternalLog( "Info", strCode, strMessage, Thrown, level );		
-		
-	}
-
-	public void LogDebug( String strCode, String strMessage, Level ... level ) {
-		
-		InternalLog( "Debug", strCode, strMessage, null, level );		
+		internalLog( "Message", strCode, strMessage, Thrown, level );		
 		
 	}
 
-	public void LogDebug( String strCode, String strMessage, Throwable Thrown, Level ... level ) {
+	public void logInfo( String strCode, String strMessage, Level ... level ) {
 		
-		InternalLog( "Debug", strCode, strMessage, Thrown, level );		
-		
-	}
-
-	public void LogError( String strCode, String strMessage, Level ... level ) {
-		
-		InternalLog( "Error", strCode, strMessage, null, level );		
+		internalLog( "Info", strCode, strMessage, null, level );		
 		
 	}
 	
-	public void LogError( String strCode, String strMessage, Throwable Thrown, Level ... level ) {
+	public void logInfo( String strCode, String strMessage, Throwable Thrown, Level ... level ) {
 		
-		InternalLog( "Error", strCode, strMessage, Thrown, level );		
-		
-	}
-
-	public void LogWarning( String strCode, String strMessage, Level ... level ) {
-		
-		InternalLog( "Warning", strCode, strMessage, null, level );		
+		internalLog( "Info", strCode, strMessage, Thrown, level );		
 		
 	}
 
-	public void LogWarning( String strCode, String strMessage, Throwable Thrown, Level ... level ) {
+	public void logDebug( String strCode, String strMessage, Level ... level ) {
 		
-		InternalLog( "Warning", strCode, strMessage, Thrown, level );		
+		internalLog( "Debug", strCode, strMessage, null, level );		
 		
 	}
 
-	public void LogMethodEntry( String strCode, String strMessage, Level ... level ) {
+	public void logDebug( String strCode, String strMessage, Throwable Thrown, Level ... level ) {
 		
-		InternalLog( "MethodEntry", strCode, strMessage, null, level );		
+		internalLog( "Debug", strCode, strMessage, Thrown, level );		
+		
+	}
+
+	public void logError( String strCode, String strMessage, Level ... level ) {
+		
+		internalLog( "Error", strCode, strMessage, null, level );		
 		
 	}
 	
-	public void LogMethodEntry( String strCode, String strMessage, Throwable Thrown, Level ... level ) {
+	public void logError( String strCode, String strMessage, Throwable Thrown, Level ... level ) {
 		
-		InternalLog( "MethodEntry", strCode, strMessage, Thrown, level );		
+		internalLog( "Error", strCode, strMessage, Thrown, level );		
 		
 	}
 
-	public void LogMethodLeave( String strCode, String strMessage, Level ... level ) {
+	public void logWarning( String strCode, String strMessage, Level ... level ) {
 		
-		InternalLog( "MethodLeave", strCode, strMessage, null, level );		
+		internalLog( "Warning", strCode, strMessage, null, level );		
+		
+	}
+
+	public void logWarning( String strCode, String strMessage, Throwable Thrown, Level ... level ) {
+		
+		internalLog( "Warning", strCode, strMessage, Thrown, level );		
+		
+	}
+
+	public void logMethodEntry( String strCode, String strMessage, Level ... level ) {
+		
+		internalLog( "MethodEntry", strCode, strMessage, null, level );		
 		
 	}
 	
-	public void LogMethodLeave( String strCode, String strMessage, Throwable Thrown, Level ... level ) {
+	public void logMethodEntry( String strCode, String strMessage, Throwable Thrown, Level ... level ) {
 		
-		InternalLog( "MethodLeave", strCode, strMessage, Thrown, level );		
+		internalLog( "MethodEntry", strCode, strMessage, Thrown, level );		
 		
 	}
 
-	public void LogException( String strCode, String strMessage, Exception ExceptionInfo, Level ... level ) {
+	public void logMethodLeave( String strCode, String strMessage, Level ... level ) {
+		
+		internalLog( "MethodLeave", strCode, strMessage, null, level );		
+		
+	}
+	
+	public void logMethodLeave( String strCode, String strMessage, Throwable Thrown, Level ... level ) {
+		
+		internalLog( "MethodLeave", strCode, strMessage, Thrown, level );		
+		
+	}
+
+	public void logException( String strCode, String strMessage, Exception ExceptionInfo, Level ... level ) {
 	
 		CExtendedLogRecord LogRecord = null;
 		   
@@ -320,8 +363,128 @@ public class CExtendedLogger extends Logger {
 	        this.log( LogRecord );
 		
 		}
+		
+	}
+	
+	public void logError( String strCode, String strMessage, Error ErrorInfo, Level ... level ) {
+		
+		CExtendedLogRecord LogRecord = null;
+		   
+		if ( level.length == 0 )    
+		   LogRecord = new CExtendedLogRecord( Level.SEVERE, strMessage ); 
+		else
+		   LogRecord = new CExtendedLogRecord( level[ 0 ], strMessage ); 
 
-		//InternalLog( "Exception", strCode, strMessage, level );		
+		if ( this.isLoggable( LogRecord.getLevel() ) ) {
+			
+		    intInternalSequence++;
+	      
+		    LogRecord.setThrown( ErrorInfo );
+		    
+	        LogRecord.setLogType( "Hard-Error" );
+	        
+	        LogRecord.setThreadID( (int) Thread.currentThread().getId() );
+	      
+	        LogRecord.setThreadName( Thread.currentThread().getName() );
+	      
+	        String strFullSourceClassName = Thread.currentThread().getStackTrace()[ intCallStackLevel - 1 ].getClassName(); 
+
+	        LogRecord.setSourcePackageName( strFullSourceClassName.substring( 0, strFullSourceClassName.lastIndexOf(".") ) );
+
+	        LogRecord.setSourceClassName( strFullSourceClassName.substring( strFullSourceClassName.lastIndexOf(".") + 1 ) );
+	        
+        	LogRecord.setSourceMethodName( Thread.currentThread().getStackTrace()[ intCallStackLevel - 1 ].getMethodName() );
+	        
+        	LogRecord.setLineNumber( Thread.currentThread().getStackTrace()[ intCallStackLevel - 1 ].getLineNumber() );
+
+        	/*if ( ExceptionInfo != null ) {
+	        
+	        	strFullSourceClassName = ExceptionInfo.getStackTrace()[ 0 ].getClassName();
+	        
+	        	LogRecord.setSourceMethodName( ExceptionInfo.getStackTrace()[ 0 ].getMethodName() );
+		        
+	        	LogRecord.setLineNumber( ExceptionInfo.getStackTrace()[ 0 ].getLineNumber() );
+	        	
+	        }	
+	        else {*/
+	        
+	      
+	        //};
+	        
+	        LogRecord.setCode( strCode );
+	      
+	        LogRecord.setSequenceNumber( intInternalSequence );
+	      
+	        LogRecord.setLoggerName( this.getName() );
+	        
+	        this.log( LogRecord );
+		
+		}
+		
+	}
+	
+	public void setLogIP( String strLogIP ) {
+		
+		this.strLogIP = strLogIP;
+		
+		this.bSocketHandActive = false;
+		
+	}
+	
+	public String getLogIP() {
+		
+		return strLogIP;
+		
+	}
+	
+	public void setLogPort( int intLogPort ) {
+		
+		this.intLogPort = intLogPort;
+		
+		this.bSocketHandActive = false;
+		
+	}
+	
+	public int getLogPort() {
+		
+		return intLogPort;
+		
+	}
+	
+	public boolean activateSocketHandler( boolean bAddSocketHandToList ) {
+		
+		boolean bResult = false;
+		
+		if ( this.bSocketHandActive == false ) {
+			
+			if ( SocketHand != null && bAddSocketHandToList == false )
+				this.removeHandler( SocketHand );
+			
+			try {
+				
+    			SocketHand = new SocketHandler( strLogIP, intLogPort );
+
+				SocketHand.setFormatter( ExXmlFormatter );
+    			
+    			this.addHandler( SocketHand );
+				
+    			bResult = true;
+    			
+			}
+			catch ( Exception Ex ) {
+				
+				if ( bSetupSet == false )
+					Ex.printStackTrace();
+				else
+					this.logException( "-1020", Ex.getMessage(), Ex );
+				
+			}
+			
+			this.bSocketHandActive = true;
+			
+		}
+		
+		return bResult;
 		
 	}
 	
