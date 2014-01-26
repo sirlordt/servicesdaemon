@@ -44,7 +44,7 @@ import CommonClasses.CSecurityTokensManager;
 import CommonClasses.CServicePostExecuteResult;
 import CommonClasses.CConfigServicesDaemon;
 import CommonClasses.CNativeSessionInfoManager;
-import CommonClasses.ConfigXMLTagsServicesDaemon;
+import CommonClasses.ConstantsCommonConfigXMLTags;
 import CommonClasses.ConstantsCommonClasses;
 import CommonClasses.ConstantsMessagesCodes;
 import CommonClasses.NamesSQLTypes;
@@ -73,7 +73,7 @@ public class CSystemStartSession extends CDBAbstractService {
 
     		SystemStartSessionDBConnection.RemoveInputParameterByName( ConstantsCommonClasses._Request_ResponseFormatVersion );
 
-    		SystemStartSessionDBConnection.RemoveInputParameterByName( ConstantsSystemStartSession._Request_DBConnection_Name );
+    		SystemStartSessionDBConnection.RemoveInputParameterByName( ConstantsService._Request_DBConnection_Name );
 
     		//Force to add standards parameters ServiceSD and DBConnection
     		CInputServiceParameter InputParameter = new CInputServiceParameter( ConstantsCommonClasses._Request_ResponseFormat, false, ConstantsCommonClasses._Request_ResponseFormat_Type, ConstantsCommonClasses._Request_ResponseFormat_Length, TParameterScope.IN, ServiceLang.translate( "Response format name, example: XML-DATAPACKET, CSV, JSON" ) );
@@ -88,7 +88,7 @@ public class CSystemStartSession extends CDBAbstractService {
     		
     		SystemStartSessionDBConnection.InputParameters.add( InputParameter ); 	
     		
-    		InputParameter = new CInputServiceParameter( ConstantsSystemStartSession._Request_DBConnection_Name, true, ConstantsSystemStartSession._Request_DBConnection_Type, ConstantsSystemStartSession._Request_DBConnection_Length, TParameterScope.IN, ServiceLang.translate( "Database connection name" ) );
+    		InputParameter = new CInputServiceParameter( ConstantsService._Request_DBConnection_Name, true, ConstantsService._Request_DBConnection_Type, ConstantsService._Request_DBConnection_Length, TParameterScope.IN, ServiceLang.translate( "Database connection name" ) );
     		
     		SystemStartSessionDBConnection.InputParameters.add( InputParameter ); 	
 
@@ -115,7 +115,7 @@ public class CSystemStartSession extends CDBAbstractService {
         	this.strServiceName = "System.Start.Session";
         	this.strServiceVersion = "0.0.0.1";
 
-        	this.setupService( ConstantsSystemStartSession._Main_File_Log, this.strRunningPath + ConstantsCommonClasses._Langs_Dir + ConstantsSystemStartSession._Main_File + "." + ConstantsCommonClasses._Lang_Ext ); //Init the Logger and Lang
+        	this.setupService( ConstantsService._Main_File_Log, this.strRunningPath + ConstantsCommonClasses._Langs_Dir + ConstantsService._Main_File + "." + ConstantsCommonClasses._Lang_Ext ); //Init the Logger and Lang
         	
         	ServiceLogger.logMessage( "1", ServiceLang.translate( "Running dir: [%s]", this.strRunningPath ) );        
         	ServiceLogger.logMessage( "1", ServiceLang.translate( "Version: [%s]", this.strServiceVersion ) );        
@@ -132,7 +132,7 @@ public class CSystemStartSession extends CDBAbstractService {
 
         	SystemStartSessionConfig = CConfigSystemStartSession.getConfigSystemStartSession( ServicesDaemonConfig, OwnerConfig, this.strRunningPath );
 
-        	if ( SystemStartSessionConfig.LoadConfig( this.strRunningPath + ConstantsSystemStartSession._Conf_File, ServiceLang, ServiceLogger ) == true ) {
+        	if ( SystemStartSessionConfig.loadConfig( this.strRunningPath + ConstantsService._Conf_File, ServiceLang, ServiceLogger ) == true ) {
 
         		bResult = true;
 
@@ -201,7 +201,7 @@ public class CSystemStartSession extends CDBAbstractService {
 		
 		String strResult = strParamValueContained;
 		
-		ArrayList<String> ListOfParamsNames = Utilities.parseTokensByTags( ConfigXMLTagsServicesDaemon._StartParamValue, ConfigXMLTagsServicesDaemon._EndParamValue, strParamValueContained, true, false );
+		ArrayList<String> ListOfParamsNames = Utilities.parseTokensByTags( ConstantsCommonConfigXMLTags._StartParamValue, ConstantsCommonConfigXMLTags._EndParamValue, strParamValueContained, true, false );
 		
         for ( String strParamName : ListOfParamsNames ) {
         	
@@ -209,7 +209,7 @@ public class CSystemStartSession extends CDBAbstractService {
         	
         	if ( strParamValue != null ) {
 
-        		strResult = strResult.replace( ConfigXMLTagsServicesDaemon._StartParamValue + strParamName + ConfigXMLTagsServicesDaemon._EndParamValue, strParamValue );
+        		strResult = strResult.replace( ConstantsCommonConfigXMLTags._StartParamValue + strParamName + ConstantsCommonConfigXMLTags._EndParamValue, strParamValue );
         		
         	}
         	
@@ -599,7 +599,7 @@ public class CSystemStartSession extends CDBAbstractService {
 
 			if ( OwnerConfig != null ) {
 
-				String strPostDBConnection = Request.getParameter( ConstantsSystemStartSession._Request_DBConnection_Name );
+				String strPostDBConnection = Request.getParameter( ConstantsService._Request_DBConnection_Name );
 
 				if ( strPostDBConnection != null && strPostDBConnection.isEmpty() == false ) {
 
@@ -651,10 +651,10 @@ public class CSystemStartSession extends CDBAbstractService {
 										LocalConfigDBConnection.strSessionKey = this.replaceMacrosNamesForValues( LocalConfigDBConnection.strSessionKey, Request.getRemoteAddr(), Request.getHeader( "X-Forwarded-For" ), LocalConfigDBConnection.strDatabase, LocalConfigDBConnection.strName, DateFormat.format( SystemDateTime ), TimeFormat.format( SystemDateTime ), DateTimeFormat.format( SystemDateTime ) );
 										LocalConfigDBConnection.strSessionUser = this.replaceInputParametersNamesForValues( LocalConfigDBConnection.strSessionUser, Request );
 										LocalConfigDBConnection.strSessionPassword = this.replaceInputParametersNamesForValues( LocalConfigDBConnection.strSessionPassword, Request );
-										LocalConfigDBConnection.strSessionPassword = Utilities.uncryptString( ConfigXMLTagsSystemStartSession._Password_Crypted, ConfigXMLTagsSystemStartSession._Password_Crypted_Sep, ConstantsCommonClasses._Crypt_Algorithm, LocalConfigDBConnection.strSessionPassword, ServiceLogger, ServiceLang );
+										LocalConfigDBConnection.strSessionPassword = Utilities.uncryptString( ConstantsConfigXMLTags._Password_Crypted, ConstantsConfigXMLTags._Password_Crypted_Sep, ConstantsCommonClasses._Crypt_Algorithm, LocalConfigDBConnection.strSessionPassword, ServiceLogger, ServiceLang );
 										LocalConfigDBConnection.strTransactionUser = this.replaceInputParametersNamesForValues( LocalConfigDBConnection.strTransactionUser, Request );
 										LocalConfigDBConnection.strTransactionPassword = this.replaceInputParametersNamesForValues( LocalConfigDBConnection.strTransactionPassword, Request );
-										LocalConfigDBConnection.strTransactionPassword = Utilities.uncryptString( ConfigXMLTagsSystemStartSession._Password_Crypted, ConfigXMLTagsSystemStartSession._Password_Crypted_Sep, ConstantsCommonClasses._Crypt_Algorithm, LocalConfigDBConnection.strTransactionPassword, ServiceLogger, ServiceLang );
+										LocalConfigDBConnection.strTransactionPassword = Utilities.uncryptString( ConstantsConfigXMLTags._Password_Crypted, ConstantsConfigXMLTags._Password_Crypted_Sep, ConstantsCommonClasses._Crypt_Algorithm, LocalConfigDBConnection.strTransactionPassword, ServiceLogger, ServiceLang );
 										LocalConfigDBConnection.strSessionKey = this.replaceInputParametersNamesForValues( LocalConfigDBConnection.strSessionKey, Request );
 
 										CAbstractDBConnection DBConnection = DBEngine.getDBConnection( LocalConfigDBConnection.getDBEngineConfigConnection( true ), ServiceLogger, ServiceLang );
@@ -672,12 +672,12 @@ public class CSystemStartSession extends CDBAbstractService {
 
 											if ( strSQL.isEmpty() == false ) { //database
 
-												if ( SystemStartSessionDBConnection.strSQLType.equals( ConfigXMLTagsSystemStartSession._SQLType_sql )  ) {
+												if ( SystemStartSessionDBConnection.strSQLType.equals( ConstantsConfigXMLTags._SQLType_sql )  ) {
 
 													StartSessionResultSet = DBEngine.executeQuerySQLByInputServiceParameters( DBConnection, Request, InputServiceParameters, this.getMacrosTypes(), this.getMacrosNames(), strMacrosValues, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, LocalConfigDBConnection.strDateTimeFormat, strSQL, ServiceLogger, ServiceLang );
 
 												}
-												else if ( SystemStartSessionDBConnection.strSQLType.equals( ConfigXMLTagsSystemStartSession._SQLType_stored_procedure )  ) {
+												else if ( SystemStartSessionDBConnection.strSQLType.equals( ConstantsConfigXMLTags._SQLType_stored_procedure )  ) {
 
 													StartSessionResultSet = DBEngine.executeCallableStatementByInputServiceParameters( DBConnection, Request, InputServiceParameters, this.getMacrosTypes(), this.getMacrosNames(), strMacrosValues, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, LocalConfigDBConnection.strDateTimeFormat, strSQL, ServiceLogger, ServiceLang );
 
@@ -687,7 +687,7 @@ public class CSystemStartSession extends CDBAbstractService {
 
 											//DBEngine.close( DBConnection, ServiceLogger, ServiceLang );
 
-											if ( ConfigNativeDBConnection.strAuthType.equals( ConfigXMLTagsSystemStartSession._Auth_Type_Engine ) ) {
+											if ( ConfigNativeDBConnection.strAuthType.equals( ConstantsConfigXMLTags._Auth_Type_Engine ) ) {
 											
 												afterCheckSQL( 1, DBEngine, SystemStartSessionDBConnection, DBConnection, Request, InputServiceParameters, this.getMacrosTypes(), this.getMacrosNames(), strMacrosValues, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, LocalConfigDBConnection.strDateTimeFormat, ServiceLogger, ServiceLang );
 
@@ -706,7 +706,7 @@ public class CSystemStartSession extends CDBAbstractService {
 												else {*/
 
 												//Check field value
-												if ( SystemStartSessionDBConnection.strType.equals( ConfigXMLTagsSystemStartSession._Type_check_field_value ) ) {
+												if ( SystemStartSessionDBConnection.strType.equals( ConstantsConfigXMLTags._Type_check_field_value ) ) {
 
 													CMemoryFieldData Field = StartSessionResultSet.getFieldByName( SystemStartSessionDBConnection.strFieldName );
 
@@ -817,7 +817,7 @@ public class CSystemStartSession extends CDBAbstractService {
 
 												}
 
-												if ( ConfigNativeDBConnection.strAuthType.equals( ConfigXMLTagsSystemStartSession._Auth_Type_Engine ) ) {
+												if ( ConfigNativeDBConnection.strAuthType.equals( ConstantsConfigXMLTags._Auth_Type_Engine ) ) {
 
 													afterCheckSQL( 1, DBEngine, SystemStartSessionDBConnection, DBConnection, Request, InputServiceParameters, this.getMacrosTypes(), this.getMacrosNames(), strMacrosValues, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, LocalConfigDBConnection.strDateTimeFormat, ServiceLogger, ServiceLang );
 
@@ -959,7 +959,7 @@ public class CSystemStartSession extends CDBAbstractService {
 						Response.setContentType( ResponseFormat.getContentType() );
 						Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
 
-						String strResponseBuffer = ResponseFormat.formatSimpleMessage( "", "", -1001, ServiceLang.translate( "The [%s] parameter is required for service and was not sent or its contents is empty", ConstantsSystemStartSession._Request_DBConnection_Name ), true, strResponseFormatVersion, (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_DateTime_Format, null ), (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_Date_Format, null ), (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_Time_Format, null ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
+						String strResponseBuffer = ResponseFormat.formatSimpleMessage( "", "", -1001, ServiceLang.translate( "The [%s] parameter is required for service and was not sent or its contents is empty", ConstantsService._Request_DBConnection_Name ), true, strResponseFormatVersion, (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_DateTime_Format, null ), (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_Date_Format, null ), (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_Time_Format, null ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 						Response.getWriter().print( strResponseBuffer );
 
 					}

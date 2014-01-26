@@ -24,6 +24,7 @@
 <entry key="The file in the path [%s] cannot read, please check the owner and permissions">El archivo en la ruta [%s] no se puede leer, por favor verifique el dueño y los permisos</entry>
 <entry key="The file in the path [%s] not exists">El archivo en la ruta [%s] no existe</entry>
 <entry key="The [%s] attribute value [%s] is not valid ip address">El atributo [%s] con el valor [%s] no es una dirección ip válida</entry>
+<entry key="The [%s] attribute value [%s] is not valid URL address">El atributo [%s] con el valor [%s] no es una dirección URL válida</entry>
 <entry key="The [%s] attribute value [%s] is out of range. Must be integer value in the next inclusive range, minimum [%s] and maximum [%s]">El atributo [%s] con valor de [%s] se encuentra fuera del rango. Debe ser un número entero en el siguiente rango inclusivo, mínimo [%s] y máximo [%s]</entry>
 <entry key="Failed to load config from XML node section: [%s]">Falló al cargar de la configuración de la sección del nodo XML: [%s]</entry>
 
@@ -37,6 +38,7 @@
 
 <entry key="The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node">El atributo [%s] no fue encontrado, para el nodo [%s] en la posición relativa [%s], ignorando el nodo</entry>
 <entry key="The [%s] attribute not found, for the node [%s] at relative index [%s]">El atributo [%s] no fue encontrado, para el nodo [%s] en la posición relativa [%s]</entry>
+<entry key="The [%s] attribute not found, for the node [%s]">El atributo [%s] no fue encontrado, para el nodo [%s]</entry>
 <entry key="The [%s] attribute not found, for the section [%s] at relative index [%s], ignoring the section">El atributo [%s] no fue encontrado, para la sección [%s] en la posición relativa [%s], ignorando la sección</entry>
 <entry key="The [%s] attribute not found, for the section [%s], ignoring the section">El atributo [%s] no fue encontrado, para la sección [%s], ignorando la sección</entry>
 <entry key="The [%s] attribute cannot empty string, for the node [%s] at relative index [%s]">El atributo [%s] no puede ser una cadena vacia, para el nodo [%s] en la posición relativa [%s]</entry>

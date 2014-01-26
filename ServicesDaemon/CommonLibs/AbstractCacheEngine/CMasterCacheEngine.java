@@ -72,6 +72,111 @@ public class CMasterCacheEngine implements IAbstractCacheEngine {
 	}
 
 	@Override
+	public void beginTransaction( CExtendedLogger Logger, CLanguage Lang ) {
+
+		try {
+			
+			if ( intCountRegisteredCacheEngines > 0 ) {
+
+				for ( int I=0; I < RegisteredCacheEngines.size(); I++ ) {
+
+					IAbstractCacheEngine CacheEngineInstance = RegisteredCacheEngines.get( I );
+					
+					CacheEngineInstance.beginTransaction( Logger, Lang );
+
+				}
+
+			}
+			else {
+				
+				Logger.logWarning( "-1", Lang.translate( "Not registered cache engines found" ) );        
+				
+			}
+		
+		} 
+		catch ( Exception Ex ) {
+
+			if ( Logger != null ) {
+        		
+				Logger.logException( "-1015", Ex.getMessage(), Ex );
+				
+			}	
+
+		}
+		
+	}
+
+	@Override
+	public void commitTransaction( CExtendedLogger Logger, CLanguage Lang ) {
+
+		try {
+			
+			if ( intCountRegisteredCacheEngines > 0 ) {
+
+				for ( int I=0; I < RegisteredCacheEngines.size(); I++ ) {
+
+					IAbstractCacheEngine CacheEngineInstance = RegisteredCacheEngines.get( I );
+					
+					CacheEngineInstance.commitTransaction( Logger, Lang );
+
+				}
+
+			}
+			else {
+				
+				Logger.logWarning( "-1", Lang.translate( "Not registered cache engines found" ) );        
+				
+			}
+		
+		} 
+		catch ( Exception Ex ) {
+
+			if ( Logger != null ) {
+        		
+				Logger.logException( "-1015", Ex.getMessage(), Ex );
+				
+			}	
+
+		}
+		
+	}
+
+	@Override
+	public void rollbackTransaction( CExtendedLogger Logger, CLanguage Lang ) {
+
+		try {
+			
+			if ( intCountRegisteredCacheEngines > 0 ) {
+
+				for ( int I=0; I < RegisteredCacheEngines.size(); I++ ) {
+
+					IAbstractCacheEngine CacheEngineInstance = RegisteredCacheEngines.get( I );
+					
+					CacheEngineInstance.rollbackTransaction( Logger, Lang );
+
+				}
+
+			}
+			else {
+				
+				Logger.logWarning( "-1", Lang.translate( "Not registered cache engines found" ) );        
+				
+			}
+		
+		} 
+		catch ( Exception Ex ) {
+
+			if ( Logger != null ) {
+        		
+				Logger.logException( "-1015", Ex.getMessage(), Ex );
+				
+			}	
+
+		}
+		
+	}
+	
+	@Override
 	public boolean initializeCacheEngine( CExtendedLogger Logger, CLanguage Lang ) {
 
 		return false;
@@ -129,7 +234,7 @@ public class CMasterCacheEngine implements IAbstractCacheEngine {
 
 			}
     		
-			int intCountRegisteredCacheEngines = RegisteredCacheEngines.size();
+			intCountRegisteredCacheEngines = RegisteredCacheEngines.size();
 			
 			Logger.logMessage( "1", Lang.translate( "Count of cache engines registered: [%s]", Integer.toString( intCountRegisteredCacheEngines ) ) );        
 
@@ -274,6 +379,45 @@ public class CMasterCacheEngine implements IAbstractCacheEngine {
 	}
 
 	@Override
+	public boolean replaceOnCache( String strMaster, String strKey, int intLiveSeconds, Object ObjectToStore, CExtendedLogger Logger, CLanguage Lang ) {
+
+		boolean bResult = false;
+
+		try {
+		
+			if ( intCountRegisteredCacheEngines > 0 ) {
+
+				for ( int I=0; I < RegisteredCacheEngines.size(); I++ ) {
+
+					IAbstractCacheEngine CacheEngineInstance = RegisteredCacheEngines.get( I );
+					
+					bResult = CacheEngineInstance.replaceOnCache( strMaster, strKey, intLiveSeconds, ObjectToStore, Logger, Lang );
+
+				}
+
+			}
+			else {
+				
+				Logger.logWarning( "-1", Lang.translate( "Not registered cache engines found" ) );        
+				
+			}
+		
+		} 
+		catch ( Exception Ex ) {
+
+			if ( Logger != null ) {
+        		
+				Logger.logException( "-1015", Ex.getMessage(), Ex );
+				
+			}	
+
+		}
+		
+		return bResult;
+		
+	}
+
+	@Override
 	public Object getFromCache( String strMaster, String strKey, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		Object Result = null;
@@ -374,8 +518,7 @@ public class CMasterCacheEngine implements IAbstractCacheEngine {
 	        }
 		
 		});
-		
-		
-	}
 	
+	}
+
 }

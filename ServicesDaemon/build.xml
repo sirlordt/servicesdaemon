@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="ServicesDaemon" default="00_Build-All" basedir=".">
  
-    <target name="00_Build-All" depends="01_Init, 02_Create_Bin_Folders_And_Files_ServicesDaemon, 03_Compile-CommonLibs-Source, 04_Create_CommonLibs.Jar, 05_Create_Distro-Bin_Folders_And_Files_ServicesDaemon, 06_Compile-ServicesDaemon-Source, 07_Compile-CryptPasswordSD-Source, 08_Create-CryptPasswordSD.jar, 09_Create-ServicesDaemon.jar, 10_Create_Bin_Folders_And_Files_DBServicesManager, 11_Create_Distro-Bin_Folders_And_Files_DBServicesManager, 12_Compile-DBCommonLibs-Source, 13_Generate-DBCommonLibs.jar, 14_Compile-DBServicesManager-Source, 15_Generate-DBServicesManager.jar, 16_Compile-DBEngines-Source, 17_Generate-DBEngines.jar, 18_Compile-DBServices-Source, 19_Generate-DBServices-Jar-Files" description="Compile ALL and package ALL">
+    <target name="00_Build-All" depends="01_Init, 02_Create_Bin_Folders_And_Files_ServicesDaemon, 03_Compile-CommonLibs-Source, 04_Create_CommonLibs.Jar, 05_Create_Distro-Bin_Folders_And_Files_ServicesDaemon, 06_Compile-ServicesDaemon-Source, 07_Compile-CryptPasswordSD-Source, 08_Create-CryptPasswordSD.jar, 09_Create-ServicesDaemon.jar, 10_Create_Bin_Folders_And_Files_DBServicesManager, 11_Create_Distro-Bin_Folders_And_Files_DBServicesManager, 12_Compile-DBCommonLibs-Source, 13_Generate-DBCommonLibs.jar, 14_Compile-DBServicesManager-Source, 15_Generate-DBServicesManager.jar, 16_Compile-DBEngines-Source, 17_Generate-DBEngines.jar, 18_Compile-DBServices-Source, 19_Generate-DBServices-Jar-Files, 20_Compile-CacheEngines-Source, 21_Generate-CEngines-Jar-Files" description="Compile ALL and package ALL">
         <echo message="Compile ALL and create ALL .jar file" />
     </target>
  
@@ -193,13 +193,21 @@
         <property name="SystemDatabaseInfoName" value="SystemDatabaseInfo" />
         <property name="SystemDatabaseInfoVersion" value="0.0.0.1" />
     	
+        <property name="MemcachedCEngineName" value="MemcachedCEngine" />
+        <property name="MemcachedCEngineVersion" value="0.0.0.1" />
+        
+        <property name="bin-MemcachedCEngine" value="${bin}/MemcachedCEngine/" />
+        <property name="src-MemcachedCEngine" value="MemcachedCEngine/MemcachedCEngine" />
+        
         <property name="EnableDebug" value="true" />
     	
     	<path id="class_path_jars">
-    	        
-    	        <fileset dir="${src-ServicesDaemon}/Libs">
-    	            <include name="**/*.jar" />
-    	        </fileset>
+    	      
+    		<fileset dir="${src-ServicesDaemon}/Libs">
+
+    			<include name="**/*.jar" />
+    	    
+    		</fileset>
     	        
     	</path> 
     	
@@ -994,5 +1002,55 @@
         </copy> 
     	
     </target>
+	
+    <target name="20_Compile-CacheEngines-Source" depends="01_Init"  description="Only compile MemcachedCEngine source folder">
+        
+        <mkdir dir="${bin}"/>
+        <mkdir dir="${bin}/${MemcachedCEngineName}"/>
+        
+        <path id="class_path_cache_jars">
+              
+            <fileset dir="${src-MemcachedCEngine}/Libs">
+                <include name="**/*.jar" />
+            </fileset>
+                
+        </path> 
+    	
+        <javac includeantruntime="false" destdir="${bin}" includes="**/*.java" debug="${EnableDebug}">
+            <src path="${src-MemcachedCEngine}"/>
+            <classpath refid="class_path_jars"/>
+            <classpath refid="class_path_cache_jars"/>
+        </javac>
+        
+    </target>
+
+	<target name="21_Generate-CEngines-Jar-Files" depends="01_Init"  description="Generate MemcachedCEngine.jar from source folder">
+
+        <delete file="${distro-bin-ServicesDaemon}/CacheEngines/MemcachedCEngine/${MemcachedCEngineName}.jar"/>
+
+        <jar jarfile="${distro-bin-ServicesDaemon}/CacheEngines/MemcachedCEngine/${MemcachedCEngineName}.jar" index="no" compress="yes" update="true">
+            <fileset dir="${bin}" includes="${MemcachedCEngineName}/**/*.class"/>
+            <manifest>
+                <attribute name="Built-By" value="${user.name}" />
+                <attribute name="Specification-Title" value="${MemcachedCEngineName}" />
+                <attribute name="Specification-Version" value="${MemcachedCEngineVersion}" />
+            </manifest>
+            <service type="AbstractCacheEngine.IAbstractCacheEngine">
+                <provider classname="MemcachedCEngine.CMemcachedCEngine"/>
+            </service>  
+        </jar>
+    
+        <copy file="${distro-bin-ServicesDaemon}/CacheEngines/MemcachedCEngine/${MemcachedCEngineName}.jar" todir="${bin-ServicesDaemon}/CacheEngines/MemcachedCEngine" overwrite="true"/>
+        <copy file="${src-MemcachedCEngine}/MemcachedCEngine.conf" todir="${bin-ServicesDaemon}/CacheEngines/MemcachedCEngine" overwrite="true"/>
+        
+		<copy todir="${bin-ServicesDaemon}/CacheEngines/MemcachedCEngine/Libs" overwrite="true">
+		
+            <fileset dir="${src-MemcachedCEngine}/Libs">
+                <include name="**/*.jar" />
+            </fileset>
+        	
+        </copy>
+	
+	</target>
 	
 </project>

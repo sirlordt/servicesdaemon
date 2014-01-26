@@ -59,7 +59,7 @@ public class CSystemEndTransaction extends CDBAbstractService {
 			this.strServiceName = "System.End.Transaction";
 			this.strServiceVersion = "0.0.0.1";
 
-			this.setupService( ConstantsSystemEndTransaction._Main_File_Log, this.strRunningPath + ConstantsCommonClasses._Langs_Dir + ConstantsSystemEndTransaction._Main_File + "." + ConstantsCommonClasses._Lang_Ext ); //Init the Logger and Lang
+			this.setupService( ConstantsService._Main_File_Log, this.strRunningPath + ConstantsCommonClasses._Langs_Dir + ConstantsService._Main_File + "." + ConstantsCommonClasses._Lang_Ext ); //Init the Logger and Lang
 
 			ServiceLogger.logMessage( "1", ServiceLang.translate( "Running dir: [%s]", this.strRunningPath ) );        
 			ServiceLogger.logMessage( "1", ServiceLang.translate( "Version: [%s]", this.strServiceVersion ) );        
@@ -76,7 +76,7 @@ public class CSystemEndTransaction extends CDBAbstractService {
 
 			SystemEndTransactionConfig = CConfigSystemEndTransaction.getSystemEndTransactionConfig( ServicesDaemonConfig, OwnerConfig, this.strRunningPath );
 
-			if ( SystemEndTransactionConfig.LoadConfig( this.strRunningPath + ConstantsSystemEndTransaction._Conf_File, ServiceLang, ServiceLogger ) == true ) {
+			if ( SystemEndTransactionConfig.loadConfig( this.strRunningPath + ConstantsService._Conf_File, ServiceLang, ServiceLogger ) == true ) {
 
 				bResult = true;
 

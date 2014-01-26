@@ -58,7 +58,7 @@ public class CSystemCommitTransaction extends CDBAbstractService {
 			this.strServiceName = "System.Commit.Transaction";
 			this.strServiceVersion = "0.0.0.1";
 
-			this.setupService( ConstantsSystemCommitTransaction._Main_File_Log, this.strRunningPath + ConstantsCommonClasses._Langs_Dir + ConstantsSystemCommitTransaction._Main_File + "." + ConstantsCommonClasses._Lang_Ext ); //Init the Logger and Lang
+			this.setupService( ConstantsService._Main_File_Log, this.strRunningPath + ConstantsCommonClasses._Langs_Dir + ConstantsService._Main_File + "." + ConstantsCommonClasses._Lang_Ext ); //Init the Logger and Lang
 			
 			ServiceLogger.logMessage( "1", ServiceLang.translate( "Running dir: [%s]", this.strRunningPath ) );        
 			ServiceLogger.logMessage( "1", ServiceLang.translate( "Version: [%s]", this.strServiceVersion ) );        
@@ -75,7 +75,7 @@ public class CSystemCommitTransaction extends CDBAbstractService {
 
 			SystemCommitTransactionConfig = CConfigSystemCommitTransaction.getSystemCommitTransactionConfig( ServicesDaemonConfig, OwnerConfig, this.strRunningPath );
 
-			if ( SystemCommitTransactionConfig.LoadConfig( this.strRunningPath + ConstantsSystemCommitTransaction._Conf_File, ServiceLang, ServiceLogger ) == true ) {
+			if ( SystemCommitTransactionConfig.loadConfig( this.strRunningPath + ConstantsService._Conf_File, ServiceLang, ServiceLogger ) == true ) {
 
 				bResult = true;
 

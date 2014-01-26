@@ -58,7 +58,7 @@ import CommonClasses.CConfigNetworkInterface;
 import CommonClasses.CCustomErrorHandler;
 import CommonClasses.CLanguage;
 import CommonClasses.CConfigServicesDaemon;
-import CommonClasses.ConfigXMLTagsServicesDaemon;
+import CommonClasses.ConstantsCommonConfigXMLTags;
 import CommonClasses.ConstantsCommonClasses;
 import CommonClasses.ConstantsMessagesCodes;
 import CommonClasses.InitArgsConstants;
@@ -431,7 +431,7 @@ public class CProgramRunner implements IMessageObject {
 				
 			if ( RegisteredServicesManagers.size() == 0 ) {  
 			 
-	    		ServicesDaemonLogger.logWarning( "-1",  ServicesDaemonLang.translate( "Using default services manager for context path [%s]", ConfigXMLTagsServicesDaemon._Context_Path_Default ) );        
+	    		ServicesDaemonLogger.logWarning( "-1",  ServicesDaemonLang.translate( "Using default services manager for context path [%s]", ConstantsCommonConfigXMLTags._Context_Path_Default ) );        
 	
 	    		CAbstractServicesManager AbstractServicesManager = new CAbstractServicesManager();
 	    		
@@ -524,7 +524,7 @@ public class CProgramRunner implements IMessageObject {
 			
 				CLanguage.LoggerMissingTranslations = CExtendedLogger.getLogger( ConstantsCommonClasses._Logger_Name_Missing_Translations );
 
-				CLanguage.LoggerMissingTranslations.setupLogger( false, this.strRunningPath + ConstantsCommonClasses._Logs_System_Dir, ConstantsCommonClasses._Missing_Translations_File_Log, "*.*", false, "ALL", ServicesDaemonConfig.strLogIP, ServicesDaemonConfig.intLogPort );
+				CLanguage.LoggerMissingTranslations.setupLogger( "", false, this.strRunningPath + ConstantsCommonClasses._Logs_System_Dir, ConstantsCommonClasses._Missing_Translations_File_Log, "*.*", false, "ALL", ServicesDaemonConfig.strLogIP, ServicesDaemonConfig.intLogPort, ServicesDaemonConfig.strHTTPLogURL, ServicesDaemonConfig.strHTTPLogUser, ServicesDaemonConfig.strHTTPLogPassword, ServicesDaemonConfig.strProxyIP, ServicesDaemonConfig.intProxyPort, ServicesDaemonConfig.strProxyUser, ServicesDaemonConfig.strProxyPassword );
 			
 			}
 
@@ -582,6 +582,36 @@ public class CProgramRunner implements IMessageObject {
     	
     } 
     
+    /*
+    protected void testCache( CMasterCacheEngine MasterCacheEngine ) throws Exception {
+	 	
+    	MasterCacheEngine.addToCache( "", "test01", 100000, "1", ServicesDaemonLogger, ServicesDaemonLang );
+
+	 	MasterCacheEngine.addToCache( "", "test02", 100000, "1", ServicesDaemonLogger, ServicesDaemonLang );
+
+	 	Thread.sleep( 3000 );
+		
+	 	MasterCacheEngine.replaceOnCache( "", "test01", 100000, "2", ServicesDaemonLogger, ServicesDaemonLang );
+
+	 	MasterCacheEngine.removeFromCache( "", "test02", ServicesDaemonLogger, ServicesDaemonLang );
+	 	
+	 	String strValue = (String) MasterCacheEngine.getFromCache( "", "test01", ServicesDaemonLogger, ServicesDaemonLang );
+	 	
+	 	System.out.println( "tets01 => " + strValue );
+	 	
+	 	strValue = (String) MasterCacheEngine.getFromCache( "", "test02", ServicesDaemonLogger, ServicesDaemonLang );
+	 	
+	 	System.out.println( "tets02 => " + strValue );
+	 	
+	 	Future<Object> F = MasterCacheEngine.asyncGetFromCache( "", "test01", ServicesDaemonLogger, ServicesDaemonLang );
+	 	
+	 	strValue = (String) F.get();
+	 	
+	 	System.out.println( "tets01 => " + strValue );
+	 	
+    }
+    */
+    
     public int runProgram( String strRunningPath, String[] args ) throws Exception {
     	
 		this.strRunningPath = strRunningPath;
@@ -589,7 +619,7 @@ public class CProgramRunner implements IMessageObject {
 		InitArgs = new ArrayList<String>( Arrays.asList( args ) );
 		
 		ServicesDaemonLogger = CExtendedLogger.getLogger( ConstantsCommonClasses._Logger_Name );
-		ServicesDaemonLogger.setupLogger( InitArgs.contains( InitArgsConstants._LogToScreen ), this.strRunningPath + ConstantsCommonClasses._Logs_System_Dir, ConstantsCommonClasses._Main_File_Log, ConstantsCommonClasses._Log_Class_Method, ConstantsCommonClasses._Log_Exact_Match, ConstantsCommonClasses._Log_Level, "", -1 );
+		ServicesDaemonLogger.setupLogger( "", InitArgs.contains( InitArgsConstants._LogToScreen ), this.strRunningPath + ConstantsCommonClasses._Logs_System_Dir, ConstantsCommonClasses._Main_File_Log, ConstantsCommonClasses._Log_Class_Method, ConstantsCommonClasses._Log_Exact_Match, ConstantsCommonClasses._Log_Level, "", -1, "", "", "", "", -1, "", "" );
 
 		CLanguage CommonlLang = CLanguage.getLanguage( ServicesDaemonLogger, this.strRunningPath + ConstantsCommonClasses._Langs_Dir + ConstantsCommonClasses._Common_Lang_File ); 
 		
@@ -607,9 +637,11 @@ public class CProgramRunner implements IMessageObject {
 	 	
 	 	MasterCacheEngine.loadAndRegisterCacheEnginesFromDir( this.strRunningPath + ConstantsCommonClasses._Cache_Engines_Dir, null, ServicesDaemonLogger, ServicesDaemonLang );
 		
-		if ( GlobalConfig.LoadConfig( this.strRunningPath + ConstantsCommonClasses._Conf_File, ServicesDaemonLang, ServicesDaemonLogger ) == true ) {
+	 	//this.testCache( MasterCacheEngine );
+	 	
+		if ( GlobalConfig.loadConfig( this.strRunningPath + ConstantsCommonClasses._Conf_File, ServicesDaemonLang, ServicesDaemonLogger ) == true ) {
         	
-    		GlobalConfig.InitArgs = InitArgs; //Save the init arguments
+		 	GlobalConfig.InitArgs = InitArgs; //Save the init arguments
 			
 			ServicesDaemonLogger.logMessage( "1", ServicesDaemonLang.translate( "Config Ok" ) );        
 

@@ -10,7 +10,7 @@
  ******************************************************************************/
 package SystemPing;
 
-public interface ConstantsSystemPing {
+public interface ConstantsService {
 
 	public static final String _Request_Ping          = "Ping";
 	public final static String _Request_Ping_Type     = "Bigint";

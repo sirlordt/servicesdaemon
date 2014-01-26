@@ -18,9 +18,17 @@ public interface IAbstractCacheEngine {
 	
 	public Object getNativeCacheInstance();
 	
+	public void beginTransaction( CExtendedLogger Logger, CLanguage Lang );
+	
+	public void commitTransaction( CExtendedLogger Logger, CLanguage Lang );
+	
+	public void rollbackTransaction( CExtendedLogger Logger, CLanguage Lang );
+	
 	public boolean initializeCacheEngine( CExtendedLogger Logger, CLanguage Lang );
 	
 	boolean addToCache( String strMaster, String strKey, int intLiveSeconds, Object ObjectToStore, CExtendedLogger Logger, CLanguage Lang );
+
+	boolean replaceOnCache( String strMaster, String strKey, int intLiveSeconds, Object ObjectToStore, CExtendedLogger Logger, CLanguage Lang );
 
 	Object getFromCache( String strMaster, String strKey, CExtendedLogger Logger, CLanguage Lang );
 	

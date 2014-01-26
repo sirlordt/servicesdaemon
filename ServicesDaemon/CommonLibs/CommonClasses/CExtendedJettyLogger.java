@@ -40,7 +40,7 @@ public class CExtendedJettyLogger extends AbstractLogger {
 			if ( GlobalConfig == null )
 				GlobalConfig = CConfigServicesDaemon.getConfigServicesDaemon();
 
-			ExtendedLogger.setupLogger( GlobalConfig.InitArgs.contains( "-LogToScreen" ), GlobalConfig.getRunningPath() + ConstantsCommonClasses._Logs_System_Dir, ConstantsCommonClasses._Main_Jetty_File_Log, GlobalConfig.strClassNameMethodName, GlobalConfig.bExactMatch, GlobalConfig.LoggingLevel.toString(), GlobalConfig.strLogIP, GlobalConfig.intLogPort );
+			ExtendedLogger.setupLogger( GlobalConfig.strLogInstanceID, GlobalConfig.InitArgs.contains( "-LogToScreen" ), GlobalConfig.getRunningPath() + ConstantsCommonClasses._Logs_System_Dir, ConstantsCommonClasses._Main_Jetty_File_Log, GlobalConfig.strClassNameMethodName, GlobalConfig.bExactMatch, GlobalConfig.LoggingLevel.toString(), GlobalConfig.strLogIP, GlobalConfig.intLogPort, GlobalConfig.strHTTPLogURL, GlobalConfig.strHTTPLogUser, GlobalConfig.strHTTPLogPassword, GlobalConfig.strProxyIP, GlobalConfig.intProxyPort, GlobalConfig.strProxyUser, GlobalConfig.strProxyPassword );
 		
 			//this class is a wrapper for the real logger, adjust the call stack level for precise logging info
 			ExtendedLogger.setCallStackLevel( 4 ); 

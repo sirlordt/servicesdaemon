@@ -53,7 +53,7 @@ public class CSystemPing extends CDBAbstractService {
 			this.strServiceName = "System.Ping";
 			this.strServiceVersion = "0.0.0.1";
 
-			this.setupService( ConstantsSystemPing._Main_File_Log, this.strRunningPath + ConstantsCommonClasses._Langs_Dir + ConstantsSystemPing._Main_File + "." + ConstantsCommonClasses._Lang_Ext ); //Init the Logger and Lang
+			this.setupService( ConstantsService._Main_File_Log, this.strRunningPath + ConstantsCommonClasses._Langs_Dir + ConstantsService._Main_File + "." + ConstantsCommonClasses._Lang_Ext ); //Init the Logger and Lang
 
 			ServiceLogger.logMessage( "1", ServiceLang.translate( "Running dir: [%s]", this.strRunningPath ) );        
 			ServiceLogger.logMessage( "1", ServiceLang.translate( "Version: [%s]", this.strServiceVersion ) );        
@@ -84,7 +84,7 @@ public class CSystemPing extends CDBAbstractService {
 
 			ServiceInputParameters.add( InputParameter );
 
-			InputParameter = new CInputServiceParameter( ConstantsSystemPing._Request_Ping, true, ConstantsSystemPing._Request_Ping_Type, "0", TParameterScope.IN, ServiceLang.translate( "Whole number sent as a parameter and return increased by 1" ) );
+			InputParameter = new CInputServiceParameter( ConstantsService._Request_Ping, true, ConstantsService._Request_Ping_Type, "0", TParameterScope.IN, ServiceLang.translate( "Whole number sent as a parameter and return increased by 1" ) );
 
 			ServiceInputParameters.add( InputParameter );
 
@@ -157,17 +157,17 @@ public class CSystemPing extends CDBAbstractService {
 
 					CachedRowset.moveToCurrentRow();*/
 					
-					Long lngPing = Long.parseLong( Request.getParameter( ConstantsSystemPing._Request_Ping ) );
+					Long lngPing = Long.parseLong( Request.getParameter( ConstantsService._Request_Ping ) );
 
 					CMemoryRowSet ResultMemoryRowSet = new CMemoryRowSet( false );
 					
-					ResultMemoryRowSet.addField( ConstantsSystemPing._Response_Pong, Types.BIGINT, NamesSQLTypes._BIGINT, 0, NamesSQLTypes._BIGINT );
-					ResultMemoryRowSet.addField( ConstantsSystemPing._Response_Date_Request, Types.DATE, NamesSQLTypes._DATE, 0, NamesSQLTypes._DATE );
-					ResultMemoryRowSet.addField( ConstantsSystemPing._Response_Time_Request, Types.TIME, NamesSQLTypes._TIME, 0, NamesSQLTypes._TIME );
+					ResultMemoryRowSet.addField( ConstantsService._Response_Pong, Types.BIGINT, NamesSQLTypes._BIGINT, 0, NamesSQLTypes._BIGINT );
+					ResultMemoryRowSet.addField( ConstantsService._Response_Date_Request, Types.DATE, NamesSQLTypes._DATE, 0, NamesSQLTypes._DATE );
+					ResultMemoryRowSet.addField( ConstantsService._Response_Time_Request, Types.TIME, NamesSQLTypes._TIME, 0, NamesSQLTypes._TIME );
 					
-					ResultMemoryRowSet.addData( ConstantsSystemPing._Response_Pong, lngPing + 1 );
-					ResultMemoryRowSet.addData( ConstantsSystemPing._Response_Date_Request, new Date( System.currentTimeMillis() ) );
-					ResultMemoryRowSet.addData( ConstantsSystemPing._Response_Time_Request, new Time( System.currentTimeMillis() ) );
+					ResultMemoryRowSet.addData( ConstantsService._Response_Pong, lngPing + 1 );
+					ResultMemoryRowSet.addData( ConstantsService._Response_Date_Request, new Date( System.currentTimeMillis() ) );
+					ResultMemoryRowSet.addData( ConstantsService._Response_Time_Request, new Time( System.currentTimeMillis() ) );
 					
 					String strResponseBuffer = ResponseFormat.formatMemoryRowSet( ResultMemoryRowSet, strResponseFormatVersion, (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_DateTime_Format, null ) , (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_Date_Format, null ), (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_Time_Format, null ), this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 

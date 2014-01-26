@@ -35,6 +35,7 @@ public interface ConstantsCommonClasses {
 	public static final String _Main_Jetty_File_Log = _Main_File + ".servlet.container.log";
 	public static final String _Main_File_Access_Log = _Main_File + ".accesss.yyyy_mm_dd.log";
 
+	public static final String _Log_Instance_ID = "ServiceDaemon:Instance0";
 	public static final String _Logger_Name = "ServicesDaemonLogger"; 
 	public static final String _Jetty_Logger_Name = "JettyLogger"; 
 	public static final String _Jetty_Logger_Class_Name = "org.eclipse.jetty.util.log"; 
@@ -69,8 +70,16 @@ public interface ConstantsCommonClasses {
 	public static final int _Min_Request_Header_Size = 1024;
 	public static final int _Max_Request_Header_Size = 8192;
 
-	public static final String _Default_Log_IP = "";
+	public static final String _Log_IP = "";
 	public static final int _Log_Port_Number = 30000;
+
+	public static final String _HTTP_Log_URL = "";
+	public static final String _HTTP_Log_User = "";
+	public static final String _HTTP_Log_Password = "";
+	public static final String _Proxy_IP = "";
+	public static final int _Proxy_Port = -1;
+	public static final String _Proxy_User = "";
+	public static final String _Proxy_Password = "";
 	
 	public static final String _Crypt_Algorithm = "DES";
 	public static final String _Hash_Algorithm = "SHA512";

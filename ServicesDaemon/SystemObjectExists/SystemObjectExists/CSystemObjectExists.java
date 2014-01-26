@@ -43,7 +43,7 @@ public class CSystemObjectExists extends CDBAbstractService {
 			this.strServiceName = "System.Object.Exists";
 			this.strServiceVersion = "0.0.0.1";
 
-			this.setupService( ConstantsSystemObjectExists._Main_File_Log, this.strRunningPath + ConstantsCommonClasses._Langs_Dir + ConstantsSystemObjectExists._Main_File + "." + ConstantsCommonClasses._Lang_Ext ); //Init the Logger and Lang
+			this.setupService( ConstantsService._Main_File_Log, this.strRunningPath + ConstantsCommonClasses._Langs_Dir + ConstantsService._Main_File + "." + ConstantsCommonClasses._Lang_Ext ); //Init the Logger and Lang
 
 			ServiceLogger.logMessage( "1", ServiceLang.translate( "Running dir: [%s]", this.strRunningPath ) );        
 			ServiceLogger.logMessage( "1", ServiceLang.translate( "Version: [%s]", this.strServiceVersion ) );        
@@ -78,11 +78,11 @@ public class CSystemObjectExists extends CDBAbstractService {
 
 			ServiceInputParameters.add( InputParameter );
 			
-			InputParameter = new CInputServiceParameter( ConstantsSystemObjectExists._Request_ObjectType, true, ConstantsSystemObjectExists._Request_ObjectType_Type, ConstantsSystemObjectExists._Request_ObjectType_Length, TParameterScope.IN, ServiceLang.translate( "Type of object to be verified its existence 1 = Table, 2 = View, 3 = Function, 4 = Stored Procedure" ) );
+			InputParameter = new CInputServiceParameter( ConstantsService._Request_ObjectType, true, ConstantsService._Request_ObjectType_Type, ConstantsService._Request_ObjectType_Length, TParameterScope.IN, ServiceLang.translate( "Type of object to be verified its existence 1 = Table, 2 = View, 3 = Function, 4 = Stored Procedure" ) );
 
 			ServiceInputParameters.add( InputParameter );
 
-			InputParameter = new CInputServiceParameter( ConstantsSystemObjectExists._Request_ObjectName, true, ConstantsSystemObjectExists._Request_ObjectName_Type, ConstantsSystemObjectExists._Request_ObjectName_Length, TParameterScope.IN, ServiceLang.translate( "Name of the object to be verified its existence" ) );
+			InputParameter = new CInputServiceParameter( ConstantsService._Request_ObjectName, true, ConstantsService._Request_ObjectName_Type, ConstantsService._Request_ObjectName_Length, TParameterScope.IN, ServiceLang.translate( "Name of the object to be verified its existence" ) );
 
 			ServiceInputParameters.add( InputParameter );
 
@@ -134,11 +134,11 @@ public class CSystemObjectExists extends CDBAbstractService {
 
 								if ( DBConnection != null ) {
 									
-									String strObjectType = Request.getParameter( ConstantsSystemObjectExists._Request_ObjectType );
+									String strObjectType = Request.getParameter( ConstantsService._Request_ObjectType );
 									
-									if ( strObjectType.equals( ConstantsSystemObjectExists._Table ) || strObjectType.equals( ConstantsSystemObjectExists._View ) || strObjectType.equals( ConstantsSystemObjectExists._Function ) || strObjectType.equals( ConstantsSystemObjectExists._Procedure ) ) {
+									if ( strObjectType.equals( ConstantsService._Table ) || strObjectType.equals( ConstantsService._View ) || strObjectType.equals( ConstantsService._Function ) || strObjectType.equals( ConstantsService._Procedure ) ) {
 									
-										String strObjectName = Request.getParameter( ConstantsSystemObjectExists._Request_ObjectName );
+										String strObjectName = Request.getParameter( ConstantsService._Request_ObjectName );
 
 										int intCode = -1000;
 										String strDescription = "";

@@ -1,6 +1,6 @@
 package SystemEnumServices;
 
-public interface ConstantsSystemEnumServices {
+public interface ConstantsService {
 
 	public static final String _Main_File = "SystemEnumServices";
 	public static final String _Conf_File = _Main_File + ".conf";

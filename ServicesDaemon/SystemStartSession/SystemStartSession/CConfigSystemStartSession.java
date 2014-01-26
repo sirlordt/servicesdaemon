@@ -59,7 +59,7 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 		super( strRunningPath );
 		
 		//Set the order for read xml config file sections
-		strFirstLevelConfigSectionsOrder.add( ConfigXMLTagsSystemStartSession._DBConnections );  //1
+		strFirstLevelConfigSectionsOrder.add( ConstantsConfigXMLTags._DBConnections );  //1
 
 		ConfiguredSystemStartSessionDBConnections = new ArrayList<CSystemStartSessionDBConnection>(); 
 		
@@ -85,7 +85,7 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 		
 	}
 	
-	public boolean LoadConfigSectionParam( int intConfigSectionIndex, Node ConfigSectionNode, CSystemStartSessionDBConnection SystemStartSessionDBConnection, CLanguage Lang, CExtendedLogger Logger ) {
+	public boolean loadConfigSectionParam( int intConfigSectionIndex, Node ConfigSectionNode, CSystemStartSessionDBConnection SystemStartSessionDBConnection, CLanguage Lang, CExtendedLogger Logger ) {
 		
         boolean bResult = false;
 		
@@ -100,7 +100,7 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 				int intLength = 0;
 				String strDescription = "";
 				
-				String strAttributesOrder[] = { ConfigXMLTagsSystemStartSession._Name, ConfigXMLTagsSystemStartSession._Required, ConfigXMLTagsSystemStartSession._DataType, ConfigXMLTagsSystemStartSession._Scope, ConfigXMLTagsSystemStartSession._Length, ConfigXMLTagsSystemStartSession._Description };
+				String strAttributesOrder[] = { ConstantsConfigXMLTags._Name, ConstantsConfigXMLTags._Required, ConstantsConfigXMLTags._DataType, ConstantsConfigXMLTags._Scope, ConstantsConfigXMLTags._Length, ConstantsConfigXMLTags._Description };
 				
 				NamedNodeMap NodeAttributes = ConfigSectionNode.getAttributes();
 
@@ -113,43 +113,43 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 		            	Logger.logMessage( "1", Lang.translate( "Node attribute name: [%s]", NodeAttribute.getNodeName() ) );
 		            	Logger.logMessage( "1", Lang.translate( "Node attribute value: [%s]", NodeAttribute.getNodeValue() ) );
 						
-						if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsSystemStartSession._Name ) ) {
+						if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Name ) ) {
 
 							if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 							
 								strName = NodeAttribute.getNodeValue().trim();
 					           
-								Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConfigXMLTagsSystemStartSession._Param + ".str" + ConfigXMLTagsSystemStartSession._Name, strName ) );
+								Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConstantsConfigXMLTags._Param + ".str" + ConstantsConfigXMLTags._Name, strName ) );
 
 							}
 							else {
 								
-								Logger.logError( "-1001", Lang.translate( "The [%s] attribute cannot empty string, for the node [%s] at relative index [%s], ignoring the node", ConfigXMLTagsSystemStartSession._Name, NodeAttribute.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+								Logger.logError( "-1001", Lang.translate( "The [%s] attribute cannot empty string, for the node [%s] at relative index [%s], ignoring the node", ConstantsConfigXMLTags._Name, NodeAttribute.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 
 								break;
 								
 							}
 						
 						}
-						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsSystemStartSession._Required ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Required ) ) {
 
 							if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 								
 								bRequired = NodeAttribute.getNodeValue().toLowerCase().trim().equals( "true" );
 					           
-								Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConfigXMLTagsSystemStartSession._Param + ".b" + ConfigXMLTagsSystemStartSession._Required, bRequired==true?"true":"false" ) );
+								Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConstantsConfigXMLTags._Param + ".b" + ConstantsConfigXMLTags._Required, bRequired==true?"true":"false" ) );
 
 							}
 							else {
 								
-								Logger.logError( "-1002", Lang.translate( "The [%s] attribute cannot empty string, for the node [%s] at relative index [%s], ignoring the node", ConfigXMLTagsSystemStartSession._Required, NodeAttribute.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+								Logger.logError( "-1002", Lang.translate( "The [%s] attribute cannot empty string, for the node [%s] at relative index [%s], ignoring the node", ConstantsConfigXMLTags._Required, NodeAttribute.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 
 								break;
 								
 							}
 						    
 						}
-						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsSystemStartSession._DataType ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._DataType ) ) {
  
 							if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 								
@@ -157,12 +157,12 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 					           
 									strDataType = NodeAttribute.getNodeValue().trim();
 									
-									Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConfigXMLTagsSystemStartSession._Param + ".str" + ConfigXMLTagsSystemStartSession._DataType, strDataType ) );
+									Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConstantsConfigXMLTags._Param + ".str" + ConstantsConfigXMLTags._DataType, strDataType ) );
 							
 								}
 								else {
 									
-									Logger.logError( "-1004", Lang.translate( "The [%s] attribute value [%s] must be only one of the next values: %s, for the node [%s] at relative index [%s], ignoring the node", ConfigXMLTagsSystemStartSession._DataType, NodeAttribute.getNodeValue(), NamesSQLTypes.SQLTypes.toString(), NodeAttribute.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+									Logger.logError( "-1004", Lang.translate( "The [%s] attribute value [%s] must be only one of the next values: %s, for the node [%s] at relative index [%s], ignoring the node", ConstantsConfigXMLTags._DataType, NodeAttribute.getNodeValue(), NamesSQLTypes.SQLTypes.toString(), NodeAttribute.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 									
 									break;
 									
@@ -171,27 +171,27 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 							}
 							else {
 								
-								Logger.logError( "-1003", Lang.translate( "The [%s] attribute cannot empty string, for the node [%s] at relative index [%s], ignoring the node", ConfigXMLTagsSystemStartSession._DataType, NodeAttribute.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+								Logger.logError( "-1003", Lang.translate( "The [%s] attribute cannot empty string, for the node [%s] at relative index [%s], ignoring the node", ConstantsConfigXMLTags._DataType, NodeAttribute.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 
 								break;
 								
 							}
 
 						}	
-						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsSystemStartSession._Scope ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Scope ) ) {
 							 
 							if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 								
-							   if ( NodeAttribute.getNodeValue().trim().equals( ConfigXMLTagsSystemStartSession._Scope_in ) || NodeAttribute.getNodeValue().trim().equals( ConfigXMLTagsSystemStartSession._Scope_inout ) || NodeAttribute.getNodeValue().trim().equals( ConfigXMLTagsSystemStartSession._Scope_out ) ) {
+							   if ( NodeAttribute.getNodeValue().trim().equals( ConstantsConfigXMLTags._Scope_in ) || NodeAttribute.getNodeValue().trim().equals( ConstantsConfigXMLTags._Scope_inout ) || NodeAttribute.getNodeValue().trim().equals( ConstantsConfigXMLTags._Scope_out ) ) {
 								
 								   strScope = NodeAttribute.getNodeValue().trim();
 
-								   Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConfigXMLTagsSystemStartSession._Param + ".str" + ConfigXMLTagsSystemStartSession._Scope, strScope ) );
+								   Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConstantsConfigXMLTags._Param + ".str" + ConstantsConfigXMLTags._Scope, strScope ) );
 							   
 							   }
 							   else {
 								   
-									Logger.logError( "-1006", Lang.translate( "The [%s] attribute value [%s] must be only one of the next values: [%s,%s,%s], for the node [%s] at relative index [%s]", ConfigXMLTagsSystemStartSession._DataType, ConfigXMLTagsSystemStartSession._Scope_in, ConfigXMLTagsSystemStartSession._Scope_inout, ConfigXMLTagsSystemStartSession._Scope_out, NodeAttribute.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+									Logger.logError( "-1006", Lang.translate( "The [%s] attribute value [%s] must be only one of the next values: [%s,%s,%s], for the node [%s] at relative index [%s]", ConstantsConfigXMLTags._DataType, ConstantsConfigXMLTags._Scope_in, ConstantsConfigXMLTags._Scope_inout, ConstantsConfigXMLTags._Scope_out, NodeAttribute.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 
 									break;
 								   
@@ -200,14 +200,14 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 							}
 							else {
 								
-								Logger.logError( "-1005", Lang.translate( "The [%s] attribute cannot empty string, for the node [%s] at relative index [%s], ignoring the node", ConfigXMLTagsSystemStartSession._Scope, NodeAttribute.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+								Logger.logError( "-1005", Lang.translate( "The [%s] attribute cannot empty string, for the node [%s] at relative index [%s], ignoring the node", ConstantsConfigXMLTags._Scope, NodeAttribute.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 
 								break;
 								
 							}
 							
 						}	
-						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsSystemStartSession._Length ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Length ) ) {
 
 							if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 							
@@ -219,12 +219,12 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 								
 									    intLength = intTmpLength;
 								           
-									    Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConfigXMLTagsSystemStartSession._Param + ".int" + ConfigXMLTagsSystemStartSession._Length, Integer.toString( intLength ) ) );
+									    Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConstantsConfigXMLTags._Param + ".int" + ConstantsConfigXMLTags._Length, Integer.toString( intLength ) ) );
 
 									}
 									else {
 										
-										Logger.logError( "-1009", Lang.translate( "The [%s] attribute value [%s] is invalid, must be positive integer, for the node [%s] at relative index [%s], ignoring the node", ConfigXMLTagsSystemStartSession._Length, NodeAttribute.getNodeValue().trim(), NodeAttribute.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+										Logger.logError( "-1009", Lang.translate( "The [%s] attribute value [%s] is invalid, must be positive integer, for the node [%s] at relative index [%s], ignoring the node", ConstantsConfigXMLTags._Length, NodeAttribute.getNodeValue().trim(), NodeAttribute.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 
 										break;
 										
@@ -235,12 +235,12 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 								
 								    intLength = intTmpLength;
 					           
-								    Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConfigXMLTagsSystemStartSession._Param + ".int" + ConfigXMLTagsSystemStartSession._Length, Integer.toString( intLength ) ) );
+								    Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConstantsConfigXMLTags._Param + ".int" + ConstantsConfigXMLTags._Length, Integer.toString( intLength ) ) );
 
 							    }
 								else {
 									
-									Logger.logError( "-1008", Lang.translate( "The [%s] attribute value [%s] is invalid, must be positive integer, for the node [%s] at relative index [%s], ignoring the node", ConfigXMLTagsSystemStartSession._Length, NodeAttribute.getNodeValue().trim(), NodeAttribute.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+									Logger.logError( "-1008", Lang.translate( "The [%s] attribute value [%s] is invalid, must be positive integer, for the node [%s] at relative index [%s], ignoring the node", ConstantsConfigXMLTags._Length, NodeAttribute.getNodeValue().trim(), NodeAttribute.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 									
 									break;
 									
@@ -249,25 +249,25 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 							}
 							else {
 								
-								Logger.logError( "-1007", Lang.translate( "The [%s] attribute cannot empty string, for the node [%s] at relative index [%s], ignoring the node", ConfigXMLTagsSystemStartSession._Length, NodeAttribute.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+								Logger.logError( "-1007", Lang.translate( "The [%s] attribute cannot empty string, for the node [%s] at relative index [%s], ignoring the node", ConstantsConfigXMLTags._Length, NodeAttribute.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 
 								break;
 								
 							}
 					        
 						}
-						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsSystemStartSession._Description ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Description ) ) {
 						
 							if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 								
 								strDescription = NodeAttribute.getNodeValue().trim();
 					           
-								Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConfigXMLTagsSystemStartSession._Param + ".str" + ConfigXMLTagsSystemStartSession._Description, strDescription ) );
+								Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConstantsConfigXMLTags._Param + ".str" + ConstantsConfigXMLTags._Description, strDescription ) );
 
 							}
 							else {
 								
-								Logger.logWarning( "-1", Lang.translate( "The [%s] attribute is empty string, for the node [%s] at relative index [%s]", ConfigXMLTagsSystemStartSession._Description, NodeAttribute.getNodeName(), Integer.toString( intConfigSectionIndex) ) );
+								Logger.logWarning( "-1", Lang.translate( "The [%s] attribute is empty string, for the node [%s] at relative index [%s]", ConstantsConfigXMLTags._Description, NodeAttribute.getNodeName(), Integer.toString( intConfigSectionIndex) ) );
 
 							}
 					        
@@ -290,17 +290,17 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 				}
 				else if ( strName.isEmpty() == true ) {
 					
-					Logger.logError( "-1010", Lang.translate( "The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node", ConfigXMLTagsSystemStartSession._Name, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+					Logger.logError( "-1010", Lang.translate( "The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node", ConstantsConfigXMLTags._Name, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 					
 				} 
 				else if ( strDataType.isEmpty() == true ) {
 					
-					Logger.logError( "-1011", Lang.translate( "The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node", ConfigXMLTagsSystemStartSession._DataType, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+					Logger.logError( "-1011", Lang.translate( "The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node", ConstantsConfigXMLTags._DataType, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 					
 				} 
 				else if ( strScope.isEmpty() == true ) {
 					
-					Logger.logError( "-1012", Lang.translate( "The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node", ConfigXMLTagsSystemStartSession._Scope, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+					Logger.logError( "-1012", Lang.translate( "The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node", ConstantsConfigXMLTags._Scope, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 					
 				} 
 				else {
@@ -322,7 +322,7 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 		
 	}
 	
-	public boolean LoadConfigSectionInputParams( int intConfigSectionIndex, Node ConfigSectionNode, CSystemStartSessionDBConnection SystemStartSessionDBConnection, CLanguage Lang, CExtendedLogger Logger ) {
+	public boolean loadConfigSectionInputParams( int intConfigSectionIndex, Node ConfigSectionNode, CSystemStartSessionDBConnection SystemStartSessionDBConnection, CLanguage Lang, CExtendedLogger Logger ) {
 		
 		boolean bResult = true;
 		
@@ -334,9 +334,9 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 
     		Logger.logMessage( "1", Lang.translate( "Reading XML node section: [%s]", ConfigSectionInputParams.getNodeName() ) );        
 
-    		if ( ConfigSectionInputParams.getNodeName().equals( ConfigXMLTagsSystemStartSession._Param ) == true ) {
+    		if ( ConfigSectionInputParams.getNodeName().equals( ConstantsConfigXMLTags._Param ) == true ) {
         	
-    			LoadConfigSectionParam( intLocalConfigSecitonIndex, ConfigSectionInputParams, SystemStartSessionDBConnection, Lang, Logger );
+    			loadConfigSectionParam( intLocalConfigSecitonIndex, ConfigSectionInputParams, SystemStartSessionDBConnection, Lang, Logger );
         		
         	}
              
@@ -378,7 +378,7 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 		
 	}
 	
-	public boolean LoadConfigSectionCheckMethod( int intConfigSectionIndex, Node ConfigSectionNode, CSystemStartSessionDBConnection SystemStartSessionDBConnection, CLanguage Lang, CExtendedLogger Logger ) {
+	public boolean loadConfigSectionCheckMethod( int intConfigSectionIndex, Node ConfigSectionNode, CSystemStartSessionDBConnection SystemStartSessionDBConnection, CLanguage Lang, CExtendedLogger Logger ) {
 		
 		boolean bResult =  true;
 
@@ -386,7 +386,7 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 
 			if ( ConfigSectionNode.hasAttributes() == true ) {
 				
-				String strAttributesOrder[] = { ConfigXMLTagsSystemStartSession._SQLType, ConfigXMLTagsSystemStartSession._SQL, ConfigXMLTagsSystemStartSession._SessionKey, ConfigXMLTagsSystemStartSession._Type, ConfigXMLTagsSystemStartSession._Field_Name, ConfigXMLTagsSystemStartSession._Field_Type, ConfigXMLTagsSystemStartSession._Field_Value_Success, ConfigXMLTagsSystemStartSession._Field_Value_Failed, ConfigXMLTagsSystemStartSession._Field_Value_Disabled, ConfigXMLTagsSystemStartSession._Field_Value_NotFound };
+				String strAttributesOrder[] = { ConstantsConfigXMLTags._SQLType, ConstantsConfigXMLTags._SQL, ConstantsConfigXMLTags._SessionKey, ConstantsConfigXMLTags._Type, ConstantsConfigXMLTags._Field_Name, ConstantsConfigXMLTags._Field_Type, ConstantsConfigXMLTags._Field_Value_Success, ConstantsConfigXMLTags._Field_Value_Failed, ConstantsConfigXMLTags._Field_Value_Disabled, ConstantsConfigXMLTags._Field_Value_NotFound };
 				
 				NamedNodeMap NodeAttributes = ConfigSectionNode.getAttributes();
 
@@ -399,20 +399,20 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 		            	Logger.logMessage( "1", Lang.translate( "Node attribute name: [%s]", NodeAttribute.getNodeName() ) );
 		            	Logger.logMessage( "1", Lang.translate( "Node attribute value: [%s]", NodeAttribute.getNodeValue() ) );
 						
-						if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsSystemStartSession._SQLType ) ) {
+						if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._SQLType ) ) {
 							 
 							if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 								
-								if ( NodeAttribute.getNodeValue().equals( ConfigXMLTagsSystemStartSession._SQLType_sql ) || NodeAttribute.getNodeValue().equals( ConfigXMLTagsSystemStartSession._SQLType_stored_procedure ) ) {
+								if ( NodeAttribute.getNodeValue().equals( ConstantsConfigXMLTags._SQLType_sql ) || NodeAttribute.getNodeValue().equals( ConstantsConfigXMLTags._SQLType_stored_procedure ) ) {
 					           
 									SystemStartSessionDBConnection.strSQLType = NodeAttribute.getNodeValue().trim().toLowerCase();
 									
-									Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConfigXMLTagsSystemStartSession._SQLType, SystemStartSessionDBConnection.strSQLType ) );
+									Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConstantsConfigXMLTags._SQLType, SystemStartSessionDBConnection.strSQLType ) );
 							
 								}
 								else {
 									
-									Logger.logError( "-1001", Lang.translate( "The [%s] attribute value [%s] must be only one of the next values: [%s.%s], for the node [%s] at relative index [%s]", ConfigXMLTagsSystemStartSession._SQLType, NodeAttribute.getNodeValue(), ConfigXMLTagsSystemStartSession._SQLType_sql, ConfigXMLTagsSystemStartSession._SQLType_stored_procedure, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+									Logger.logError( "-1001", Lang.translate( "The [%s] attribute value [%s] must be only one of the next values: [%s.%s], for the node [%s] at relative index [%s]", ConstantsConfigXMLTags._SQLType, NodeAttribute.getNodeValue(), ConstantsConfigXMLTags._SQLType_sql, ConstantsConfigXMLTags._SQLType_stored_procedure, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 									
 									bResult = false;
 
@@ -423,25 +423,25 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 							}
 							else {
 								
-								Logger.logError( "-1002", Lang.translate( "The [%s] attribute cannot empty string, for the node [%s] at relative index [%s]", ConfigXMLTagsSystemStartSession._DataType, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+								Logger.logError( "-1002", Lang.translate( "The [%s] attribute cannot empty string, for the node [%s] at relative index [%s]", ConstantsConfigXMLTags._DataType, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 
 								break;
 								
 							}
 
 						}	
-						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsSystemStartSession._SQL ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._SQL ) ) {
 
 							if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 							
 								SystemStartSessionDBConnection.strSQL = NodeAttribute.getNodeValue().trim();
 					           
-								Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConfigXMLTagsSystemStartSession._SQL, SystemStartSessionDBConnection.strSQL ) );
+								Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConstantsConfigXMLTags._SQL, SystemStartSessionDBConnection.strSQL ) );
 
 							}
 							else {
 								
-								Logger.logWarning( "-1", Lang.translate( "The [%s] attribute is empty string, for the node [%s] at relative index [%s]", ConfigXMLTagsSystemStartSession._SQL, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+								Logger.logWarning( "-1", Lang.translate( "The [%s] attribute is empty string, for the node [%s] at relative index [%s]", ConstantsConfigXMLTags._SQL, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 
 								//bResult = false;
 								
@@ -450,18 +450,18 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 							}
 						
 						}
-						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsSystemStartSession._SessionKey ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._SessionKey ) ) {
 
 							if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 								
 								SystemStartSessionDBConnection.strSessionKey = NodeAttribute.getNodeValue().trim();
 					           
-								Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConfigXMLTagsSystemStartSession._SessionKey, SystemStartSessionDBConnection.strSessionKey ) );
+								Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConstantsConfigXMLTags._SessionKey, SystemStartSessionDBConnection.strSessionKey ) );
 
 							}
 							else {
 								
-								Logger.logError( "-1004", Lang.translate( "The [%s] attribute cannot empty string, for the node [%s] at relative index [%s]", ConfigXMLTagsSystemStartSession._SessionKey, NodeAttribute.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+								Logger.logError( "-1004", Lang.translate( "The [%s] attribute cannot empty string, for the node [%s] at relative index [%s]", ConstantsConfigXMLTags._SessionKey, NodeAttribute.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 
 								bResult = false;
 
@@ -470,20 +470,20 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 							}
 						    
 						}
-						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsSystemStartSession._Type ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Type ) ) {
  
 							if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 								
-								if ( NodeAttribute.getNodeValue().equals( ConfigXMLTagsSystemStartSession._Type_if_exists ) || NodeAttribute.getNodeValue().equals( ConfigXMLTagsSystemStartSession._Type_check_field_value ) ) {
+								if ( NodeAttribute.getNodeValue().equals( ConstantsConfigXMLTags._Type_if_exists ) || NodeAttribute.getNodeValue().equals( ConstantsConfigXMLTags._Type_check_field_value ) ) {
 					           
 									SystemStartSessionDBConnection.strType = NodeAttribute.getNodeValue().trim().toLowerCase();
 									
-									Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConfigXMLTagsSystemStartSession._Type, SystemStartSessionDBConnection.strType ) );
+									Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConstantsConfigXMLTags._Type, SystemStartSessionDBConnection.strType ) );
 							
 								}
 								else {
 									
-									Logger.logError( "-1005", Lang.translate( "The [%s] attribute value [%s] must be only one of the next values: [%s.%s], for the node [%s] at relative index [%s]", ConfigXMLTagsSystemStartSession._DataType, ConfigXMLTagsSystemStartSession._Type_check_field_value, ConfigXMLTagsSystemStartSession._Type_if_exists, NodeAttribute.getNodeValue(), NamesSQLTypes.SQLTypes.toString(), ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+									Logger.logError( "-1005", Lang.translate( "The [%s] attribute value [%s] must be only one of the next values: [%s.%s], for the node [%s] at relative index [%s]", ConstantsConfigXMLTags._DataType, ConstantsConfigXMLTags._Type_check_field_value, ConstantsConfigXMLTags._Type_if_exists, NodeAttribute.getNodeValue(), NamesSQLTypes.SQLTypes.toString(), ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 									
 									bResult = false;
 
@@ -494,25 +494,25 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 							}
 							else {
 								
-								Logger.logError( "-1006", Lang.translate( "The [%s] attribute cannot empty string, for the node [%s] at relative index [%s]", ConfigXMLTagsSystemStartSession._DataType, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+								Logger.logError( "-1006", Lang.translate( "The [%s] attribute cannot empty string, for the node [%s] at relative index [%s]", ConstantsConfigXMLTags._DataType, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 
 								break;
 								
 							}
 
 						}	
-						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsSystemStartSession._Field_Name ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Field_Name ) ) {
 							 
-							if ( SystemStartSessionDBConnection.strType.equals( ConfigXMLTagsSystemStartSession._Type_if_exists ) || NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
+							if ( SystemStartSessionDBConnection.strType.equals( ConstantsConfigXMLTags._Type_if_exists ) || NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 								
 								SystemStartSessionDBConnection.strFieldName = NodeAttribute.getNodeValue().trim();
 
-								 Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConfigXMLTagsSystemStartSession._Field_Name, SystemStartSessionDBConnection.strFieldName ) );
+								 Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConstantsConfigXMLTags._Field_Name, SystemStartSessionDBConnection.strFieldName ) );
 
 							}
 							else {
 								
-								Logger.logError( "-1007", Lang.translate( "The [%s] attribute cannot empty string, for the node [%s] at relative index [%s]", ConfigXMLTagsSystemStartSession._Field_Name, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+								Logger.logError( "-1007", Lang.translate( "The [%s] attribute cannot empty string, for the node [%s] at relative index [%s]", ConstantsConfigXMLTags._Field_Name, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 
 								bResult = false;
 
@@ -521,7 +521,7 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 							}
 							
 						}	
-						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsSystemStartSession._Field_Type ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Field_Type ) ) {
 							 
 							if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 								
@@ -529,12 +529,12 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 							           
 									SystemStartSessionDBConnection.strFieldType = NodeAttribute.getNodeValue().trim();
 									
-									Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConfigXMLTagsSystemStartSession._Field_Type, SystemStartSessionDBConnection.strFieldType ) );
+									Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConstantsConfigXMLTags._Field_Type, SystemStartSessionDBConnection.strFieldType ) );
 							
 								}
 								else {
 									
-									Logger.logError( "-1008", Lang.translate( "The [%s] attribute value [%s] must be only one of the next values: %s, for the node [%s] at relative index [%s]", ConfigXMLTagsSystemStartSession._Field_Type, ConfigSectionNode.getNodeValue(), NamesSQLTypes.SQLTypes.toString(), NodeAttribute.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+									Logger.logError( "-1008", Lang.translate( "The [%s] attribute value [%s] must be only one of the next values: %s, for the node [%s] at relative index [%s]", ConstantsConfigXMLTags._Field_Type, ConfigSectionNode.getNodeValue(), NamesSQLTypes.SQLTypes.toString(), NodeAttribute.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 									
 									break;
 									
@@ -543,25 +543,25 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 							}
 							else {
 								
-								Logger.logError( "-1009", Lang.translate( "The [%s] attribute cannot empty string, for the node [%s] at relative index [%s]", ConfigXMLTagsSystemStartSession._Field_Type, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+								Logger.logError( "-1009", Lang.translate( "The [%s] attribute cannot empty string, for the node [%s] at relative index [%s]", ConstantsConfigXMLTags._Field_Type, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 
 								break;
 								
 							}
 
 						}	
-						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsSystemStartSession._Field_Value_Success ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Field_Value_Success ) ) {
 
-							if ( SystemStartSessionDBConnection.strType.equals( ConfigXMLTagsSystemStartSession._Type_if_exists ) || NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
+							if ( SystemStartSessionDBConnection.strType.equals( ConstantsConfigXMLTags._Type_if_exists ) || NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 							
 								SystemStartSessionDBConnection.strFieldValueSuccess = NodeAttribute.getNodeValue().trim();
 								           
-								Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConfigXMLTagsSystemStartSession._Field_Value_Success, SystemStartSessionDBConnection.strFieldValueSuccess ) );
+								Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConstantsConfigXMLTags._Field_Value_Success, SystemStartSessionDBConnection.strFieldValueSuccess ) );
 								   
 							}
 							else {
 								
-								Logger.logError( "-1010", Lang.translate( "The [%s] attribute cannot empty string, for the node [%s] at relative index [%s]", ConfigXMLTagsSystemStartSession._Field_Value_Success, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+								Logger.logError( "-1010", Lang.translate( "The [%s] attribute cannot empty string, for the node [%s] at relative index [%s]", ConstantsConfigXMLTags._Field_Value_Success, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 
 								bResult = false;
 
@@ -570,18 +570,18 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 							}
 					        
 						}
-						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsSystemStartSession._Field_Value_Failed ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Field_Value_Failed ) ) {
 						
-							if ( SystemStartSessionDBConnection.strType.equals( ConfigXMLTagsSystemStartSession._Type_if_exists ) || NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
+							if ( SystemStartSessionDBConnection.strType.equals( ConstantsConfigXMLTags._Type_if_exists ) || NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 								
 								SystemStartSessionDBConnection.strFieldValueFailed = NodeAttribute.getNodeValue().trim();
 					           
-								Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConfigXMLTagsSystemStartSession._Field_Value_Failed, SystemStartSessionDBConnection.strFieldValueFailed ) );
+								Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConstantsConfigXMLTags._Field_Value_Failed, SystemStartSessionDBConnection.strFieldValueFailed ) );
 
 							}
 							else {
 								
-								Logger.logError( "-1011", Lang.translate( "The [%s] attribute cannot empty string, for the node [%s] at relative index [%s]", ConfigXMLTagsSystemStartSession._Field_Value_Failed, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+								Logger.logError( "-1011", Lang.translate( "The [%s] attribute cannot empty string, for the node [%s] at relative index [%s]", ConstantsConfigXMLTags._Field_Value_Failed, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 								
 								bResult = false;
 
@@ -590,94 +590,81 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 							}
 					        
 						}
-						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsSystemStartSession._Field_Value_Disabled ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Field_Value_Disabled ) ) {
 							
 							if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 								
 								SystemStartSessionDBConnection.strFieldValueDisabled = NodeAttribute.getNodeValue().trim();
 					           
-								Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConfigXMLTagsSystemStartSession._Field_Value_Disabled, SystemStartSessionDBConnection.strFieldValueDisabled ) );
+								Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConstantsConfigXMLTags._Field_Value_Disabled, SystemStartSessionDBConnection.strFieldValueDisabled ) );
 
 							}
 							else {
 								
-								Logger.logWarning( "-1", Lang.translate( "The [%s] attribute is empty string, for the node [%s] at relative index [%s]", ConfigXMLTagsSystemStartSession._Field_Value_Disabled, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+								Logger.logWarning( "-1", Lang.translate( "The [%s] attribute is empty string, for the node [%s] at relative index [%s]", ConstantsConfigXMLTags._Field_Value_Disabled, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 								
 							}
 					        
 						}
-						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsSystemStartSession._Field_Value_NotFound ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Field_Value_NotFound ) ) {
 							
 							if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 								
 								SystemStartSessionDBConnection.strFieldValueNotFound = NodeAttribute.getNodeValue().trim();
 					           
-								Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConfigXMLTagsSystemStartSession._Field_Value_NotFound, SystemStartSessionDBConnection.strFieldValueNotFound ) );
+								Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]",  ConstantsConfigXMLTags._Field_Value_NotFound, SystemStartSessionDBConnection.strFieldValueNotFound ) );
 
 							}
 							else {
 								
-								Logger.logWarning( "-1", Lang.translate( "The [%s] attribute is empty string, for the node [%s] at relative index [%s]", ConfigXMLTagsSystemStartSession._Field_Value_NotFound, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+								Logger.logWarning( "-1", Lang.translate( "The [%s] attribute is empty string, for the node [%s] at relative index [%s]", ConstantsConfigXMLTags._Field_Value_NotFound, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 								
 							}
 					        
 						}
 		            
 		            }
-		            else if ( strAttributesOrder[ intAttributesIndex ].equals( ConfigXMLTagsSystemStartSession._SQLType ) ) {
+		            else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsConfigXMLTags._SQLType ) ) {
 		            	
-				        Logger.logError( "-1012", Lang.translate( "The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node", ConfigXMLTagsSystemStartSession._SQLType, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+				        Logger.logError( "-1012", Lang.translate( "The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node", ConstantsConfigXMLTags._SQLType, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 				        
 				        bResult = false;
 				        
 				        break;
 		            	
 		            }
-		            else if ( strAttributesOrder[ intAttributesIndex ].equals( ConfigXMLTagsSystemStartSession._SQL ) ) {
+		            else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsConfigXMLTags._SQL ) ) {
 		            	
-				        Logger.logError( "-1013", Lang.translate( "The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node", ConfigXMLTagsSystemStartSession._SQL, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+				        Logger.logError( "-1013", Lang.translate( "The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node", ConstantsConfigXMLTags._SQL, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 				        
 				        bResult = false;
 				        
 				        break;
 		            	
 		            }
-		            else if ( strAttributesOrder[ intAttributesIndex ].equals( ConfigXMLTagsSystemStartSession._SessionKey ) ) {
+		            else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsConfigXMLTags._SessionKey ) ) {
 		            	
-				        Logger.logError( "-1014", Lang.translate( "The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node", ConfigXMLTagsSystemStartSession._SessionKey, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+				        Logger.logError( "-1014", Lang.translate( "The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node", ConstantsConfigXMLTags._SessionKey, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 				        
 				        bResult = false;
 				        
 				        break;
 		            	
 		            }
-		            else if ( strAttributesOrder[ intAttributesIndex ].equals( ConfigXMLTagsSystemStartSession._Type ) ) {
+		            else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsConfigXMLTags._Type ) ) {
 		            	
-				        Logger.logError( "-1015", Lang.translate( "The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node", ConfigXMLTagsSystemStartSession._Type, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+				        Logger.logError( "-1015", Lang.translate( "The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node", ConstantsConfigXMLTags._Type, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 				        
 				        bResult = false;
 				        
 				        break;
 		            	
 		            }
-		            else if ( strAttributesOrder[ intAttributesIndex ].equals( ConfigXMLTagsSystemStartSession._Field_Name ) ) {
+		            else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsConfigXMLTags._Field_Name ) ) {
 
-		            	if ( SystemStartSessionDBConnection.strType.equals( ConfigXMLTagsSystemStartSession._Type_check_field_value ) ) {
+		            	if ( SystemStartSessionDBConnection.strType.equals( ConstantsConfigXMLTags._Type_check_field_value ) ) {
 
-		            		Logger.logError( "-1016", Lang.translate( "The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node", ConfigXMLTagsSystemStartSession._Field_Name, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
-
-		            		bResult = false;
-
-		            		break;
-		            	
-		            	}
-		            	
-		            }
-		            else if ( strAttributesOrder[ intAttributesIndex ].equals( ConfigXMLTagsSystemStartSession._Field_Type ) ) {
-		            	
-		            	if ( SystemStartSessionDBConnection.strType.equals( ConfigXMLTagsSystemStartSession._Type_check_field_value ) ) {
-
-		            		Logger.logError( "-1017", Lang.translate( "The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node", ConfigXMLTagsSystemStartSession._Field_Type, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+		            		Logger.logError( "-1016", Lang.translate( "The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node", ConstantsConfigXMLTags._Field_Name, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 
 		            		bResult = false;
 
@@ -686,24 +673,11 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 		            	}
 		            	
 		            }
-		            else if ( strAttributesOrder[ intAttributesIndex ].equals( ConfigXMLTagsSystemStartSession._Field_Value_Success ) ) {
+		            else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsConfigXMLTags._Field_Type ) ) {
 		            	
-		            	if ( SystemStartSessionDBConnection.strType.equals( ConfigXMLTagsSystemStartSession._Type_check_field_value ) ) {
+		            	if ( SystemStartSessionDBConnection.strType.equals( ConstantsConfigXMLTags._Type_check_field_value ) ) {
 
-		            		Logger.logError( "-1018", Lang.translate( "The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node", ConfigXMLTagsSystemStartSession._Field_Value_Success, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
-
-		            		bResult = false;
-
-		            		break;
-		            	
-		            	}
-		            	
-		            }
-		            else if ( strAttributesOrder[ intAttributesIndex ].equals( ConfigXMLTagsSystemStartSession._Field_Value_Failed ) ) {
-		            	
-		            	if ( SystemStartSessionDBConnection.strType.equals( ConfigXMLTagsSystemStartSession._Type_check_field_value ) ) {
-
-		            		Logger.logError( "-1019", Lang.translate( "The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node", ConfigXMLTagsSystemStartSession._Field_Value_Failed, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+		            		Logger.logError( "-1017", Lang.translate( "The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node", ConstantsConfigXMLTags._Field_Type, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 
 		            		bResult = false;
 
@@ -712,11 +686,11 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 		            	}
 		            	
 		            }
-		            else if ( strAttributesOrder[ intAttributesIndex ].equals( ConfigXMLTagsSystemStartSession._Field_Value_Disabled ) ) {
+		            else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsConfigXMLTags._Field_Value_Success ) ) {
 		            	
-		            	if ( SystemStartSessionDBConnection.strType.equals( ConfigXMLTagsSystemStartSession._Type_check_field_value ) ) {
+		            	if ( SystemStartSessionDBConnection.strType.equals( ConstantsConfigXMLTags._Type_check_field_value ) ) {
 
-		            		Logger.logError( "-1020", Lang.translate( "The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node", ConfigXMLTagsSystemStartSession._Field_Value_Disabled ) );
+		            		Logger.logError( "-1018", Lang.translate( "The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node", ConstantsConfigXMLTags._Field_Value_Success, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 
 		            		bResult = false;
 
@@ -725,11 +699,37 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 		            	}
 		            	
 		            }
-		            else if ( strAttributesOrder[ intAttributesIndex ].equals( ConfigXMLTagsSystemStartSession._Field_Value_NotFound ) ) {
+		            else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsConfigXMLTags._Field_Value_Failed ) ) {
 		            	
-		            	if ( SystemStartSessionDBConnection.strType.equals( ConfigXMLTagsSystemStartSession._Type_check_field_value ) ) {
+		            	if ( SystemStartSessionDBConnection.strType.equals( ConstantsConfigXMLTags._Type_check_field_value ) ) {
 
-		            		Logger.logError( "-1021", Lang.translate( "The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node", ConfigXMLTagsSystemStartSession._Field_Value_NotFound ) );
+		            		Logger.logError( "-1019", Lang.translate( "The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node", ConstantsConfigXMLTags._Field_Value_Failed, ConfigSectionNode.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+
+		            		bResult = false;
+
+		            		break;
+		            	
+		            	}
+		            	
+		            }
+		            else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsConfigXMLTags._Field_Value_Disabled ) ) {
+		            	
+		            	if ( SystemStartSessionDBConnection.strType.equals( ConstantsConfigXMLTags._Type_check_field_value ) ) {
+
+		            		Logger.logError( "-1020", Lang.translate( "The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node", ConstantsConfigXMLTags._Field_Value_Disabled ) );
+
+		            		bResult = false;
+
+		            		break;
+		            	
+		            	}
+		            	
+		            }
+		            else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsConfigXMLTags._Field_Value_NotFound ) ) {
+		            	
+		            	if ( SystemStartSessionDBConnection.strType.equals( ConstantsConfigXMLTags._Type_check_field_value ) ) {
+
+		            		Logger.logError( "-1021", Lang.translate( "The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node", ConstantsConfigXMLTags._Field_Value_NotFound ) );
 
 		            		bResult = false;
 
@@ -756,7 +756,7 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 		
 	}
 	
-	public boolean LoadConfigSectionExecuteSQL( int intTypeSection, int intConfigSectionIndex, Node ConfigSectionNode, CSystemStartSessionDBConnection SystemStartSessionDBConnection, CLanguage Lang, CExtendedLogger Logger ) {
+	public boolean loadConfigSectionExecuteSQL( int intTypeSection, int intConfigSectionIndex, Node ConfigSectionNode, CSystemStartSessionDBConnection SystemStartSessionDBConnection, CLanguage Lang, CExtendedLogger Logger ) {
 
 		boolean bResult = true;
 		
@@ -764,35 +764,35 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 
 			if ( ConfigSectionNode.getTextContent().trim().isEmpty() == false ) {
 
-				if ( intTypeSection == ConfigXMLTagsSystemStartSession._Section_Success ) { //Sucess
+				if ( intTypeSection == ConstantsConfigXMLTags._Section_Success ) { //Sucess
 
 					SystemStartSessionDBConnection.AfterCheckSQLSuccess.add( ConfigSectionNode.getTextContent().trim() );
 
 					Logger.logMessage( "1", Lang.translate( "Added after check SQL success [%s]", ConfigSectionNode.getTextContent().trim() ) );
 
 				}
-				else if ( intTypeSection == ConfigXMLTagsSystemStartSession._Section_Failed ) { //Failed
+				else if ( intTypeSection == ConstantsConfigXMLTags._Section_Failed ) { //Failed
 
 					SystemStartSessionDBConnection.AfterCheckSQLFailed.add( ConfigSectionNode.getTextContent().trim() );
 
 					Logger.logMessage( "1", Lang.translate( "Added after check SQL failed [%s]", ConfigSectionNode.getTextContent().trim() ) );
 
 				}
-				else if ( intTypeSection == ConfigXMLTagsSystemStartSession._Section_Disabled ) { //Disabled
+				else if ( intTypeSection == ConstantsConfigXMLTags._Section_Disabled ) { //Disabled
 
 					SystemStartSessionDBConnection.AfterCheckSQLDisabled.add( ConfigSectionNode.getTextContent().trim() );
 
 					Logger.logMessage( "1", Lang.translate( "Added after check SQL disabled [%s]", ConfigSectionNode.getTextContent().trim() ) );
 
 				}
-				else if ( intTypeSection == ConfigXMLTagsSystemStartSession._Section_NotFound ) { //Not Found
+				else if ( intTypeSection == ConstantsConfigXMLTags._Section_NotFound ) { //Not Found
 
 					SystemStartSessionDBConnection.AfterCheckSQLNotFound.add( ConfigSectionNode.getTextContent().trim() );
 
 					Logger.logMessage( "1", Lang.translate( "Added after check SQL not found [%s]", ConfigSectionNode.getTextContent().trim() ) );
 
 				}
-				else if ( intTypeSection == ConfigXMLTagsSystemStartSession._Section_Any ) { //Any
+				else if ( intTypeSection == ConstantsConfigXMLTags._Section_Any ) { //Any
 
 					SystemStartSessionDBConnection.AfterCheckSQLAny.add( ConfigSectionNode.getTextContent().trim() );
 
@@ -820,7 +820,7 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 		
 	}
 
-	public boolean LoadConfigSectionAfterCheckSQL( int intTypeSecction, int intConfigSectionIndex, Node ConfigSectionNode, CSystemStartSessionDBConnection SystemStartSessionDBConnection, CLanguage Lang, CExtendedLogger Logger ) {
+	public boolean loadConfigSectionAfterCheckSQL( int intTypeSecction, int intConfigSectionIndex, Node ConfigSectionNode, CSystemStartSessionDBConnection SystemStartSessionDBConnection, CLanguage Lang, CExtendedLogger Logger ) {
 
 		boolean bResult = true;
 		
@@ -832,9 +832,9 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 
     		Logger.logMessage( "1", Lang.translate( "Reading XML node section: [%s]", ConfigSectionAfterCheckSQL.getNodeName() ) );        
 
-    		if ( ConfigSectionAfterCheckSQL.getNodeName().equals( ConfigXMLTagsSystemStartSession._ExecuteSQL ) == true ) {
+    		if ( ConfigSectionAfterCheckSQL.getNodeName().equals( ConstantsConfigXMLTags._ExecuteSQL ) == true ) {
         	
-    			LoadConfigSectionExecuteSQL( intTypeSecction, intLocalConfigSecitonIndex, ConfigSectionAfterCheckSQL, SystemStartSessionDBConnection, Lang, Logger );
+    			loadConfigSectionExecuteSQL( intTypeSecction, intLocalConfigSecitonIndex, ConfigSectionAfterCheckSQL, SystemStartSessionDBConnection, Lang, Logger );
         		
         	}
              
@@ -844,7 +844,7 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 		
 	}
 	
-	public boolean LoadConfigSectionAddField( int intTypeSection, int intConfigSectionIndex, Node ConfigSectionNode, CSystemStartSessionDBConnection SystemStartSessionDBConnection, CLanguage Lang, CExtendedLogger Logger ) {
+	public boolean loadConfigSectionAddField( int intTypeSection, int intConfigSectionIndex, Node ConfigSectionNode, CSystemStartSessionDBConnection SystemStartSessionDBConnection, CLanguage Lang, CExtendedLogger Logger ) {
 
 		boolean bResult = true;
 		
@@ -852,7 +852,7 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 
 			if ( ConfigSectionNode.hasAttributes() == true ) {
 				
-				String strAttributesOrder[] = { ConfigXMLTagsSystemStartSession._Name };
+				String strAttributesOrder[] = { ConstantsConfigXMLTags._Name };
 				
 				NamedNodeMap NodeAttributes = ConfigSectionNode.getAttributes();
 
@@ -865,41 +865,41 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 		            	Logger.logMessage( "1", Lang.translate( "Node attribute name: [%s]", NodeAttribute.getNodeName() ) );
 		            	Logger.logMessage( "1", Lang.translate( "Node attribute value: [%s]", NodeAttribute.getNodeValue() ) );
 						
-						if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsSystemStartSession._Name ) ) {
+						if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Name ) ) {
 
 							if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 								
 								//Logger.LogMessage( "1", Lang.Translate( "Runtime config value [%s] changed to: [%s]",  ConfigXMLTagsSystemStartSession._Name, NodeAttribute.getNodeValue().trim() ) );
 
-								if ( intTypeSection == ConfigXMLTagsSystemStartSession._Section_Success ) { //Sucess
+								if ( intTypeSection == ConstantsConfigXMLTags._Section_Success ) { //Sucess
 
 									SystemStartSessionDBConnection.AddFieldToResponseSuccess.add( NodeAttribute.getNodeValue().trim() );
 
 									Logger.logMessage( "1", Lang.translate( "Added field [%s] for response success", NodeAttribute.getNodeValue().trim() ) );
 
 								}
-								else if ( intTypeSection == ConfigXMLTagsSystemStartSession._Section_Failed ) { //Failed
+								else if ( intTypeSection == ConstantsConfigXMLTags._Section_Failed ) { //Failed
 									
 									SystemStartSessionDBConnection.AddFieldToResponseFailed.add( NodeAttribute.getNodeValue().trim() );
 								
 									Logger.logMessage( "1", Lang.translate( "Added field [%s] for response failed", NodeAttribute.getNodeValue().trim() ) );
 									
 								}
-								else if ( intTypeSection == ConfigXMLTagsSystemStartSession._Section_Disabled ) { //Disabled
+								else if ( intTypeSection == ConstantsConfigXMLTags._Section_Disabled ) { //Disabled
 									
 									SystemStartSessionDBConnection.AddFieldToResponseDisabled.add( NodeAttribute.getNodeValue().trim() );
 								
 									Logger.logMessage( "1", Lang.translate( "Added field [%s] for response disabled", NodeAttribute.getNodeValue().trim() ) );
 									
 								}
-								else if ( intTypeSection == ConfigXMLTagsSystemStartSession._Section_NotFound ) { //Not Found
+								else if ( intTypeSection == ConstantsConfigXMLTags._Section_NotFound ) { //Not Found
 									
 									SystemStartSessionDBConnection.AddFieldToResponseNotFound.add( NodeAttribute.getNodeValue().trim() );
 								
 									Logger.logMessage( "1", Lang.translate( "Added field [%s] for response not found", NodeAttribute.getNodeValue().trim() ) );
 
 								}
-								else if ( intTypeSection == ConfigXMLTagsSystemStartSession._Section_Any ) { //Any
+								else if ( intTypeSection == ConstantsConfigXMLTags._Section_Any ) { //Any
 									
 									SystemStartSessionDBConnection.AddFieldToResponseAny.add( NodeAttribute.getNodeValue().trim() );
 								
@@ -911,7 +911,7 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 							}
 							else {
 								
-								Logger.logWarning( "-1", Lang.translate( "The [%s] attribute cannot empty string, for the node [%s] at relative index [%s], ignoring the node", ConfigXMLTagsSystemStartSession._Name, NodeAttribute.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
+								Logger.logWarning( "-1", Lang.translate( "The [%s] attribute cannot empty string, for the node [%s] at relative index [%s], ignoring the node", ConstantsConfigXMLTags._Name, NodeAttribute.getNodeName(), Integer.toString( intConfigSectionIndex ) ) );
 
 							}
 						
@@ -937,7 +937,7 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 		
 	}
 
-	public boolean LoadConfigSectionAddFieldsToResponse( int intTypeSecction, int intConfigSectionIndex, Node ConfigSectionNode, CSystemStartSessionDBConnection SystemStartSessionDBConnection, CLanguage Lang, CExtendedLogger Logger ) {
+	public boolean loadConfigSectionAddFieldsToResponse( int intTypeSecction, int intConfigSectionIndex, Node ConfigSectionNode, CSystemStartSessionDBConnection SystemStartSessionDBConnection, CLanguage Lang, CExtendedLogger Logger ) {
 
 		boolean bResult = true;
 		
@@ -949,9 +949,9 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 
     		Logger.logMessage( "1", Lang.translate( "Reading XML node section: [%s]", ConfigSectionAddFieldsToResponse.getNodeName() ) );        
 
-    		if ( ConfigSectionAddFieldsToResponse.getNodeName().equals( ConfigXMLTagsSystemStartSession._AddField ) == true ) {
+    		if ( ConfigSectionAddFieldsToResponse.getNodeName().equals( ConstantsConfigXMLTags._AddField ) == true ) {
         	
-    			LoadConfigSectionAddField( intTypeSecction, intLocalConfigSecitonIndex, ConfigSectionAddFieldsToResponse, SystemStartSessionDBConnection, Lang, Logger );
+    			loadConfigSectionAddField( intTypeSecction, intLocalConfigSecitonIndex, ConfigSectionAddFieldsToResponse, SystemStartSessionDBConnection, Lang, Logger );
         		
         	}
              
@@ -961,7 +961,7 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 		
 	}
 	
-	public boolean LoadConfigSectionDBConnection( int intConfigSectionIndex, Node ConfigSectionNode, String strDBConnectioName, CLanguage Lang, CExtendedLogger Logger ) {
+	public boolean loadConfigSectionDBConnection( int intConfigSectionIndex, Node ConfigSectionNode, String strDBConnectioName, CLanguage Lang, CExtendedLogger Logger ) {
 
 		boolean bResult = true;
 		
@@ -977,9 +977,9 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 
     		Logger.logMessage( "1", Lang.translate( "Reading XML node section: [%s]", ConfigSectionDBConnection.getNodeName() ) );        
 
-    		if ( ConfigSectionDBConnection.getNodeName().equals( ConfigXMLTagsSystemStartSession._InputParams ) == true ) {
+    		if ( ConfigSectionDBConnection.getNodeName().equals( ConstantsConfigXMLTags._InputParams ) == true ) {
         	
-    			if ( LoadConfigSectionInputParams( intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
+    			if ( loadConfigSectionInputParams( intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
 	        		
     			    Logger.logError( "-1001", Lang.translate( "Failed to load config from XML node section: [%s]", ConfigSectionDBConnection.getNodeName() ) );        
 
@@ -991,9 +991,9 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
     			
         		
         	}
-    		else if ( ConfigSectionDBConnection.getNodeName().equals( ConfigXMLTagsSystemStartSession._CheckMethod ) == true ) {
+    		else if ( ConfigSectionDBConnection.getNodeName().equals( ConstantsConfigXMLTags._CheckMethod ) == true ) {
         		
-    			if ( LoadConfigSectionCheckMethod( intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
+    			if ( loadConfigSectionCheckMethod( intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
 	        		
     			    Logger.logError( "-1002", Lang.translate( "Failed to load config from XML node section: [%s]", ConfigSectionDBConnection.getNodeName() ) );        
 
@@ -1004,9 +1004,9 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
         		}
         		
         	}
-    		else if ( ConfigSectionDBConnection.getNodeName().equals( ConfigXMLTagsSystemStartSession._AfterCheckSQLSuccess ) == true ) {
+    		else if ( ConfigSectionDBConnection.getNodeName().equals( ConstantsConfigXMLTags._AfterCheckSQLSuccess ) == true ) {
 
-    			if ( LoadConfigSectionAfterCheckSQL( ConfigXMLTagsSystemStartSession._Section_Success, intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
+    			if ( loadConfigSectionAfterCheckSQL( ConstantsConfigXMLTags._Section_Success, intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
     				
     			    Logger.logError( "-1003", Lang.translate( "Failed to load config from XML node section: [%s]", ConfigSectionDBConnection.getNodeName() ) );        
 
@@ -1017,9 +1017,9 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
     			}
     			
     		}
-    		else if ( ConfigSectionDBConnection.getNodeName().equals( ConfigXMLTagsSystemStartSession._AfterCheckSQLFailed ) == true ) {
+    		else if ( ConfigSectionDBConnection.getNodeName().equals( ConstantsConfigXMLTags._AfterCheckSQLFailed ) == true ) {
 
-    			if ( LoadConfigSectionAfterCheckSQL( ConfigXMLTagsSystemStartSession._Section_Failed, intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
+    			if ( loadConfigSectionAfterCheckSQL( ConstantsConfigXMLTags._Section_Failed, intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
     				
     			    Logger.logError( "-1004", Lang.translate( "Failed to load config from XML node section: [%s]", ConfigSectionDBConnection.getNodeName() ) );        
 
@@ -1030,9 +1030,9 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
     			}
     			
     		}
-    		else if ( ConfigSectionDBConnection.getNodeName().equals( ConfigXMLTagsSystemStartSession._AfterCheckSQLDisabled ) == true ) {
+    		else if ( ConfigSectionDBConnection.getNodeName().equals( ConstantsConfigXMLTags._AfterCheckSQLDisabled ) == true ) {
 
-    			if ( LoadConfigSectionAfterCheckSQL( ConfigXMLTagsSystemStartSession._Section_Disabled, intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
+    			if ( loadConfigSectionAfterCheckSQL( ConstantsConfigXMLTags._Section_Disabled, intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
     				
     			    Logger.logError( "-1005", Lang.translate( "Failed to load config from XML node section: [%s]", ConfigSectionDBConnection.getNodeName() ) );        
 
@@ -1043,9 +1043,9 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
     			}
     			
     		}
-    		else if ( ConfigSectionDBConnection.getNodeName().equals( ConfigXMLTagsSystemStartSession._AfterCheckSQLNotFound ) == true ) {
+    		else if ( ConfigSectionDBConnection.getNodeName().equals( ConstantsConfigXMLTags._AfterCheckSQLNotFound ) == true ) {
 
-    			if ( LoadConfigSectionAfterCheckSQL( ConfigXMLTagsSystemStartSession._Section_NotFound, intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
+    			if ( loadConfigSectionAfterCheckSQL( ConstantsConfigXMLTags._Section_NotFound, intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
     				
     			    Logger.logError( "-1006", Lang.translate( "Failed to load config from XML node section: [%s]", ConfigSectionDBConnection.getNodeName() ) );        
 
@@ -1056,9 +1056,9 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
     			}
 
     		}
-    		else if ( ConfigSectionDBConnection.getNodeName().equals( ConfigXMLTagsSystemStartSession._AfterCheckSQLAny ) == true ) {
+    		else if ( ConfigSectionDBConnection.getNodeName().equals( ConstantsConfigXMLTags._AfterCheckSQLAny ) == true ) {
 
-    			if ( LoadConfigSectionAfterCheckSQL( ConfigXMLTagsSystemStartSession._Section_Any, intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
+    			if ( loadConfigSectionAfterCheckSQL( ConstantsConfigXMLTags._Section_Any, intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
     				
     			    Logger.logError( "-1007", Lang.translate( "Failed to load config from XML node section: [%s]", ConfigSectionDBConnection.getNodeName() ) );        
 
@@ -1069,9 +1069,9 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
     			}
     			
     		}
-    		else if ( ConfigSectionDBConnection.getNodeName().equals( ConfigXMLTagsSystemStartSession._AddFieldsToResponseSuccess ) == true ) {
+    		else if ( ConfigSectionDBConnection.getNodeName().equals( ConstantsConfigXMLTags._AddFieldsToResponseSuccess ) == true ) {
         		
-    			if ( LoadConfigSectionAddFieldsToResponse( ConfigXMLTagsSystemStartSession._Section_Success, intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
+    			if ( loadConfigSectionAddFieldsToResponse( ConstantsConfigXMLTags._Section_Success, intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
     				
     			    Logger.logError( "-1008", Lang.translate( "Failed to load config from XML node section: [%s]", ConfigSectionDBConnection.getNodeName() ) );        
 
@@ -1082,9 +1082,9 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
     			}
         		
         	}
-    		else if ( ConfigSectionDBConnection.getNodeName().equals( ConfigXMLTagsSystemStartSession._AddFieldsToResponseFailed ) == true ) {
+    		else if ( ConfigSectionDBConnection.getNodeName().equals( ConstantsConfigXMLTags._AddFieldsToResponseFailed ) == true ) {
         		
-    			if ( LoadConfigSectionAddFieldsToResponse( ConfigXMLTagsSystemStartSession._Section_Failed, intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
+    			if ( loadConfigSectionAddFieldsToResponse( ConstantsConfigXMLTags._Section_Failed, intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
     				
     			    Logger.logError( "-1009", Lang.translate( "Failed to load config from XML node section: [%s]", ConfigSectionDBConnection.getNodeName() ) );        
 
@@ -1095,9 +1095,9 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
     			}
         		
         	}
-    		else if ( ConfigSectionDBConnection.getNodeName().equals( ConfigXMLTagsSystemStartSession._AddFieldsToResponseDisabled ) == true ) {
+    		else if ( ConfigSectionDBConnection.getNodeName().equals( ConstantsConfigXMLTags._AddFieldsToResponseDisabled ) == true ) {
         		
-    			if ( LoadConfigSectionAddFieldsToResponse( ConfigXMLTagsSystemStartSession._Section_Disabled, intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
+    			if ( loadConfigSectionAddFieldsToResponse( ConstantsConfigXMLTags._Section_Disabled, intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
     				
     			    Logger.logError( "-1010", Lang.translate( "Failed to load config from XML node section: [%s]", ConfigSectionDBConnection.getNodeName() ) );        
 
@@ -1108,9 +1108,9 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
     			}
         		
         	}
-    		else if ( ConfigSectionDBConnection.getNodeName().equals( ConfigXMLTagsSystemStartSession._AddFieldsToResponseNotFound ) == true ) {
+    		else if ( ConfigSectionDBConnection.getNodeName().equals( ConstantsConfigXMLTags._AddFieldsToResponseNotFound ) == true ) {
         		
-    			if ( LoadConfigSectionAddFieldsToResponse( ConfigXMLTagsSystemStartSession._Section_NotFound, intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
+    			if ( loadConfigSectionAddFieldsToResponse( ConstantsConfigXMLTags._Section_NotFound, intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
     				
     			    Logger.logError( "-1011", Lang.translate( "Failed to load config from XML node section: [%s]", ConfigSectionDBConnection.getNodeName() ) );        
 
@@ -1121,9 +1121,9 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
     			}
         		
         	}
-    		else if ( ConfigSectionDBConnection.getNodeName().equals( ConfigXMLTagsSystemStartSession._AddFieldsToResponseAny ) == true ) {
+    		else if ( ConfigSectionDBConnection.getNodeName().equals( ConstantsConfigXMLTags._AddFieldsToResponseAny ) == true ) {
         		
-    			if ( LoadConfigSectionAddFieldsToResponse( ConfigXMLTagsSystemStartSession._Section_Any, intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
+    			if ( loadConfigSectionAddFieldsToResponse( ConstantsConfigXMLTags._Section_Any, intLocalConfigSectionIndex, ConfigSectionDBConnection, SystemStartSessionDBConnection, Lang, Logger ) == false ) {
     				
     			    Logger.logError( "-1012", Lang.translate( "Failed to load config from XML node section: [%s]", ConfigSectionDBConnection.getNodeName() ) );        
 
@@ -1154,7 +1154,7 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 		
 	}
 	
-	public boolean LoadConfigSectionDBConnections( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
+	public boolean loadConfigSectionDBConnections( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
 		
 		boolean bResult = true;
 		
@@ -1168,11 +1168,11 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 
 				Logger.logMessage( "1", Lang.translate( "Reading XML node section: [%s]", ConfigSectionDBConnection.getNodeName() ) );        
 
-				if ( ConfigSectionDBConnection.getNodeName().equals( ConfigXMLTagsSystemStartSession._DBConnection ) == true ) {
+				if ( ConfigSectionDBConnection.getNodeName().equals( ConstantsConfigXMLTags._DBConnection ) == true ) {
 
 					NamedNodeMap NodeAttributes = ConfigSectionDBConnection.getAttributes();
 
-					Node NameAttribute = NodeAttributes.getNamedItem( ConfigXMLTagsSystemStartSession._Name );
+					Node NameAttribute = NodeAttributes.getNamedItem( ConstantsConfigXMLTags._Name );
 
 					if ( NameAttribute != null ) { 
 
@@ -1189,7 +1189,7 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 
 								if ( this.getSystemStartSessionByName( strDBConnectionName ) == null ) { 
 
-									if ( LoadConfigSectionDBConnection( intConfigSecitonIndex, ConfigSectionDBConnection, strDBConnectionName, Lang, Logger ) == false ) {
+									if ( loadConfigSectionDBConnection( intConfigSecitonIndex, ConfigSectionDBConnection, strDBConnectionName, Lang, Logger ) == false ) {
 
 										Logger.logWarning( "-1", Lang.translate( "Failed to load config from XML node section: [%s]", ConfigSectionDBConnection.getNodeName() ) );        
 
@@ -1198,28 +1198,28 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 								}
 								else {
 
-									Logger.logWarning( "-3", Lang.translate( "The [%s] attribute value [%s] is invalid, name duplicated config file, for the section [%s] at relative index [%s], ignoring the section", ConfigXMLTagsSystemStartSession._Name, strDBConnectionName, ConfigSectionDBConnection.getNodeName(), Integer.toString( intConfigSecitonIndex ) ) );        
+									Logger.logWarning( "-3", Lang.translate( "The [%s] attribute value [%s] is invalid, name duplicated config file, for the section [%s] at relative index [%s], ignoring the section", ConstantsConfigXMLTags._Name, strDBConnectionName, ConfigSectionDBConnection.getNodeName(), Integer.toString( intConfigSecitonIndex ) ) );        
 
 								}
 
 							}
 							else {
 
-								Logger.logWarning( "-2", Lang.translate( "The [%s] attribute value [%s] is invalid, name not found in databases conections from manager config file, for the section [%s] at relative index [%s], ignoring the section", ConfigXMLTagsSystemStartSession._Name, strDBConnectionName, ConfigSectionDBConnection.getNodeName(), Integer.toString( intConfigSecitonIndex ) ) );        
+								Logger.logWarning( "-2", Lang.translate( "The [%s] attribute value [%s] is invalid, name not found in databases conections from manager config file, for the section [%s] at relative index [%s], ignoring the section", ConstantsConfigXMLTags._Name, strDBConnectionName, ConfigSectionDBConnection.getNodeName(), Integer.toString( intConfigSecitonIndex ) ) );        
 
 							}
 
 						}
 						else {
 
-							Logger.logWarning( "-3", Lang.translate( "The [%s] attribute cannot empty string, for the section [%s] at relative index [%s], ignoring the section", ConfigXMLTagsSystemStartSession._Name, ConfigSectionDBConnection.getNodeName(), Integer.toString( intConfigSecitonIndex ) ) );        
+							Logger.logWarning( "-3", Lang.translate( "The [%s] attribute cannot empty string, for the section [%s] at relative index [%s], ignoring the section", ConstantsConfigXMLTags._Name, ConfigSectionDBConnection.getNodeName(), Integer.toString( intConfigSecitonIndex ) ) );        
 
 						}
 
 					}
 					else {
 
-						Logger.logWarning( "-4", Lang.translate( "The [%s] attribute not found, for the section [%s] at relative index [%s], ignoring the section", ConfigXMLTagsSystemStartSession._Name, ConfigSectionDBConnection.getNodeName(), Integer.toString( intConfigSecitonIndex ) ) );        
+						Logger.logWarning( "-4", Lang.translate( "The [%s] attribute not found, for the section [%s] at relative index [%s], ignoring the section", ConstantsConfigXMLTags._Name, ConfigSectionDBConnection.getNodeName(), Integer.toString( intConfigSecitonIndex ) ) );        
 
 					}
 
@@ -1259,15 +1259,15 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 	}
 	
 	@Override
-	public boolean LoadConfigSection( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
+	public boolean loadConfigSection( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
 
 		boolean bResult = true;
 
 		Logger.logMessage( "1", Lang.translate( "Reading XML node section: [%s]", ConfigSectionNode.getNodeName() ) );        
         
-		if ( ConfigSectionNode.getNodeName().equals( ConfigXMLTagsSystemStartSession._DBConnections ) == true ) {
+		if ( ConfigSectionNode.getNodeName().equals( ConstantsConfigXMLTags._DBConnections ) == true ) {
            
-			if ( this.LoadConfigSectionDBConnections( ConfigSectionNode, Lang, Logger ) == false ) {
+			if ( this.loadConfigSectionDBConnections( ConfigSectionNode, Lang, Logger ) == false ) {
 				
     			Logger.logError( "-1001", Lang.translate( "Failed to load config from XML node section: [%s]", ConfigSectionNode.getNodeName() ) );        
 				

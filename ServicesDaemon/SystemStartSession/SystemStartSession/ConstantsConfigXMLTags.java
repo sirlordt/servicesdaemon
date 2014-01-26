@@ -10,7 +10,7 @@
  ******************************************************************************/
 package SystemStartSession;
 
-public interface ConfigXMLTagsSystemStartSession {
+public interface ConstantsConfigXMLTags {
 
 	public static final String _DBConnections = "DBConnections";
 	public static final String _DBConnection = "DBConnection";

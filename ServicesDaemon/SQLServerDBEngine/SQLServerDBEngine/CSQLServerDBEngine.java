@@ -25,7 +25,7 @@ import CommonClasses.CMemoryFieldData;
 import CommonClasses.CMemoryRowSet;
 import CommonClasses.CNamedPreparedStatement;
 import CommonClasses.CResultSetResult;
-import CommonClasses.ConfigXMLTagsServicesDaemon;
+import CommonClasses.ConstantsCommonConfigXMLTags;
 import ExtendedLogger.CExtendedLogger;
 
 public class CSQLServerDBEngine extends CAbstractDBEngine {
@@ -234,8 +234,8 @@ public class CSQLServerDBEngine extends CAbstractDBEngine {
     	
     		HashMap<String,String> Delimiters = new HashMap<String,String>();
 
-    		Delimiters.put( ConfigXMLTagsServicesDaemon._StartMacroTag, ConfigXMLTagsServicesDaemon._EndMacroTag );
-    		Delimiters.put( ConfigXMLTagsServicesDaemon._StartParamValue, ConfigXMLTagsServicesDaemon._EndParamValue );
+    		Delimiters.put( ConstantsCommonConfigXMLTags._StartMacroTag, ConstantsCommonConfigXMLTags._EndMacroTag );
+    		Delimiters.put( ConstantsCommonConfigXMLTags._StartParamValue, ConstantsCommonConfigXMLTags._EndParamValue );
 
     		CNamedPreparedStatement MainNamedPreparedStatement = new CNamedPreparedStatement( (Connection) DBConnection.getDBConnection(), strSQL, Delimiters );		
     	
@@ -253,7 +253,7 @@ public class CSQLServerDBEngine extends CAbstractDBEngine {
 				
 				String strInputServiceParameterValue = Request.getParameter( NamedParam.getKey() );
 
-				int intMacroIndex = Utilities.getIndexByValue( strMacrosNames, ConfigXMLTagsServicesDaemon._StartMacroTag + NamedParam.getKey() + ConfigXMLTagsServicesDaemon._EndMacroTag );
+				int intMacroIndex = Utilities.getIndexByValue( strMacrosNames, ConstantsCommonConfigXMLTags._StartMacroTag + NamedParam.getKey() + ConstantsCommonConfigXMLTags._EndMacroTag );
 
 				if ( intMacroIndex >= 0 ) {
 					

@@ -67,7 +67,7 @@ public class CBackendServicesManager {
 				
 				String strProxyPassword = ConfigProxy.strProxyPassword.trim();
 				
-				strProxyPassword = net.maindataservices.Utilities.uncryptString( ConfigXMLTagsServicesDaemon._Password_Crypted, ConfigXMLTagsServicesDaemon._Password_Crypted_Sep, ConstantsCommonClasses._Crypt_Algorithm, strProxyPassword, Logger, Lang );
+				strProxyPassword = net.maindataservices.Utilities.uncryptString( ConstantsCommonConfigXMLTags._Password_Crypted, ConstantsCommonConfigXMLTags._Password_Crypted_Sep, ConstantsCommonClasses._Crypt_Algorithm, strProxyPassword, Logger, Lang );
 				
 				CredentialsProvider credsProvider = new BasicCredentialsProvider();
 				credsProvider.setCredentials( new AuthScope( ProxyHost.getHostName(), ProxyHost.getPort() ), new UsernamePasswordCredentials( ConfigProxy.strProxyUser.trim(), strProxyPassword ));    				
@@ -303,7 +303,7 @@ public class CBackendServicesManager {
     	 
     		ArrayList<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
     		urlParameters.add( new BasicNameValuePair( "ServiceName", "System.Register.Manager" ) );
-    		urlParameters.add( new BasicNameValuePair( "SecurityTokenID", net.maindataservices.Utilities.uncryptString( ConfigXMLTagsServicesDaemon._Password_Crypted, ConfigXMLTagsServicesDaemon._Password_Crypted_Sep, ConstantsCommonClasses._Crypt_Algorithm, strSecurityTokenID, Logger, Lang ) ) );
+    		urlParameters.add( new BasicNameValuePair( "SecurityTokenID", net.maindataservices.Utilities.uncryptString( ConstantsCommonConfigXMLTags._Password_Crypted, ConstantsCommonConfigXMLTags._Password_Crypted_Sep, ConstantsCommonClasses._Crypt_Algorithm, strSecurityTokenID, Logger, Lang ) ) );
     		urlParameters.add( new BasicNameValuePair( "Context", strContext ) );
     		urlParameters.add( new BasicNameValuePair( "ManagerURL", strManagerURL ) );
     		urlParameters.add( new BasicNameValuePair( "Weight", Integer.toString( intWeight ) ) );
@@ -360,7 +360,7 @@ public class CBackendServicesManager {
     	 
     		ArrayList<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
     		urlParameters.add( new BasicNameValuePair( "ServiceName", "System.Unregister.Manager" ) );
-    		urlParameters.add( new BasicNameValuePair( "SecurityTokenID", net.maindataservices.Utilities.uncryptString( ConfigXMLTagsServicesDaemon._Password_Crypted, ConfigXMLTagsServicesDaemon._Password_Crypted_Sep, ConstantsCommonClasses._Crypt_Algorithm, strSecurityTokenID, Logger, Lang ) ) );
+    		urlParameters.add( new BasicNameValuePair( "SecurityTokenID", net.maindataservices.Utilities.uncryptString( ConstantsCommonConfigXMLTags._Password_Crypted, ConstantsCommonConfigXMLTags._Password_Crypted_Sep, ConstantsCommonClasses._Crypt_Algorithm, strSecurityTokenID, Logger, Lang ) ) );
     		urlParameters.add( new BasicNameValuePair( "ManagerURL", strManagerURL ) );
     		urlParameters.add( new BasicNameValuePair( "ResponseFormat", _ResponseFormat ) );
     		urlParameters.add( new BasicNameValuePair( "ResponseFormatVersion", _ResponseFormatVersion ) );
@@ -483,7 +483,7 @@ public class CBackendServicesManager {
     		ArrayList<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
     		urlParameters.add( new BasicNameValuePair( "ServiceName", "System.List.Registered.Managers" ) );
     		urlParameters.add( new BasicNameValuePair( "Context", strContext ) );
-    		urlParameters.add( new BasicNameValuePair( "SecurityTokenID", net.maindataservices.Utilities.uncryptString( ConfigXMLTagsServicesDaemon._Password_Crypted, ConfigXMLTagsServicesDaemon._Password_Crypted_Sep, ConstantsCommonClasses._Crypt_Algorithm, strSecurityTokenID, Logger, Lang ) ) );
+    		urlParameters.add( new BasicNameValuePair( "SecurityTokenID", net.maindataservices.Utilities.uncryptString( ConstantsCommonConfigXMLTags._Password_Crypted, ConstantsCommonConfigXMLTags._Password_Crypted_Sep, ConstantsCommonClasses._Crypt_Algorithm, strSecurityTokenID, Logger, Lang ) ) );
     		urlParameters.add( new BasicNameValuePair( "ResponseFormat", _ResponseFormat ) );
     		urlParameters.add( new BasicNameValuePair( "ResponseFormatVersion", _ResponseFormatVersion ) );
     		

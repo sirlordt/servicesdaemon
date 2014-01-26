@@ -63,7 +63,7 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 			this.strServiceName = "System.Execute.SQL";
 			this.strServiceVersion = "0.0.0.1";
 
-			this.setupService( ConstantsSystemExecuteSQL._Main_File_Log, this.strRunningPath + ConstantsCommonClasses._Langs_Dir + ConstantsSystemExecuteSQL._Main_File + "." + ConstantsCommonClasses._Lang_Ext ); //Init the Logger and Lang
+			this.setupService( ConstantsService._Main_File_Log, this.strRunningPath + ConstantsCommonClasses._Langs_Dir + ConstantsService._Main_File + "." + ConstantsCommonClasses._Lang_Ext ); //Init the Logger and Lang
 
 			ServiceLogger.logMessage( "1", ServiceLang.translate( "Running dir: [%s]", this.strRunningPath ) );        
 			ServiceLogger.logMessage( "1", ServiceLang.translate( "Version: [%s]", this.strServiceVersion ) );        
@@ -80,7 +80,7 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 
 			SystemExecuteSQLConfig = CConfigSystemExecuteSQL.getSystemExecuteSQLConfig( ServicesDaemonConfig, OwnerConfig, this.strRunningPath );
 
-			if ( SystemExecuteSQLConfig.LoadConfig( this.strRunningPath + ConstantsSystemExecuteSQL._Conf_File, ServiceLang, ServiceLogger ) == true ) {
+			if ( SystemExecuteSQLConfig.loadConfig( this.strRunningPath + ConstantsService._Conf_File, ServiceLang, ServiceLogger ) == true ) {
 
 				bResult = true;
 
@@ -96,11 +96,11 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 
 				ServiceInputParameters.add( InputParameter ); 	
 
-				InputParameter = new CInputServiceParameter( ConstantsSystemExecuteSQL._Request_Commit, false, ConstantsSystemExecuteSQL._Request_Commit_Type, ConstantsSystemExecuteSQL._Request_Commit_Length, TParameterScope.IN, ServiceLang.translate( "Commit all pending operations in context of current transaction, example: 1" ) );
+				InputParameter = new CInputServiceParameter( ConstantsService._Request_Commit, false, ConstantsService._Request_Commit_Type, ConstantsService._Request_Commit_Length, TParameterScope.IN, ServiceLang.translate( "Commit all pending operations in context of current transaction, example: 1" ) );
 
 				ServiceInputParameters.add( InputParameter ); 	
 
-				InputParameter = new CInputServiceParameter( ConstantsSystemExecuteSQL._Request_InternalFetchSize, false, ConstantsSystemExecuteSQL._Request_InternalFetchSize_Type, ConstantsSystemExecuteSQL._Request_InternalFetchSize_Length, TParameterScope.IN, ServiceLang.translate( "Adjust the internal result set fetch size (Rows) for better performance for specific SQL consult, example: 25000" ) );
+				InputParameter = new CInputServiceParameter( ConstantsService._Request_InternalFetchSize, false, ConstantsService._Request_InternalFetchSize_Type, ConstantsService._Request_InternalFetchSize_Length, TParameterScope.IN, ServiceLang.translate( "Adjust the internal result set fetch size (Rows) for better performance for specific SQL consult, example: 25000" ) );
 
 				ServiceInputParameters.add( InputParameter ); 	
 				
@@ -112,7 +112,7 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 
 				ServiceInputParameters.add( InputParameter );
 
-				InputParameter = new CInputServiceParameter( ConstantsSystemExecuteSQL._Request_SQL, true, ConstantsSystemExecuteSQL._Request_SQL_Type, ConstantsSystemExecuteSQL._Request_SQL_Length, TParameterScope.IN, ServiceLang.translate( "SQL statement" ) );
+				InputParameter = new CInputServiceParameter( ConstantsService._Request_SQL, true, ConstantsService._Request_SQL_Type, ConstantsService._Request_SQL_Length, TParameterScope.IN, ServiceLang.translate( "SQL statement" ) );
 
 				ServiceInputParameters.add( InputParameter );
 
@@ -149,13 +149,13 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 			
 			if ( ExpresionFilters.checkExpressionInFilters( strSQL, ServiceLogger ) ) {
 		    
-				if ( ExpresionFilters.strType == ConfigXMLTagsSystemExecuteSQL._Type_Allow )
+				if ( ExpresionFilters.strType == ConstantsConfigXMLTags._Type_Allow )
 					bResult = true;
 				
 			}
 			else {
 				
-				if ( ExpresionFilters.strType == ConfigXMLTagsSystemExecuteSQL._Type_Block )
+				if ( ExpresionFilters.strType == ConstantsConfigXMLTags._Type_Block )
 					bResult = true;
 				
 			}
@@ -534,7 +534,7 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 
 								//if ( DBConnectionSemaphore != null ) {
 
-									String strSQL = Request.getParameter( ConstantsSystemExecuteSQL._Request_SQL );
+									String strSQL = Request.getParameter( ConstantsService._Request_SQL );
 
 									if ( strSQL != null ) {
 
@@ -552,7 +552,7 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 												
 												int intInternalFetchSize = Integer.parseInt( (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Internal_Fetch_Size, null ) );
 												
-												String strInternalFetchSize = Request.getParameter( ConstantsSystemExecuteSQL._Request_InternalFetchSize );
+												String strInternalFetchSize = Request.getParameter( ConstantsService._Request_InternalFetchSize );
 												
 												if ( strInternalFetchSize != null && net.maindataservices.Utilities.checkStringIsInteger( strInternalFetchSize, ServiceLogger ) ) {
 													
@@ -565,7 +565,7 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 
 													intResultCode = 1;
 
-													String strCommit = Request.getParameter( ConstantsSystemExecuteSQL._Request_Commit );
+													String strCommit = Request.getParameter( ConstantsService._Request_Commit );
 													
 													if ( LocalConfigDBConnection.bAutoCommit == false && strCommit != null && strCommit.equals( "1" ) ) {
 														
@@ -587,7 +587,7 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 
 												int intInternalFetchSize = Integer.parseInt( (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Internal_Fetch_Size, null ) );
 												
-												String strInternalFetchSize = Request.getParameter( ConstantsSystemExecuteSQL._Request_InternalFetchSize );
+												String strInternalFetchSize = Request.getParameter( ConstantsService._Request_InternalFetchSize );
 												
 												if ( strInternalFetchSize != null && net.maindataservices.Utilities.checkStringIsInteger( strInternalFetchSize, ServiceLogger ) ) {
 													
@@ -600,7 +600,7 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 
 													intResultCode = 1;
 
-													String strCommit = Request.getParameter( ConstantsSystemExecuteSQL._Request_Commit );
+													String strCommit = Request.getParameter( ConstantsService._Request_Commit );
 													
 													if ( LocalConfigDBConnection.bAutoCommit == false && strCommit != null && strCommit.equals( "1" ) ) {
 														

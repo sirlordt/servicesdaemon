@@ -44,7 +44,7 @@ public class CSystemListObjects extends CDBAbstractService {
 			this.strServiceName = "System.List.Objects";
 			this.strServiceVersion = "0.0.0.1";
 
-			this.setupService( ConstantsSystemListObjects._Main_File_Log, this.strRunningPath + ConstantsCommonClasses._Langs_Dir + ConstantsSystemListObjects._Main_File + "." + ConstantsCommonClasses._Lang_Ext ); //Init the Logger and Lang
+			this.setupService( ConstantsService._Main_File_Log, this.strRunningPath + ConstantsCommonClasses._Langs_Dir + ConstantsService._Main_File + "." + ConstantsCommonClasses._Lang_Ext ); //Init the Logger and Lang
 
 			ServiceLogger.logMessage( "1", ServiceLang.translate( "Running dir: [%s]", this.strRunningPath ) );        
 			ServiceLogger.logMessage( "1", ServiceLang.translate( "Version: [%s]", this.strServiceVersion ) );        
@@ -79,7 +79,7 @@ public class CSystemListObjects extends CDBAbstractService {
 
 			ServiceInputParameters.add( InputParameter );
 			
-			InputParameter = new CInputServiceParameter( ConstantsSystemListObjects._Request_ObjectType, true, ConstantsSystemListObjects._Request_ObjectType_Type, ConstantsSystemListObjects._Request_ObjectType_Length, TParameterScope.IN, ServiceLang.translate( "Type of object to list 1 = Table, 2 = View, 3 = Function, 4 = Stored Procedure" ) );
+			InputParameter = new CInputServiceParameter( ConstantsService._Request_ObjectType, true, ConstantsService._Request_ObjectType_Type, ConstantsService._Request_ObjectType_Length, TParameterScope.IN, ServiceLang.translate( "Type of object to list 1 = Table, 2 = View, 3 = Function, 4 = Stored Procedure" ) );
 
 			ServiceInputParameters.add( InputParameter );
 
@@ -131,9 +131,9 @@ public class CSystemListObjects extends CDBAbstractService {
 
 								if ( DBConnection != null ) {
 									
-									String strObjectType = Request.getParameter( ConstantsSystemListObjects._Request_ObjectType );
+									String strObjectType = Request.getParameter( ConstantsService._Request_ObjectType );
 									
-									if ( strObjectType.equals( ConstantsSystemListObjects._AllObjects ) || strObjectType.equals( ConstantsSystemListObjects._Table ) || strObjectType.equals( ConstantsSystemListObjects._View ) || strObjectType.equals( ConstantsSystemListObjects._Function ) || strObjectType.equals( ConstantsSystemListObjects._Procedure ) ) {
+									if ( strObjectType.equals( ConstantsService._AllObjects ) || strObjectType.equals( ConstantsService._Table ) || strObjectType.equals( ConstantsService._View ) || strObjectType.equals( ConstantsService._Function ) || strObjectType.equals( ConstantsService._Procedure ) ) {
 									
 										CResultSetResult Result = DBEngine.listDatabaseObjects(DBConnection, Integer.parseInt( strObjectType ), ServiceLogger, ServiceLang );
 										

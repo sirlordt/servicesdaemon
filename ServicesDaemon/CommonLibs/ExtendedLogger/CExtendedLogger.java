@@ -24,18 +24,33 @@ public class CExtendedLogger extends Logger {
 	protected boolean bSetupSet = false;
 	protected int intCallStackLevel = 3; //Adjust call stack index for precise info
 	
+	protected String strInstanceID = ""; 
+	
 	protected String strLogIP = "";
 	protected int intLogPort = -1;
-	protected boolean bSocketHandActive = false;
+	protected boolean bSocketHandlerActive = false;
 	
-	protected SocketHandler SocketHand = null;
-	protected FileHandler FileHand = null;
-	protected ConsoleHandler ConsoleHand = null;
+	protected String strHTTPLogURL = "";
+	protected String strHTTPLogUser = "";
+	protected String strHTTPLogPassword = "";
+	protected String strProxyIP = "";
+	protected int intProxyPort = -1;
+	protected String strProxyUser = "";
+	protected String strProxyPassword = "";
+	protected boolean bHTTPHandlerActive = false;
+	
+	protected String strLogPath = "";
+	protected String strLogFile = "";
+	
+	protected SocketHandler SocketHandler = null;
+	protected FileHandler FileHandler = null;
+	protected ConsoleHandler ConsoleHandler = null;
+	protected CExtendedHTTPHandler HTTPHandler = null;
 	
 	protected CExtendedLogXMLFormatter ExXmlFormatter = null;
 	
-	public static int intMinPort = 1; 
-	public static int intMaxPort = 65535; 
+	public static final int _Min_Port = 1; 
+	public static final int _Max_Port = 65535; 
 	
 	public CExtendedLogger( String strName ) {
 
@@ -63,30 +78,75 @@ public class CExtendedLogger extends Logger {
 		
 	}	
 	
-    public void setupLogger( boolean bLogToScreen, String strLogPath, String strLogFile, String strLogFilters, boolean bExactMatch, String strLogLevel, String strLogIP, int intLogPort ) {
+    public void setupLogger( String strInstanceID, boolean bLogToScreen, String strLogPath, String strLogFile, String strLogFilters, boolean bExactMatch, String strLogLevel, String strLogIP, int intLogPort, String strHTTPLogURL, String strHTTPLogUser, String strHTTPLogPassword, String strProxyIP, int intProxyPort, String strProxyUser, String strProxyPassword ) {
     	
     	try {
 
-    		if ( strLogIP.isEmpty() == false && intLogPort >= intMinPort && intLogPort <= intMaxPort ) {
+    		this.strInstanceID = strInstanceID;
+    		
+    		if ( strLogIP.trim().isEmpty() == false && intLogPort >= _Min_Port && intLogPort <= _Max_Port ) {
     		 
-    			SocketHand = new SocketHandler( strLogIP, intLogPort );
+    			SocketHandler = new SocketHandler( strLogIP, intLogPort );
     			
     			this.strLogIP = strLogIP;
     			this.intLogPort = intLogPort;
-    			this.bSocketHandActive = true;
+    			this.bSocketHandlerActive = true;
     			
     		}     
-    		
+
+			this.strHTTPLogURL = strHTTPLogURL;
+			
+			if ( strHTTPLogUser.trim().isEmpty() == false ) {
+				
+				this.strHTTPLogUser = strHTTPLogUser;
+				this.strHTTPLogPassword = strHTTPLogPassword;
+				
+			}
+
+			if ( strProxyIP.trim().isEmpty() == false && intProxyPort >= _Min_Port && intProxyPort <= _Max_Port  ) {
+	
+				this.strProxyIP = strProxyIP;
+				this.intProxyPort = intProxyPort;
+				
+                if ( strProxyUser.trim().isEmpty() == false ) {
+				
+                	this.strProxyUser = strProxyUser;
+                	this.strProxyPassword = strProxyPassword;
+				
+                }
+			
+			}
+
+			if ( strHTTPLogURL.trim().isEmpty() == false ) {
+				
+				HTTPHandler = new CExtendedHTTPHandler( this.getName() ); 
+
+				if ( HTTPHandler.configureHandler( strHTTPLogURL, strHTTPLogUser, strHTTPLogPassword, strProxyIP, intProxyPort, strProxyUser, strProxyPassword ) ) {
+					
+					this.addHandler( HTTPHandler );
+					
+				}
+				else {
+					
+					HTTPHandler = null;
+					
+				}
+				
+			}
+			
     	}
     	catch ( Exception Ex ) {
     		
-    		SocketHand = null;
+    		SocketHandler = null;
 			Ex.printStackTrace();
     		
     	}
     	
 		try { 
     	  
+			this.strLogPath = strLogPath;
+			this.strLogFile = strLogFile;
+			
 			File DirPath = new File( strLogPath );
 			
 			if ( DirPath.exists() == false ) {
@@ -95,20 +155,20 @@ public class CExtendedLogger extends Logger {
 				
 			}
 			
-			FileHand = new FileHandler( strLogPath + strLogFile, 2048576, 50, false );
+			FileHandler = new FileHandler( strLogPath + strLogFile, 2048576, 50, false );
 		 
 			ExXmlFormatter = new CExtendedLogXMLFormatter();
 
 			ExXmlFormatter.strLogFilePath = strLogPath;
 			ExXmlFormatter.strLogFileName = strLogFile;
 			
-			FileHand.setFormatter( ExXmlFormatter );
+			FileHandler.setFormatter( ExXmlFormatter );
 
 			if ( bLogToScreen == true ) {   
 		     
-				ConsoleHand = new ConsoleHandler();
+				ConsoleHandler = new ConsoleHandler();
 			
-				ConsoleHand.setFormatter( ExXmlFormatter );
+				ConsoleHandler.setFormatter( ExXmlFormatter );
 
 			}   
 			
@@ -117,15 +177,15 @@ public class CExtendedLogger extends Logger {
 			this.setFilter( LogFilter );
 			
 			if ( bLogToScreen == true )    
-			   this.addHandler( ConsoleHand ); 
+			   this.addHandler( ConsoleHandler ); 
 		
-			this.addHandler( FileHand );
+			this.addHandler( FileHandler );
 			
-			if ( SocketHand != null ) {
+			if ( SocketHandler != null ) {
 			
-				SocketHand.setFormatter( ExXmlFormatter );
+				SocketHandler.setFormatter( ExXmlFormatter );
 				
-				this.addHandler( SocketHand );
+				this.addHandler( SocketHandler );
 				
 			}	
 			
@@ -139,7 +199,19 @@ public class CExtendedLogger extends Logger {
 		};
 		
     }
-	
+
+    public void setInstanceID( String strInstanceID ) {
+		
+		this.strInstanceID = strInstanceID;
+		
+	}
+    
+	public String getInstanceID() {
+		
+	   return strInstanceID;	
+		
+	}
+
 	public void setInternalSequence( int intInternalSequence ) {
 		
 		this.intInternalSequence = intInternalSequence;
@@ -170,7 +242,7 @@ public class CExtendedLogger extends Logger {
 		
 	}
 	
-	protected void internalLog( String strLogType, String strCode, String strMessage, Throwable Thrown, Level ... level ) {
+	protected void internalLog( String strLogType, String strCode, String strMessage, String strData, Throwable Thrown, Level ... level ) {
 		  
 		CExtendedLogRecord LogRecord = null;
 		   
@@ -185,8 +257,13 @@ public class CExtendedLogger extends Logger {
 	      
 	        LogRecord.setLogType( strLogType );
 	        
+	        LogRecord.setInstanceID( strInstanceID );
+	        
 		    LogRecord.setThrown( Thrown );
 
+		    if ( strData != null )
+		    	LogRecord.setData( strData );
+		    
 		    LogRecord.setThreadID( (int) Thread.currentThread().getId() );
 	      
 	        LogRecord.setThreadName( Thread.currentThread().getName() );
@@ -212,100 +289,112 @@ public class CExtendedLogger extends Logger {
 		}
 	
 	}	
-		
+	
 	public void logEntry( String strLogType, String strCode, String strMessage, Level ... level ) {
-		
-		internalLog( strLogType, strCode, strMessage, null, level );		
-		
+
+		internalLog( strLogType, strCode, strMessage, null, null, level );		
+
 	}
 
 	public void logEntry( String strLogType, String strCode, String strMessage, Throwable Thrown, Level ... level ) {
 		
-		internalLog( strLogType, strCode, strMessage, Thrown, level );		
+		internalLog( strLogType, strCode, strMessage, null, Thrown, level );		
 		
 	}
-	
+
 	public void logMessage( String strCode, String strMessage, Level ... level ) {
 		
-		internalLog( "Message", strCode, strMessage, null, level );		
+		internalLog( "Message", strCode, strMessage, null, null, level );		
 		
 	}
-	
+
 	public void logMessage( String strCode, String strMessage, Throwable Thrown, Level ... level ) {
 		
-		internalLog( "Message", strCode, strMessage, Thrown, level );		
+		internalLog( "Message", strCode, strMessage, null, Thrown, level );		
 		
 	}
 
 	public void logInfo( String strCode, String strMessage, Level ... level ) {
 		
-		internalLog( "Info", strCode, strMessage, null, level );		
+		internalLog( "Info", strCode, strMessage, null, null, level );		
 		
 	}
 	
 	public void logInfo( String strCode, String strMessage, Throwable Thrown, Level ... level ) {
 		
-		internalLog( "Info", strCode, strMessage, Thrown, level );		
+		internalLog( "Info", strCode, strMessage, null, Thrown, level );		
 		
 	}
 
 	public void logDebug( String strCode, String strMessage, Level ... level ) {
 		
-		internalLog( "Debug", strCode, strMessage, null, level );		
+		internalLog( "Debug", strCode, strMessage, null, null, level );		
 		
 	}
 
 	public void logDebug( String strCode, String strMessage, Throwable Thrown, Level ... level ) {
 		
-		internalLog( "Debug", strCode, strMessage, Thrown, level );		
+		internalLog( "Debug", strCode, strMessage, null, Thrown, level );		
 		
 	}
 
 	public void logError( String strCode, String strMessage, Level ... level ) {
 		
-		internalLog( "Error", strCode, strMessage, null, level );		
+		internalLog( "Error", strCode, strMessage, null, null, level );		
 		
 	}
 	
 	public void logError( String strCode, String strMessage, Throwable Thrown, Level ... level ) {
 		
-		internalLog( "Error", strCode, strMessage, Thrown, level );		
+		internalLog( "Error", strCode, strMessage, null, Thrown, level );		
 		
 	}
 
 	public void logWarning( String strCode, String strMessage, Level ... level ) {
 		
-		internalLog( "Warning", strCode, strMessage, null, level );		
+		internalLog( "Warning", strCode, strMessage, null, null, level );		
 		
 	}
 
 	public void logWarning( String strCode, String strMessage, Throwable Thrown, Level ... level ) {
 		
-		internalLog( "Warning", strCode, strMessage, Thrown, level );		
+		internalLog( "Warning", strCode, strMessage, null, Thrown, level );		
 		
 	}
 
+	public void logData( String strCode, String strMessage, String strData, Level ... level ) {
+		
+		internalLog( "Info", strCode, strMessage, strData, null, level );		
+		
+	}
+	
+	public void logData( String strCode, String strMessage, String strData, Throwable Thrown, Level ... level ) {
+		
+		internalLog( "Info", strCode, strMessage, strData, Thrown, level );		
+		
+	}
+	
 	public void logMethodEntry( String strCode, String strMessage, Level ... level ) {
 		
-		internalLog( "MethodEntry", strCode, strMessage, null, level );		
+		internalLog( "MethodEntry", strCode, strMessage, null, null, level );		
 		
 	}
 	
 	public void logMethodEntry( String strCode, String strMessage, Throwable Thrown, Level ... level ) {
 		
-		internalLog( "MethodEntry", strCode, strMessage, Thrown, level );		
+		internalLog( "MethodEntry", strCode, strMessage, null, Thrown, level );		
 		
 	}
 
 	public void logMethodLeave( String strCode, String strMessage, Level ... level ) {
 		
-		internalLog( "MethodLeave", strCode, strMessage, null, level );		
+		internalLog( "MethodLeave", strCode, strMessage, null, null, level );		
 		
 	}
 	
 	public void logMethodLeave( String strCode, String strMessage, Throwable Thrown, Level ... level ) {
 		
-		internalLog( "MethodLeave", strCode, strMessage, Thrown, level );		
+		internalLog( "MethodLeave", strCode, strMessage, null, Thrown, level );		
 		
 	}
 
@@ -324,7 +413,9 @@ public class CExtendedLogger extends Logger {
 	      
 		    LogRecord.setThrown( ExceptionInfo );
 		    
-	        LogRecord.setLogType( "Exception" );
+	        LogRecord.setLogType( "Java-Exception" );
+	        
+	        LogRecord.setInstanceID( strInstanceID );
 	        
 	        LogRecord.setThreadID( (int) Thread.currentThread().getId() );
 	      
@@ -381,7 +472,9 @@ public class CExtendedLogger extends Logger {
 	      
 		    LogRecord.setThrown( ErrorInfo );
 		    
-	        LogRecord.setLogType( "Hard-Error" );
+	        LogRecord.setLogType( "Java-Error" );
+	        
+	        LogRecord.setInstanceID( strInstanceID );
 	        
 	        LogRecord.setThreadID( (int) Thread.currentThread().getId() );
 	      
@@ -427,7 +520,7 @@ public class CExtendedLogger extends Logger {
 		
 		this.strLogIP = strLogIP;
 		
-		this.bSocketHandActive = false;
+		this.bSocketHandlerActive = false;
 		
 	}
 	
@@ -441,7 +534,7 @@ public class CExtendedLogger extends Logger {
 		
 		this.intLogPort = intLogPort;
 		
-		this.bSocketHandActive = false;
+		this.bSocketHandlerActive = false;
 		
 	}
 	
@@ -451,22 +544,120 @@ public class CExtendedLogger extends Logger {
 		
 	}
 	
-	public boolean activateSocketHandler( boolean bAddSocketHandToList ) {
+	public void setHTTPLogURL( String strHTTPLogURL ) {
+		
+		this.strHTTPLogURL = strHTTPLogURL;
+		
+		this.bHTTPHandlerActive = false;
+		
+	}
+	
+	public String getHTTPLogURL() {
+		
+		return strHTTPLogURL;
+		
+	}
+
+	public void setHTTPLogUser( String strHTTPLogUser ) {
+		
+		this.strHTTPLogUser = strHTTPLogUser;
+		
+		this.bHTTPHandlerActive = false;
+		
+	}
+	
+	public String getHTTPLogUser() {
+		
+		return strHTTPLogURL;
+		
+	}
+
+	public void setHTTPLogPassword( String strHTTPLogPassword ) {
+		
+		this.strHTTPLogPassword = strHTTPLogPassword;
+		
+		this.bHTTPHandlerActive = false;
+		
+	}
+	
+	public String getHTTPLogPassword() {
+		
+		return strHTTPLogURL;
+		
+	}
+	
+	public void setProxyIP( String strProxyIP ) {
+		
+		this.strProxyIP = strProxyIP;
+		
+		this.bHTTPHandlerActive = false;
+		
+	}
+
+	public String getProxyIP() {
+		
+		return strProxyIP;
+		
+	}
+	
+	public void setProxyPort( int intProxyPort ) {
+		
+		this.intProxyPort = intProxyPort;
+		
+		this.bHTTPHandlerActive = false;
+		
+	}
+
+	public int getProxyPort() {
+		
+		return intProxyPort;
+		
+	}
+
+	public void setProxyUser( String strProxyUser ) {
+		
+		this.strProxyUser = strProxyUser;
+		
+		this.bHTTPHandlerActive = false;
+		
+	}
+
+	public String getProxyUser() {
+		
+		return strProxyUser;
+		
+	}
+
+	public void setProxyPassword( String strProxyPassword ) {
+		
+		this.strProxyPassword = strProxyPassword;
+		
+		this.bHTTPHandlerActive = false;
+		
+	}
+
+	public String getProxyPassword() {
+		
+		return strProxyPassword;
+		
+	}
+
+	public boolean activateSocketHandler( boolean bAddSocketHandlerToList ) {
 		
 		boolean bResult = false;
 		
-		if ( this.bSocketHandActive == false ) {
+		if ( this.bSocketHandlerActive == false && this.strLogIP.trim().isEmpty() == false ) {
 			
-			if ( SocketHand != null && bAddSocketHandToList == false )
-				this.removeHandler( SocketHand );
+			if ( this.SocketHandler != null && bAddSocketHandlerToList == false )
+				this.removeHandler( this.SocketHandler );
 			
 			try {
 				
-    			SocketHand = new SocketHandler( strLogIP, intLogPort );
+    			SocketHandler = new SocketHandler( strLogIP, intLogPort );
 
-				SocketHand.setFormatter( ExXmlFormatter );
+				SocketHandler.setFormatter( ExXmlFormatter );
     			
-    			this.addHandler( SocketHand );
+    			this.addHandler( SocketHandler );
 				
     			bResult = true;
     			
@@ -480,7 +671,52 @@ public class CExtendedLogger extends Logger {
 				
 			}
 			
-			this.bSocketHandActive = true;
+			this.bSocketHandlerActive = true;
+			
+		}
+		
+		return bResult;
+		
+	}
+
+	public boolean activateHTTPHandler( boolean bAddHTTPHandlerToList ) {
+		
+		boolean bResult = false;
+		
+		if ( this.bHTTPHandlerActive == false && this.strHTTPLogURL.trim().isEmpty() == false ) {
+			
+			if ( this.HTTPHandler != null && bAddHTTPHandlerToList == false )
+				this.removeHandler( this.HTTPHandler );
+			
+			try {
+				
+				if ( HTTPHandler == null ) 
+					HTTPHandler = new CExtendedHTTPHandler( this.getName() ); 
+
+				if ( HTTPHandler.configureHandler( strHTTPLogURL, strHTTPLogUser, strHTTPLogPassword, strProxyIP, intProxyPort, strProxyUser, strProxyPassword ) ) {
+
+					this.addHandler( HTTPHandler );
+
+					bResult = true;
+
+					this.bHTTPHandlerActive = true;
+					
+				}
+				else {
+
+					HTTPHandler = null;
+
+				}
+				
+			}
+			catch ( Exception Ex ) {
+				
+				if ( bSetupSet == false )
+					Ex.printStackTrace();
+				else
+					this.logException( "-1020", Ex.getMessage(), Ex );
+				
+			}
 			
 		}
 		

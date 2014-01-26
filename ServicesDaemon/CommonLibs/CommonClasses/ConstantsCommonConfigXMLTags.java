@@ -10,7 +10,7 @@
  ******************************************************************************/
 package CommonClasses;
 
-public interface ConfigXMLTagsServicesDaemon {
+public interface ConstantsCommonConfigXMLTags {
 
 	public static final String _Config = "Config";
 	public static final String _System = "System";
@@ -25,14 +25,23 @@ public interface ConfigXMLTagsServicesDaemon {
 	public static final String _Request_Method_OnlyPOST = "OnlyPOST";
 	public static final String _Request_Method_ANY = "Any";
 	
-	
 	public static final String _Logger = "Logger";
 	public static final String _ClassName_MethodName = "ClassName_MethodName";
 	public static final String _Exact_Match = "Exact_Match";
 	public static final String _Log_Missing_Translations = "Log_Missing_Translations";
 	public static final String _Level = "Level";
+
+	public static final String _Log_Instance_ID = "Log_Instance_ID";
 	public static final String _Log_IP = "Log_IP";
 	public static final String _Log_Port = "Log_Port";
+	
+	public static final String _HTTP_Log_URL = "HTTP_Log_URL";
+	public static final String _HTTP_Log_User = "HTTP_Log_User";
+	public static final String _HTTP_Log_Password = "HTTP_Log_Password";
+	public static final String _Proxy_IP = "Proxy_IP";
+	public static final String _Proxy_Port = "Proxy_Port";
+	public static final String _Proxy_User = "Proxy_User";
+	public static final String _Proxy_Password = "Proxy_Password";
 	
 	public static final String _AccessControl = "AccessControl";
 	public static final String _From = "From";

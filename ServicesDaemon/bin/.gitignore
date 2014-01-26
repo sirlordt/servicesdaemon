@@ -7,9 +7,8 @@
 /CryptPasswordSD
 /DBBackendServicesManager
 /DBCommonClasses
-/ExtendedLogger
 /FirebirdDBEngine
-/MemCachedCEngine
+/MemcachedCEngine
 /MySQLDBEngine
 /PGSQLDBEngine
 /PreExecuteServiceTest
@@ -27,10 +26,11 @@
 /SystemRollbackTransaction
 /SystemStartSession
 /SystemStartTransaction
-/WebRowSet
+/ServicesDaemon
+/DBServicesManager
+/ExtendedLogger
 /net
 /org
-/rowset
 /META-INF
-/DBServicesManager
-/ServicesDaemon
+/WebRowSet
+/rowset

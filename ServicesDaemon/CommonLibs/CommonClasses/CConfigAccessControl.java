@@ -20,7 +20,7 @@ public class CConfigAccessControl {
 	public CConfigAccessControl() {
 		
 		strFromIP = "";
-		strContextPath = ConfigXMLTagsServicesDaemon._Context_Path_Default;
+		strContextPath = ConstantsCommonConfigXMLTags._Context_Path_Default;
 		bAlwaysDeny = false;
 		bAlwaysAllow = false;
 		

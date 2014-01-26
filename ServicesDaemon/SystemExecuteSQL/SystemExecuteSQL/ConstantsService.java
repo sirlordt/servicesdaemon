@@ -12,7 +12,7 @@ package SystemExecuteSQL;
 
 import java.sql.Types;
 
-public interface ConstantsSystemExecuteSQL {
+public interface ConstantsService {
 
 	public static final String _Request_Commit            = "Commit";
 	public static final String _Request_Commit_Type       = "Integer";

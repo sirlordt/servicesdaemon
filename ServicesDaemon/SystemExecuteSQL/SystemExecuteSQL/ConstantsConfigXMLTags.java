@@ -10,7 +10,7 @@
  ******************************************************************************/
 package SystemExecuteSQL;
 
-public interface ConfigXMLTagsSystemExecuteSQL {
+public interface ConstantsConfigXMLTags {
 
 	public static final String _PreExecute_Dir = "PreExecute_Dir";
 	public static final String _PostExecute_Dir = "PostExecute_Dir";

@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import CommonClasses.CConfigServicesDaemon;
-import CommonClasses.ConfigXMLTagsServicesDaemon;
+import CommonClasses.ConstantsCommonConfigXMLTags;
 import CommonClasses.IMessageObject;
 
 public class CAbstractServicesManager extends HttpServlet implements IMessageObject {
@@ -111,7 +111,7 @@ public class CAbstractServicesManager extends HttpServlet implements IMessageObj
     @Override
 	protected void doGet( HttpServletRequest request, HttpServletResponse response ) {
     	
-    	if ( ServicesDaemonConfig.strResponseRequestMethod.equals( ConfigXMLTagsServicesDaemon._Request_Method_ANY ) || ServicesDaemonConfig.strResponseRequestMethod.equals( ConfigXMLTagsServicesDaemon._Request_Method_OnlyGET ) )
+    	if ( ServicesDaemonConfig.strResponseRequestMethod.equals( ConstantsCommonConfigXMLTags._Request_Method_ANY ) || ServicesDaemonConfig.strResponseRequestMethod.equals( ConstantsCommonConfigXMLTags._Request_Method_OnlyGET ) )
     		this.processRequest( request, response );
     	else
    	        response.setStatus( HttpServletResponse.SC_OK );
@@ -121,7 +121,7 @@ public class CAbstractServicesManager extends HttpServlet implements IMessageObj
     @Override
 	protected void doPost( HttpServletRequest request, HttpServletResponse response ) {
 	
-    	if ( ServicesDaemonConfig.strResponseRequestMethod.equals( ConfigXMLTagsServicesDaemon._Request_Method_ANY ) || ServicesDaemonConfig.strResponseRequestMethod.equals( ConfigXMLTagsServicesDaemon._Request_Method_OnlyPOST ) )
+    	if ( ServicesDaemonConfig.strResponseRequestMethod.equals( ConstantsCommonConfigXMLTags._Request_Method_ANY ) || ServicesDaemonConfig.strResponseRequestMethod.equals( ConstantsCommonConfigXMLTags._Request_Method_OnlyPOST ) )
     		this.processRequest( request, response );
     	else
    	        response.setStatus( HttpServletResponse.SC_OK );

@@ -22,7 +22,7 @@ import CommonClasses.CExpresionFilter;
 import CommonClasses.CExpresionsFilters;
 import CommonClasses.CLanguage;
 import CommonClasses.CConfigServicesDaemon;
-import CommonClasses.ConfigXMLTagsServicesDaemon;
+import CommonClasses.ConstantsCommonConfigXMLTags;
 import ExtendedLogger.CExtendedLogger;
 
 public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
@@ -63,14 +63,14 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
 		super( strRunningPath );
 		
 		//Set the order for read xml config file sections
-		strFirstLevelConfigSectionsOrder.add( ConfigXMLTagsServicesDaemon._Logger );  //1
+		strFirstLevelConfigSectionsOrder.add( ConstantsCommonConfigXMLTags._Logger );  //1
 		bFirstLevelConfigSectionsMustExists.add( true );
 		//strFirstLevelConfigSectionsOrder.add( ConfigXMLTagsServicesDaemon._System );  //
 		//bFirstLevelConfigSectionsMustExists.add( true );
-		strFirstLevelConfigSectionsOrder.add( ConfigXMLTagsSystemExecuteSQL._Filters );  //2
+		strFirstLevelConfigSectionsOrder.add( ConstantsConfigXMLTags._Filters );  //2
 		bFirstLevelConfigSectionsMustExists.add( true );
 		
-		this.bLogSQLStatement = ConstantsSystemExecuteSQL._Log_SQL_Statement;
+		this.bLogSQLStatement = ConstantsService._Log_SQL_Statement;
 		
 		//this.strPreExecuteDir = DefaultConstantsSystemExecuteSQL.strDefaultPreExecuteDir;
 		//this.strPostExecuteDir = DefaultConstantsSystemExecuteSQL.strDefaultPostExecuteDir;
@@ -79,7 +79,7 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
 		
 	}
 	
-	public boolean LoadConfigSectionLogger( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
+	public boolean loadConfigSectionLogger( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
 
         boolean bResult = true;
 		
@@ -87,7 +87,7 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
 	
 			if ( ConfigSectionNode.hasAttributes() == true ) {
 				
-				String strAttributesOrder[] = { ConfigXMLTagsSystemExecuteSQL._LogSQL_Statement };
+				String strAttributesOrder[] = { ConstantsConfigXMLTags._LogSQL_Statement };
 				
 				NamedNodeMap NodeAttributes = ConfigSectionNode.getAttributes();
 
@@ -100,7 +100,7 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
 		            	Logger.logMessage( "1", Lang.translate( "Node attribute name: [%s]", NodeAttribute.getNodeName() ) );
 		            	Logger.logMessage( "1", Lang.translate( "Node attribute value: [%s]", NodeAttribute.getNodeValue() ) );
 						
-						if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsSystemExecuteSQL._LogSQL_Statement ) ) {
+						if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._LogSQL_Statement ) ) {
 
 							this.bLogSQLStatement = NodeAttribute.getNodeValue().toLowerCase().equals( "true" )?true:false;
 	
@@ -128,7 +128,7 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
         
 	}
 
-	public boolean LoadConfigSectionSystem( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
+	public boolean loadConfigSectionSystem( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
 
         boolean bResult = true;
 		
@@ -211,7 +211,7 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
 	
 	}    
 	
-	public CExpresionsFilters LoadConfigFilter( Node ConfigSectionNode, String strFiltersName, String strFiltersType, CLanguage Lang, CExtendedLogger Logger ) {
+	public CExpresionsFilters loadConfigFilter( Node ConfigSectionNode, String strFiltersName, String strFiltersType, CLanguage Lang, CExtendedLogger Logger ) {
 		
 		CExpresionsFilters ExpFilters = new CExpresionsFilters();
 		
@@ -230,11 +230,11 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
 
     				Logger.logMessage( "1", Lang.translate( "Reading XML node filter: [%s]", ConfigFilterNode.getNodeName() ) );        
 
-    				if ( ConfigFilterNode.getNodeName().equals( ConfigXMLTagsSystemExecuteSQL._Filter ) == true ) {
+    				if ( ConfigFilterNode.getNodeName().equals( ConstantsConfigXMLTags._Filter ) == true ) {
 
     					if ( ConfigFilterNode.hasAttributes() == true ) {
 
-    						String strAttributesOrder[] = { ConfigXMLTagsSystemExecuteSQL._Type };
+    						String strAttributesOrder[] = { ConstantsConfigXMLTags._Type };
 
     						String strType = "";
     						String strExpression = "";
@@ -254,11 +254,11 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
     									Logger.logMessage( "1", Lang.translate( "Node attribute name: [%s]", NodeAttribute.getNodeName() ) );
     									Logger.logMessage( "1", Lang.translate( "Node attribute value: [%s]", NodeAttribute.getNodeValue() ) );
 
-    									if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsSystemExecuteSQL._Type ) ) {
+    									if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Type ) ) {
 
     										if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
 
-    											if ( NodeAttribute.getNodeValue().toLowerCase().equals( ConfigXMLTagsSystemExecuteSQL._Type_Allow ) || NodeAttribute.getNodeValue().toLowerCase().equals( ConfigXMLTagsSystemExecuteSQL._Type_Block ) ) {
+    											if ( NodeAttribute.getNodeValue().toLowerCase().equals( ConstantsConfigXMLTags._Type_Allow ) || NodeAttribute.getNodeValue().toLowerCase().equals( ConstantsConfigXMLTags._Type_Block ) ) {
 
     												strType = NodeAttribute.getNodeValue().toLowerCase();
 
@@ -267,7 +267,7 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
     											}
     											else {
 
-    												Logger.logError( "1004", Lang.translate( "The [%s] attribute value [%s] must be only one of the next values: [%s,%s,%s]", strAttributesOrder[ intAttributesIndex ], NodeAttribute.getNodeValue(), ConfigXMLTagsSystemExecuteSQL._Type_Exact, ConfigXMLTagsSystemExecuteSQL._Type_Partial, ConfigXMLTagsSystemExecuteSQL._Type_RExp ) );
+    												Logger.logError( "1004", Lang.translate( "The [%s] attribute value [%s] must be only one of the next values: [%s,%s,%s]", strAttributesOrder[ intAttributesIndex ], NodeAttribute.getNodeValue(), ConstantsConfigXMLTags._Type_Exact, ConstantsConfigXMLTags._Type_Partial, ConstantsConfigXMLTags._Type_RExp ) );
 
     											}
 
@@ -330,7 +330,7 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
 		
 	}
 	
-	public boolean LoadConfigSectionFilters( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
+	public boolean loadConfigSectionFilters( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
 
         boolean bResult = true;
 		
@@ -338,7 +338,7 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
 	
 			if ( ConfigSectionNode.hasAttributes() == true ) {
 				
-				String strAttributesOrder[] = { ConfigXMLTagsSystemExecuteSQL._Name, ConfigXMLTagsSystemExecuteSQL._Type };
+				String strAttributesOrder[] = { ConstantsConfigXMLTags._Name, ConstantsConfigXMLTags._Type };
 
 				NamedNodeMap NodeAttributes = ConfigSectionNode.getAttributes();
 
@@ -354,7 +354,7 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
 		            	Logger.logMessage( "1", Lang.translate( "Node attribute name: [%s]", NodeAttribute.getNodeName() ) );
 		            	Logger.logMessage( "1", Lang.translate( "Node attribute value: [%s]", NodeAttribute.getNodeValue() ) );
 						
-		            	if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsSystemExecuteSQL._Name ) ) {
+		            	if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Name ) ) {
 
 							strName = NodeAttribute.getNodeValue();
 		
@@ -372,11 +372,11 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
 					        }
 							
 						}
-		            	else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsSystemExecuteSQL._Type ) ) {
+		            	else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Type ) ) {
 
 					        if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
 					        
-								if ( NodeAttribute.getNodeValue().toLowerCase().equals( ConfigXMLTagsSystemExecuteSQL._Type_Allow ) || NodeAttribute.getNodeValue().toLowerCase().equals( ConfigXMLTagsSystemExecuteSQL._Type_Block ) ) {
+								if ( NodeAttribute.getNodeValue().toLowerCase().equals( ConstantsConfigXMLTags._Type_Allow ) || NodeAttribute.getNodeValue().toLowerCase().equals( ConstantsConfigXMLTags._Type_Block ) ) {
 					        	
 									strType = NodeAttribute.getNodeValue().toLowerCase();
 
@@ -385,7 +385,7 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
 								}
 								else {
 									
-									Logger.logError( "1004", Lang.translate( "The [%s] attribute value [%s] must be only one of the next values: [%s,%s]", "CExpressionsFilters." + strAttributesOrder[ intAttributesIndex ], NodeAttribute.getNodeValue(), ConfigXMLTagsSystemExecuteSQL._Type_Allow, ConfigXMLTagsSystemExecuteSQL._Type_Block ) );
+									Logger.logError( "1004", Lang.translate( "The [%s] attribute value [%s] must be only one of the next values: [%s,%s]", "CExpressionsFilters." + strAttributesOrder[ intAttributesIndex ], NodeAttribute.getNodeValue(), ConstantsConfigXMLTags._Type_Allow, ConstantsConfigXMLTags._Type_Block ) );
 									
 								}
 								
@@ -418,7 +418,7 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
 		        	
 		        	if ( ExpFilters == null ) { //dont exits another filter name
 		        		
-		        		ExpFilters = this.LoadConfigFilter(ConfigSectionNode, strName, strType, Lang, Logger );
+		        		ExpFilters = this.loadConfigFilter(ConfigSectionNode, strName, strType, Lang, Logger );
 		        		
 		        		if ( ExpFilters.Filters.size() > 0 ) {
 		        			
@@ -458,15 +458,15 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
 	}    
 
 	@Override
-	public boolean LoadConfigSection( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
+	public boolean loadConfigSection( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
 
 		boolean bResult = true;
 
 		Logger.logMessage( "1", Lang.translate( "Reading XML node section: [%s]", ConfigSectionNode.getNodeName() ) );        
         
-		if ( ConfigSectionNode.getNodeName().equals(  ConfigXMLTagsServicesDaemon._Logger ) == true ) {
+		if ( ConfigSectionNode.getNodeName().equals(  ConstantsCommonConfigXMLTags._Logger ) == true ) {
 	           
-			if ( this.LoadConfigSectionLogger( ConfigSectionNode, Lang, Logger ) == false ) {
+			if ( this.loadConfigSectionLogger( ConfigSectionNode, Lang, Logger ) == false ) {
 				
     			Logger.logError( "-1001", Lang.translate( "Failed to load config from XML node section: [%s] ", ConfigSectionNode.getNodeName() ) );        
 				
@@ -475,9 +475,9 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
 			} 
         	 
         }
-		else if ( ConfigSectionNode.getNodeName().equals(  CommonClasses.ConfigXMLTagsServicesDaemon._System ) == true ) {
+		else if ( ConfigSectionNode.getNodeName().equals(  CommonClasses.ConstantsCommonConfigXMLTags._System ) == true ) {
            
-			if ( this.LoadConfigSectionSystem( ConfigSectionNode, Lang, Logger ) == false ) {
+			if ( this.loadConfigSectionSystem( ConfigSectionNode, Lang, Logger ) == false ) {
 				
     			Logger.logError( "-1002", Lang.translate( "Failed to load config from XML node section: [%s]", ConfigSectionNode.getNodeName() ) );        
 				
@@ -486,9 +486,9 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
 			} 
         	 
         }
-		else if ( ConfigSectionNode.getNodeName().equals(  ConfigXMLTagsSystemExecuteSQL._Filters ) == true ) {
+		else if ( ConfigSectionNode.getNodeName().equals(  ConstantsConfigXMLTags._Filters ) == true ) {
 	           
-			if ( this.LoadConfigSectionFilters( ConfigSectionNode, Lang, Logger ) == false ) {
+			if ( this.loadConfigSectionFilters( ConfigSectionNode, Lang, Logger ) == false ) {
 				
     			Logger.logError( "-1003", Lang.translate( "Failed to load config from XML node section: [%s] ", ConfigSectionNode.getNodeName() ) );        
 				
@@ -503,7 +503,7 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
 	}
 
 	@Override
-	public boolean LoadConfig( String strConfigFilePath, CLanguage Lang, CExtendedLogger Logger ) {
+	public boolean loadConfig( String strConfigFilePath, CLanguage Lang, CExtendedLogger Logger ) {
 		
         if ( ServiceLogger == null )
         	ServiceLogger = Logger;
@@ -511,10 +511,9 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
         if ( ServiceLang == null )
         	ServiceLang = Lang;
         
-	    return super.LoadConfig( strConfigFilePath, Lang, Logger );
+	    return super.loadConfig( strConfigFilePath, Lang, Logger );
 	
 	}
-
 	
 	@Override
 	public Object sendMessage(String strMessageName, Object MessageData) {

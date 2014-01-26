@@ -34,7 +34,7 @@ import CommonClasses.CLanguage;
 import CommonClasses.CRegisterManagerTask;
 import CommonClasses.CSecurityTokensManager;
 import CommonClasses.CConfigServicesDaemon;
-import CommonClasses.ConfigXMLTagsServicesDaemon;
+import CommonClasses.ConstantsCommonConfigXMLTags;
 import CommonClasses.ConstantsCommonClasses;
 import CommonClasses.InitArgsConstants;
 import DBCommonClasses.CDBAbstractService;
@@ -344,7 +344,7 @@ public class CServicesManager extends CAbstractServicesManager {
     	this.strRunningPath = net.maindataservices.Utilities.getJarFolder( this.getClass() );
     	
         CExtendedLogger DBServicesManagerLogger = CExtendedLogger.getLogger( ConstantsServicesManager._Logger_Name );
-        DBServicesManagerLogger.setupLogger( ServicesDaemonConfig.InitArgs.contains( InitArgsConstants._LogToScreen ), this.strRunningPath + ConstantsCommonClasses._Logs_Dir, ConstantsServicesManager._Main_File_Log, ServicesDaemonConfig.strClassNameMethodName, ServicesDaemonConfig.bExactMatch, ServicesDaemonConfig.LoggingLevel.toString(), ServicesDaemonConfig.strLogIP, ServicesDaemonConfig.intLogPort );
+        DBServicesManagerLogger.setupLogger( ServicesDaemonConfig.strLogInstanceID, ServicesDaemonConfig.InitArgs.contains( InitArgsConstants._LogToScreen ), this.strRunningPath + ConstantsCommonClasses._Logs_Dir, ConstantsServicesManager._Main_File_Log, ServicesDaemonConfig.strClassNameMethodName, ServicesDaemonConfig.bExactMatch, ServicesDaemonConfig.LoggingLevel.toString(), ServicesDaemonConfig.strLogIP, ServicesDaemonConfig.intLogPort, ServicesDaemonConfig.strHTTPLogURL, ServicesDaemonConfig.strHTTPLogUser, ServicesDaemonConfig.strHTTPLogPassword, ServicesDaemonConfig.strProxyIP, ServicesDaemonConfig.intProxyPort, ServicesDaemonConfig.strProxyUser, ServicesDaemonConfig.strProxyPassword );
 		
 		CLanguage DBServicesManagerLang = CLanguage.getLanguage( DBServicesManagerLogger, this.strRunningPath + CommonClasses.ConstantsCommonClasses._Langs_Dir + ConstantsServicesManager._Main_File + "." + ConstantsCommonClasses._Lang_Ext );
 
@@ -355,7 +355,7 @@ public class CServicesManager extends CAbstractServicesManager {
 		
 		boolean bResult = false;
     	
-    	if ( ConfigServicesManager.LoadConfig( this.strRunningPath + ConstantsServicesManager._Conf_File, DBServicesManagerLang, DBServicesManagerLogger ) == true ) {
+    	if ( ConfigServicesManager.loadConfig( this.strRunningPath + ConstantsServicesManager._Conf_File, DBServicesManagerLang, DBServicesManagerLogger ) == true ) {
     		
     		try {
 
@@ -746,7 +746,7 @@ public class CServicesManager extends CAbstractServicesManager {
     @Override
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) {
     	
-    	if ( ConfigServicesManager.strResponseRequestMethod.equals( ConfigXMLTagsServicesDaemon._Request_Method_ANY ) || ConfigServicesManager.strResponseRequestMethod.equals( ConfigXMLTagsServicesDaemon._Request_Method_OnlyGET ) )
+    	if ( ConfigServicesManager.strResponseRequestMethod.equals( ConstantsCommonConfigXMLTags._Request_Method_ANY ) || ConfigServicesManager.strResponseRequestMethod.equals( ConstantsCommonConfigXMLTags._Request_Method_OnlyGET ) )
     		this.processRequest( request, response );
     	else
    	        response.setStatus( HttpServletResponse.SC_OK );
@@ -756,7 +756,7 @@ public class CServicesManager extends CAbstractServicesManager {
     @Override
     protected void doPost( HttpServletRequest request, HttpServletResponse response ) {
     	
-    	if ( ConfigServicesManager.strResponseRequestMethod.equals( ConfigXMLTagsServicesDaemon._Request_Method_ANY ) || ConfigServicesManager.strResponseRequestMethod.equals( ConfigXMLTagsServicesDaemon._Request_Method_OnlyPOST ) )
+    	if ( ConfigServicesManager.strResponseRequestMethod.equals( ConstantsCommonConfigXMLTags._Request_Method_ANY ) || ConfigServicesManager.strResponseRequestMethod.equals( ConstantsCommonConfigXMLTags._Request_Method_OnlyPOST ) )
     		this.processRequest( request, response );
     	else
    	        response.setStatus( HttpServletResponse.SC_OK );

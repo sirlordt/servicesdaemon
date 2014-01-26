@@ -46,8 +46,15 @@ public class Utilities {
 	
 	public static Pattern VALID_IPV4_PATTERN = null;
 	public static Pattern VALID_IPV6_PATTERN = null;
+	
 	public static String ipv4Pattern = "(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])";
 	public static String ipv6Pattern = "([0-9a-f]{1,4}:){7}([0-9a-f]){1,4}";
+
+	public static Pattern VALID_HTTP_PATTERN = null;
+	public static Pattern VALID_FTP_PATTERN = null;
+
+	public static String httpPattern = "^(https?)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
+	public static String ftpPattern = "^(ftp)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
 	
 	static {
 	
@@ -55,6 +62,9 @@ public class Utilities {
 		    
 			VALID_IPV4_PATTERN = Pattern.compile( ipv4Pattern, Pattern.CASE_INSENSITIVE );
 		    VALID_IPV6_PATTERN = Pattern.compile( ipv6Pattern, Pattern.CASE_INSENSITIVE );
+
+			VALID_HTTP_PATTERN = Pattern.compile( httpPattern, Pattern.CASE_INSENSITIVE );
+		    VALID_FTP_PATTERN = Pattern.compile( ftpPattern, Pattern.CASE_INSENSITIVE );
 		    
 		} 
 		catch ( Exception Ex ) {
@@ -83,6 +93,28 @@ public class Utilities {
 		    
 		return isValidIPV4( strIPAddress ) || isValidIPV6( strIPAddress );
 	  
+	}
+
+	public static boolean isValidHTTPURL( String strHTTPURL ) {
+		
+		Matcher m1 = Utilities.VALID_HTTP_PATTERN.matcher( strHTTPURL );
+
+		return m1.matches();
+		
+	}
+
+	public static boolean isValidFTPURL( String strFTPURL ) {
+		
+		Matcher m1 = Utilities.VALID_FTP_PATTERN.matcher( strFTPURL );
+
+		return m1.matches();
+		
+	}
+	
+	public static boolean isValidURL( String strURL ) {
+
+		return isValidHTTPURL( strURL ) || isValidFTPURL( strURL );
+		
 	}
 	
     public static boolean checkDir( String strDirToCheck ) {
@@ -652,16 +684,22 @@ public class Utilities {
 				
 				
 			}
-			else {
-				
-		    	Logger.logError( "-1001", Lang.translate( "The crypt key index [%s] is not valid", strCryptKeyIndex ) );        
-				
+			else if ( Logger != null ) {
+
+				if ( Lang != null )
+					Logger.logError( "-1001", Lang.translate( "The crypt key index [%s] is not valid", strCryptKeyIndex ) );
+				else
+					Logger.logError( "-1001", String.format( "The crypt key index [%s] is not valid", strCryptKeyIndex ) );
+
 			}
 			
 		}
-		else {
+		else if ( Logger != null ) {
 			
-	    	Logger.logWarning( "-1", Lang.translate( "Using clear text password" ) );        
+			if ( Lang != null )
+				Logger.logWarning( "-1", Lang.translate( "Using clear text password" ) );
+			else
+				Logger.logWarning( "-1", "Using clear text password" );
 			
 		}
 		
@@ -669,7 +707,8 @@ public class Utilities {
 		
 	}
  
-	public static String replaceToHTMLEntity( String strToFindAndReplace ) {
+	
+    public static String replaceToHTMLEntity( String strToFindAndReplace ) {
 		
         strToFindAndReplace = strToFindAndReplace.replaceAll( "&", "&amp;" );
         strToFindAndReplace = strToFindAndReplace.replaceAll( "<", "&lt;" );
@@ -680,6 +719,7 @@ public class Utilities {
 		return strToFindAndReplace;
 		
 	}
+	
 	
 	public static ArrayList<String> extractTokens( String strStartToken, String strEndToken, String strExpression ) {
 		
@@ -715,7 +755,8 @@ public class Utilities {
 		
 	}
 
-    public final static String getJarFolder( Class<?> ClassDef ) {
+    
+	public final static String getJarFolder( Class<?> ClassDef ) {
 
     	String s = "";
 
@@ -763,7 +804,8 @@ public class Utilities {
     	
     }
 
-    public final static String getJarFolder( Class<?> ClassDef, CExtendedLogger Logger ) {
+    
+	public final static String getJarFolder( Class<?> ClassDef, CExtendedLogger Logger ) {
 
     	String s = "";
 
@@ -812,7 +854,8 @@ public class Utilities {
     	
     }
     
-    public static int getSystemLoad( boolean bIncludeSystemMemoryUsage ) {
+
+	public static int getSystemLoad( boolean bIncludeSystemMemoryUsage ) {
     	
     	int intSystemLoad = 0;
     	
@@ -848,7 +891,8 @@ public class Utilities {
     	
     }
     
-    public static ArrayList<String> getNetAddressList( CExtendedLogger Logger, boolean bIncludeLocalHost ) {
+    
+	public static ArrayList<String> getNetAddressList( CExtendedLogger Logger, boolean bIncludeLocalHost ) {
     	
     	ArrayList<String> Result = new ArrayList<String>();
     	
@@ -900,6 +944,7 @@ public class Utilities {
     	
     }
     
+
     public static ArrayList<String> getNetAddressList( CExtendedLogger Logger, boolean bIncludeLocalHost, boolean bOnlyIPV4, boolean bOnlyIPV6 ) {
     	
     	ArrayList<String> Result = new ArrayList<String>();
@@ -956,6 +1001,7 @@ public class Utilities {
     	
     }
 
+
     public static boolean checkFileExt( File FileToTest, String strFileExtensions[] ) {
     	
     	if ( strFileExtensions != null ) {
@@ -973,6 +1019,7 @@ public class Utilities {
     	
     }
     
+
     public static void cleanupDirectory( File FileOrDirectory, String arrExcludesExt[], int intCurrentLevelDeep ) {
     	
     	try {
@@ -1019,6 +1066,7 @@ public class Utilities {
     	}
     	
     }
+
 
     public static boolean cleanupDirectory( File FileOrDirectory, String arrExcludesExt[], int intCurrentLevelDeep, CExtendedLogger Logger ) {
     	
@@ -1073,6 +1121,7 @@ public class Utilities {
     	
     }
     
+
     public static void recursiveDelete( File FileOrDirectory ) {
         
     	try {
@@ -1102,6 +1151,7 @@ public class Utilities {
     	}
     	
     }   
+
 
     public static void recursiveDelete( File FileOrDirectory, CExtendedLogger Logger ) {
         

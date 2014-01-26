@@ -11,20 +11,21 @@
 package ExtendedLogger;
 
 //import java.util.List;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 public class CExtendedLogRecord extends LogRecord  {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -7645250759981736025L;
+	protected String strInstanceID;
 	protected String strCode;
 	protected String strSourcePackageName;
     protected long intLineNumber;
 	protected String strThreadName;
 	protected String strLogType;
+	protected Date logDateTime;
+	protected String strData;
 	
 	public CExtendedLogRecord( Level level, String msg ) {
 		
@@ -35,6 +36,10 @@ public class CExtendedLogRecord extends LogRecord  {
 		intLineNumber = -1;
 		strThreadName = "";
 		strLogType = "";
+		
+		logDateTime = new Date();
+		
+		strData = null;
 		
 	}
 
@@ -50,6 +55,18 @@ public class CExtendedLogRecord extends LogRecord  {
 		
 	}
 
+	public void setInstanceID( String strInstanceID ) {
+		
+		this.strInstanceID = strInstanceID;
+		
+	}
+
+	public String getInstanceID() {
+		
+		return strInstanceID;
+		
+	}
+	
 	public void setCode( String strCode ) {
 		
 		this.strCode = strCode;
@@ -98,4 +115,27 @@ public class CExtendedLogRecord extends LogRecord  {
 		
 	}
 	
+	public void setLogDateTime( Date logDateTime ) {
+		
+		this.logDateTime = logDateTime;
+		
+	}
+
+	public Date getLogDateTime() {
+		
+		return logDateTime;
+		
+	}
+
+	public void setData( String strData ) {
+		
+		this.strData = strData;
+		
+	}
+	
+	public String getData() {
+		
+		return strData;
+		
+	}
 }

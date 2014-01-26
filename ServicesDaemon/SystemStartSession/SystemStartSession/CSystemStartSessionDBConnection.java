@@ -16,32 +16,32 @@ import AbstractService.CInputServiceParameter;
 
 public class CSystemStartSessionDBConnection {
 
-	String strName;
+	protected String strName;
 
-	ArrayList<CInputServiceParameter> InputParameters;
+	protected ArrayList<CInputServiceParameter> InputParameters;
 	
-	String strSQLType;
-	String strSQL;
-	String strSessionKey;
-	String strType;
-	String strFieldName;
-	String strFieldType;
-	String strFieldValueSuccess;
-	String strFieldValueFailed;
-	String strFieldValueDisabled;
-	String strFieldValueNotFound;
+	protected String strSQLType;
+	protected String strSQL;
+	protected String strSessionKey;
+	protected String strType;
+	protected String strFieldName;
+	protected String strFieldType;
+	protected String strFieldValueSuccess;
+	protected String strFieldValueFailed;
+	protected String strFieldValueDisabled;
+	protected String strFieldValueNotFound;
 	
-	ArrayList<String> AfterCheckSQLSuccess;
-	ArrayList<String> AfterCheckSQLFailed;
-	ArrayList<String> AfterCheckSQLDisabled;
-	ArrayList<String> AfterCheckSQLNotFound;
-	ArrayList<String> AfterCheckSQLAny;
+	protected ArrayList<String> AfterCheckSQLSuccess;
+	protected ArrayList<String> AfterCheckSQLFailed;
+	protected ArrayList<String> AfterCheckSQLDisabled;
+	protected ArrayList<String> AfterCheckSQLNotFound;
+	protected ArrayList<String> AfterCheckSQLAny;
 	
-	ArrayList<String> AddFieldToResponseSuccess;
-	ArrayList<String> AddFieldToResponseFailed;
-	ArrayList<String> AddFieldToResponseDisabled;
-	ArrayList<String> AddFieldToResponseNotFound;
-	ArrayList<String> AddFieldToResponseAny;
+	protected ArrayList<String> AddFieldToResponseSuccess;
+	protected ArrayList<String> AddFieldToResponseFailed;
+	protected ArrayList<String> AddFieldToResponseDisabled;
+	protected ArrayList<String> AddFieldToResponseNotFound;
+	protected ArrayList<String> AddFieldToResponseAny;
 	
 	public CSystemStartSessionDBConnection() {
 

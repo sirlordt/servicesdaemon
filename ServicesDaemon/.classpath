@@ -23,7 +23,7 @@
 	<classpathentry kind="src" path="SystemDescribeObject"/>
 	<classpathentry kind="src" path="SystemDatabaseInfo"/>
 	<classpathentry kind="src" path="DBCommonLibs"/>
-	<classpathentry kind="src" path="MemCachedCEngine"/>
+	<classpathentry kind="src" path="MemcachedCEngine"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="ServicesDaemon/ServicesDaemon/Libs/jetty-all-9.1.0.v20131115.jar"/>
 	<classpathentry kind="lib" path="ServicesDaemon/ServicesDaemon/Libs/javax.servlet-api-3.1.0.jar"/>
@@ -34,6 +34,6 @@
 	<classpathentry kind="lib" path="ServicesDaemon/ServicesDaemon/Libs/httpclient-cache-4.3.1.jar"/>
 	<classpathentry kind="lib" path="ServicesDaemon/ServicesDaemon/Libs/httpcore-4.3.jar"/>
 	<classpathentry kind="lib" path="ServicesDaemon/ServicesDaemon/Libs/httpmime-4.3.1.jar"/>
-	<classpathentry kind="lib" path="ServicesDaemon/ServicesDaemon/Libs/spymemcached-2.10.3.jar"/>
+	<classpathentry kind="lib" path="MemcachedCEngine/MemcachedCEngine/Libs/spymemcached-2.10.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

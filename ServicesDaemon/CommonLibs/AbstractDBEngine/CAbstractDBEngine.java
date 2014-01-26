@@ -45,7 +45,7 @@ import CommonClasses.CNamedCallableStatement;
 import CommonClasses.CNamedPreparedStatement;
 import CommonClasses.CResultSetResult;
 import CommonClasses.CConfigServicesDaemon;
-import CommonClasses.ConfigXMLTagsServicesDaemon;
+import CommonClasses.ConstantsCommonConfigXMLTags;
 import CommonClasses.NamesSQLTypes;
 import ExtendedLogger.CExtendedLogger;
 
@@ -889,8 +889,8 @@ public abstract class CAbstractDBEngine {
 			
 			HashMap<String,String> Delimiters = new HashMap<String,String>();
 			
-			Delimiters.put( ConfigXMLTagsServicesDaemon._StartMacroTag, ConfigXMLTagsServicesDaemon._EndMacroTag );
-			Delimiters.put( ConfigXMLTagsServicesDaemon._StartParamValue, ConfigXMLTagsServicesDaemon._EndParamValue );
+			Delimiters.put( ConstantsCommonConfigXMLTags._StartMacroTag, ConstantsCommonConfigXMLTags._EndMacroTag );
+			Delimiters.put( ConstantsCommonConfigXMLTags._StartParamValue, ConstantsCommonConfigXMLTags._EndParamValue );
 			
 			CNamedPreparedStatement NamedPreparedStatement = new CNamedPreparedStatement( JDBConnection, strCommand, Delimiters );		
 
@@ -908,7 +908,7 @@ public abstract class CAbstractDBEngine {
 
 				String strInputServiceParameterValue = Request.getParameter( NamedParam.getKey() );
 
-				int intMacroIndex = Utilities.getIndexByValue( strMacrosNames, ConfigXMLTagsServicesDaemon._StartMacroTag + NamedParam.getKey() + ConfigXMLTagsServicesDaemon._EndMacroTag );
+				int intMacroIndex = Utilities.getIndexByValue( strMacrosNames, ConstantsCommonConfigXMLTags._StartMacroTag + NamedParam.getKey() + ConstantsCommonConfigXMLTags._EndMacroTag );
 				
 				if ( InputServiceParameterDef != null && strInputServiceParameterValue != null ) {
 				
@@ -996,8 +996,8 @@ public abstract class CAbstractDBEngine {
 			
 			HashMap<String,String> Delimiters = new HashMap<String,String>();
 			
-			Delimiters.put( ConfigXMLTagsServicesDaemon._StartMacroTag, ConfigXMLTagsServicesDaemon._EndMacroTag );
-			Delimiters.put( ConfigXMLTagsServicesDaemon._StartParamValue, ConfigXMLTagsServicesDaemon._EndParamValue );
+			Delimiters.put( ConstantsCommonConfigXMLTags._StartMacroTag, ConstantsCommonConfigXMLTags._EndMacroTag );
+			Delimiters.put( ConstantsCommonConfigXMLTags._StartParamValue, ConstantsCommonConfigXMLTags._EndParamValue );
 			
 			CNamedPreparedStatement NamedPreparedStatement = new CNamedPreparedStatement( JDBConnection, strCommand, Delimiters );		
 
@@ -1015,7 +1015,7 @@ public abstract class CAbstractDBEngine {
 
 				String strInputServiceParameterValue = Request.getParameter( NamedParam.getKey() );
 
-				int intMacroIndex = Utilities.getIndexByValue( strMacrosNames, ConfigXMLTagsServicesDaemon._StartMacroTag + NamedParam.getKey() + ConfigXMLTagsServicesDaemon._EndMacroTag );
+				int intMacroIndex = Utilities.getIndexByValue( strMacrosNames, ConstantsCommonConfigXMLTags._StartMacroTag + NamedParam.getKey() + ConstantsCommonConfigXMLTags._EndMacroTag );
 				
 				if ( InputServiceParameterDef != null && strInputServiceParameterValue != null ) {
 				
@@ -1104,8 +1104,8 @@ public abstract class CAbstractDBEngine {
 			
 			HashMap<String,String> Delimiters = new HashMap<String,String>();
 			
-			Delimiters.put( ConfigXMLTagsServicesDaemon._StartMacroTag, ConfigXMLTagsServicesDaemon._EndMacroTag );
-			Delimiters.put( ConfigXMLTagsServicesDaemon._StartParamValue, ConfigXMLTagsServicesDaemon._EndParamValue );
+			Delimiters.put( ConstantsCommonConfigXMLTags._StartMacroTag, ConstantsCommonConfigXMLTags._EndMacroTag );
+			Delimiters.put( ConstantsCommonConfigXMLTags._StartParamValue, ConstantsCommonConfigXMLTags._EndParamValue );
 			
 			CNamedCallableStatement NamedCallableStatement = new CNamedCallableStatement( JDBConnection, strCommand, Delimiters );		
 
@@ -1129,7 +1129,7 @@ public abstract class CAbstractDBEngine {
 
 				String strInputServiceParameterValue = Request.getParameter( NamedParam.getKey() );
 
-				int intMacroIndex = Utilities.getIndexByValue( strMacrosNames, ConfigXMLTagsServicesDaemon._StartMacroTag + NamedParam.getKey() + ConfigXMLTagsServicesDaemon._EndMacroTag );
+				int intMacroIndex = Utilities.getIndexByValue( strMacrosNames, ConstantsCommonConfigXMLTags._StartMacroTag + NamedParam.getKey() + ConstantsCommonConfigXMLTags._EndMacroTag );
 				
 				bIsOutParam = InputServiceParameterDef != null && ( InputServiceParameterDef.getParameterScope().equals( TParameterScope.OUT ) || InputServiceParameterDef.getParameterScope().equals( TParameterScope.INOUT ) );
 				
@@ -1241,7 +1241,7 @@ public abstract class CAbstractDBEngine {
 		
 		try {
 		
-			if ( strCommand.indexOf( ConfigXMLTagsServicesDaemon._StartParamValue ) == -1 )
+			if ( strCommand.indexOf( ConstantsCommonConfigXMLTags._StartParamValue ) == -1 )
 				return true;
 			
 		}
@@ -1879,8 +1879,8 @@ public abstract class CAbstractDBEngine {
     	
     		HashMap<String,String> Delimiters = new HashMap<String,String>();
 
-    		Delimiters.put( ConfigXMLTagsServicesDaemon._StartMacroTag, ConfigXMLTagsServicesDaemon._EndMacroTag );
-    		Delimiters.put( ConfigXMLTagsServicesDaemon._StartParamValue, ConfigXMLTagsServicesDaemon._EndParamValue );
+    		Delimiters.put( ConstantsCommonConfigXMLTags._StartMacroTag, ConstantsCommonConfigXMLTags._EndMacroTag );
+    		Delimiters.put( ConstantsCommonConfigXMLTags._StartParamValue, ConstantsCommonConfigXMLTags._EndParamValue );
 
     		CNamedPreparedStatement MainNamedPreparedStatement = new CNamedPreparedStatement( JDBConnection, strCommand, Delimiters );		
     	
@@ -1898,7 +1898,7 @@ public abstract class CAbstractDBEngine {
 				
 				String strInputServiceParameterValue = Request.getParameter( NamedParam.getKey() );
 
-				int intMacroIndex = Utilities.getIndexByValue( strMacrosNames, ConfigXMLTagsServicesDaemon._StartMacroTag + NamedParam.getKey() + ConfigXMLTagsServicesDaemon._EndMacroTag );
+				int intMacroIndex = Utilities.getIndexByValue( strMacrosNames, ConstantsCommonConfigXMLTags._StartMacroTag + NamedParam.getKey() + ConstantsCommonConfigXMLTags._EndMacroTag );
 
 				if ( intMacroIndex >= 0 ) {
 					
@@ -2061,8 +2061,8 @@ public abstract class CAbstractDBEngine {
     	
     		HashMap<String,String> Delimiters = new HashMap<String,String>();
 
-    		Delimiters.put( ConfigXMLTagsServicesDaemon._StartMacroTag, ConfigXMLTagsServicesDaemon._EndMacroTag );
-    		Delimiters.put( ConfigXMLTagsServicesDaemon._StartParamValue, ConfigXMLTagsServicesDaemon._EndParamValue );
+    		Delimiters.put( ConstantsCommonConfigXMLTags._StartMacroTag, ConstantsCommonConfigXMLTags._EndMacroTag );
+    		Delimiters.put( ConstantsCommonConfigXMLTags._StartParamValue, ConstantsCommonConfigXMLTags._EndParamValue );
 
     		CNamedPreparedStatement MainNamedPreparedStatement = new CNamedPreparedStatement( JDBConnection, strCommand, Delimiters );		
     	
@@ -2080,7 +2080,7 @@ public abstract class CAbstractDBEngine {
 				
 				String strInputServiceParameterValue = Request.getParameter( NamedParam.getKey() );
 
-				int intMacroIndex = Utilities.getIndexByValue( strMacrosNames, ConfigXMLTagsServicesDaemon._StartMacroTag + NamedParam.getKey() + ConfigXMLTagsServicesDaemon._EndMacroTag );
+				int intMacroIndex = Utilities.getIndexByValue( strMacrosNames, ConstantsCommonConfigXMLTags._StartMacroTag + NamedParam.getKey() + ConstantsCommonConfigXMLTags._EndMacroTag );
 
 				if ( intMacroIndex >= 0 ) {
 					
@@ -2270,8 +2270,8 @@ public abstract class CAbstractDBEngine {
     		
     		HashMap<String,String> Delimiters = new HashMap<String,String>();
 
-    		Delimiters.put( ConfigXMLTagsServicesDaemon._StartMacroTag, ConfigXMLTagsServicesDaemon._EndMacroTag );
-    		Delimiters.put( ConfigXMLTagsServicesDaemon._StartParamValue, ConfigXMLTagsServicesDaemon._EndParamValue );
+    		Delimiters.put( ConstantsCommonConfigXMLTags._StartMacroTag, ConstantsCommonConfigXMLTags._EndMacroTag );
+    		Delimiters.put( ConstantsCommonConfigXMLTags._StartParamValue, ConstantsCommonConfigXMLTags._EndParamValue );
 
     		CNamedCallableStatement MainNamedCallableStatement = new CNamedCallableStatement( JDBConnection, strCommand, Delimiters );		
     	
@@ -2289,7 +2289,7 @@ public abstract class CAbstractDBEngine {
 				
 				String strInputServiceParameterValue = Request.getParameter( NamedParam.getKey() );
 
-				int intMacroIndex = Utilities.getIndexByValue( strMacrosNames, ConfigXMLTagsServicesDaemon._StartMacroTag + NamedParam.getKey() + ConfigXMLTagsServicesDaemon._EndMacroTag );
+				int intMacroIndex = Utilities.getIndexByValue( strMacrosNames, ConstantsCommonConfigXMLTags._StartMacroTag + NamedParam.getKey() + ConstantsCommonConfigXMLTags._EndMacroTag );
 
 				if ( intMacroIndex >= 0 ) {
 					

@@ -54,7 +54,7 @@ public abstract class CAbstractConfigLoader implements IMessageObject {
 		
 	}
 	
-	public boolean LoadConfigSection( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
+	public boolean loadConfigSection( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
 
 		boolean bResult = true;
 
@@ -62,7 +62,7 @@ public abstract class CAbstractConfigLoader implements IMessageObject {
 		
 	}
 	
-	public Node FindConfigSectionByName( NodeList ConfigSectionList, String strConfigSectionName, CExtendedLogger Logger ) {
+	public Node findConfigSectionByName( NodeList ConfigSectionList, String strConfigSectionName, CExtendedLogger Logger ) {
 		
 		Node ConfigSectionNode = null;
 		
@@ -91,7 +91,7 @@ public abstract class CAbstractConfigLoader implements IMessageObject {
 		
 	}
 	
-	public boolean LoadConfig( String strConfigFilePath, CLanguage Lang, CExtendedLogger Logger ) {
+	public boolean loadConfig( String strConfigFilePath, CLanguage Lang, CExtendedLogger Logger ) {
 		
 		boolean bResult = true;
 
@@ -120,7 +120,7 @@ public abstract class CAbstractConfigLoader implements IMessageObject {
 	
 				Logger.logMessage( "1", Lang.translate( "XML node root of config file: [%s]", XMLDocument.getDocumentElement().getNodeName() ) );        
 	
-		        NodeList NodeRootlst = XMLDocument.getElementsByTagName( ConfigXMLTagsServicesDaemon._Config );
+		        NodeList NodeRootlst = XMLDocument.getElementsByTagName( ConstantsCommonConfigXMLTags._Config );
 		          
 		        if ( NodeRootlst.getLength() == 1 ) {
 		           
@@ -128,11 +128,11 @@ public abstract class CAbstractConfigLoader implements IMessageObject {
 				
 		            for ( int intConfigSecitonIndex = 0; intConfigSecitonIndex < strFirstLevelConfigSectionsOrder.size(); intConfigSecitonIndex++ ) {
 		                
-		            	Node ConfigSectionNode = FindConfigSectionByName( ConfigSectionList, strFirstLevelConfigSectionsOrder.get( intConfigSecitonIndex ), Logger ); //ConfigSectionList.item( intConfigSecitonIndex );
+		            	Node ConfigSectionNode = findConfigSectionByName( ConfigSectionList, strFirstLevelConfigSectionsOrder.get( intConfigSecitonIndex ), Logger ); //ConfigSectionList.item( intConfigSecitonIndex );
 
 		            	if ( ConfigSectionNode != null ) {
 		            		
-		            		if ( LoadConfigSection( ConfigSectionNode, Lang, Logger ) == false ) {
+		            		if ( loadConfigSection( ConfigSectionNode, Lang, Logger ) == false ) {
 
 		            			bResult = false;
 

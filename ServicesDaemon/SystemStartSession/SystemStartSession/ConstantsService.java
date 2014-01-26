@@ -10,7 +10,7 @@
  ******************************************************************************/
 package SystemStartSession;
 
-public interface ConstantsSystemStartSession {
+public interface ConstantsService {
 
 	public final String _Request_DBConnection_Name = "DBConnection";
 	public final String _Request_DBConnection_Type = "varchar";

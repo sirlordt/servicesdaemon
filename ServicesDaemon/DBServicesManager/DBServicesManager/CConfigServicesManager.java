@@ -24,7 +24,7 @@ import CommonClasses.CClassPathLoader;
 import CommonClasses.CConfigNativeDBConnection;
 import CommonClasses.CConfigRegisterService;
 import CommonClasses.CLanguage;
-import CommonClasses.ConfigXMLTagsServicesDaemon;
+import CommonClasses.ConstantsCommonConfigXMLTags;
 import CommonClasses.ConstantsCommonClasses;
 import CommonClasses.ConstantsMessagesCodes;
 import ExtendedLogger.CExtendedLogger;
@@ -99,7 +99,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 		super( strRunningPath );
 		
 		//Set the order for read xml config file sections
-		strFirstLevelConfigSectionsOrder.add( ConfigXMLTagsServicesDaemon._System );  //1
+		strFirstLevelConfigSectionsOrder.add( ConstantsCommonConfigXMLTags._System );  //1
 		bFirstLevelConfigSectionsMustExists.add( true );
 		strFirstLevelConfigSectionsOrder.add( ConstantsConfigXMLTags._RegisterServices ); //2
 		bFirstLevelConfigSectionsMustExists.add( true );
@@ -121,7 +121,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 		strDefaultResponseFormat = ConstantsServicesManager._Response_Format;
 		strDefaultResponseFormatVersion = ConstantsServicesManager._Response_Format_Version;
 
-		strResponseRequestMethod = ConfigXMLTagsServicesDaemon._Request_Method_ANY;
+		strResponseRequestMethod = ConstantsCommonConfigXMLTags._Request_Method_ANY;
 		
 		intInternalFetchSize = ConstantsCommonClasses._Internal_Fetch_Size;
 		
@@ -169,7 +169,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 		
 	}
 
-    public boolean LoadConfigSectionSystem( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
+    public boolean loadConfigSectionSystem( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
 
         boolean bResult = true;
 		
@@ -177,7 +177,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 		   
 			if ( ConfigSectionNode.hasAttributes() == true ) {
 		
-				String strAttributesOrder[] = { ConstantsConfigXMLTags._Global_Date_Time_Format, ConstantsConfigXMLTags._Global_Date_Format, ConstantsConfigXMLTags._Global_Time_Format, ConstantsConfigXMLTags._Temp_Dir, ConstantsConfigXMLTags._DBServices_Dir, ConstantsConfigXMLTags._DBDrivers_Dir, ConstantsConfigXMLTags._DBEngines_Dir, ConstantsConfigXMLTags._Responses_Formats_Dir, ConstantsConfigXMLTags._Default_Response_Format, ConstantsConfigXMLTags._Default_Response_Format_Version, ConstantsConfigXMLTags._Internal_Fetch_Size, ConfigXMLTagsServicesDaemon._Response_Request_Method, ConstantsConfigXMLTags._Self_Client_Request_Timeout, ConstantsConfigXMLTags._Self_Client_Socket_Timeout };
+				String strAttributesOrder[] = { ConstantsConfigXMLTags._Global_Date_Time_Format, ConstantsConfigXMLTags._Global_Date_Format, ConstantsConfigXMLTags._Global_Time_Format, ConstantsConfigXMLTags._Temp_Dir, ConstantsConfigXMLTags._DBServices_Dir, ConstantsConfigXMLTags._DBDrivers_Dir, ConstantsConfigXMLTags._DBEngines_Dir, ConstantsConfigXMLTags._Responses_Formats_Dir, ConstantsConfigXMLTags._Default_Response_Format, ConstantsConfigXMLTags._Default_Response_Format_Version, ConstantsConfigXMLTags._Internal_Fetch_Size, ConstantsCommonConfigXMLTags._Response_Request_Method, ConstantsConfigXMLTags._Self_Client_Request_Timeout, ConstantsConfigXMLTags._Self_Client_Socket_Timeout };
 
 				NamedNodeMap NodeAttributes = ConfigSectionNode.getAttributes();
 
@@ -405,43 +405,43 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 					        }
 					        
 						}
-						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsServicesDaemon._Response_Request_Method ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Response_Request_Method ) ) {
 							
 					        if ( NodeAttribute.getNodeValue() != null && NodeAttribute.getNodeValue().isEmpty() == false ) {
 
-					        	if ( NodeAttribute.getNodeValue().trim().toLowerCase().equals( ConfigXMLTagsServicesDaemon._Request_Method_ANY.toLowerCase() ) ) {
+					        	if ( NodeAttribute.getNodeValue().trim().toLowerCase().equals( ConstantsCommonConfigXMLTags._Request_Method_ANY.toLowerCase() ) ) {
 
-					        		this.strResponseRequestMethod = ConfigXMLTagsServicesDaemon._Request_Method_ANY;
+					        		this.strResponseRequestMethod = ConstantsCommonConfigXMLTags._Request_Method_ANY;
 							        
 					        		Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]", "strResponseRequestMethod", this.strResponseRequestMethod ) );
 					        
 					        
 					        	}
-					        	else if ( NodeAttribute.getNodeValue().trim().toLowerCase().equals( ConfigXMLTagsServicesDaemon._Request_Method_OnlyGET.toLowerCase() ) ) { 
+					        	else if ( NodeAttribute.getNodeValue().trim().toLowerCase().equals( ConstantsCommonConfigXMLTags._Request_Method_OnlyGET.toLowerCase() ) ) { 
 
-					        		this.strResponseRequestMethod = ConfigXMLTagsServicesDaemon._Request_Method_OnlyGET;
+					        		this.strResponseRequestMethod = ConstantsCommonConfigXMLTags._Request_Method_OnlyGET;
 							        
 					        		Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]", "strResponseRequestMethod", this.strResponseRequestMethod ) );
 
 					        	}	
-					        	else if ( NodeAttribute.getNodeValue().trim().toLowerCase().equals( ConfigXMLTagsServicesDaemon._Request_Method_OnlyPOST.toLowerCase() ) ) {    
+					        	else if ( NodeAttribute.getNodeValue().trim().toLowerCase().equals( ConstantsCommonConfigXMLTags._Request_Method_OnlyPOST.toLowerCase() ) ) {    
 
-					        	   this.strResponseRequestMethod = ConfigXMLTagsServicesDaemon._Request_Method_OnlyPOST;
+					        	   this.strResponseRequestMethod = ConstantsCommonConfigXMLTags._Request_Method_OnlyPOST;
 						    	
 						           Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]", "strResponseRequestMethod", this.strResponseRequestMethod ) );
 
 					        	}
 					        	else {
 					        		
-						           Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] must be only one of the next values: [%s,%s,%s]", ConfigXMLTagsServicesDaemon._Response_Request_Method, ConfigXMLTagsServicesDaemon._Request_Method_ANY, ConfigXMLTagsServicesDaemon._Request_Method_OnlyGET, ConfigXMLTagsServicesDaemon._Request_Method_OnlyPOST ) );
-						           Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is invalid, using the default value [%s]", ConfigXMLTagsServicesDaemon._Response_Request_Method, NodeAttribute.getNodeValue(), this.strResponseRequestMethod ) );
+						           Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] must be only one of the next values: [%s,%s,%s]", ConstantsCommonConfigXMLTags._Response_Request_Method, ConstantsCommonConfigXMLTags._Request_Method_ANY, ConstantsCommonConfigXMLTags._Request_Method_OnlyGET, ConstantsCommonConfigXMLTags._Request_Method_OnlyPOST ) );
+						           Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is invalid, using the default value [%s]", ConstantsCommonConfigXMLTags._Response_Request_Method, NodeAttribute.getNodeValue(), this.strResponseRequestMethod ) );
 					        		
 					        	}
 						    	
 						    }
 					        else {
 					        	
-						        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConfigXMLTagsServicesDaemon._Response_Request_Method, this.strResponseRequestMethod ) );
+						        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsCommonConfigXMLTags._Response_Request_Method, this.strResponseRequestMethod ) );
 					        	
 					        }
 					        
@@ -628,9 +628,9 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 					        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute not found, using the default value [%s]", ConstantsConfigXMLTags._Default_Response_Format_Version, this.strDefaultResponseFormatVersion ) );
 		            		
 		            	}
-		            	else if ( strAttributesOrder[ intAttributesIndex ].equals( ConfigXMLTagsServicesDaemon._Response_Request_Method ) ) {
+		            	else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsCommonConfigXMLTags._Response_Request_Method ) ) {
 		            		
-					        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute not found, using the default value [%s]", ConfigXMLTagsServicesDaemon._Response_Request_Method, this.strResponseRequestMethod ) );
+					        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute not found, using the default value [%s]", ConstantsCommonConfigXMLTags._Response_Request_Method, this.strResponseRequestMethod ) );
 		            		
 		            	}
 		            	else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsConfigXMLTags._Internal_Fetch_Size ) ) {
@@ -668,7 +668,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 
 	}
 	
-	public boolean LoadConfigSectionRegisterServices( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
+	public boolean loadConfigSectionRegisterServices( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
 		
         boolean bResult = true;
         
@@ -758,7 +758,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 											}
 											else {
 
-												Logger.logError( "-1004", Lang.translate( "The [%s] attribute value [%s] is not valid ip address", CommonClasses.ConfigXMLTagsServicesDaemon._IP, NodeAttribute.getNodeValue() ) );
+												Logger.logError( "-1004", Lang.translate( "The [%s] attribute value [%s] is not valid ip address", CommonClasses.ConstantsCommonConfigXMLTags._IP, NodeAttribute.getNodeValue() ) );
 												break; //Stop parse more attributes
 
 											}
@@ -784,7 +784,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 											}
 											else {
 
-												Logger.logError( "-1005", Lang.translate( "The [%s] attribute value [%s] is out of range. Must be integer value in the next inclusive range, minimum [%s] and maximum [%s]", CommonClasses.ConfigXMLTagsServicesDaemon._Port, NodeAttribute.getNodeValue(), Integer.toString( CommonClasses.ConstantsCommonClasses._Min_Port_Number ), Integer.toString( CommonClasses.ConstantsCommonClasses._Max_Port_Number ) ) );
+												Logger.logError( "-1005", Lang.translate( "The [%s] attribute value [%s] is out of range. Must be integer value in the next inclusive range, minimum [%s] and maximum [%s]", CommonClasses.ConstantsCommonConfigXMLTags._Port, NodeAttribute.getNodeValue(), Integer.toString( CommonClasses.ConstantsCommonClasses._Min_Port_Number ), Integer.toString( CommonClasses.ConstantsCommonClasses._Max_Port_Number ) ) );
 												break; //Stop parse more attributes
 
 											}
@@ -937,7 +937,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 
 	}
     
-	public boolean LoadConfigSectionBuiltinResponsesFormats( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
+	public boolean loadConfigSectionBuiltinResponsesFormats( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
 		
         boolean bResult = true;
         
@@ -1230,13 +1230,13 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 
 	}
 
-    public boolean LoadConfigSectionDBConnections( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
+    public boolean loadConfigSectionDBConnections( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
 		
         boolean bResult = false;
         
         try {
 
-			String strAttributesOrder[] = { ConstantsConfigXMLTags._Name, ConstantsConfigXMLTags._Driver, ConstantsConfigXMLTags._Engine, ConstantsConfigXMLTags._Engine_Version, ConfigXMLTagsServicesDaemon._IP, ConfigXMLTagsServicesDaemon._Port, ConstantsConfigXMLTags._Database, ConstantsConfigXMLTags._Auto_Commit, ConstantsConfigXMLTags._Dummy_SQL, ConstantsConfigXMLTags._Auth_Type, ConstantsConfigXMLTags._SessionUser, ConstantsConfigXMLTags._SessionPassword, ConstantsConfigXMLTags._TransactionUser, ConstantsConfigXMLTags._TransactionPassword, ConstantsConfigXMLTags._Date_Format, ConstantsConfigXMLTags._Time_Format, ConstantsConfigXMLTags._Date_Time_Format };
+			String strAttributesOrder[] = { ConstantsConfigXMLTags._Name, ConstantsConfigXMLTags._Driver, ConstantsConfigXMLTags._Engine, ConstantsConfigXMLTags._Engine_Version, ConstantsCommonConfigXMLTags._IP, ConstantsCommonConfigXMLTags._Port, ConstantsConfigXMLTags._Database, ConstantsConfigXMLTags._Auto_Commit, ConstantsConfigXMLTags._Dummy_SQL, ConstantsConfigXMLTags._Auth_Type, ConstantsConfigXMLTags._SessionUser, ConstantsConfigXMLTags._SessionPassword, ConstantsConfigXMLTags._TransactionUser, ConstantsConfigXMLTags._TransactionPassword, ConstantsConfigXMLTags._Date_Format, ConstantsConfigXMLTags._Time_Format, ConstantsConfigXMLTags._Date_Time_Format };
 
 			NodeList ConfigConnectionsList = ConfigSectionNode.getChildNodes();
 	          
@@ -1344,7 +1344,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 										}
 										
 									}
-									else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsServicesDaemon._IP ) ) {
+									else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._IP ) ) {
 									
 										if ( Utilities.isValidIPV4( NodeAttribute.getNodeValue() ) == true ) {
 										
@@ -1360,13 +1360,13 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 										}
 							            else {
 							            	
-											Logger.logError( "-1006", Lang.translate( "The [%s] attribute value [%s] is not valid ip address", CommonClasses.ConfigXMLTagsServicesDaemon._IP, NodeAttribute.getNodeValue() ) );
+											Logger.logError( "-1006", Lang.translate( "The [%s] attribute value [%s] is not valid ip address", CommonClasses.ConstantsCommonConfigXMLTags._IP, NodeAttribute.getNodeValue() ) );
 											break; //Stop parse more attributes
 											
 							            }
 
 									}	
-									else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsServicesDaemon._Port ) ) {
+									else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Port ) ) {
 
 										int intTmpPort = Utilities.strToInteger( NodeAttribute.getNodeValue().trim(), Logger );
 											
@@ -1377,7 +1377,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 										}
 										else {
 												
-											Logger.logError( "-1007", Lang.translate( "The [%s] attribute value [%s] is out of range. Must be integer value in the next inclusive range, minimum [%s] and maximum [%s]", CommonClasses.ConfigXMLTagsServicesDaemon._Port, NodeAttribute.getNodeValue(), Integer.toString( CommonClasses.ConstantsCommonClasses._Min_Port_Number ), Integer.toString( CommonClasses.ConstantsCommonClasses._Max_Port_Number ) ) );
+											Logger.logError( "-1007", Lang.translate( "The [%s] attribute value [%s] is out of range. Must be integer value in the next inclusive range, minimum [%s] and maximum [%s]", CommonClasses.ConstantsCommonConfigXMLTags._Port, NodeAttribute.getNodeValue(), Integer.toString( CommonClasses.ConstantsCommonClasses._Min_Port_Number ), Integer.toString( CommonClasses.ConstantsCommonClasses._Max_Port_Number ) ) );
 											break; //Stop parse more attributes
 												
 										}
@@ -1688,15 +1688,15 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 	}
 
 	@Override
-	public boolean LoadConfigSection( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
+	public boolean loadConfigSection( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
 
 		boolean bResult = true;
 
 		Logger.logMessage( "1", Lang.translate( "Reading XML node section: [%s]", ConfigSectionNode.getNodeName() ) );        
         
-		if ( ConfigSectionNode.getNodeName().equals(  CommonClasses.ConfigXMLTagsServicesDaemon._System ) == true ) {
+		if ( ConfigSectionNode.getNodeName().equals(  CommonClasses.ConstantsCommonConfigXMLTags._System ) == true ) {
            
-			if ( this.LoadConfigSectionSystem( ConfigSectionNode, Lang, Logger ) == false ) {
+			if ( this.loadConfigSectionSystem( ConfigSectionNode, Lang, Logger ) == false ) {
 				
     			Logger.logError( "-1001", Lang.translate( "Failed to load config from XML node section: [%s] ", ConfigSectionNode.getNodeName() ) );        
 				
@@ -1707,7 +1707,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
         }
         else if ( ConfigSectionNode.getNodeName().equals( ConstantsConfigXMLTags._RegisterServices ) == true ) {
 
-			if ( this.LoadConfigSectionRegisterServices( ConfigSectionNode, Lang, Logger ) == false ) {
+			if ( this.loadConfigSectionRegisterServices( ConfigSectionNode, Lang, Logger ) == false ) {
 				
     			Logger.logError( "-1002", Lang.translate( "Failed to load config from XML node section: [%s] ", ConfigSectionNode.getNodeName() ) );        
 				
@@ -1718,7 +1718,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
         }	
         else if ( ConfigSectionNode.getNodeName().equals( ConstantsConfigXMLTags._BuiltinResponsesFormats ) == true ) {
 
-        	if ( this.LoadConfigSectionBuiltinResponsesFormats( ConfigSectionNode, Lang, Logger ) == false ) {
+        	if ( this.loadConfigSectionBuiltinResponsesFormats( ConfigSectionNode, Lang, Logger ) == false ) {
         		
     			Logger.logError( "-1003", Lang.translate( "Failed to load config from XML node section: [%s]", ConfigSectionNode.getNodeName() ) );        
 				
@@ -1729,7 +1729,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
         }
         else if ( ConfigSectionNode.getNodeName().equals( ConstantsConfigXMLTags._DBConnections ) == true ) {
 
-        	if ( this.LoadConfigSectionDBConnections( ConfigSectionNode, Lang, Logger ) == false ) {
+        	if ( this.loadConfigSectionDBConnections( ConfigSectionNode, Lang, Logger ) == false ) {
         		
     			Logger.logError( "-1004", Lang.translate( "Failed to load config from XML node section: [%s]", ConfigSectionNode.getNodeName() ) );        
 				

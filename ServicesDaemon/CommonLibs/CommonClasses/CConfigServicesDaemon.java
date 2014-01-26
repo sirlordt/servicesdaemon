@@ -38,12 +38,21 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 	public int intMaxRequestHeaderSize;
 	public String strResponseRequestMethod; //OnlyGET, OnlyPOST, Any
     
+	public String strLogInstanceID;
     public String strClassNameMethodName; 
     public boolean bExactMatch;
     public boolean bLogMissingTranslations;
     public Level LoggingLevel;
     public String strLogIP;
     public int intLogPort;
+    
+	public String strHTTPLogURL;
+	public String strHTTPLogUser;
+	public String strHTTPLogPassword;
+	public String strProxyIP;
+	public int intProxyPort;
+    public String strProxyUser;
+	public String strProxyPassword;
     
     public ArrayList<CConfigNetworkInterface> ConfiguredNetworkInterfaces;
 	public ArrayList<CConfigAccessControl> ConfiguredAccessControl;
@@ -71,13 +80,13 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 		super( strRunningPath );
 		
 		//Set the order for read xml config file sections
-		strFirstLevelConfigSectionsOrder.add( ConfigXMLTagsServicesDaemon._Logger );  //1
+		strFirstLevelConfigSectionsOrder.add( ConstantsCommonConfigXMLTags._Logger );  //1
 		bFirstLevelConfigSectionsMustExists.add( true );
-		strFirstLevelConfigSectionsOrder.add( ConfigXMLTagsServicesDaemon._System );  //2
+		strFirstLevelConfigSectionsOrder.add( ConstantsCommonConfigXMLTags._System );  //2
 		bFirstLevelConfigSectionsMustExists.add( true );
-		strFirstLevelConfigSectionsOrder.add( ConfigXMLTagsServicesDaemon._NetworkInterfaces ); //3
+		strFirstLevelConfigSectionsOrder.add( ConstantsCommonConfigXMLTags._NetworkInterfaces ); //3
 		bFirstLevelConfigSectionsMustExists.add( true );
-		strFirstLevelConfigSectionsOrder.add( ConfigXMLTagsServicesDaemon._AccessControl ); //4
+		strFirstLevelConfigSectionsOrder.add( ConstantsCommonConfigXMLTags._AccessControl ); //4
 		bFirstLevelConfigSectionsMustExists.add( true );
 		
 		strManagersDir = this.strRunningPath + ConstantsCommonClasses._Managers_Dir; //"Managers/"; 
@@ -87,15 +96,24 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 	    intMaxIdleTime = ConstantsCommonClasses._Max_Idle_Time; //30000
 	    intMaxRequestHeaderSize = ConstantsCommonClasses._Max_Request_Header_Size; //8192	
 	    
-		strResponseRequestMethod = ConfigXMLTagsServicesDaemon._Request_Method_ANY;
+		strResponseRequestMethod = ConstantsCommonConfigXMLTags._Request_Method_ANY;
 
+		strLogInstanceID = ConstantsCommonClasses._Log_Instance_ID;
 	    strClassNameMethodName = ConstantsCommonClasses._Log_Class_Method; //*.*
 	    bExactMatch = ConstantsCommonClasses._Log_Exact_Match; //false
 	    bLogMissingTranslations = ConstantsCommonClasses._Log_Missing_Translations; //false
 	    LoggingLevel = Level.parse( ConstantsCommonClasses._Log_Level ); //ALL
-	    strLogIP = ConstantsCommonClasses._Default_Log_IP; //""
+	    strLogIP = ConstantsCommonClasses._Log_IP; //""
         intLogPort = ConstantsCommonClasses._Log_Port_Number; //30000	     
 	    
+    	strHTTPLogURL = ConstantsCommonClasses._HTTP_Log_URL;
+    	strHTTPLogUser = ConstantsCommonClasses._HTTP_Log_User;
+    	strHTTPLogPassword = ConstantsCommonClasses._HTTP_Log_Password;
+    	strProxyIP = ConstantsCommonClasses._Proxy_IP;
+    	intProxyPort = ConstantsCommonClasses._Proxy_Port;
+    	strProxyUser = ConstantsCommonClasses._Proxy_User;
+    	strProxyPassword = ConstantsCommonClasses._Proxy_Password;
+        
 	    ConfiguredNetworkInterfaces = new ArrayList<CConfigNetworkInterface>(); 
 		ConfiguredAccessControl = new ArrayList<CConfigAccessControl>();
 	
@@ -109,7 +127,7 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 		   
 			if ( ConfigSectionNode.hasAttributes() == true ) {
 				
-				String strAttributesOrder[] = { ConfigXMLTagsServicesDaemon._ClassName_MethodName, ConfigXMLTagsServicesDaemon._Exact_Match, ConfigXMLTagsServicesDaemon._Level, ConfigXMLTagsServicesDaemon._Log_Missing_Translations, ConfigXMLTagsServicesDaemon._Log_IP, ConfigXMLTagsServicesDaemon._Log_Port };
+				String strAttributesOrder[] = { ConstantsCommonConfigXMLTags._Log_Instance_ID, ConstantsCommonConfigXMLTags._ClassName_MethodName, ConstantsCommonConfigXMLTags._Exact_Match, ConstantsCommonConfigXMLTags._Level, ConstantsCommonConfigXMLTags._Log_Missing_Translations, ConstantsCommonConfigXMLTags._Log_IP, ConstantsCommonConfigXMLTags._Log_Port, ConstantsCommonConfigXMLTags._HTTP_Log_URL, ConstantsCommonConfigXMLTags._HTTP_Log_User, ConstantsCommonConfigXMLTags._HTTP_Log_Password, ConstantsCommonConfigXMLTags._Proxy_IP, ConstantsCommonConfigXMLTags._Proxy_Port, ConstantsCommonConfigXMLTags._Proxy_User, ConstantsCommonConfigXMLTags._Proxy_Password };
 				
 				NamedNodeMap NodeAttributes = ConfigSectionNode.getAttributes();
 
@@ -122,7 +140,25 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 		            	Logger.logMessage( "1", Lang.translate( "Node attribute name: [%s]", NodeAttribute.getNodeName() ) );
 		            	Logger.logMessage( "1", Lang.translate( "Node attribute value: [%s]", NodeAttribute.getNodeValue() ) );
 						
-						if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsServicesDaemon._ClassName_MethodName ) ) {
+						if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Log_Instance_ID ) ) {
+
+							if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
+							
+								this.strLogInstanceID = NodeAttribute.getNodeValue().trim();
+								
+								Logger.setInstanceID( strLogInstanceID );
+							
+							}
+							else {
+								
+								Logger.logWarning( "-1", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsCommonConfigXMLTags._Log_Instance_ID, NodeAttribute.getNodeValue(), CommonClasses.ConstantsCommonClasses._Log_Instance_ID ) );
+								
+							}
+						 	   
+				            Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]", "strLogInstanceID", NodeAttribute.getNodeValue() ) );
+
+						}
+						else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._ClassName_MethodName ) ) {
 
 							this.strClassNameMethodName = NodeAttribute.getNodeValue().trim();
 						 	   
@@ -133,7 +169,7 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 				            Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]", "strClassNameMethodName", NodeAttribute.getNodeValue() ) );
 
 						}
-						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsServicesDaemon._Exact_Match ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Exact_Match ) ) {
 
 							this.bExactMatch = NodeAttribute.getNodeValue().trim().toLowerCase().equals( "true" );
 		            		  
@@ -148,7 +184,7 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 							}
 							
 						}
-						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsServicesDaemon._Log_Missing_Translations ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Log_Missing_Translations ) ) {
 
 							this.bLogMissingTranslations = NodeAttribute.getNodeValue().trim().toLowerCase().equals( "true" );
 		            		  
@@ -159,7 +195,7 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 							}
 							
 						}
-						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsServicesDaemon._Level ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Level ) ) {
 
 							this.LoggingLevel = Level.parse( NodeAttribute.getNodeValue().trim() );
 							
@@ -172,11 +208,11 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 				            Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]", "LoggingLevel", NodeAttribute.getNodeValue() ) );
 						
 						}
-						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsServicesDaemon._Log_IP ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Log_IP ) ) {
 
 							String strIP = NodeAttribute.getNodeValue().trim();
 							
-							if ( Utilities.isValidIPV4( strIP ) == true || Utilities.isValidIPV6( strIP ) == true ) {
+							if ( Utilities.isValidIP( strIP ) ) {
 								
 								Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]", "strLogIP", strIP ) );
 
@@ -187,15 +223,15 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 							}
 				            else {
 				            	
-								Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is not valid ip address", CommonClasses.ConfigXMLTagsServicesDaemon._Log_IP, NodeAttribute.getNodeValue() ) );
-								Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is invalid, using the default value [%s]", ConfigXMLTagsServicesDaemon._Log_IP, NodeAttribute.getNodeValue(), CommonClasses.ConstantsCommonClasses._Default_Log_IP ) );
+								Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is not valid ip address", CommonClasses.ConstantsCommonConfigXMLTags._Log_IP, NodeAttribute.getNodeValue() ) );
+								Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is invalid, using the default value [%s]", ConstantsCommonConfigXMLTags._Log_IP, NodeAttribute.getNodeValue(), CommonClasses.ConstantsCommonClasses._Log_IP ) );
 								
 				            }
 		            		  
 						}
-						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsServicesDaemon._Log_Port ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Log_Port ) ) {
 
-							int intTempPort = Integer.parseInt( NodeAttribute.getNodeValue().trim() );
+							int intTempPort = net.maindataservices.Utilities.strToInteger( NodeAttribute.getNodeValue().trim(), Logger );
 							
 							if ( intTempPort >= CommonClasses.ConstantsCommonClasses._Min_Port_Number && intTempPort <= CommonClasses.ConstantsCommonClasses._Max_Port_Number ) {
 								
@@ -208,8 +244,8 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 							}
 							else {
 								
-								Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is out of range. Must be integer value in the next inclusive range, minimum [%s] and maximum [%s]", ConfigXMLTagsServicesDaemon._Log_Port, NodeAttribute.getNodeValue(), Integer.toString( CommonClasses.ConstantsCommonClasses._Min_Port_Number ), Integer.toString( CommonClasses.ConstantsCommonClasses._Max_Port_Number )  ) );
-								Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is invalid, using the default value [%s]", ConfigXMLTagsServicesDaemon._Log_Port, NodeAttribute.getNodeValue(), Integer.toString( CommonClasses.ConstantsCommonClasses._Log_Port_Number )  ) );
+								Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is out of range. Must be integer value in the next inclusive range, minimum [%s] and maximum [%s]", ConstantsCommonConfigXMLTags._Log_Port, NodeAttribute.getNodeValue(), Integer.toString( CommonClasses.ConstantsCommonClasses._Min_Port_Number ), Integer.toString( CommonClasses.ConstantsCommonClasses._Max_Port_Number )  ) );
+								//Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is invalid, using the default value [%s]", ConstantsCommonConfigXMLTags._Log_Port, NodeAttribute.getNodeValue(), Integer.toString( CommonClasses.ConstantsCommonClasses._Log_Port_Number )  ) );
 
 								Logger.setLogPort( CommonClasses.ConstantsCommonClasses._Log_Port_Number );
 								//this.intLogPort = CommonClasses.DefaultConstantsServicesDaemon.intDefaultLogPortNumber;
@@ -217,12 +253,117 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 							}
 						
 						}
+						else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._HTTP_Log_URL ) ) {
+
+							String strHTTPLogURL = NodeAttribute.getNodeValue().trim();
+							
+							if ( Utilities.isValidHTTPURL( strHTTPLogURL ) ) {
+								
+								Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]", "strHTTPLogURL", strHTTPLogURL ) );
+
+								this.strHTTPLogURL = strHTTPLogURL;
+						
+								Logger.setHTTPLogURL( this.strHTTPLogURL );
+								
+							}
+				            else {
+				            	
+								Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is not valid URL address", CommonClasses.ConstantsCommonConfigXMLTags._HTTP_Log_URL, NodeAttribute.getNodeValue() ) );
+								Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is invalid, using the default value [%s]", ConstantsCommonConfigXMLTags._HTTP_Log_URL, NodeAttribute.getNodeValue(), CommonClasses.ConstantsCommonClasses._HTTP_Log_URL ) );
+								
+				            }
+		            		  
+						}
+						else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._HTTP_Log_User ) ) {
+
+							this.strHTTPLogUser = NodeAttribute.getNodeValue().trim();
+
+							Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]", "strHTTPLogUser", strHTTPLogUser ) );
+
+							Logger.setHTTPLogUser( this.strHTTPLogURL );
+		            		  
+						}
+						else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._HTTP_Log_Password ) ) {
+
+							this.strHTTPLogPassword = net.maindataservices.Utilities.uncryptString( ConstantsCommonConfigXMLTags._Password_Crypted, ConstantsCommonConfigXMLTags._Password_Crypted_Sep, ConstantsCommonClasses._Crypt_Algorithm, NodeAttribute.getNodeValue().trim(), null, null );
+
+							Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]", "strHTTPLogPassword", strHTTPLogPassword ) );
+
+							Logger.setHTTPLogPassword( this.strHTTPLogPassword );
+		            		  
+						}
+						else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Proxy_IP ) ) {
+
+							String strProxyIP = NodeAttribute.getNodeValue().trim();
+							
+							if ( Utilities.isValidIP( strProxyIP ) ) {
+								
+								Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]", "strProxyIP", strProxyIP ) );
+
+								this.strProxyIP = strProxyIP;
+						
+								Logger.setProxyIP( this.strProxyIP );
+								
+							}
+				            else {
+				            	
+								Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is not valid ip address", CommonClasses.ConstantsCommonConfigXMLTags._Proxy_IP, NodeAttribute.getNodeValue() ) );
+								Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is invalid, using the default value [%s]", ConstantsCommonConfigXMLTags._Proxy_IP, NodeAttribute.getNodeValue(), CommonClasses.ConstantsCommonClasses._Proxy_IP ) );
+								
+				            }
+		            		  
+						}
+						else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Proxy_Port ) ) {
+
+							if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
+							
+								int intTempPort = net.maindataservices.Utilities.strToInteger( NodeAttribute.getNodeValue().trim(), Logger );
+
+								if ( intTempPort >= CommonClasses.ConstantsCommonClasses._Min_Port_Number && intTempPort <= CommonClasses.ConstantsCommonClasses._Max_Port_Number ) {
+
+									Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]", "intProxyPort", NodeAttribute.getNodeValue().trim() ) );
+
+									this.intProxyPort = intTempPort;
+
+									Logger.setProxyPort( intProxyPort );
+
+								}
+								else {
+
+									Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is out of range. Must be integer value in the next inclusive range, minimum [%s] and maximum [%s]", ConstantsCommonConfigXMLTags._Proxy_Port, NodeAttribute.getNodeValue(), Integer.toString( CommonClasses.ConstantsCommonClasses._Min_Port_Number ), Integer.toString( CommonClasses.ConstantsCommonClasses._Max_Port_Number )  ) );
+
+									Logger.setProxyPort( CommonClasses.ConstantsCommonClasses._Proxy_Port );
+
+								}
+						
+							}
+							
+						}
+						else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Proxy_User ) ) {
+
+							this.strProxyUser = NodeAttribute.getNodeValue().trim();
+
+							Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]", "strProxyUser", strProxyUser ) );
+
+							Logger.setProxyUser( this.strProxyUser );
+		            		  
+						}
+						else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Proxy_Password ) ) {
+
+							this.strProxyPassword = net.maindataservices.Utilities.uncryptString( ConstantsCommonConfigXMLTags._Password_Crypted, ConstantsCommonConfigXMLTags._Password_Crypted_Sep, ConstantsCommonClasses._Crypt_Algorithm, NodeAttribute.getNodeValue().trim(), null, null );
+
+							Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]", "strProxyPassword", strProxyPassword ) );
+
+							Logger.setProxyPassword( this.strProxyPassword );
+		            		  
+						}
 		            
 		            }
 		            
 		        }
 		        
 		        Logger.activateSocketHandler( false );
+		        Logger.activateHTTPHandler( false );
 			
 			}
 		
@@ -248,7 +389,7 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 		   
 			if ( ConfigSectionNode.hasAttributes() == true ) {
 		
-				String strAttributesOrder[] = { ConfigXMLTagsServicesDaemon._Managers_Dir, ConfigXMLTagsServicesDaemon._Key_Store_File, ConfigXMLTagsServicesDaemon._Key_Store_Password, ConfigXMLTagsServicesDaemon._Key_Manager_Password, ConfigXMLTagsServicesDaemon._Max_Idle_Time, ConfigXMLTagsServicesDaemon._Max_Request_Header_Size, ConfigXMLTagsServicesDaemon._Response_Request_Method };
+				String strAttributesOrder[] = { ConstantsCommonConfigXMLTags._Managers_Dir, ConstantsCommonConfigXMLTags._Key_Store_File, ConstantsCommonConfigXMLTags._Key_Store_Password, ConstantsCommonConfigXMLTags._Key_Manager_Password, ConstantsCommonConfigXMLTags._Max_Idle_Time, ConstantsCommonConfigXMLTags._Max_Request_Header_Size, ConstantsCommonConfigXMLTags._Response_Request_Method };
 
 				NamedNodeMap NodeAttributes = ConfigSectionNode.getAttributes();
 
@@ -261,7 +402,7 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 		            	Logger.logMessage( "1", Lang.translate( "Node attribute name: [%s]", NodeAttribute.getNodeName() ) );
 		            	Logger.logMessage( "1", Lang.translate( "Node attribute value: [%s]", NodeAttribute.getNodeValue() ) );
 						
-		            	if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsServicesDaemon._Managers_Dir ) ) {
+		            	if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Managers_Dir ) ) {
 
 							this.strManagersDir = NodeAttribute.getNodeValue();
 		
@@ -282,7 +423,7 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 						    }
 						
 						}
-						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsServicesDaemon._Key_Store_File ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Key_Store_File ) ) {
 
 							this.strKeyStoreFile = NodeAttribute.getNodeValue();
 		            		  
@@ -303,21 +444,21 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 						    }
 					        
 						}
-						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsServicesDaemon._Key_Store_Password ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Key_Store_Password ) ) {
 
 							this.strKeyStorePassword = NodeAttribute.getNodeValue();
 		            		  
 				            Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]", "strKeyStorePassword", NodeAttribute.getNodeValue() ) );
 						
 						}
-						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsServicesDaemon._Key_Manager_Password ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Key_Manager_Password ) ) {
 
 							this.strKeyManagerPassword = NodeAttribute.getNodeValue();
 		            		  
 				            Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]", "strKeyManagerPassword", NodeAttribute.getNodeValue() ) );
 						
 						}
-						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsServicesDaemon._Max_Idle_Time ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Max_Idle_Time ) ) {
 
 							this.intMaxIdleTime = Utilities.strToInteger( NodeAttribute.getNodeValue(), Logger );
 		            		  
@@ -325,14 +466,14 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 							
 				            	this.intMaxIdleTime = ConstantsCommonClasses._Min_Idle_Time;
 				            	
-				            	Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is invalid, using the default max idle time of [%s] seconds", ConfigXMLTagsServicesDaemon._Max_Idle_Time, NodeAttribute.getNodeValue(), Integer.toString( ConstantsCommonClasses._Min_Idle_Time ) ) );
+				            	Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is invalid, using the default max idle time of [%s] seconds", ConstantsCommonConfigXMLTags._Max_Idle_Time, NodeAttribute.getNodeValue(), Integer.toString( ConstantsCommonClasses._Min_Idle_Time ) ) );
 				            	
 				            }
 
 				            Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]", "intMaxIdleTime", Integer.toString( this.intMaxIdleTime ) ) );
 						
 						}
-						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsServicesDaemon._Max_Request_Header_Size ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Max_Request_Header_Size ) ) {
 
 							this.intMaxRequestHeaderSize = Utilities.strToInteger( NodeAttribute.getNodeValue(), Logger );
 		            		  
@@ -340,42 +481,42 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 							
 				            	this.intMaxRequestHeaderSize = ConstantsCommonClasses._Min_Request_Header_Size;
 				            	
-				            	Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is invalid, using the default max request header size of [%s] bytes", ConfigXMLTagsServicesDaemon._Max_Request_Header_Size, NodeAttribute.getNodeValue(), Integer.toString( ConstantsCommonClasses._Min_Request_Header_Size ) ) );
+				            	Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is invalid, using the default max request header size of [%s] bytes", ConstantsCommonConfigXMLTags._Max_Request_Header_Size, NodeAttribute.getNodeValue(), Integer.toString( ConstantsCommonClasses._Min_Request_Header_Size ) ) );
 				            	
 				            }
 
 				            Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]", "intMaxRequestHeaderSize", Integer.toString( this.intMaxRequestHeaderSize ) ) );
 						
 						}
-						else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsServicesDaemon._Response_Request_Method ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Response_Request_Method ) ) {
 							
 					        if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
 
-					        	if ( NodeAttribute.getNodeValue().trim().toLowerCase().equals( ConfigXMLTagsServicesDaemon._Request_Method_ANY.toLowerCase() ) ) {
+					        	if ( NodeAttribute.getNodeValue().trim().toLowerCase().equals( ConstantsCommonConfigXMLTags._Request_Method_ANY.toLowerCase() ) ) {
 
-					        		this.strResponseRequestMethod = ConfigXMLTagsServicesDaemon._Request_Method_ANY;
+					        		this.strResponseRequestMethod = ConstantsCommonConfigXMLTags._Request_Method_ANY;
 							        
 					        		Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]", "strResponseRequestMethod", this.strResponseRequestMethod ) );
 					        
 					        
 					        	}
-					        	else if ( NodeAttribute.getNodeValue().trim().toLowerCase().equals( ConfigXMLTagsServicesDaemon._Request_Method_OnlyGET.toLowerCase() ) ) { 
+					        	else if ( NodeAttribute.getNodeValue().trim().toLowerCase().equals( ConstantsCommonConfigXMLTags._Request_Method_OnlyGET.toLowerCase() ) ) { 
 
-					        		this.strResponseRequestMethod = ConfigXMLTagsServicesDaemon._Request_Method_OnlyGET;
+					        		this.strResponseRequestMethod = ConstantsCommonConfigXMLTags._Request_Method_OnlyGET;
 							        
 					        		Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]", "strResponseRequestMethod", this.strResponseRequestMethod ) );
 
 					        	}	
-					        	else if ( NodeAttribute.getNodeValue().trim().toLowerCase().equals( ConfigXMLTagsServicesDaemon._Request_Method_OnlyPOST.toLowerCase() ) ) {    
+					        	else if ( NodeAttribute.getNodeValue().trim().toLowerCase().equals( ConstantsCommonConfigXMLTags._Request_Method_OnlyPOST.toLowerCase() ) ) {    
 
-					        	   this.strResponseRequestMethod = ConfigXMLTagsServicesDaemon._Request_Method_OnlyPOST;
+					        	   this.strResponseRequestMethod = ConstantsCommonConfigXMLTags._Request_Method_OnlyPOST;
 						    	
 						           Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]", "strResponseRequestMethod", this.strResponseRequestMethod ) );
 
 					        	}
 					        	else {
 					        		
-						           Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] must be only one of the next values: [%s,%s,%s]", "strResponseRequestMethod", ConfigXMLTagsServicesDaemon._Request_Method_ANY, ConfigXMLTagsServicesDaemon._Request_Method_OnlyGET, ConfigXMLTagsServicesDaemon._Request_Method_OnlyPOST ) );
+						           Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] must be only one of the next values: [%s,%s,%s]", "strResponseRequestMethod", ConstantsCommonConfigXMLTags._Request_Method_ANY, ConstantsCommonConfigXMLTags._Request_Method_OnlyGET, ConstantsCommonConfigXMLTags._Request_Method_OnlyPOST ) );
 						           Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is invalid, using the default value [%s]", "strResponseRequestMethod", NodeAttribute.getNodeValue(), this.strResponseRequestMethod ) );
 					        		
 					        	}
@@ -390,7 +531,7 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 						}
 		            
 		            }
-		            else if ( strAttributesOrder[ intAttributesIndex ].equals( ConfigXMLTagsServicesDaemon._Managers_Dir ) ) {
+		            else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsCommonConfigXMLTags._Managers_Dir ) ) {
 		            
 		            	if ( new File( this.strManagersDir ).isAbsolute() == false ) {
 
@@ -409,7 +550,7 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 		            	}
 		            	
 		            }
-		            else if ( strAttributesOrder[ intAttributesIndex ].equals( ConfigXMLTagsServicesDaemon._Key_Store_File ) ) {
+		            else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsCommonConfigXMLTags._Key_Store_File ) ) {
 			            
 		            	if ( new File( this.strKeyStoreFile ).isAbsolute() == false ) {
 
@@ -452,7 +593,7 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
          
         try {
 
-			String strAttributesOrder[] = { ConfigXMLTagsServicesDaemon._IP, ConfigXMLTagsServicesDaemon._Port, ConfigXMLTagsServicesDaemon._Use_SSL };
+			String strAttributesOrder[] = { ConstantsCommonConfigXMLTags._IP, ConstantsCommonConfigXMLTags._Port, ConstantsCommonConfigXMLTags._Use_SSL };
 
         	NodeList ConfigNetworkInterfacesList = ConfigSectionNode.getChildNodes();
 	          
@@ -464,7 +605,7 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 	                 
 	    			Logger.logMessage( "1", Lang.translate( "Reading XML network interface: [%s]", ConfigNetworkInterfaceNode.getNodeName() ) );        
 	                 
-					if ( ConfigNetworkInterfaceNode.getNodeName().equals( ConfigXMLTagsServicesDaemon._NetworkInterface ) == true ) {
+					if ( ConfigNetworkInterfaceNode.getNodeName().equals( ConstantsCommonConfigXMLTags._NetworkInterface ) == true ) {
 
 						String strIP = "";
 						String strAddressType = "";
@@ -484,7 +625,7 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 					            	Logger.logMessage( "1", Lang.translate( "Node attribute name: [%s]", NodeAttribute.getNodeName() ) );
 					            	Logger.logMessage( "1", Lang.translate( "Node attribute value: [%s]", NodeAttribute.getNodeValue() ) );
 									
-									if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsServicesDaemon._IP ) ) {
+									if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._IP ) ) {
 
 										if ( Utilities.isValidIPV4( NodeAttribute.getNodeValue() ) == true ) {
 											
@@ -500,13 +641,13 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 										}
 							            else {
 							            	
-											Logger.logError( "-1000", Lang.translate( "The [%s] attribute value [%s] is not valid ip address", ConfigXMLTagsServicesDaemon._IP, NodeAttribute.getNodeValue() ) );
+											Logger.logError( "-1000", Lang.translate( "The [%s] attribute value [%s] is not valid ip address", ConstantsCommonConfigXMLTags._IP, NodeAttribute.getNodeValue() ) );
 											break; //Stop parse more attributes
 											
 							            }
 										
 									}
-									else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsServicesDaemon._Port ) ) {
+									else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Port ) ) {
 
 										int intTmpPort = Utilities.strToInteger( NodeAttribute.getNodeValue().trim(), Logger );
 											
@@ -517,13 +658,13 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 										}
 										else {
 												
-											Logger.logError( "-1001", Lang.translate( "The [%s] attribute value [%s] is out of range. Must be integer value in the next inclusive range, minimum [%s] and maximum [%s]", ConfigXMLTagsServicesDaemon._Port, NodeAttribute.getNodeValue(), Integer.toString( ConstantsCommonClasses._Min_Port_Number ), Integer.toString( ConstantsCommonClasses._Max_Port_Number ) ) );
+											Logger.logError( "-1001", Lang.translate( "The [%s] attribute value [%s] is out of range. Must be integer value in the next inclusive range, minimum [%s] and maximum [%s]", ConstantsCommonConfigXMLTags._Port, NodeAttribute.getNodeValue(), Integer.toString( ConstantsCommonClasses._Min_Port_Number ), Integer.toString( ConstantsCommonClasses._Max_Port_Number ) ) );
 											break; //Stop parse more attributes
 												
 										}
 									    
 									}
-									else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsServicesDaemon._Use_SSL ) ) {
+									else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Use_SSL ) ) {
 
 										if ( NodeAttribute.getNodeValue().equals( "true" ) ) {
 											
@@ -538,7 +679,7 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 													}
 													else {
 														
-											            Logger.logError( "-1002", Lang.translate( "Cannot use SSL beacuse no [%s] defined in config file section [%s]", ConfigXMLTagsServicesDaemon._Key_Manager_Password, ConfigXMLTagsServicesDaemon._System ) );
+											            Logger.logError( "-1002", Lang.translate( "Cannot use SSL beacuse no [%s] defined in config file section [%s]", ConstantsCommonConfigXMLTags._Key_Manager_Password, ConstantsCommonConfigXMLTags._System ) );
 											            break; //Stop parse more attributes
 														
 													}
@@ -546,7 +687,7 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 												}
 												else {
 													
-										            Logger.logError( "-1003", Lang.translate( "Cannot use SSL beacuse no [%s] defined in config file section [%s]", ConfigXMLTagsServicesDaemon._Key_Store_Password, ConfigXMLTagsServicesDaemon._System ) );
+										            Logger.logError( "-1003", Lang.translate( "Cannot use SSL beacuse no [%s] defined in config file section [%s]", ConstantsCommonConfigXMLTags._Key_Store_Password, ConstantsCommonConfigXMLTags._System ) );
 										            break; //Stop parse more attributes
 													
 												}
@@ -554,7 +695,7 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 											}
 											else {
 												
-									            Logger.logError( "-1004", Lang.translate( "Cannot use SSL beacuse no [%s] defined in config file section [%s]", ConfigXMLTagsServicesDaemon._Key_Store_File, ConfigXMLTagsServicesDaemon._System ) );
+									            Logger.logError( "-1004", Lang.translate( "Cannot use SSL beacuse no [%s] defined in config file section [%s]", ConstantsCommonConfigXMLTags._Key_Store_File, ConstantsCommonConfigXMLTags._System ) );
 									            break; //Stop parse more attributes
 												
 											}
@@ -665,7 +806,7 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 		
         try {
 
-			String strAttributesOrder[] = { ConfigXMLTagsServicesDaemon._IP, ConfigXMLTagsServicesDaemon._Context_Path, ConfigXMLTagsServicesDaemon._Action };
+			String strAttributesOrder[] = { ConstantsCommonConfigXMLTags._IP, ConstantsCommonConfigXMLTags._Context_Path, ConstantsCommonConfigXMLTags._Action };
 
 			NodeList ConfigAccessControlList = ConfigSectionNode.getChildNodes();
 	          
@@ -677,10 +818,10 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 	                 
 	    			Logger.logMessage( "1", Lang.translate( "Reading XML access control rule: [%s]", ConfigConnectionNode.getNodeName() ) );        
 	                 
-					if ( ConfigConnectionNode.getNodeName().equals( ConfigXMLTagsServicesDaemon._From ) == true ) {
+					if ( ConfigConnectionNode.getNodeName().equals( ConstantsCommonConfigXMLTags._From ) == true ) {
 		            
 						String strFromIP = "";
-						String strContextPath = ConfigXMLTagsServicesDaemon._Context_Path_Default;
+						String strContextPath = ConstantsCommonConfigXMLTags._Context_Path_Default;
 						String strAction = "";
 						boolean bAlwaysDeny = false;
 						boolean bAlwaysAllow = false;
@@ -698,7 +839,7 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 					            	Logger.logMessage( "1", Lang.translate( "Node attribute name: [%s]", NodeAttribute.getNodeName() ) );
 					            	Logger.logMessage( "1", Lang.translate( "Node attribute value: [%s]", NodeAttribute.getNodeValue() ) );
 									
-									if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsServicesDaemon._IP ) ) {
+									if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._IP ) ) {
 
 										if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
 											
@@ -707,13 +848,13 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 										}
 							            else {
 							            	
-											Logger.logError( "-1000", Lang.translate( "The [%s] attribute cannot empty string", ConfigXMLTagsServicesDaemon._IP ) );
+											Logger.logError( "-1000", Lang.translate( "The [%s] attribute cannot empty string", ConstantsCommonConfigXMLTags._IP ) );
 											break; //Stop parse more attributes
 											
 							            }
 										
 									}
-									else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsServicesDaemon._Context_Path ) ) {
+									else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Context_Path ) ) {
 
 										if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
 											
@@ -722,23 +863,23 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 										}
 							            else {
 							            	
-											Logger.logWarning( "-1", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConfigXMLTagsServicesDaemon._Context_Path, ConfigXMLTagsServicesDaemon._Context_Path_Default ) );
+											Logger.logWarning( "-1", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsCommonConfigXMLTags._Context_Path, ConstantsCommonConfigXMLTags._Context_Path_Default ) );
 											
 							            }
 										
 									}
-									else if ( NodeAttribute.getNodeName().equals( ConfigXMLTagsServicesDaemon._Action ) ) {
+									else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Action ) ) {
 										
-										if ( NodeAttribute.getNodeValue().trim().toLowerCase().equals( ConfigXMLTagsServicesDaemon._Action_Deny ) || NodeAttribute.getNodeValue().trim().toLowerCase().equals( ConfigXMLTagsServicesDaemon._Action_Allow ) ) {    
+										if ( NodeAttribute.getNodeValue().trim().toLowerCase().equals( ConstantsCommonConfigXMLTags._Action_Deny ) || NodeAttribute.getNodeValue().trim().toLowerCase().equals( ConstantsCommonConfigXMLTags._Action_Allow ) ) {    
 										 
 										    strAction = NodeAttribute.getNodeValue().toLowerCase();
-											bAlwaysAllow = NodeAttribute.getNodeValue().toLowerCase().equals( ConfigXMLTagsServicesDaemon._Action_Allow );
-										    bAlwaysDeny = NodeAttribute.getNodeValue().toLowerCase().equals( ConfigXMLTagsServicesDaemon._Action_Deny );
+											bAlwaysAllow = NodeAttribute.getNodeValue().toLowerCase().equals( ConstantsCommonConfigXMLTags._Action_Allow );
+										    bAlwaysDeny = NodeAttribute.getNodeValue().toLowerCase().equals( ConstantsCommonConfigXMLTags._Action_Deny );
 										
 										}
 										else {
 											
-											Logger.logError( "-1001", Lang.translate( "The [%s] attribute value [%s] must be only one of the next values: [%s,%s]", ConfigXMLTagsServicesDaemon._Action, ConfigXMLTagsServicesDaemon._Action_Allow, ConfigXMLTagsServicesDaemon._Action_Deny ) );
+											Logger.logError( "-1001", Lang.translate( "The [%s] attribute value [%s] must be only one of the next values: [%s,%s]", ConstantsCommonConfigXMLTags._Action, ConstantsCommonConfigXMLTags._Action_Allow, ConstantsCommonConfigXMLTags._Action_Deny ) );
 											break; //Stop parse more attributes
 											
 										}
@@ -826,13 +967,13 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 	}
 	
 	@Override
-	public boolean LoadConfigSection( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
+	public boolean loadConfigSection( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
 
 		boolean bResult = true;
 		
 		Logger.logMessage( "1", Lang.translate( "Reading XML node section: [%s]", ConfigSectionNode.getNodeName() ) );        
         
-		if ( ConfigSectionNode.getNodeName().equals(  ConfigXMLTagsServicesDaemon._Logger ) == true ) {
+		if ( ConfigSectionNode.getNodeName().equals(  ConstantsCommonConfigXMLTags._Logger ) == true ) {
            
 			if ( this.LoadConfigSectionLogger( ConfigSectionNode, Lang, Logger ) == false ) {
 				
@@ -843,7 +984,7 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 			} 
         	 
         }
-        else if ( ConfigSectionNode.getNodeName().equals( ConfigXMLTagsServicesDaemon._System ) == true ) {
+        else if ( ConfigSectionNode.getNodeName().equals( ConstantsCommonConfigXMLTags._System ) == true ) {
          
 			if ( this.LoadConfigSectionSystem( ConfigSectionNode, Lang, Logger ) == false ) {
 				
@@ -854,7 +995,7 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 			}
 
         }
-        else if ( ConfigSectionNode.getNodeName().equals( ConfigXMLTagsServicesDaemon._NetworkInterfaces ) == true ) {
+        else if ( ConfigSectionNode.getNodeName().equals( ConstantsCommonConfigXMLTags._NetworkInterfaces ) == true ) {
              
 			if ( this.LoadConfigSectionNetworkInterfaces( ConfigSectionNode, Lang, Logger ) == false ) {
 				
@@ -865,7 +1006,7 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 			}
 			
         }
-        else if ( ConfigSectionNode.getNodeName().equals( ConfigXMLTagsServicesDaemon._AccessControl ) == true ) {
+        else if ( ConfigSectionNode.getNodeName().equals( ConstantsCommonConfigXMLTags._AccessControl ) == true ) {
 
         	if ( this.LoadConfigSectionAccessControl( ConfigSectionNode, Lang, Logger ) == false ) {
         		
@@ -880,7 +1021,6 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 		return bResult;
 		
 	}
-
 	
 	@Override
 	public Object sendMessage(String strMessageName, Object MessageData) {
@@ -889,16 +1029,4 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 		
 	}
 
-	/*public boolean LoadConfig( String strConfigFilePath, CLanguage Lang, CExtendedLogger Logger ) {
-		
-        if ( this.Logger == null )
-        	this.Logger = Logger;
-
-        if ( this.Lang == null )
-        	this.Lang = Lang;
-
-	    return super.LoadConfig( strConfigFilePath, Lang, Logger );
-	
-	}*/
-         
 }
