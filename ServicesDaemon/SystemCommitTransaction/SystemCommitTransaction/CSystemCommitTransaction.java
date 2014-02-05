@@ -33,11 +33,14 @@ import CommonClasses.CNativeSessionInfoManager;
 import CommonClasses.ConstantsCommonClasses;
 import CommonClasses.ConstantsMessagesCodes;
 import DBCommonClasses.CDBAbstractService;
+import DBReplicator.CMasterDBReplicator;
 
 public class CSystemCommitTransaction extends CDBAbstractService {
 
 	protected CConfigSystemCommitTransaction SystemCommitTransactionConfig = null;
 
+	protected CMasterDBReplicator MasterDBReplicator = null;
+	
 	public CSystemCommitTransaction() {
 		
 		super();
@@ -75,7 +78,7 @@ public class CSystemCommitTransaction extends CDBAbstractService {
 
 			SystemCommitTransactionConfig = CConfigSystemCommitTransaction.getSystemCommitTransactionConfig( ServicesDaemonConfig, OwnerConfig, this.strRunningPath );
 
-			if ( SystemCommitTransactionConfig.loadConfig( this.strRunningPath + ConstantsService._Conf_File, ServiceLang, ServiceLogger ) == true ) {
+			if ( SystemCommitTransactionConfig.loadConfig( this.strRunningPath + ConstantsService._Conf_File, ServiceLogger, ServiceLang ) == true ) {
 
 				bResult = true;
 
@@ -105,6 +108,8 @@ public class CSystemCommitTransaction extends CDBAbstractService {
 
 				GroupsInputParametersService.put( ConstantsCommonClasses._Default, ServiceInputParameters );
 
+				MasterDBReplicator = CMasterDBReplicator.getMasterDBReplicator();
+				
 			}
 		
 		}
@@ -180,6 +185,8 @@ public class CSystemCommitTransaction extends CDBAbstractService {
 											String strResponseBuffer = ResponseFormat.formatSimpleMessage( "", strTransactionID, 1, ServiceLang.translate( "Success commit transaction for id: [%s]", strTransactionID ), false, strResponseFormatVersion, LocalConfigDBConnection.strDateTimeFormat, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 											Response.getWriter().print( strResponseBuffer );
 
+								            MasterDBReplicator.addPlainQueryCommandToQueue( strTransactionID, "commit", LocalConfigDBConnection.strName, ServiceLogger, ServiceLang );
+											
 											intResultCode = 1;
 
 										}

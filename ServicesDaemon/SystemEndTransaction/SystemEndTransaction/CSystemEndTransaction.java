@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 
+
 import AbstractDBEngine.CAbstractDBConnection;
 import AbstractDBEngine.CAbstractDBEngine;
 import AbstractResponseFormat.CAbstractResponseFormat;
@@ -34,11 +35,14 @@ import CommonClasses.CNativeSessionInfoManager;
 import CommonClasses.ConstantsCommonClasses;
 import CommonClasses.ConstantsMessagesCodes;
 import DBCommonClasses.CDBAbstractService;
+import DBReplicator.CMasterDBReplicator;
 
 public class CSystemEndTransaction extends CDBAbstractService {
 
 	protected CConfigSystemEndTransaction SystemEndTransactionConfig = null;
 
+	protected CMasterDBReplicator MasterDBReplicator = null;
+	
     public CSystemEndTransaction() {
     	
     	super();
@@ -76,7 +80,7 @@ public class CSystemEndTransaction extends CDBAbstractService {
 
 			SystemEndTransactionConfig = CConfigSystemEndTransaction.getSystemEndTransactionConfig( ServicesDaemonConfig, OwnerConfig, this.strRunningPath );
 
-			if ( SystemEndTransactionConfig.loadConfig( this.strRunningPath + ConstantsService._Conf_File, ServiceLang, ServiceLogger ) == true ) {
+			if ( SystemEndTransactionConfig.loadConfig( this.strRunningPath + ConstantsService._Conf_File, ServiceLogger, ServiceLang ) == true ) {
 
 				bResult = true;
 
@@ -106,6 +110,8 @@ public class CSystemEndTransaction extends CDBAbstractService {
 
 				GroupsInputParametersService.put( ConstantsCommonClasses._Default, ServiceInputParameters );
 
+				MasterDBReplicator = CMasterDBReplicator.getMasterDBReplicator();
+				
 			};
 	        
 		}
@@ -202,6 +208,8 @@ public class CSystemEndTransaction extends CDBAbstractService {
 										DBConnection.unlockConnection( ServiceLogger, ServiceLang ); //Release another threads to use this connection
 										//DBConnectionSemaphore.release(); //Release another threads to use this connection
 
+							            MasterDBReplicator.addPlainQueryCommandToQueue( strTransactionID, "rollback-endtransaction", LocalConfigDBConnection.strName, ServiceLogger, ServiceLang );
+										
 									}
 									catch ( Exception Ex ) {
 

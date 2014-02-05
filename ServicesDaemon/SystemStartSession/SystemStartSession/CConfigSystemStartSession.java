@@ -1259,7 +1259,7 @@ public class CConfigSystemStartSession extends CAbstractConfigLoader {
 	}
 	
 	@Override
-	public boolean loadConfigSection( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
+	public boolean loadConfigSection( Node ConfigSectionNode, CExtendedLogger Logger, CLanguage Lang ) {
 
 		boolean bResult = true;
 

@@ -1,6 +1,8 @@
 package MemcachedCEngine;
 
+import java.util.Properties;
 import java.util.concurrent.Future;
+import java.util.logging.Level;
 
 import net.spy.memcached.AddrUtil;
 import net.spy.memcached.ConnectionFactoryBuilder;
@@ -9,7 +11,6 @@ import net.spy.memcached.MemcachedClient;
 import net.spy.memcached.auth.AuthDescriptor;
 import net.spy.memcached.auth.PlainCallbackHandler;
 import net.spy.memcached.internal.OperationFuture;
-
 import AbstractCacheEngine.IAbstractCacheEngine;
 import CommonClasses.CLanguage;
 import CommonClasses.ConstantsCommonClasses;
@@ -85,10 +86,16 @@ public class CMemcachedCEngine implements IAbstractCacheEngine {
 		
 		ConfigMemCachedCEngine = new CConfigMemcachedCEngine( this.strRunningPath );
 		
-		if ( ConfigMemCachedCEngine.loadConfig( this.strRunningPath + ConstansCEngine._Conf_File, Lang, Logger ) ) { 
+		if ( ConfigMemCachedCEngine.loadConfig( this.strRunningPath + ConstansCEngine._Conf_File, Logger, Lang ) ) { 
 			
 			try {
 			
+		        Properties systemProperties = System.getProperties();
+		        systemProperties.put("net.spy.log.LoggerImpl", "net.spy.memcached.compat.log.SunLogger");
+		        System.setProperties(systemProperties);
+
+		        java.util.logging.Logger.getLogger("net.spy.memcached").setLevel(Level.SEVERE);
+				
 				AuthDescriptor ad = null;
 
 				if ( ConfigMemCachedCEngine.strUser.isEmpty() == false ) {

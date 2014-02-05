@@ -37,8 +37,8 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 	public String strGlobalDateFormat;
 	public String strGlobalTimeFormat;
 
-	public int intSelfClientRequestTimeout;
-	public int intSelfClientSocketTimeout;
+	public int intRequestTimeout;
+	public int intSocketTimeout;
 	
 	public String strTempDir;
 	public String strDBServicesDir;
@@ -101,11 +101,11 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 		//Set the order for read xml config file sections
 		strFirstLevelConfigSectionsOrder.add( ConstantsCommonConfigXMLTags._System );  //1
 		bFirstLevelConfigSectionsMustExists.add( true );
-		strFirstLevelConfigSectionsOrder.add( ConstantsConfigXMLTags._RegisterServices ); //2
+		strFirstLevelConfigSectionsOrder.add( ConstantsCommonConfigXMLTags._RegisterServices ); //2
 		bFirstLevelConfigSectionsMustExists.add( true );
-		strFirstLevelConfigSectionsOrder.add( ConstantsConfigXMLTags._BuiltinResponsesFormats ); //3
+		strFirstLevelConfigSectionsOrder.add( ConstantsCommonConfigXMLTags._BuiltinResponsesFormats ); //3
 		bFirstLevelConfigSectionsMustExists.add( true );
-		strFirstLevelConfigSectionsOrder.add( ConstantsConfigXMLTags._DBConnections ); //4
+		strFirstLevelConfigSectionsOrder.add( ConstantsCommonConfigXMLTags._DBConnections ); //4
 		bFirstLevelConfigSectionsMustExists.add( true );
 		
 		strTempDir = strRunningPath + ConstantsCommonClasses._Temp_Dir; //"Temp/";
@@ -140,8 +140,8 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 		strCSV_SeparatorSymbol = ConstantsCommonClasses._Separator_Symbol_CSV;
 		bCSV_ShowHeaders = ConstantsCommonClasses._Show_Headers_CSV;
 
-		intSelfClientRequestTimeout = ConstantsCommonClasses._Self_Client_Request_Timeout;
-		intSelfClientSocketTimeout = ConstantsCommonClasses._Self_Client_Socket_Timeout;
+		intRequestTimeout = ConstantsCommonClasses._Request_Timeout;
+		intSocketTimeout = ConstantsCommonClasses._Socket_Timeout;
 
 		ConfiguredDBConnections = new ArrayList<CConfigNativeDBConnection>();
 		
@@ -177,7 +177,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 		   
 			if ( ConfigSectionNode.hasAttributes() == true ) {
 		
-				String strAttributesOrder[] = { ConstantsConfigXMLTags._Global_Date_Time_Format, ConstantsConfigXMLTags._Global_Date_Format, ConstantsConfigXMLTags._Global_Time_Format, ConstantsConfigXMLTags._Temp_Dir, ConstantsConfigXMLTags._DBServices_Dir, ConstantsConfigXMLTags._DBDrivers_Dir, ConstantsConfigXMLTags._DBEngines_Dir, ConstantsConfigXMLTags._Responses_Formats_Dir, ConstantsConfigXMLTags._Default_Response_Format, ConstantsConfigXMLTags._Default_Response_Format_Version, ConstantsConfigXMLTags._Internal_Fetch_Size, ConstantsCommonConfigXMLTags._Response_Request_Method, ConstantsConfigXMLTags._Self_Client_Request_Timeout, ConstantsConfigXMLTags._Self_Client_Socket_Timeout };
+				String strAttributesOrder[] = { ConstantsCommonConfigXMLTags._Global_Date_Time_Format, ConstantsCommonConfigXMLTags._Global_Date_Format, ConstantsCommonConfigXMLTags._Global_Time_Format, ConstantsCommonConfigXMLTags._Temp_Dir, ConstantsConfigXMLTags._DBServices_Dir, ConstantsConfigXMLTags._DBDrivers_Dir, ConstantsConfigXMLTags._DBEngines_Dir, ConstantsCommonConfigXMLTags._Responses_Formats_Dir, ConstantsCommonConfigXMLTags._Default_Response_Format, ConstantsCommonConfigXMLTags._Default_Response_Format_Version, ConstantsCommonConfigXMLTags._Internal_Fetch_Size, ConstantsCommonConfigXMLTags._Response_Request_Method, ConstantsCommonConfigXMLTags._Request_Timeout, ConstantsCommonConfigXMLTags._Socket_Timeout };
 
 				NamedNodeMap NodeAttributes = ConfigSectionNode.getAttributes();
 
@@ -190,19 +190,19 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 		            	Logger.logMessage( "1", Lang.translate( "Node attribute name: [%s]", NodeAttribute.getNodeName() ) );
 		            	Logger.logMessage( "1", Lang.translate( "Node attribute value: [%s]", NodeAttribute.getNodeValue() ) );
 						
-						if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Global_Date_Time_Format ) ) {
+						if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Global_Date_Time_Format ) ) {
 							
 							if ( NodeAttribute.getNodeValue() != null ) {
 							
 								if ( NodeAttribute.getNodeValue().trim().isEmpty() == true ) {
 
-									Logger.logWarning( "-1", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsConfigXMLTags._Global_Date_Time_Format, this.strGlobalDateTimeFormat ) );
+									Logger.logWarning( "-1", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsCommonConfigXMLTags._Global_Date_Time_Format, this.strGlobalDateTimeFormat ) );
 
 
 								}
 								else if ( Utilities.isValidDateTimeFormat( this.strGlobalDateTimeFormat.trim(), Logger ) == false ) {
 
-									Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is no valid date and time format, using the default value [%s]", ConstantsConfigXMLTags._Global_Date_Time_Format, NodeAttribute.getNodeValue().trim(), this.strGlobalDateTimeFormat ) );
+									Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is no valid date and time format, using the default value [%s]", ConstantsCommonConfigXMLTags._Global_Date_Time_Format, NodeAttribute.getNodeValue().trim(), this.strGlobalDateTimeFormat ) );
 
 								}
 								else {
@@ -216,19 +216,19 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 							}
 							
 						}
-						else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Global_Date_Format ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Global_Date_Format ) ) {
 							
 							if ( NodeAttribute.getNodeValue() != null ) {
 							
 								if ( NodeAttribute.getNodeValue().trim().isEmpty() == true ) {
 
-									Logger.logWarning( "-1", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsConfigXMLTags._Global_Date_Format, this.strGlobalDateFormat ) );
+									Logger.logWarning( "-1", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsCommonConfigXMLTags._Global_Date_Format, this.strGlobalDateFormat ) );
 
 
 								}
 								else if ( Utilities.isValidDateTimeFormat( this.strGlobalDateFormat.trim(), Logger ) == false ) {
 
-									Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is no valid date format, using the default value [%s]", ConstantsConfigXMLTags._Global_Date_Format, NodeAttribute.getNodeValue().trim(), this.strGlobalDateFormat ) );
+									Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is no valid date format, using the default value [%s]", ConstantsCommonConfigXMLTags._Global_Date_Format, NodeAttribute.getNodeValue().trim(), this.strGlobalDateFormat ) );
 
 								}
 								else {
@@ -242,19 +242,19 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 							}
 							
 						}
-						else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Global_Time_Format ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Global_Time_Format ) ) {
 							
 							if ( NodeAttribute.getNodeValue() != null ) {
 							
 								if ( NodeAttribute.getNodeValue().trim().isEmpty() == true ) {
 
-									Logger.logWarning( "-1", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsConfigXMLTags._Global_Time_Format, this.strGlobalTimeFormat ) );
+									Logger.logWarning( "-1", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsCommonConfigXMLTags._Global_Time_Format, this.strGlobalTimeFormat ) );
 
 
 								}
 								else if ( Utilities.isValidDateTimeFormat( this.strGlobalDateFormat.trim(), Logger ) == false ) {
 
-									Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is no valid time format, using the default value [%s]", ConstantsConfigXMLTags._Global_Time_Format, NodeAttribute.getNodeValue().trim(), this.strGlobalTimeFormat ) );
+									Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is no valid time format, using the default value [%s]", ConstantsCommonConfigXMLTags._Global_Time_Format, NodeAttribute.getNodeValue().trim(), this.strGlobalTimeFormat ) );
 
 								}
 								else {
@@ -268,7 +268,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 							}
 							
 						}
-						else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Temp_Dir ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Temp_Dir ) ) {
 
 							this.strTempDir = NodeAttribute.getNodeValue();
 		
@@ -352,7 +352,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 						    }
 						    
 						}
-						else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Responses_Formats_Dir ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Responses_Formats_Dir ) ) {
 
 							this.strResponsesFormatsDir = NodeAttribute.getNodeValue();
 		            		  
@@ -373,7 +373,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 						    }
 					        
 						}
-						else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Default_Response_Format ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Default_Response_Format ) ) {
 						
 					        if ( NodeAttribute.getNodeValue() != null && NodeAttribute.getNodeValue().isEmpty() == false ) {
 
@@ -384,12 +384,12 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 						    }
 					        else {
 					        	
-						        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsConfigXMLTags._Default_Response_Format, this.strDefaultResponseFormat ) );
+						        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsCommonConfigXMLTags._Default_Response_Format, this.strDefaultResponseFormat ) );
 					        	
 					        }
 					        
 						}
-						else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Default_Response_Format_Version ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Default_Response_Format_Version ) ) {
 							
 					        if ( NodeAttribute.getNodeValue() != null && NodeAttribute.getNodeValue().isEmpty() == false ) {
 
@@ -400,7 +400,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 						    }
 					        else {
 					        	
-						        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsConfigXMLTags._Default_Response_Format_Version, this.strDefaultResponseFormatVersion ) );
+						        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsCommonConfigXMLTags._Default_Response_Format_Version, this.strDefaultResponseFormatVersion ) );
 					        	
 					        }
 					        
@@ -446,7 +446,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 					        }
 					        
 						}
-						else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Internal_Fetch_Size ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Internal_Fetch_Size ) ) {
 							
 					        if ( NodeAttribute.getNodeValue() != null && NodeAttribute.getNodeValue().isEmpty() == false ) {
 
@@ -463,26 +463,26 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 					        		}
 					        		else {
 					        			
-								        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is invalid, using the default value [%s]", ConstantsConfigXMLTags._Internal_Fetch_Size, NodeAttribute.getNodeValue(), Integer.toString( this.intInternalFetchSize ) ) );
+								        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is invalid, using the default value [%s]", ConstantsCommonConfigXMLTags._Internal_Fetch_Size, NodeAttribute.getNodeValue(), Integer.toString( this.intInternalFetchSize ) ) );
 					        			
 					        		}
 					        		
 					        	}
 					        	else {
 
-							        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is invalid, using the default value [%s]", ConstantsConfigXMLTags._Internal_Fetch_Size, NodeAttribute.getNodeValue(), Integer.toString( this.intInternalFetchSize ) ) );
+							        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is invalid, using the default value [%s]", ConstantsCommonConfigXMLTags._Internal_Fetch_Size, NodeAttribute.getNodeValue(), Integer.toString( this.intInternalFetchSize ) ) );
 
 					        	}
 						    	
 						    }
 					        else {
 					        	
-						        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsConfigXMLTags._Internal_Fetch_Size, Integer.toString( this.intInternalFetchSize ) ) );
+						        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsCommonConfigXMLTags._Internal_Fetch_Size, Integer.toString( this.intInternalFetchSize ) ) );
 					        	
 					        }
 					        
 						}
-						else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Self_Client_Request_Timeout ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Request_Timeout ) ) {
 
 					        if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 					        
@@ -490,25 +490,25 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 					        	
 					        	if ( intTmpRequestTimeout >= ConstantsCommonClasses._Minimal_Request_Timeout && intTmpRequestTimeout <= ConstantsCommonClasses._Maximal_Request_Timeout ) {
 					        		
-					        		intSelfClientRequestTimeout = intTmpRequestTimeout;
+					        		intRequestTimeout = intTmpRequestTimeout;
 					        		
 					        	}
 					        	else {
 					        		
-									Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is out of range. Must be integer value in the next inclusive range, minimum [%s] and maximum [%s]", ConstantsConfigXMLTags._Self_Client_Request_Timeout, Integer.toString( intTmpRequestTimeout ), Integer.toString( ConstantsCommonClasses._Minimal_Request_Timeout ), Integer.toString( ConstantsCommonClasses._Maximal_Request_Timeout ) ) );
-									Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is invalid, using the default value [%s]", ConstantsConfigXMLTags._Self_Client_Request_Timeout, Integer.toString( intTmpRequestTimeout ), Integer.toString( ConstantsCommonClasses._Self_Client_Request_Timeout ) ) );
+									Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is out of range. Must be integer value in the next inclusive range, minimum [%s] and maximum [%s]", ConstantsCommonConfigXMLTags._Request_Timeout, Integer.toString( intTmpRequestTimeout ), Integer.toString( ConstantsCommonClasses._Minimal_Request_Timeout ), Integer.toString( ConstantsCommonClasses._Maximal_Request_Timeout ) ) );
+									Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is invalid, using the default value [%s]", ConstantsCommonConfigXMLTags._Request_Timeout, Integer.toString( intTmpRequestTimeout ), Integer.toString( ConstantsCommonClasses._Request_Timeout ) ) );
 									
 					        	}
 					        	
 					        }
 					        else {
 					        	
-						        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsConfigXMLTags._Self_Client_Request_Timeout, Integer.toString( this.intSelfClientRequestTimeout ) ) );
+						        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsCommonConfigXMLTags._Request_Timeout, Integer.toString( this.intRequestTimeout ) ) );
 					        	
 					        }
 							
 						}	
-						else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Self_Client_Socket_Timeout ) ) {
+						else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Socket_Timeout ) ) {
 
 					        if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
 
@@ -516,20 +516,20 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 					        	
 					        	if ( intTmpSocketTimeout >= ConstantsCommonClasses._Minimal_Socket_Timeout && intTmpSocketTimeout <= ConstantsCommonClasses._Maximal_Socket_Timeout ) {
 					        		
-					        		intSelfClientSocketTimeout = intTmpSocketTimeout;
+					        		intSocketTimeout = intTmpSocketTimeout;
 					        		
 					        	}
 					        	else {
 					        		
-									Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is out of range. Must be integer value in the next inclusive range, minimum [%s] and maximum [%s]", ConstantsConfigXMLTags._Self_Client_Socket_Timeout, Integer.toString( intTmpSocketTimeout ), Integer.toString( ConstantsCommonClasses._Minimal_Socket_Timeout ), Integer.toString( ConstantsCommonClasses._Maximal_Socket_Timeout ) ) );
-									Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is invalid, using the default value [%s]", ConstantsConfigXMLTags._Self_Client_Socket_Timeout, Integer.toString( intTmpSocketTimeout ), Integer.toString( ConstantsCommonClasses._Self_Client_Socket_Timeout ) ) );
+									Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is out of range. Must be integer value in the next inclusive range, minimum [%s] and maximum [%s]", ConstantsCommonConfigXMLTags._Socket_Timeout, Integer.toString( intTmpSocketTimeout ), Integer.toString( ConstantsCommonClasses._Minimal_Socket_Timeout ), Integer.toString( ConstantsCommonClasses._Maximal_Socket_Timeout ) ) );
+									Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is invalid, using the default value [%s]", ConstantsCommonConfigXMLTags._Socket_Timeout, Integer.toString( intTmpSocketTimeout ), Integer.toString( ConstantsCommonClasses._Socket_Timeout ) ) );
 									
 					        	}
 						        
 					        }
 					        else {
 					        	
-						        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsConfigXMLTags._Self_Client_Socket_Timeout, Integer.toString( this.intSelfClientSocketTimeout ) ) );
+						        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsCommonConfigXMLTags._Socket_Timeout, Integer.toString( this.intSocketTimeout ) ) );
 					        	
 					        }
 					        
@@ -538,19 +538,19 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 		            }
 		            else {
 
-				        if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsConfigXMLTags._Global_Date_Time_Format ) ) {
+				        if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsCommonConfigXMLTags._Global_Date_Time_Format ) ) {
 		            		
-					        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute not found, using the default value [%s]", ConstantsConfigXMLTags._Global_Date_Time_Format, this.strGlobalDateTimeFormat ) );
-		            		
-		            	}
-				        else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsConfigXMLTags._Global_Date_Format ) ) {
-		            		
-					        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute not found, using the default value [%s]", ConstantsConfigXMLTags._Global_Date_Format, this.strGlobalDateFormat ) );
+					        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute not found, using the default value [%s]", ConstantsCommonConfigXMLTags._Global_Date_Time_Format, this.strGlobalDateTimeFormat ) );
 		            		
 		            	}
-				        else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsConfigXMLTags._Global_Time_Format ) ) {
+				        else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsCommonConfigXMLTags._Global_Date_Format ) ) {
 		            		
-					        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute not found, using the default value [%s]", ConstantsConfigXMLTags._Global_Time_Format, this.strGlobalTimeFormat ) );
+					        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute not found, using the default value [%s]", ConstantsCommonConfigXMLTags._Global_Date_Format, this.strGlobalDateFormat ) );
+		            		
+		            	}
+				        else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsCommonConfigXMLTags._Global_Time_Format ) ) {
+		            		
+					        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute not found, using the default value [%s]", ConstantsCommonConfigXMLTags._Global_Time_Format, this.strGlobalTimeFormat ) );
 		            		
 		            	}
 				        else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsConfigXMLTags._DBServices_Dir ) ) {
@@ -566,9 +566,9 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 						    }
 		            		
 		            	}
-		            	else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsConfigXMLTags._Temp_Dir ) ) {
+		            	else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsCommonConfigXMLTags._Temp_Dir ) ) {
 		            		
-					        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute not found, using the default value [%s]", ConstantsConfigXMLTags._Temp_Dir, this.strTempDir ) );
+					        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute not found, using the default value [%s]", ConstantsCommonConfigXMLTags._Temp_Dir, this.strTempDir ) );
 
 					        if ( Utilities.checkDir( this.strTempDir, Logger, Lang ) == false ) {
 						    	
@@ -605,9 +605,9 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 						    }
 		            		
 		            	}
-		            	else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsConfigXMLTags._Responses_Formats_Dir ) ) {
+		            	else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsCommonConfigXMLTags._Responses_Formats_Dir ) ) {
 		            		
-					        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute not found, using the default value [%s]", ConstantsConfigXMLTags._Responses_Formats_Dir, this.strResponsesFormatsDir ) );
+					        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute not found, using the default value [%s]", ConstantsCommonConfigXMLTags._Responses_Formats_Dir, this.strResponsesFormatsDir ) );
 
 					        if ( Utilities.checkDir( this.strResponsesFormatsDir, Logger, Lang ) == false ) {
 						    	
@@ -618,14 +618,14 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 						    }
 		            		
 		            	}
-		            	else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsConfigXMLTags._Default_Response_Format ) ) {
+		            	else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsCommonConfigXMLTags._Default_Response_Format ) ) {
 		            		
-					        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute not found, using the default value [%s]", ConstantsConfigXMLTags._Default_Response_Format, this.strDefaultResponseFormat ) );
+					        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute not found, using the default value [%s]", ConstantsCommonConfigXMLTags._Default_Response_Format, this.strDefaultResponseFormat ) );
 		            		
 		            	}
-		            	else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsConfigXMLTags._Default_Response_Format_Version ) ) {
+		            	else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsCommonConfigXMLTags._Default_Response_Format_Version ) ) {
 		            		
-					        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute not found, using the default value [%s]", ConstantsConfigXMLTags._Default_Response_Format_Version, this.strDefaultResponseFormatVersion ) );
+					        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute not found, using the default value [%s]", ConstantsCommonConfigXMLTags._Default_Response_Format_Version, this.strDefaultResponseFormatVersion ) );
 		            		
 		            	}
 		            	else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsCommonConfigXMLTags._Response_Request_Method ) ) {
@@ -633,19 +633,19 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 					        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute not found, using the default value [%s]", ConstantsCommonConfigXMLTags._Response_Request_Method, this.strResponseRequestMethod ) );
 		            		
 		            	}
-		            	else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsConfigXMLTags._Internal_Fetch_Size ) ) {
+		            	else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsCommonConfigXMLTags._Internal_Fetch_Size ) ) {
 		            		
-					        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute not found, using the default value [%s]", ConstantsConfigXMLTags._Internal_Fetch_Size, Integer.toString( this.intInternalFetchSize ) ) );
-		            		
-		            	}
-		            	else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsConfigXMLTags._Self_Client_Request_Timeout ) ) {
-		            		
-					        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute not found, using the default value [%s]", ConstantsConfigXMLTags._Self_Client_Request_Timeout, Integer.toString( this.intSelfClientRequestTimeout ) ) );
+					        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute not found, using the default value [%s]", ConstantsCommonConfigXMLTags._Internal_Fetch_Size, Integer.toString( this.intInternalFetchSize ) ) );
 		            		
 		            	}
-		            	else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsConfigXMLTags._Self_Client_Socket_Timeout ) ) {
+		            	else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsCommonConfigXMLTags._Request_Timeout ) ) {
 		            		
-					        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute not found, using the default value [%s]", ConstantsConfigXMLTags._Self_Client_Socket_Timeout, Integer.toString( this.intSelfClientSocketTimeout ) ) );
+					        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute not found, using the default value [%s]", ConstantsCommonConfigXMLTags._Request_Timeout, Integer.toString( this.intRequestTimeout ) ) );
+		            		
+		            	}
+		            	else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsCommonConfigXMLTags._Socket_Timeout ) ) {
+		            		
+					        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute not found, using the default value [%s]", ConstantsCommonConfigXMLTags._Socket_Timeout, Integer.toString( this.intSocketTimeout ) ) );
 		            		
 		            	}
 		            	
@@ -674,19 +674,19 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
         
         try {
         	
-			String strAttributesOrder[] = { ConstantsConfigXMLTags._Password, ConstantsConfigXMLTags._URL, ConstantsConfigXMLTags._Proxy_IP, ConstantsConfigXMLTags._Proxy_Port, ConstantsConfigXMLTags._Proxy_User, ConstantsConfigXMLTags._Proxy_Password, ConstantsConfigXMLTags._Interval, ConstantsConfigXMLTags._Weight, ConstantsConfigXMLTags._ReportLoad, ConstantsConfigXMLTags._ReportIPType };
+			String strAttributesOrder[] = { ConstantsCommonConfigXMLTags._Password, ConstantsCommonConfigXMLTags._URL, ConstantsCommonConfigXMLTags._Proxy_IP, ConstantsCommonConfigXMLTags._Proxy_Port, ConstantsCommonConfigXMLTags._Proxy_User, ConstantsCommonConfigXMLTags._Proxy_Password, ConstantsCommonConfigXMLTags._Interval, ConstantsCommonConfigXMLTags._Weight, ConstantsCommonConfigXMLTags._ReportLoad, ConstantsCommonConfigXMLTags._ReportIPType };
 
 			NodeList ConfigRegisterServiceList = ConfigSectionNode.getChildNodes();
 	          
 	        if ( ConfigRegisterServiceList.getLength() > 0 ) {
 			
-	            for ( int intConfigBuiltinResponseFormatIndex = 0; intConfigBuiltinResponseFormatIndex < ConfigRegisterServiceList.getLength(); intConfigBuiltinResponseFormatIndex++ ) {
+	            for ( int intConfigRegisterIndex = 0; intConfigRegisterIndex < ConfigRegisterServiceList.getLength(); intConfigRegisterIndex++ ) {
 	                
-	            	Node ConfigRegisterServicesNode = ConfigRegisterServiceList.item( intConfigBuiltinResponseFormatIndex );
+	            	Node ConfigRegisterServicesNode = ConfigRegisterServiceList.item( intConfigRegisterIndex );
 	                 
 	    			Logger.logMessage( "1", Lang.translate( "Reading XML built in response format: [%s]", ConfigRegisterServicesNode.getNodeName() ) );        
 	                 
-	    			if ( ConfigRegisterServicesNode.getNodeName().equals( ConstantsConfigXMLTags._Register ) == true ) {
+	    			if ( ConfigRegisterServicesNode.getNodeName().equals( ConstantsCommonConfigXMLTags._Register ) == true ) {
 
 	    				String strPassword = "";
 						String strURL = "";
@@ -712,7 +712,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 									Logger.logMessage( "1", Lang.translate( "Node attribute name: [%s]", NodeAttribute.getNodeName() ) );
 									Logger.logMessage( "1", Lang.translate( "Node attribute value: [%s]", NodeAttribute.getNodeValue() ) );
 
-									if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Password ) ) {
+									if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Password ) ) {
 										
 										if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 											
@@ -721,13 +721,13 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 										}
 										else {
 											
-									    	Logger.logError( "-1002", Lang.translate( "The [%s] attribute cannot empty string, for the node [%s] at relative index [%s]", ConstantsConfigXMLTags._Name, ConstantsConfigXMLTags._BuiltinResponseFormat, Integer.toString( intConfigBuiltinResponseFormatIndex ) ) );
+									    	Logger.logError( "-1002", Lang.translate( "The [%s] attribute cannot empty string", ConstantsCommonConfigXMLTags._Password ) );
 											break;
 											
 										}
 										
 									}
-									else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._URL ) ) {
+									else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._URL ) ) {
 										
 										if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 											
@@ -736,29 +736,24 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 										}
 										else {
 											
-									    	Logger.logError( "-1003", Lang.translate( "The [%s] attribute cannot empty string, for the node [%s] at relative index [%s]", ConstantsConfigXMLTags._Name, ConstantsConfigXMLTags._BuiltinResponseFormat, Integer.toString( intConfigBuiltinResponseFormatIndex ) ) );
+									    	Logger.logError( "-1003", Lang.translate( "The [%s] attribute cannot empty string", ConstantsCommonConfigXMLTags._URL ) );
 											break;
 											
 										}
 										
 									}
-									else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Proxy_IP ) ) {
+									else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Proxy_IP ) ) {
 
 										if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 
-											if ( Utilities.isValidIPV4( NodeAttribute.getNodeValue() ) == true ) {
-
-												strProxyIP = NodeAttribute.getNodeValue();
-
-											}
-											else if ( Utilities.isValidIPV6( NodeAttribute.getNodeValue() ) == true ) {
+											if ( Utilities.isValidIP( NodeAttribute.getNodeValue() ) == true ) {
 
 												strProxyIP = NodeAttribute.getNodeValue();
 
 											}
 											else {
 
-												Logger.logError( "-1004", Lang.translate( "The [%s] attribute value [%s] is not valid ip address", CommonClasses.ConstantsCommonConfigXMLTags._IP, NodeAttribute.getNodeValue() ) );
+												Logger.logError( "-1004", Lang.translate( "The [%s] attribute value [%s] is not valid ip address", ConstantsCommonConfigXMLTags._Proxy_IP, NodeAttribute.getNodeValue() ) );
 												break; //Stop parse more attributes
 
 											}
@@ -766,25 +761,25 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 										}
 										else {
 											
-											Logger.logWarning( "-1", Lang.translate( "The [%s] attribute is empty string", ConstantsConfigXMLTags._Proxy_IP ) );
+											Logger.logWarning( "-1", Lang.translate( "The [%s] attribute is empty string", ConstantsCommonConfigXMLTags._Proxy_IP ) );
 											
 										}
 									    
 									}
-									else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Proxy_Port ) ) {
+									else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Proxy_Port ) ) {
 
 										if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 
 											int intTmpPort = Utilities.strToInteger( NodeAttribute.getNodeValue().trim(), Logger );
 
-											if ( intTmpPort >= CommonClasses.ConstantsCommonClasses._Min_Port_Number && intTmpPort <= CommonClasses.ConstantsCommonClasses._Max_Port_Number ) {
+											if ( intTmpPort >= ConstantsCommonClasses._Min_Port_Number && intTmpPort <= ConstantsCommonClasses._Max_Port_Number ) {
 
 												intProxyPort = intTmpPort;
 
 											}
 											else {
 
-												Logger.logError( "-1005", Lang.translate( "The [%s] attribute value [%s] is out of range. Must be integer value in the next inclusive range, minimum [%s] and maximum [%s]", CommonClasses.ConstantsCommonConfigXMLTags._Port, NodeAttribute.getNodeValue(), Integer.toString( CommonClasses.ConstantsCommonClasses._Min_Port_Number ), Integer.toString( CommonClasses.ConstantsCommonClasses._Max_Port_Number ) ) );
+												Logger.logError( "-1005", Lang.translate( "The [%s] attribute value [%s] is out of range. Must be integer value in the next inclusive range, minimum [%s] and maximum [%s]", ConstantsCommonConfigXMLTags._Proxy_Port, NodeAttribute.getNodeValue(), Integer.toString( ConstantsCommonClasses._Min_Port_Number ), Integer.toString( ConstantsCommonClasses._Max_Port_Number ) ) );
 												break; //Stop parse more attributes
 
 											}
@@ -792,12 +787,12 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 										}
 										else {
 											
-											Logger.logWarning( "-1", Lang.translate( "The [%s] attribute is empty string", ConstantsConfigXMLTags._Proxy_Port ) );
+											Logger.logWarning( "-1", Lang.translate( "The [%s] attribute is empty string", ConstantsCommonConfigXMLTags._Proxy_Port ) );
 											
 										}
 
 									}
-									else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Proxy_User ) ) {
+									else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Proxy_User ) ) {
 
 										if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 											
@@ -806,12 +801,12 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 										}
 										else {
 											
-											Logger.logWarning( "-1", Lang.translate( "The [%s] attribute is empty string", ConstantsConfigXMLTags._Proxy_User ) );
+											Logger.logWarning( "-1", Lang.translate( "The [%s] attribute is empty string", ConstantsCommonConfigXMLTags._Proxy_User ) );
 											
 										}
 
 									}
-									else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Proxy_Password ) ) {
+									else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Proxy_Password ) ) {
 
 										if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 											
@@ -820,50 +815,50 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 										}
 										else {
 											
-											Logger.logWarning( "-1", Lang.translate( "The [%s] attribute is empty string", ConstantsConfigXMLTags._Proxy_Password ) );
+											Logger.logWarning( "-1", Lang.translate( "The [%s] attribute is empty string", ConstantsCommonConfigXMLTags._Proxy_Password ) );
 											
 										}
 
 									}
-									else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Interval ) ) {
+									else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Interval ) ) {
 
 										intInterval = Utilities.strToInteger( NodeAttribute.getNodeValue().trim(), Logger );
 										
 										if ( intInterval < ConstantsCommonClasses._Minimal_Register_Manager_Frecuency ) {
 											
-											Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is invalid, using the default value [%s]", ConstantsConfigXMLTags._Interval, Integer.toString( intInterval ), Integer.toString( ConstantsCommonClasses._Register_Manager_Frecuency ) ) );
+											Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is invalid, using the default value [%s]", ConstantsCommonConfigXMLTags._Interval, Integer.toString( intInterval ), Integer.toString( ConstantsCommonClasses._Register_Manager_Frecuency ) ) );
 											
 											intInterval = ConstantsCommonClasses._Register_Manager_Frecuency;
 											
 										}
 
 									}
-									else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Weight ) ) {
+									else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Weight ) ) {
 
 										intWeight = Utilities.strToInteger( NodeAttribute.getNodeValue().trim(), Logger );
 										
 										if ( intWeight < 1 ) {
 											
-											Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is invalid, using the default value [%s]", ConstantsConfigXMLTags._Weight, Integer.toString( intWeight ), "1" ) );
+											Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is invalid, using the default value [%s]", ConstantsCommonConfigXMLTags._Weight, Integer.toString( intWeight ), "1" ) );
 
 											intWeight = 1;
 											
 										}
 
 									}
-									else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._ReportLoad ) ) {
+									else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._ReportLoad ) ) {
 
 										bReportLoad = NodeAttribute.getNodeValue().trim().equals( "true" );
 
 									}
-									else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._ReportIPType ) ) {
+									else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._ReportIPType ) ) {
 
-										if ( NodeAttribute.getNodeValue().trim().equals( ConstantsConfigXMLTags._IPV4 ) ) {
+										if ( NodeAttribute.getNodeValue().trim().equals( ConstantsCommonConfigXMLTags._IPV4 ) ) {
 											
 											intReportIPType = 1; //IPV4
 											
 										}
-										else if ( NodeAttribute.getNodeValue().trim().equals( ConstantsConfigXMLTags._IPV6 ) ) {
+										else if ( NodeAttribute.getNodeValue().trim().equals( ConstantsCommonConfigXMLTags._IPV6 ) ) {
 											
 											intReportIPType = 2; //IPV6
 											
@@ -877,9 +872,9 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 									}
 
 								}
-								else if ( intAttributesIndex == 0 ) { //Only the name attribute is obligatory 
+								else { //The attribute is obligatory 
 									
-							    	Logger.logError( "-1001", Lang.translate( "The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node", ConstantsConfigXMLTags._Name, ConstantsConfigXMLTags._RegisterServices, Integer.toString( intConfigBuiltinResponseFormatIndex ) ) );
+							    	Logger.logError( "-1001", Lang.translate( "The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node", strAttributesOrder[ intAttributesIndex ], ConstantsCommonConfigXMLTags._Register, Integer.toString( intConfigRegisterIndex ) ) );
 							    	break;
 							    	
 								}
@@ -943,7 +938,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
         
         try {
         	
-			String strAttributesOrder[] = { ConstantsConfigXMLTags._Name, ConstantsConfigXMLTags._Char_Set, ConstantsConfigXMLTags._Content_Type, ConstantsConfigXMLTags._Fields_Quote, ConstantsConfigXMLTags._Separator_Symbol, ConstantsConfigXMLTags._Show_Headers };
+			String strAttributesOrder[] = { ConstantsCommonConfigXMLTags._Name, ConstantsCommonConfigXMLTags._Char_Set, ConstantsCommonConfigXMLTags._Content_Type, ConstantsCommonConfigXMLTags._Fields_Quote, ConstantsCommonConfigXMLTags._Separator_Symbol, ConstantsCommonConfigXMLTags._Show_Headers };
 
 			NodeList ConfigBuiltinResponsesList = ConfigSectionNode.getChildNodes();
 	          
@@ -957,7 +952,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 	                 
 				    String strBuitinResponseName = "";
 	    			
-	    			if ( ConfigBuiltinResponseFormatNode.getNodeName().equals( ConstantsConfigXMLTags._BuiltinResponseFormat ) == true ) {
+	    			if ( ConfigBuiltinResponseFormatNode.getNodeName().equals( ConstantsCommonConfigXMLTags._BuiltinResponseFormat ) == true ) {
 
 						if ( ConfigBuiltinResponseFormatNode.hasAttributes() == true ) {
 
@@ -972,7 +967,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 									Logger.logMessage( "1", Lang.translate( "Node attribute name: [%s]", NodeAttribute.getNodeName() ) );
 									Logger.logMessage( "1", Lang.translate( "Node attribute value: [%s]", NodeAttribute.getNodeValue() ) );
 
-									if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Name ) ) {
+									if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Name ) ) {
 										
 										if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 											
@@ -981,14 +976,14 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 										}
 										else {
 											
-									    	Logger.logError( "-1002", Lang.translate( "The [%s] attribute cannot empty string, for the node [%s] at relative index [%s]", ConstantsConfigXMLTags._Name, ConstantsConfigXMLTags._BuiltinResponseFormat, Integer.toString( intConfigBuiltinResponseFormatIndex ) ) );
+									    	Logger.logError( "-1002", Lang.translate( "The [%s] attribute cannot empty string, for the node [%s] at relative index [%s]", ConstantsCommonConfigXMLTags._Name, ConstantsCommonConfigXMLTags._BuiltinResponseFormat, Integer.toString( intConfigBuiltinResponseFormatIndex ) ) );
 											
 										}
 										
 									}
-									else if ( strBuitinResponseName.equals( ConstantsConfigXMLTags._ResponseFormat_XML_DATAPACKET ) ) {
+									else if ( strBuitinResponseName.equals( ConstantsCommonConfigXMLTags._ResponseFormat_XML_DATAPACKET ) ) {
 
-										if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Char_Set ) ) {
+										if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Char_Set ) ) {
 
 											if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
 
@@ -998,13 +993,13 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 											}
 											else {
 
-												Logger.logError( "-1003", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsConfigXMLTags._Char_Set, ConstantsCommonClasses._Chaset_XML ) );
+												Logger.logError( "-1003", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsCommonConfigXMLTags._Char_Set, ConstantsCommonClasses._Chaset_XML ) );
 												break; //stop the parse another attributes
 
 											}
 
 										}
-										else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Content_Type ) ) {
+										else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Content_Type ) ) {
 
 											if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
 
@@ -1014,7 +1009,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 											}
 											else {
 
-												Logger.logError( "-1004", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsConfigXMLTags._Content_Type, ConstantsCommonClasses._Content_Type_XML ) );
+												Logger.logError( "-1004", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsCommonConfigXMLTags._Content_Type, ConstantsCommonClasses._Content_Type_XML ) );
 												break; //stop the parse another attributes
 
 											}
@@ -1027,9 +1022,9 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 										}
 
 									}
-									else if ( strBuitinResponseName.equals( ConstantsConfigXMLTags._ResponseFormat_JAVA_XML_WEBROWSET ) ) {
+									else if ( strBuitinResponseName.equals( ConstantsCommonConfigXMLTags._ResponseFormat_JAVA_XML_WEBROWSET ) ) {
 
-										if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Char_Set ) ) {
+										if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Char_Set ) ) {
 
 											if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
 
@@ -1039,13 +1034,13 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 											}
 											else {
 
-												Logger.logError( "-1005", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsConfigXMLTags._Char_Set, ConstantsCommonClasses._Chaset_XML ) );
+												Logger.logError( "-1005", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsCommonConfigXMLTags._Char_Set, ConstantsCommonClasses._Chaset_XML ) );
 												break; //stop the parse another attributes
 
 											}
 
 										}
-										else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Content_Type ) ) {
+										else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Content_Type ) ) {
 
 											if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
 
@@ -1055,7 +1050,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 											}
 											else {
 
-												Logger.logError( "-1006", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsConfigXMLTags._Content_Type, ConstantsCommonClasses._Content_Type_XML ) );
+												Logger.logError( "-1006", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsCommonConfigXMLTags._Content_Type, ConstantsCommonClasses._Content_Type_XML ) );
 												break; //stop the parse another attributes
 
 											}
@@ -1068,9 +1063,9 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 										}
 
 									}
-									else if ( strBuitinResponseName.equals( ConstantsConfigXMLTags._ResponseFormat_JSON ) ) {
+									else if ( strBuitinResponseName.equals( ConstantsCommonConfigXMLTags._ResponseFormat_JSON ) ) {
 
-										if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Char_Set ) ) {
+										if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Char_Set ) ) {
 
 											if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
 
@@ -1080,13 +1075,13 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 											}
 											else {
 
-												Logger.logError( "-1007", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsConfigXMLTags._Char_Set, ConstantsCommonClasses._Chaset_XML ) );
+												Logger.logError( "-1007", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsCommonConfigXMLTags._Char_Set, ConstantsCommonClasses._Chaset_XML ) );
 												break; //stop the parse another attributes
 
 											}
 
 										}
-										else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Content_Type ) ) {
+										else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Content_Type ) ) {
 
 											if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
 
@@ -1096,7 +1091,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 											}
 											else {
 
-												Logger.logError( "-1008", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsConfigXMLTags._Content_Type, ConstantsCommonClasses._Content_Type_XML ) );
+												Logger.logError( "-1008", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsCommonConfigXMLTags._Content_Type, ConstantsCommonClasses._Content_Type_XML ) );
 												break; //stop the parse another attributes
 
 											}
@@ -1109,9 +1104,9 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 										}
 
 									}
-									else if ( strBuitinResponseName.equals( ConstantsConfigXMLTags._ResponseFormat_CSV ) ) {
+									else if ( strBuitinResponseName.equals( ConstantsCommonConfigXMLTags._ResponseFormat_CSV ) ) {
 
-										if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Char_Set ) ) {
+										if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Char_Set ) ) {
 
 											if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
 
@@ -1121,13 +1116,13 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 											}
 											else {
 
-												Logger.logError( "-1009", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsConfigXMLTags._Char_Set, ConstantsCommonClasses._Chaset_XML ) );
+												Logger.logError( "-1009", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsCommonConfigXMLTags._Char_Set, ConstantsCommonClasses._Chaset_XML ) );
 												break; //stop the parse another attributes
 
 											}
 
 										}
-										else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Content_Type ) ) {
+										else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Content_Type ) ) {
 
 											if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
 
@@ -1137,13 +1132,13 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 											}
 											else {
 
-												Logger.logError( "-1010", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsConfigXMLTags._Content_Type, ConstantsCommonClasses._Content_Type_XML ) );
+												Logger.logError( "-1010", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsCommonConfigXMLTags._Content_Type, ConstantsCommonClasses._Content_Type_XML ) );
 												break; //stop the parse another attributes
 
 											}
 
 										}
-										else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Fields_Quote ) ) {
+										else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Fields_Quote ) ) {
 
 											if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
 
@@ -1153,13 +1148,13 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 											}
 											else {
 
-												Logger.logError( "-1010", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsConfigXMLTags._Fields_Quote, Boolean.toString( ConstantsCommonClasses._Fields_Quote_CSV ) ) );
+												Logger.logError( "-1010", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsCommonConfigXMLTags._Fields_Quote, Boolean.toString( ConstantsCommonClasses._Fields_Quote_CSV ) ) );
 												break; //stop the parse another attributes
 
 											}
 
 										}
-										else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Separator_Symbol ) ) {
+										else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Separator_Symbol ) ) {
 
 											if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
 
@@ -1169,13 +1164,13 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 											}
 											else {
 
-												Logger.logError( "-1010", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsConfigXMLTags._Separator_Symbol, ConstantsCommonClasses._Separator_Symbol_CSV ) );
+												Logger.logError( "-1010", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsCommonConfigXMLTags._Separator_Symbol, ConstantsCommonClasses._Separator_Symbol_CSV ) );
 												break; //stop the parse another attributes
 
 											}
 
 										}
-										else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Show_Headers ) ) {
+										else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Show_Headers ) ) {
 
 											if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
 
@@ -1185,7 +1180,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 											}
 											else {
 
-												Logger.logError( "-1010", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsConfigXMLTags._Show_Headers, Boolean.toString( ConstantsCommonClasses._Show_Headers_CSV ) ) );
+												Logger.logError( "-1010", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsCommonConfigXMLTags._Show_Headers, Boolean.toString( ConstantsCommonClasses._Show_Headers_CSV ) ) );
 												break; //stop the parse another attributes
 
 											}
@@ -1202,7 +1197,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 								}
 								else if ( intAttributesIndex == 0 ) { //Only the name attribute is obligatory 
 									
-							    	Logger.logError( "-1001", Lang.translate( "The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node", ConstantsConfigXMLTags._Name, ConstantsConfigXMLTags._BuiltinResponseFormat, Integer.toString( intConfigBuiltinResponseFormatIndex ) ) );
+							    	Logger.logError( "-1001", Lang.translate( "The [%s] attribute not found, for the node [%s] at relative index [%s], ignoring the node", ConstantsCommonConfigXMLTags._Name, ConstantsCommonConfigXMLTags._BuiltinResponseFormat, Integer.toString( intConfigBuiltinResponseFormatIndex ) ) );
 							    	break;
 							    	
 								}
@@ -1236,7 +1231,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
         
         try {
 
-			String strAttributesOrder[] = { ConstantsConfigXMLTags._Name, ConstantsConfigXMLTags._Driver, ConstantsConfigXMLTags._Engine, ConstantsConfigXMLTags._Engine_Version, ConstantsCommonConfigXMLTags._IP, ConstantsCommonConfigXMLTags._Port, ConstantsConfigXMLTags._Database, ConstantsConfigXMLTags._Auto_Commit, ConstantsConfigXMLTags._Dummy_SQL, ConstantsConfigXMLTags._Auth_Type, ConstantsConfigXMLTags._SessionUser, ConstantsConfigXMLTags._SessionPassword, ConstantsConfigXMLTags._TransactionUser, ConstantsConfigXMLTags._TransactionPassword, ConstantsConfigXMLTags._Date_Format, ConstantsConfigXMLTags._Time_Format, ConstantsConfigXMLTags._Date_Time_Format };
+			String strAttributesOrder[] = { ConstantsCommonConfigXMLTags._Name, ConstantsConfigXMLTags._Driver, ConstantsConfigXMLTags._Engine, ConstantsConfigXMLTags._Engine_Version, ConstantsCommonConfigXMLTags._IP, ConstantsCommonConfigXMLTags._Port, ConstantsCommonConfigXMLTags._Database, ConstantsConfigXMLTags._Auto_Commit, ConstantsConfigXMLTags._Dummy_SQL, ConstantsConfigXMLTags._Auth_Type, ConstantsConfigXMLTags._SessionUser, ConstantsConfigXMLTags._SessionPassword, ConstantsConfigXMLTags._TransactionUser, ConstantsConfigXMLTags._TransactionPassword, ConstantsCommonConfigXMLTags._Date_Format, ConstantsCommonConfigXMLTags._Time_Format, ConstantsCommonConfigXMLTags._Date_Time_Format };
 
 			NodeList ConfigConnectionsList = ConfigSectionNode.getChildNodes();
 	          
@@ -1250,7 +1245,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 	                 
 	    			Logger.logMessage( "1", Lang.translate( "Reading XML database connection: [%s]", ConfigConnectionNode.getNodeName() ) );        
 	                 
-					if ( ConfigConnectionNode.getNodeName().equals( ConstantsConfigXMLTags._DBConnection ) == true ) {
+					if ( ConfigConnectionNode.getNodeName().equals( ConstantsCommonConfigXMLTags._DBConnection ) == true ) {
 
 						String strName = "";
 						String strDriver = "";
@@ -1284,7 +1279,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 					            	Logger.logMessage( "1", Lang.translate( "Node attribute name: [%s]", NodeAttribute.getNodeName() ) );
 					            	Logger.logMessage( "1", Lang.translate( "Node attribute value: [%s]", NodeAttribute.getNodeValue() ) );
 									
-									if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Name ) ) {
+									if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Name ) ) {
 
 										if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 										
@@ -1293,7 +1288,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 										}
 										else {
 											
-											Logger.logError( "-1002", Lang.translate( "The [%s] attribute for connection number [%s] config cannot empty string", DBServicesManager.ConstantsConfigXMLTags._Name, Integer.toString( intConnectionIndex ) ) );
+											Logger.logError( "-1002", Lang.translate( "The [%s] attribute for connection number [%s] config cannot empty string", ConstantsCommonConfigXMLTags._Name, Integer.toString( intConnectionIndex ) ) );
 											break; //Stop parse more attributes
 											
 										}
@@ -1383,7 +1378,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 										}
 									    
 									}
-									else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Database ) ) {
+									else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Database ) ) {
 
 										if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 											
@@ -1392,7 +1387,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 										}
 										else {
 											
-											Logger.logError( "-1008", Lang.translate( "The [%s] attribute value for connection [%s] config cannot empty string", ConstantsConfigXMLTags._Database, strName ) );
+											Logger.logError( "-1008", Lang.translate( "The [%s] attribute value for connection [%s] config cannot empty string", ConstantsCommonConfigXMLTags._Database, strName ) );
 											break; //Stop parse more attributes
 											
 										}
@@ -1509,7 +1504,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 										}
 										
 									}
-									else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Date_Format ) ) {
+									else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Date_Format ) ) {
 
 										if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 											
@@ -1518,13 +1513,13 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 										}
 										else {
 											
-											Logger.logError( "-1013", Lang.translate( "The [%s] attribute value for connection [%s] config cannot empty string", ConstantsConfigXMLTags._Date_Format, strName ) );
+											Logger.logError( "-1013", Lang.translate( "The [%s] attribute value for connection [%s] config cannot empty string", ConstantsCommonConfigXMLTags._Date_Format, strName ) );
 											break; //Stop parse more attributes
 											
 										}
 										
 									}
-									else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Time_Format ) ) {
+									else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Time_Format ) ) {
 
 										if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 											
@@ -1533,13 +1528,13 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 										}
 										else {
 											
-											Logger.logError( "-1014", Lang.translate( "The [%s] attribute value for connection [%s] config cannot empty string", ConstantsConfigXMLTags._Time_Format, strName ) );
+											Logger.logError( "-1014", Lang.translate( "The [%s] attribute value for connection [%s] config cannot empty string", ConstantsCommonConfigXMLTags._Time_Format, strName ) );
 											break; //Stop parse more attributes
 											
 										}
 										
 									}
-									else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Date_Time_Format ) ) {
+									else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Date_Time_Format ) ) {
 
 										if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 											
@@ -1548,7 +1543,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 										}
 										else {
 											
-											Logger.logError( "-1015", Lang.translate( "The [%s] attribute value for connection [%s] config cannot empty string", ConstantsConfigXMLTags._Date_Time_Format, strName ) );
+											Logger.logError( "-1015", Lang.translate( "The [%s] attribute value for connection [%s] config cannot empty string", ConstantsCommonConfigXMLTags._Date_Time_Format, strName ) );
 											break; //Stop parse more attributes
 											
 										}
@@ -1688,7 +1683,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 	}
 
 	@Override
-	public boolean loadConfigSection( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
+	public boolean loadConfigSection( Node ConfigSectionNode, CExtendedLogger Logger, CLanguage Lang ) {
 
 		boolean bResult = true;
 
@@ -1705,7 +1700,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 			} 
         	 
         }
-        else if ( ConfigSectionNode.getNodeName().equals( ConstantsConfigXMLTags._RegisterServices ) == true ) {
+        else if ( ConfigSectionNode.getNodeName().equals( ConstantsCommonConfigXMLTags._RegisterServices ) == true ) {
 
 			if ( this.loadConfigSectionRegisterServices( ConfigSectionNode, Lang, Logger ) == false ) {
 				
@@ -1716,7 +1711,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 			} 
         	
         }	
-        else if ( ConfigSectionNode.getNodeName().equals( ConstantsConfigXMLTags._BuiltinResponsesFormats ) == true ) {
+        else if ( ConfigSectionNode.getNodeName().equals( ConstantsCommonConfigXMLTags._BuiltinResponsesFormats ) == true ) {
 
         	if ( this.loadConfigSectionBuiltinResponsesFormats( ConfigSectionNode, Lang, Logger ) == false ) {
         		
@@ -1727,7 +1722,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
         	}
              
         }
-        else if ( ConfigSectionNode.getNodeName().equals( ConstantsConfigXMLTags._DBConnections ) == true ) {
+        else if ( ConfigSectionNode.getNodeName().equals( ConstantsCommonConfigXMLTags._DBConnections ) == true ) {
 
         	if ( this.loadConfigSectionDBConnections( ConfigSectionNode, Lang, Logger ) == false ) {
         		

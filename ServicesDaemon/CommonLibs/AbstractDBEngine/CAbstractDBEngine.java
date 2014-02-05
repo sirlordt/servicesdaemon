@@ -112,6 +112,19 @@ public abstract class CAbstractDBEngine {
     	
     }
 
+	public LinkedHashMap<String, Integer> getQueryParams( String strCommand ) {
+		
+		HashMap<String,String> Delimiters = new HashMap<String,String>();
+
+		Delimiters.put( ConstantsCommonConfigXMLTags._StartMacroTag, ConstantsCommonConfigXMLTags._EndMacroTag );
+		Delimiters.put( ConstantsCommonConfigXMLTags._StartParamValue, ConstantsCommonConfigXMLTags._EndParamValue );
+
+		StringBuffer strParsedQuery = new StringBuffer();
+		
+	 	return CNamedPreparedStatement.parseQueryAndGetParams( strCommand, Delimiters, strParsedQuery );
+		
+	}
+    
     public enum SQLStatementType { Unknown, Call, Select, Insert, Update, Delete, DDL };
     
     protected String strName;

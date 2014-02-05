@@ -10,6 +10,8 @@
  ******************************************************************************/
 package DBServicesManager;
 
+import CommonClasses.ConstantsCommonConfigXMLTags;
+
 public interface ConstantsServicesManager {
 
 	public static final String _Main_File = "DBServicesManager";
@@ -22,7 +24,7 @@ public interface ConstantsServicesManager {
 	public static final String _DB_Engines_Dir = "DBEngines/";
 	public static final String _Logger_Name = "DBServicesManagerLogger"; 
 
-	public static final String _Response_Format = ConstantsConfigXMLTags._ResponseFormat_XML_DATAPACKET;
+	public static final String _Response_Format = ConstantsCommonConfigXMLTags._ResponseFormat_XML_DATAPACKET;
 	public static final String _Response_Format_Version = "1.1";
 	
 }

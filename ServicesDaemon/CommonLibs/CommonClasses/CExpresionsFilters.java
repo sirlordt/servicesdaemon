@@ -82,17 +82,17 @@ public class CExpresionsFilters {
 				
 					if ( ExpFilter.strType.equals( CExpresionFilter._Exact ) ) {
 
-						bResult = strExpression.toLowerCase().toLowerCase().equals( ExpFilter.strExpression );
+						bResult = strExpression.toLowerCase().toLowerCase().equals( ExpFilter.strExpression.toLowerCase() );
 
 					}
 					else if ( ExpFilter.strType.equals( CExpresionFilter._Partial ) ) {
 
-						bResult = strExpression.toLowerCase().contains( ExpFilter.strExpression );
+						bResult = strExpression.toLowerCase().contains( ExpFilter.strExpression.toLowerCase() );
 
 					}
 					else if ( ExpFilter.strType.equals( CExpresionFilter._RExp ) ) {
 
-						bResult = strExpression.matches( ExpFilter.strExpression );
+						bResult = strExpression.matches( ExpFilter.strExpression.toLowerCase() );
 
 					}
 				

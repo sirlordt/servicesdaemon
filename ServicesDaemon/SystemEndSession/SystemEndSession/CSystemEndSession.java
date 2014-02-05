@@ -34,11 +34,14 @@ import CommonClasses.CNativeSessionInfoManager;
 import CommonClasses.ConstantsCommonClasses;
 import CommonClasses.ConstantsMessagesCodes;
 import DBCommonClasses.CDBAbstractService;
+import DBReplicator.CMasterDBReplicator;
 
 public class CSystemEndSession extends CDBAbstractService {
 
 	protected CConfigSystemEndSession SystemEndSessionConfig = null;
 
+	protected CMasterDBReplicator MasterDBReplicator = null;
+	
 	public CSystemEndSession() {
 		
 		super();
@@ -76,7 +79,7 @@ public class CSystemEndSession extends CDBAbstractService {
 
 			SystemEndSessionConfig = CConfigSystemEndSession.getSystemEndSessionConfig( ServicesDaemonConfig, OwnerConfig, this.strRunningPath );
 
-			if ( SystemEndSessionConfig.loadConfig( this.strRunningPath + ConstantsService._Conf_File, ServiceLang, ServiceLogger ) == true ) {
+			if ( SystemEndSessionConfig.loadConfig( this.strRunningPath + ConstantsService._Conf_File, ServiceLogger, ServiceLang ) == true ) {
 
 				bResult = true;
 
@@ -102,6 +105,8 @@ public class CSystemEndSession extends CDBAbstractService {
 
 				GroupsInputParametersService.put( ConstantsCommonClasses._Default, ServiceInputParameters );
 
+				MasterDBReplicator = CMasterDBReplicator.getMasterDBReplicator();
+				
 			};
 	        
 		}
@@ -199,8 +204,9 @@ public class CSystemEndSession extends CDBAbstractService {
 										}
 
 										DBConnection.unlockConnection( ServiceLogger, ServiceLang ); //Release another threads to use this connection
-										//DBConnectionSemaphore.release(); //Release another threads to use this connection
 
+							            MasterDBReplicator.addPlainQueryCommandToQueue( strCurrentTransactionID, "rollback-endsession", LocalConfigDBConnection.strName, ServiceLogger, ServiceLang );
+										
 									}
 									catch ( Exception Ex ) {
 

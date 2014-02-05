@@ -33,10 +33,13 @@ import CommonClasses.CNativeSessionInfoManager;
 import CommonClasses.ConstantsCommonClasses;
 import CommonClasses.ConstantsMessagesCodes;
 import DBCommonClasses.CDBAbstractService;
+import DBReplicator.CMasterDBReplicator;
 
 public class CSystemRollbackTransaction extends CDBAbstractService {
 
 	protected CConfigSystemRollbackTransaction SystemRollbackTransactionConfig = null;
+	
+	protected CMasterDBReplicator MasterDBReplicator = null;
 	
     public CSystemRollbackTransaction() {
     	
@@ -75,7 +78,7 @@ public class CSystemRollbackTransaction extends CDBAbstractService {
 
 			SystemRollbackTransactionConfig = CConfigSystemRollbackTransaction.getSystemRollbackTransactionConfig( ServicesDaemonConfig, OwnerConfig, this.strRunningPath );
 
-			if ( SystemRollbackTransactionConfig.loadConfig( this.strRunningPath + ConstantsService._Conf_File, ServiceLang, ServiceLogger ) == true ) {
+			if ( SystemRollbackTransactionConfig.loadConfig( this.strRunningPath + ConstantsService._Conf_File, ServiceLogger, ServiceLang ) == true ) {
 
 				bResult = true;
 
@@ -105,6 +108,8 @@ public class CSystemRollbackTransaction extends CDBAbstractService {
 
 				GroupsInputParametersService.put( ConstantsCommonClasses._Default, ServiceInputParameters );
 
+				MasterDBReplicator = CMasterDBReplicator.getMasterDBReplicator();
+				
 			};
 	        
 		}
@@ -180,6 +185,8 @@ public class CSystemRollbackTransaction extends CDBAbstractService {
 											String strResponseBuffer = ResponseFormat.formatSimpleMessage( "", strTransactionID, 1, ServiceLang.translate( "Success rollback transaction for id: [%s]", strTransactionID ), false, strResponseFormatVersion, LocalConfigDBConnection.strDateTimeFormat, LocalConfigDBConnection.strDateFormat, LocalConfigDBConnection.strTimeFormat, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 											Response.getWriter().print( strResponseBuffer );
 
+								            MasterDBReplicator.addPlainQueryCommandToQueue( strTransactionID, "rollback", LocalConfigDBConnection.strName, ServiceLogger, ServiceLang );
+											
 											intResultCode = 1;
 
 										}

@@ -30,6 +30,7 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 	protected static CConfigServicesDaemon ConfigServicesDaemon = null;
 
     public ArrayList<String> InitArgs = null;
+	public String strInstanceID;
 	public String strManagersDir;
     public String strKeyStoreFile;
     public String strKeyStorePassword;
@@ -38,7 +39,6 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 	public int intMaxRequestHeaderSize;
 	public String strResponseRequestMethod; //OnlyGET, OnlyPOST, Any
     
-	public String strLogInstanceID;
     public String strClassNameMethodName; 
     public boolean bExactMatch;
     public boolean bLogMissingTranslations;
@@ -98,7 +98,7 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 	    
 		strResponseRequestMethod = ConstantsCommonConfigXMLTags._Request_Method_ANY;
 
-		strLogInstanceID = ConstantsCommonClasses._Log_Instance_ID;
+		strInstanceID = ConstantsCommonClasses._Log_Instance_ID;
 	    strClassNameMethodName = ConstantsCommonClasses._Log_Class_Method; //*.*
 	    bExactMatch = ConstantsCommonClasses._Log_Exact_Match; //false
 	    bLogMissingTranslations = ConstantsCommonClasses._Log_Missing_Translations; //false
@@ -127,7 +127,7 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 		   
 			if ( ConfigSectionNode.hasAttributes() == true ) {
 				
-				String strAttributesOrder[] = { ConstantsCommonConfigXMLTags._Log_Instance_ID, ConstantsCommonConfigXMLTags._ClassName_MethodName, ConstantsCommonConfigXMLTags._Exact_Match, ConstantsCommonConfigXMLTags._Level, ConstantsCommonConfigXMLTags._Log_Missing_Translations, ConstantsCommonConfigXMLTags._Log_IP, ConstantsCommonConfigXMLTags._Log_Port, ConstantsCommonConfigXMLTags._HTTP_Log_URL, ConstantsCommonConfigXMLTags._HTTP_Log_User, ConstantsCommonConfigXMLTags._HTTP_Log_Password, ConstantsCommonConfigXMLTags._Proxy_IP, ConstantsCommonConfigXMLTags._Proxy_Port, ConstantsCommonConfigXMLTags._Proxy_User, ConstantsCommonConfigXMLTags._Proxy_Password };
+				String strAttributesOrder[] = { ConstantsCommonConfigXMLTags._Instance_ID, ConstantsCommonConfigXMLTags._ClassName_MethodName, ConstantsCommonConfigXMLTags._Exact_Match, ConstantsCommonConfigXMLTags._Level, ConstantsCommonConfigXMLTags._Log_Missing_Translations, ConstantsCommonConfigXMLTags._Log_IP, ConstantsCommonConfigXMLTags._Log_Port, ConstantsCommonConfigXMLTags._HTTP_Log_URL, ConstantsCommonConfigXMLTags._HTTP_Log_User, ConstantsCommonConfigXMLTags._HTTP_Log_Password, ConstantsCommonConfigXMLTags._Proxy_IP, ConstantsCommonConfigXMLTags._Proxy_Port, ConstantsCommonConfigXMLTags._Proxy_User, ConstantsCommonConfigXMLTags._Proxy_Password };
 				
 				NamedNodeMap NodeAttributes = ConfigSectionNode.getAttributes();
 
@@ -140,25 +140,25 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 		            	Logger.logMessage( "1", Lang.translate( "Node attribute name: [%s]", NodeAttribute.getNodeName() ) );
 		            	Logger.logMessage( "1", Lang.translate( "Node attribute value: [%s]", NodeAttribute.getNodeValue() ) );
 						
-						if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Log_Instance_ID ) ) {
+						if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Instance_ID ) ) {
 
 							if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 							
-								this.strLogInstanceID = NodeAttribute.getNodeValue().trim();
+								this.strInstanceID = NodeAttribute.getNodeValue().trim();
 								
-								Logger.setInstanceID( strLogInstanceID );
+								Logger.setInstanceID( this.strInstanceID );
 							
 							}
 							else {
 								
-								Logger.logWarning( "-1", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsCommonConfigXMLTags._Log_Instance_ID, NodeAttribute.getNodeValue(), CommonClasses.ConstantsCommonClasses._Log_Instance_ID ) );
+								Logger.logWarning( "-1", Lang.translate( "The [%s] attribute cannot empty string, using the default value [%s]", ConstantsCommonConfigXMLTags._Instance_ID, NodeAttribute.getNodeValue(), CommonClasses.ConstantsCommonClasses._Log_Instance_ID ) );
 								
 							}
 						 	   
 				            Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]", "strLogInstanceID", NodeAttribute.getNodeValue() ) );
 
 						}
-						else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._ClassName_MethodName ) ) {
+		            	else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._ClassName_MethodName ) ) {
 
 							this.strClassNameMethodName = NodeAttribute.getNodeValue().trim();
 						 	   
@@ -402,7 +402,7 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 		            	Logger.logMessage( "1", Lang.translate( "Node attribute name: [%s]", NodeAttribute.getNodeName() ) );
 		            	Logger.logMessage( "1", Lang.translate( "Node attribute value: [%s]", NodeAttribute.getNodeValue() ) );
 						
-		            	if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Managers_Dir ) ) {
+						if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Managers_Dir ) ) {
 
 							this.strManagersDir = NodeAttribute.getNodeValue();
 		
@@ -967,7 +967,7 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 	}
 	
 	@Override
-	public boolean loadConfigSection( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
+	public boolean loadConfigSection( Node ConfigSectionNode, CExtendedLogger Logger, CLanguage Lang ) {
 
 		boolean bResult = true;
 		

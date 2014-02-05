@@ -19,7 +19,6 @@ public interface ConstantsConfigXMLTags {
 	public static final String _LogSQL_Statement = "LogSQL_Statement";
 	
 	public static final String _Filters = "Filters";
-	public static final String _Name = "Name";
 	public static final String _Type = "Type";
 	public static final String _Type_Allow = "allow";
 	public static final String _Type_Block = "block";
@@ -27,5 +26,22 @@ public interface ConstantsConfigXMLTags {
 	public static final String _Type_Partial = "partial";
 	public static final String _Type_RExp = "rexp";
 	public static final String _Filter = "Filter";
+
+	public static final String _Replicators = "Replicators";
+	public static final String _Replicator = "Replicator";
+	public static final String _Source_DBConnection_Name = "Source_DBConnection_Name";
+	public static final String _Max_Store_File_Size = "Max_Store_File_Size";
+	public static final String _On_Fail_Go_Sleep_For = "On_Fail_Go_Sleep_For";
+
+	public static final long _Min_Store_File_Size = 10240; //10 kb
+	public static final long _Store_File_Size = 153600;  //150 kb
+
+	public static final long _Min_Fail_Sleep_Millis = 10000; //10 Seconds
+	public static final long _Fail_Sleep_Millis = 300000;  //5 Minutes on millis 60*5*1000
+	
+	public static final String _Channels = "Channels";
+	public static final String _Channel = "Channel";
+	
+	
 	
 }

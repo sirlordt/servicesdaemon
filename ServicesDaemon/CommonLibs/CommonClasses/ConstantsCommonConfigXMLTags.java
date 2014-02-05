@@ -12,6 +12,48 @@ package CommonClasses;
 
 public interface ConstantsCommonConfigXMLTags {
 
+	public static final String _Global_Date_Time_Format = "Global_Date_Time_Format";
+	public static final String _Global_Date_Format = "Global_Date_Format";
+	public static final String _Global_Time_Format = "Global_Time_Format";
+	
+	public static final String _Temp_Dir = "Temp_Dir";
+	public static final String _Responses_Formats_Dir = "Responses_Formats_Dir";
+
+	public static final String _Default_Response_Format = "Default_Response_Format";
+	public static final String _Default_Response_Format_Version = "Default_Response_Format_Version";
+
+	public static final String _Internal_Fetch_Size = "Internal_Fetch_Size";
+	
+	public static final String _ResponseFormat_XML_DATAPACKET = "XML-DATAPACKET";
+	public static final String _ResponseFormat_JSON = "JSON";
+	public static final String _ResponseFormat_JAVA_XML_WEBROWSET = "JAVA-XML-WEBROWSET";
+	public static final String _ResponseFormat_CSV = "CSV";
+
+	public static final String _RegisterServices = "RegisterServices";
+	public static final String _Register = "Register";
+	public static final String _Interval = "Interval";
+	public static final String _Weight = "Weight";
+	public static final String _ReportLoad = "ReportLoad";
+	public static final String _ReportIPType = "ReportIPType";
+	public static final String _IPV4 = "ipv4";
+	public static final String _IPV6 = "ipv6";
+	
+	public static final String _BuiltinResponsesFormats = "BuiltinResponsesFormats";
+	public static final String _BuiltinResponseFormat = "BuiltinResponseFormat";
+	public static final String _Content_Type = "Content_Type";
+	public static final String _Char_Set = "Char_Set";
+	public static final String _Fields_Quote = "Fields_Quote";
+	public static final String _Separator_Symbol = "Separator_Symbol";
+	public static final String _Show_Headers = "Show_Headers";
+
+	public static final String _Date_Format = "Date_Format";
+	public static final String _Time_Format = "Time_Format";
+	public static final String _Date_Time_Format = "Date_Time_Format";
+
+	public static final String _DBConnections = "DBConnections";
+	public static final String _DBConnection = "DBConnection";
+	public static final String _Database = "Database";
+	
 	public static final String _Config = "Config";
 	public static final String _System = "System";
 	public static final String _Managers_Dir = "Managers_Dir";
@@ -31,10 +73,16 @@ public interface ConstantsCommonConfigXMLTags {
 	public static final String _Log_Missing_Translations = "Log_Missing_Translations";
 	public static final String _Level = "Level";
 
-	public static final String _Log_Instance_ID = "Log_Instance_ID";
+	public static final String _Instance_ID = "Log_Instance_ID";
 	public static final String _Log_IP = "Log_IP";
 	public static final String _Log_Port = "Log_Port";
 	
+	public static final String _Request_Timeout = "Connect_Timeout";
+	public static final String _Socket_Timeout = "Socket_Timeout";
+	public static final String _Name = "Name";
+	public static final String _URL = "URL";
+	public static final String _User = "User";
+	public static final String _Password = "Password";
 	public static final String _HTTP_Log_URL = "HTTP_Log_URL";
 	public static final String _HTTP_Log_User = "HTTP_Log_User";
 	public static final String _HTTP_Log_Password = "HTTP_Log_Password";
@@ -66,5 +114,7 @@ public interface ConstantsCommonConfigXMLTags {
 	public static final String _Password_Crypted = "crypted";
 	public static final String _Password_Crypted_Sep = ":";
 	
+	public static final String _Class_Name = "Class_Name";
+	public static final String _Config_File = "Config_File";
 	
 }

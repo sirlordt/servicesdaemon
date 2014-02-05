@@ -38,6 +38,7 @@ import CommonClasses.ConstantsCommonConfigXMLTags;
 import CommonClasses.ConstantsCommonClasses;
 import CommonClasses.InitArgsConstants;
 import DBCommonClasses.CDBAbstractService;
+import DBReplicator.CMasterDBReplicator;
 import ExtendedLogger.CExtendedLogger;
 
 public class CServicesManager extends CAbstractServicesManager {
@@ -344,7 +345,7 @@ public class CServicesManager extends CAbstractServicesManager {
     	this.strRunningPath = net.maindataservices.Utilities.getJarFolder( this.getClass() );
     	
         CExtendedLogger DBServicesManagerLogger = CExtendedLogger.getLogger( ConstantsServicesManager._Logger_Name );
-        DBServicesManagerLogger.setupLogger( ServicesDaemonConfig.strLogInstanceID, ServicesDaemonConfig.InitArgs.contains( InitArgsConstants._LogToScreen ), this.strRunningPath + ConstantsCommonClasses._Logs_Dir, ConstantsServicesManager._Main_File_Log, ServicesDaemonConfig.strClassNameMethodName, ServicesDaemonConfig.bExactMatch, ServicesDaemonConfig.LoggingLevel.toString(), ServicesDaemonConfig.strLogIP, ServicesDaemonConfig.intLogPort, ServicesDaemonConfig.strHTTPLogURL, ServicesDaemonConfig.strHTTPLogUser, ServicesDaemonConfig.strHTTPLogPassword, ServicesDaemonConfig.strProxyIP, ServicesDaemonConfig.intProxyPort, ServicesDaemonConfig.strProxyUser, ServicesDaemonConfig.strProxyPassword );
+        DBServicesManagerLogger.setupLogger( ServicesDaemonConfig.strInstanceID, ServicesDaemonConfig.InitArgs.contains( InitArgsConstants._LogToScreen ), this.strRunningPath + ConstantsCommonClasses._Logs_Dir, ConstantsServicesManager._Main_File_Log, ServicesDaemonConfig.strClassNameMethodName, ServicesDaemonConfig.bExactMatch, ServicesDaemonConfig.LoggingLevel.toString(), ServicesDaemonConfig.strLogIP, ServicesDaemonConfig.intLogPort, ServicesDaemonConfig.strHTTPLogURL, ServicesDaemonConfig.strHTTPLogUser, ServicesDaemonConfig.strHTTPLogPassword, ServicesDaemonConfig.strProxyIP, ServicesDaemonConfig.intProxyPort, ServicesDaemonConfig.strProxyUser, ServicesDaemonConfig.strProxyPassword );
 		
 		CLanguage DBServicesManagerLang = CLanguage.getLanguage( DBServicesManagerLogger, this.strRunningPath + CommonClasses.ConstantsCommonClasses._Langs_Dir + ConstantsServicesManager._Main_File + "." + ConstantsCommonClasses._Lang_Ext );
 
@@ -355,7 +356,7 @@ public class CServicesManager extends CAbstractServicesManager {
 		
 		boolean bResult = false;
     	
-    	if ( ConfigServicesManager.loadConfig( this.strRunningPath + ConstantsServicesManager._Conf_File, DBServicesManagerLang, DBServicesManagerLogger ) == true ) {
+    	if ( ConfigServicesManager.loadConfig( this.strRunningPath + ConstantsServicesManager._Conf_File, DBServicesManagerLogger, DBServicesManagerLang ) == true ) {
     		
     		try {
 
@@ -465,11 +466,15 @@ public class CServicesManager extends CAbstractServicesManager {
     	
     	if ( ConfigServicesManager.ConfiguredRegisterServices.size() > 0 ) {
     		
-			RegisterManagerTask = new CRegisterManagerTask( "RegisterManagerTask - " + this.strContextPath, ConfigServicesManager.Logger, ConfigServicesManager.Lang, ConfigServicesManager.ConfiguredRegisterServices, ServicesDaemonConfig.ConfiguredNetworkInterfaces, this.strContextPath, ConfigServicesManager.strTempDir, ConstantsCommonClasses._Register_Manager_Frecuency, ConfigServicesManager.intSelfClientRequestTimeout, ConfigServicesManager.intSelfClientSocketTimeout );
+			RegisterManagerTask = new CRegisterManagerTask( "RegisterManagerTask - " + this.strContextPath, ConfigServicesManager.Logger, ConfigServicesManager.Lang, ConfigServicesManager.ConfiguredRegisterServices, ServicesDaemonConfig.ConfiguredNetworkInterfaces, this.strContextPath, ConfigServicesManager.strTempDir, ConstantsCommonClasses._Register_Manager_Frecuency, ConfigServicesManager.intRequestTimeout, ConfigServicesManager.intSocketTimeout );
 			
 			RegisterManagerTask.start();
 			
     	}
+    	
+    	CMasterDBReplicator MasterDBReplicator = CMasterDBReplicator.getMasterDBReplicator();
+    			
+    	MasterDBReplicator.initReplicators();
     	
     	return true;
     	
@@ -621,6 +626,17 @@ public class CServicesManager extends CAbstractServicesManager {
 
         	   if ( strServiceName != null && strServiceName.isEmpty() == false ) {
         	   
+        		   /*if ( RegisteredDBServices.get( "system.execute.sql" ) != null ) {
+        			   
+        			   System.out.println( "Call to " + strServiceName.toLowerCase() + " system.execute.sql found" );
+        			   
+        		   }
+        		   else {
+
+        			   System.out.println( "Call to " + strServiceName.toLowerCase() + " system.execute.sql NOT FOUND" );
+        			   
+        		   }*/
+        		   
         		   CAbstractService Service = RegisteredDBServices.get( strServiceName.toLowerCase() );
 
         		   if ( Service != null ) {

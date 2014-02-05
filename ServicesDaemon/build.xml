@@ -89,7 +89,9 @@
     	<property name="DBCommonLibsName" value="DBCommonLibs" />
         <property name="DBCommonLibsVersion" value="0.0.0.1" />
     	
+        <property name="DBBackendServicesManagerName" value="DBBackendServicesManager" />
         <property name="DBCommonClassesName" value="DBCommonClasses" />
+        <property name="DBReplicatorName" value="DBReplicator" />
     	
         <property name="bin-MySQLDBEngine" value="${bin}/MySQLDBEngine/" />
         <property name="src-MySQLDBEngine" value="MySQLDBEngine/MySQLDBEngine" />
@@ -459,6 +461,8 @@
     	
         <jar jarfile="${distro-bin-DBServicesManager}/Libs/${DBCommonLibsName}.jar" index="no" compress="yes" update="true">
             <fileset dir="${bin}" includes="${DBCommonClassesName}/**/*.class"/>
+            <fileset dir="${bin}" includes="${DBBackendServicesManagerName}/**/*.class"/>
+            <fileset dir="${bin}" includes="${DBReplicatorName}/**/*.class"/>
             <manifest>
                 <attribute name="Built-By" value="${user.name}" />
                 <attribute name="Specification-Title" value="${DBCommonLibsName}" />
@@ -645,7 +649,11 @@
             </fileset>
         </copy> 
 
-        <copy file="${src-SystemStartSession}/${SystemStartSessionName}.conf" todir="${bin-SystemStartSession}/" overwrite="true"/>
+        <copy todir="$${bin-SystemStartSession}/" overwrite="true">
+            <fileset dir="${src-SystemStartSession}/">
+                <include name="*.conf" />
+            </fileset>
+        </copy> 
     	
         <copy todir="${bin-SystemStartTransaction}/Langs" overwrite="true">
             <fileset dir="${src-SystemStartTransaction}/Langs/">
@@ -683,7 +691,11 @@
             </fileset>
         </copy> 
     	
-        <copy file="${src-SystemExecuteSQL}/${SystemExecuteSQLName}.conf" todir="${bin-SystemExecuteSQL}/" overwrite="true"/>
+        <copy todir="${bin-SystemExecuteSQL}/" overwrite="true">
+            <fileset dir="${src-SystemExecuteSQL}/">
+                <include name="*.conf" />
+            </fileset>
+        </copy>	
 
         <copy todir="${bin-SystemObjectExists}/Langs" overwrite="true">
             <fileset dir="${src-SystemObjectExists}/Langs/">

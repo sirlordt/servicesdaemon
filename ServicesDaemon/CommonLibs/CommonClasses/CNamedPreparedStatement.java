@@ -88,8 +88,10 @@ public class CNamedPreparedStatement implements PreparedStatement {
     ps = db.prepareStatement(parsed_query.toString());
   }*/
 
-	public CNamedPreparedStatement( Connection db, String strQuery, HashMap<String,String> strDelimiters ) throws SQLException {
-
+    public static LinkedHashMap<String, Integer> parseQueryAndGetParams( String strQuery, HashMap<String,String> strDelimiters, StringBuffer strParsedQuery ) {
+    	
+    	LinkedHashMap<String, Integer> Result = new LinkedHashMap<String, Integer>();
+    	
 		Iterator<Entry<String, String>> Delimiters = strDelimiters.entrySet().iterator();
 
 		final String strDelimiterStart = "[##$$$##]"; 
@@ -105,7 +107,7 @@ public class CNamedPreparedStatement implements PreparedStatement {
 		}
 
 		// map params
-		params = new LinkedHashMap<String, Integer>();
+		Result = new LinkedHashMap<String, Integer>();
 
 		int intParamCount = 0;
 
@@ -113,7 +115,7 @@ public class CNamedPreparedStatement implements PreparedStatement {
 
 		int intQueryLength = strQuery.length();
 
-		StringBuffer strParsedQuery = new StringBuffer();
+		//StringBuffer strParsedQuery = new StringBuffer();
 		
 		StringBuffer strParamName = null;
 		
@@ -152,7 +154,7 @@ public class CNamedPreparedStatement implements PreparedStatement {
 
 				intIndex = intIndex + strDelimiterEnd.length() - 1;
 
-				params.put( strParamName.toString(), new Integer( intParamCount ) );
+				Result.put( strParamName.toString(), new Integer( intParamCount ) );
 
 				strParsedQuery.append( '?' );
 
@@ -175,6 +177,16 @@ public class CNamedPreparedStatement implements PreparedStatement {
 			throw new IllegalArgumentException( "Parameter name not closed: " + strParamName.toString() );
 
 		}
+    	
+		return Result;
+		
+    } 
+    
+	public CNamedPreparedStatement( Connection db, String strQuery, HashMap<String,String> strDelimiters ) throws SQLException {
+
+		StringBuffer strParsedQuery = new StringBuffer();
+		
+		params = parseQueryAndGetParams( strQuery, strDelimiters, strParsedQuery );
 
 		this.strParsedStatement = strParsedQuery.toString();
 		

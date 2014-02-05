@@ -42,10 +42,10 @@
 <entry key="Init complex SQL statement">Iniciando sentencia SQL compleja</entry>
 <entry key="End complex SQL statement">Sentencia SQL compleja finalizada</entry>
 <entry key="Init response format data set">Iniciando formateado de respuesta para el conjunto de datos</entry>
-<entry key="End response format data set">Formateado de respuesta para el conjunto de datos finalizada</entry>
+<entry key="End response format data set on [%s] ms">Formateado de respuesta para el conjunto de datos finalizada en [%s] ms</entry>
 <entry key="The JDBC Driver [%s] ignoring fetch size value [%s], using JDBC driver default value [%s]">El controlador JDBC [%s] ignora el valor del tamaño de la entrega (Fetch) de [%s], se está usando el valor por defecto [%s] del controlador JDBC</entry>
-<entry key=""></entry>
-<entry key=""></entry>
+<entry key="Replicator name [%s] already registered">Nombre del replicador [%s] ya registrado</entry>
+<entry key="Replicator config attributes is not valid">Atributos de configuración del replicador no válidos</entry>
 <entry key=""></entry>
 <entry key=""></entry>
 <entry key=""></entry>

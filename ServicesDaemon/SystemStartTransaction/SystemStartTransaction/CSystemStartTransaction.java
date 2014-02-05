@@ -78,7 +78,7 @@ public class CSystemStartTransaction extends CDBAbstractService {
 
 			SystemStartTransactionConfig = CConfigSystemStartTransaction.getSystemStartTransactionConfig( ServicesDaemonConfig, OwnerConfig, this.strRunningPath );
 
-			if ( SystemStartTransactionConfig.loadConfig( this.strRunningPath + ConstantsService._Conf_File, ServiceLang, ServiceLogger ) == true ) {
+			if ( SystemStartTransactionConfig.loadConfig( this.strRunningPath + ConstantsService._Conf_File, ServiceLogger, ServiceLang ) == true ) {
 
 				bResult = true;
 

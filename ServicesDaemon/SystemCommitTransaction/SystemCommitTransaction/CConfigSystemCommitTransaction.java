@@ -48,7 +48,7 @@ public class CConfigSystemCommitTransaction extends CAbstractConfigLoader {
 	}
 
 	@Override
-	public boolean loadConfig( String strConfigFilePath, CLanguage Lang, CExtendedLogger Logger ) {
+	public boolean loadConfig( String strConfigFilePath, CExtendedLogger Logger, CLanguage Lang ) {
 		
         if ( ServiceLogger == null )
         	ServiceLogger = Logger;

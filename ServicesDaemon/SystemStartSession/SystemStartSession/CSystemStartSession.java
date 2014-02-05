@@ -132,7 +132,7 @@ public class CSystemStartSession extends CDBAbstractService {
 
         	SystemStartSessionConfig = CConfigSystemStartSession.getConfigSystemStartSession( ServicesDaemonConfig, OwnerConfig, this.strRunningPath );
 
-        	if ( SystemStartSessionConfig.loadConfig( this.strRunningPath + ConstantsService._Conf_File, ServiceLang, ServiceLogger ) == true ) {
+        	if ( SystemStartSessionConfig.loadConfig( this.strRunningPath + ConstantsService._Conf_File, ServiceLogger, ServiceLang ) == true ) {
 
         		bResult = true;
 

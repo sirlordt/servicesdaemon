@@ -132,7 +132,7 @@ public abstract class CAbstractService implements IMessageObject {
 	public void setupService( String strLoggerName, String strLangFileName ) {
 		
         this.ServiceLogger = CExtendedLogger.getLogger( strLoggerName );
-        ServiceLogger.setupLogger( ServicesDaemonConfig.strLogInstanceID, ServicesDaemonConfig.InitArgs.contains( InitArgsConstants._LogToScreen ), this.strRunningPath + ConstantsCommonClasses._Logs_Dir, this.strServiceName + ".log", ServicesDaemonConfig.strClassNameMethodName, ServicesDaemonConfig.bExactMatch, ServicesDaemonConfig.LoggingLevel.toString(), ServicesDaemonConfig.strLogIP, ServicesDaemonConfig.intLogPort, ServicesDaemonConfig.strHTTPLogURL, ServicesDaemonConfig.strHTTPLogUser, ServicesDaemonConfig.strHTTPLogPassword, ServicesDaemonConfig.strProxyIP, ServicesDaemonConfig.intProxyPort, ServicesDaemonConfig.strProxyUser, ServicesDaemonConfig.strProxyPassword );
+        ServiceLogger.setupLogger( ServicesDaemonConfig.strInstanceID, ServicesDaemonConfig.InitArgs.contains( InitArgsConstants._LogToScreen ), this.strRunningPath + ConstantsCommonClasses._Logs_Dir, this.strServiceName + ".log", ServicesDaemonConfig.strClassNameMethodName, ServicesDaemonConfig.bExactMatch, ServicesDaemonConfig.LoggingLevel.toString(), ServicesDaemonConfig.strLogIP, ServicesDaemonConfig.intLogPort, ServicesDaemonConfig.strHTTPLogURL, ServicesDaemonConfig.strHTTPLogUser, ServicesDaemonConfig.strHTTPLogPassword, ServicesDaemonConfig.strProxyIP, ServicesDaemonConfig.intProxyPort, ServicesDaemonConfig.strProxyUser, ServicesDaemonConfig.strProxyPassword );
 		
 		this.ServiceLang = CLanguage.getLanguage( ServiceLogger, strLangFileName );
 		

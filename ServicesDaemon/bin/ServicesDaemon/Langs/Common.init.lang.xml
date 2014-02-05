@@ -8,7 +8,7 @@
 <entry key="Loading config from file: [%s]">Cargando configuración del archivo: [%s]</entry>
 <entry key="XML node root of config file: [%s]">El nodo raíz del archivo de configuración es: [%s]</entry>
 <entry key="Reading XML node section: [%s]">Leyendo la sección del nodo XML: [%s]</entry>
-<entry key="Failed to load config from XML Node Section: [%s] ">Falló al cargar la configuración de la sección del nodo XML: [%s]</entry>
+<entry key="Failed to load config from file: [%s]">Falló al cargar la configuración desde el archivo: [%s]</entry>
 <entry key="Only one section [Config] tag allowed in config file in the path [%s]">Solo una sección [Config] es permitida en el archivo de configuración de la ruta [%s]</entry>
 <entry key="The config file in the path [%s] not exists">El archivo de configuracion [%s] no existe</entry>
 <entry key="The config file in the path [%s] cannot read, please check the owner and permissions">La ruta del archivo de configuración [%s] no se puede leer, por favor verifique el dueño y los permisos</entry>
@@ -110,7 +110,7 @@
 <entry key="Post initialize of service: [%s]">Post inicialización del servicio: [%s]</entry>
 <entry key="Post initialize of services manager: [%s]">Post inicialización del administrador de servicios: [%s]</entry>
 <entry key="[%s] executed on: [%s] ms">[%s] executado en: [%s] ms</entry>
-<entry key=""></entry>
+<entry key="The class [%s] not implements the [%s] interface">La clase [%s] no implementa la interface [%s]</entry>
 <entry key=""></entry>
 <entry key=""></entry>
 <entry key=""></entry>

@@ -89,8 +89,8 @@ public interface ConstantsCommonClasses {
 	
 	public static final String _Version_Any = "any";
 	
-	public static final int _Self_Client_Request_Timeout = 3000;
-	public static final int _Self_Client_Socket_Timeout = 3000;
+	public static final int _Request_Timeout = 3000;
+	public static final int _Socket_Timeout = 3000;
 	
 	public static final int _Minimal_Request_Timeout = 1000;
 	public static final int _Maximal_Request_Timeout = 100000000;

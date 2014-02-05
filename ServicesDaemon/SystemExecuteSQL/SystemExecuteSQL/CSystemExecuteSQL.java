@@ -13,6 +13,8 @@ package SystemExecuteSQL;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,10 +39,13 @@ import CommonClasses.CNativeSessionInfoManager;
 import CommonClasses.ConstantsCommonClasses;
 import CommonClasses.ConstantsMessagesCodes;
 import DBCommonClasses.CDBAbstractService;
+import DBReplicator.CMasterDBReplicator;
 
 public class CSystemExecuteSQL extends CDBAbstractService {
 
 	protected CConfigSystemExecuteSQL SystemExecuteSQLConfig = null;
+	
+	protected CMasterDBReplicator MasterDBReplicator = null;
 	
 	public CSystemExecuteSQL() {
 		
@@ -78,9 +83,9 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 
 			this.loadAndRegisterServicePostExecute();
 
-			SystemExecuteSQLConfig = CConfigSystemExecuteSQL.getSystemExecuteSQLConfig( ServicesDaemonConfig, OwnerConfig, this.strRunningPath );
+			SystemExecuteSQLConfig = CConfigSystemExecuteSQL.getConfigSystemExecuteSQL( ServicesDaemonConfig, OwnerConfig, this.strRunningPath );
 
-			if ( SystemExecuteSQLConfig.loadConfig( this.strRunningPath + ConstantsService._Conf_File, ServiceLang, ServiceLogger ) == true ) {
+			if ( SystemExecuteSQLConfig.loadConfig( this.strRunningPath + ConstantsService._Conf_File, ServiceLogger, ServiceLang ) == true ) {
 
 				bResult = true;
 
@@ -118,6 +123,8 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 
 				GroupsInputParametersService.put( ConstantsCommonClasses._Default, ServiceInputParameters );
 
+				MasterDBReplicator = CMasterDBReplicator.getMasterDBReplicator();
+				
 			};
 	        
 		}
@@ -134,7 +141,7 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 		
 	}
 	
-	public boolean CheckExpressionsFilters( String strSessionKey, String strSQL ) {
+	public boolean checkExpressionsFilters( String strSessionKey, String strSQL ) {
 
 		boolean bResult = false;
 		
@@ -166,19 +173,19 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 		
 	}
 	
-	public boolean ExecutePlainSQL( CConfigNativeDBConnection ConfigDBConnection, CAbstractDBConnection DBConnection, CAbstractDBEngine DBEngine, String strSQL, int intInternalFetchSize, HttpServletResponse Response, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion, String strTransactionID ) {
+	public boolean executePlainCommand( CConfigNativeDBConnection ConfigDBConnection, CAbstractDBConnection DBConnection, CAbstractDBEngine DBEngine, String strCommand, int intInternalFetchSize, HttpServletResponse Response, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion, String strTransactionID ) {
 		
 		boolean bResult = false;
 		
 		try {
 		
-			SQLStatementType SQLType = DBEngine.getSQLStatementType( strSQL, ServiceLogger, ServiceLang );
+			SQLStatementType SQLType = DBEngine.getSQLStatementType( strCommand, ServiceLogger, ServiceLang );
 
 			if ( SQLType == SQLStatementType.Select ) { //Select
 
 				//int intInternalFetchSize = Integer.parseInt( (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Internal_Fetch_Size, null ) );
 				
-				CResultSetResult ResultSetResult = DBEngine.executePlainQueryCommand( DBConnection, strSQL, intInternalFetchSize, ServiceLogger, ServiceLang ); //SQLStatement.executeQuery( strSQL );
+				CResultSetResult ResultSetResult = DBEngine.executePlainQueryCommand( DBConnection, strCommand, intInternalFetchSize, ServiceLogger, ServiceLang ); //SQLStatement.executeQuery( strSQL );
 
 				if ( ResultSetResult != null ) {
 
@@ -194,18 +201,24 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 		        			
 		            }	
 					
+					long lngStart = System.currentTimeMillis();
+		            
 					ResponseFormat.formatResultSet( Response, ResultSetResult, DBEngine, intInternalFetchSize, strResponseFormatVersion, ConfigDBConnection!=null?ConfigDBConnection.strDateTimeFormat:(String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_DateTime_Format, null ), ConfigDBConnection!=null?ConfigDBConnection.strDateFormat:(String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_Date_Format, null ), ConfigDBConnection!=null?ConfigDBConnection.strTimeFormat:(String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_Time_Format, null ), true, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 
+					long lngEnd = System.currentTimeMillis();
+					
 		            if ( ServiceLogger != null ) { //Trace how much time in format data
 		            	
 		        		if ( ServiceLang != null )   
-		        			ServiceLogger.logInfo( "0x2502", ServiceLang.translate( "End response format data set" ) );
+		        			ServiceLogger.logInfo( "0x2502", ServiceLang.translate( "End response format data set on [%s] ms", Long.toString( lngEnd - lngStart ) ) );
 		        		else
-		        			ServiceLogger.logInfo( "0x2502", "End response format data set" );
+		        			ServiceLogger.logInfo( "0x2502", String.format( "End response format data set on [%s] ms", Long.toString( lngEnd - lngStart ) ) );
 		        			
 		            }
 		            
-					//Response.getWriter().print( "Hello" );
+					//System.out.println( strCommand );
+		            
+		            MasterDBReplicator.addPlainQueryCommandToQueue( strTransactionID, strCommand, ConfigDBConnection.strName, ServiceLogger, ServiceLang );
 
 					bResult = true;
 					
@@ -214,7 +227,7 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 
 					if ( ServiceLogger != null ) {
 
-						ServiceLogger.logError( "-1008", ServiceLang.translate( "The SQL statement [%s] is invalid for transaction id: [%s]", strSQL, strTransactionID ) );        
+						ServiceLogger.logError( "-1008", ServiceLang.translate( "The SQL statement [%s] is invalid for transaction id: [%s]", strCommand, strTransactionID ) );        
 
 					}
 
@@ -232,20 +245,20 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 				CResultSetResult ResultSetResult = null;
 				
 				if ( SQLType == SQLStatementType.Insert )
-					ResultSetResult = DBEngine.executePlainInsertCommand( DBConnection, strSQL, ServiceLogger, ServiceLang );
+					ResultSetResult = DBEngine.executePlainInsertCommand( DBConnection, strCommand, ServiceLogger, ServiceLang );
 				else if ( SQLType == SQLStatementType.Update )
-					ResultSetResult = DBEngine.executePlainUpdateCommand( DBConnection, strSQL, ServiceLogger, ServiceLang );
+					ResultSetResult = DBEngine.executePlainUpdateCommand( DBConnection, strCommand, ServiceLogger, ServiceLang );
 				else if ( SQLType == SQLStatementType.Delete )
-					ResultSetResult = DBEngine.executePlainDeleteCommand( DBConnection, strSQL, ServiceLogger, ServiceLang );
+					ResultSetResult = DBEngine.executePlainDeleteCommand( DBConnection, strCommand, ServiceLogger, ServiceLang );
 				else if ( SQLType == SQLStatementType.Call ) {
 				
 					//int intInternalFetchSize = Integer.parseInt( (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Internal_Fetch_Size, null ) );
 
-					ResultSetResult = DBEngine.executePlainCallableStatement( DBConnection, strSQL, intInternalFetchSize, ServiceLogger, ServiceLang );
+					ResultSetResult = DBEngine.executePlainCallableStatement( DBConnection, strCommand, intInternalFetchSize, ServiceLogger, ServiceLang );
 				
 				}	
 				else if ( SQLType == SQLStatementType.DDL )
-					ResultSetResult = DBEngine.executePlainDDLCommand( DBConnection, strSQL, ServiceLogger, ServiceLang );
+					ResultSetResult = DBEngine.executePlainDDLCommand( DBConnection, strCommand, ServiceLogger, ServiceLang );
 
 				if ( ResultSetResult != null ) {
 
@@ -271,20 +284,28 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 		        			
 		            }	
 
+					long lngStart = System.currentTimeMillis();
+		            
 		            ResponseFormat.formatResultSet( Response, ResultSetResult, DBEngine, intInternalFetchSize, strResponseFormatVersion, ConfigDBConnection!=null?ConfigDBConnection.strDateTimeFormat:(String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_DateTime_Format, null ), ConfigDBConnection!=null?ConfigDBConnection.strDateFormat:(String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_Date_Format, null ), ConfigDBConnection!=null?ConfigDBConnection.strTimeFormat:(String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_Time_Format, null ), true, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang );
 
+					long lngEnd = System.currentTimeMillis();
+		            
 		            if ( ServiceLogger != null ) { //Trace how much time in format data
 		            	
 		        		if ( ServiceLang != null )   
-		        			ServiceLogger.logInfo( "0x2502", ServiceLang.translate( "End response format data set" ) );
+		        			ServiceLogger.logInfo( "0x2502", ServiceLang.translate( "End response format data set on [%s] ms", Long.toString( lngEnd - lngStart ) ) );
 		        		else
-		        			ServiceLogger.logInfo( "0x2502", "End response format data set" );
+		        			ServiceLogger.logInfo( "0x2502", String.format( "End response format data set on [%s] ms", Long.toString( lngEnd - lngStart ) ) );
 		        			
 		            }
 
 		            //Response.getWriter().print( strResponseBuffer );
 
 					DBEngine.closeResultSetResultStatement( ResultSetResult, ServiceLogger, ServiceLang );
+					
+					//System.out.println( strCommand );
+					
+		            MasterDBReplicator.addPlainQueryCommandToQueue( strTransactionID, strCommand, ConfigDBConnection.strName, ServiceLogger, ServiceLang );
 					
 					bResult = true;
 					
@@ -293,7 +314,7 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 
 					if ( ServiceLogger != null ) {
 
-						ServiceLogger.logError( "-1007", ServiceLang.translate( "The SQL statement [%s] is invalid for transaction id: [%s]", strSQL, strTransactionID ) );        
+						ServiceLogger.logError( "-1007", ServiceLang.translate( "The SQL statement [%s] is invalid for transaction id: [%s]", strCommand, strTransactionID ) );        
 
 					}
 
@@ -336,19 +357,40 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 		
 	}
 	
-	public boolean ExecuteComplexSQL( CConfigNativeDBConnection ConfigDBConnection, CAbstractDBConnection DBConnection, CAbstractDBEngine DBEngine, String strSQL, int intInternalFetchSize, HttpServletRequest Request, HttpServletResponse Response, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion, String strTransactionID ) {
+	public LinkedHashMap<String,String> getRequestParams( CAbstractDBEngine DBEngine, String strCommand, HttpServletRequest Request ) {
+		
+		LinkedHashMap<String,String> Result = new LinkedHashMap<String,String>();
+		
+		LinkedHashMap<String,Integer> QueryParams = DBEngine.getQueryParams( strCommand ); 
+		
+		for ( Entry<String,Integer> QueryParam: QueryParams.entrySet() ) {
+			
+			String QueryParamName = QueryParam.getKey();
+			String QueryParamValue = Request.getParameter( QueryParamName );
+			
+			Result.put( QueryParamName, QueryParamValue );
+			
+		}
+		
+		return Result;
+		
+	}
+	
+	public boolean executeComplexCommand( CConfigNativeDBConnection ConfigDBConnection, CAbstractDBConnection DBConnection, CAbstractDBEngine DBEngine, String strCommand, int intInternalFetchSize, HttpServletRequest Request, HttpServletResponse Response, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion, String strTransactionID ) {
 		
 		boolean bResult = false;
 		
 		try {
 			
-			SQLStatementType SQLType = DBEngine.getSQLStatementType( strSQL, ServiceLogger, ServiceLang );
+			SQLStatementType SQLType = DBEngine.getSQLStatementType( strCommand, ServiceLogger, ServiceLang );
 
 			if ( SQLType == SQLStatementType.Select ) { //Select
 
 				//int intInternalFetchSize = Integer.parseInt( (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Internal_Fetch_Size, null ) );
 				
-				ArrayList<CResultSetResult> ResultsSets = DBEngine.executeComplexQueyCommand( DBConnection, intInternalFetchSize, Request, getMacrosTypes(), getMacrosNames(), getMacrosNames(), ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strSQL, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
+				//ConfigDBConnection.
+				
+				ArrayList<CResultSetResult> ResultsSets = DBEngine.executeComplexQueyCommand( DBConnection, intInternalFetchSize, Request, getMacrosTypes(), getMacrosNames(), getMacrosNames(), ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strCommand, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
 				
 				if ( ResultsSets != null && ResultsSets.size() > 0 ) {
 					
@@ -364,19 +406,27 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 		        			
 		            }	
 					
+					long lngStart = System.currentTimeMillis();
+					
 					ResponseFormat.formatResultsSets( Response, ResultsSets, DBEngine, intInternalFetchSize, strResponseFormatVersion, ConfigDBConnection!=null?ConfigDBConnection.strDateTimeFormat:(String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_DateTime_Format, null ), ConfigDBConnection!=null?ConfigDBConnection.strDateFormat:(String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_Date_Format, null ), ConfigDBConnection!=null?ConfigDBConnection.strTimeFormat:(String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_Time_Format, null ), true, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang, 1 );
 
-		            if ( ServiceLogger != null ) { //Trace how much time in format data
+					long lngEnd = System.currentTimeMillis();
+					
+					if ( ServiceLogger != null ) { //Trace how much time in format data
 		            	
 		        		if ( ServiceLang != null )   
-		        			ServiceLogger.logInfo( "0x2502", ServiceLang.translate( "End response format data set" ) );
+		        			ServiceLogger.logInfo( "0x2502", ServiceLang.translate( "End response format data set on [%s] ms", Long.toString( lngEnd - lngStart ) ) );
 		        		else
-		        			ServiceLogger.logInfo( "0x2502", "End response format data set" );
+		        			ServiceLogger.logInfo( "0x2502", String.format( "End response format data set on [%s] ms", Long.toString( lngEnd - lngStart ) ) );
 		        			
 		            }
 
 		            //Response.getWriter().print( strResponseBuffer );
 
+					LinkedHashMap<String,String> Params = this.getRequestParams( DBEngine, strCommand, Request );
+					
+		            MasterDBReplicator.addComplexQueryCommandToQueue( strTransactionID, strCommand, ConfigDBConnection.strName, Params, ServiceLogger, ServiceLang );
+					
 					bResult = true;
 					
 				}
@@ -384,7 +434,7 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 					
 					if ( ServiceLogger != null ) {
 
-						ServiceLogger.logError( "-1010", ServiceLang.translate( "The SQL statement [%s] not has results for transaction id: [%s]", strSQL, strTransactionID ) );        
+						ServiceLogger.logError( "-1010", ServiceLang.translate( "The SQL statement [%s] not has results for transaction id: [%s]", strCommand, strTransactionID ) );        
 
 					}
 
@@ -404,20 +454,20 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 				ArrayList<CResultSetResult> ResultSetsResults = null;
 				
 				if ( SQLType == SQLStatementType.Insert )
-					ResultSetsResults = DBEngine.executeComplexInsertCommand( DBConnection, Request, getMacrosTypes(), getMacrosNames(), getMacrosNames(), ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strSQL, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
+					ResultSetsResults = DBEngine.executeComplexInsertCommand( DBConnection, Request, getMacrosTypes(), getMacrosNames(), getMacrosNames(), ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strCommand, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
 				else if ( SQLType == SQLStatementType.Update )
-					ResultSetsResults = DBEngine.executeComplexUpdateCommand( DBConnection, Request, getMacrosTypes(), getMacrosNames(), getMacrosNames(), ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strSQL, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
+					ResultSetsResults = DBEngine.executeComplexUpdateCommand( DBConnection, Request, getMacrosTypes(), getMacrosNames(), getMacrosNames(), ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strCommand, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
 				else if ( SQLType == SQLStatementType.Delete )
-					ResultSetsResults = DBEngine.executeComplexDeleteCommand( DBConnection, Request, getMacrosTypes(), getMacrosNames(), getMacrosNames(), ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strSQL, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
+					ResultSetsResults = DBEngine.executeComplexDeleteCommand( DBConnection, Request, getMacrosTypes(), getMacrosNames(), getMacrosNames(), ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strCommand, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
 				else if ( SQLType == SQLStatementType.Call ) {
 				
 					//int intInternalFetchSize = Integer.parseInt( (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Internal_Fetch_Size, null ) );
 
-					ResultSetsResults = DBEngine.executeComplexCallableStatement( DBConnection, intInternalFetchSize, Request, getMacrosTypes(), getMacrosNames(), getMacrosNames(), ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strSQL, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
+					ResultSetsResults = DBEngine.executeComplexCallableStatement( DBConnection, intInternalFetchSize, Request, getMacrosTypes(), getMacrosNames(), getMacrosNames(), ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strCommand, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
 
 				}	
 				else if ( SQLType == SQLStatementType.DDL )
-					ResultSetsResults = DBEngine.executeComplexDDLCommand( DBConnection, Request, getMacrosTypes(), getMacrosNames(), getMacrosNames(), ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strSQL, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
+					ResultSetsResults = DBEngine.executeComplexDDLCommand( DBConnection, Request, getMacrosTypes(), getMacrosNames(), getMacrosNames(), ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strCommand, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
 
 				if ( ResultSetsResults != null ) {
 					
@@ -433,20 +483,28 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 		        			
 		            }	
 					
+					long lngStart = System.currentTimeMillis();
+		            
 					ResponseFormat.formatResultsSets( Response, ResultSetsResults, DBEngine, intInternalFetchSize, strResponseFormatVersion, ConfigDBConnection!=null?ConfigDBConnection.strDateTimeFormat:(String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_DateTime_Format, null ), ConfigDBConnection!=null?ConfigDBConnection.strDateFormat:(String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_Date_Format, null ), ConfigDBConnection!=null?ConfigDBConnection.strTimeFormat:(String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_Time_Format, null ), true, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang, 0 );
-		    		
-		            if ( ServiceLogger != null ) { //Trace how much time in format data
+
+					long lngEnd = System.currentTimeMillis();
+
+					if ( ServiceLogger != null ) { //Trace how much time in format data
 		            	
 		        		if ( ServiceLang != null )   
-		        			ServiceLogger.logInfo( "0x2502", ServiceLang.translate( "End response format data set" ) );
+		        			ServiceLogger.logInfo( "0x2502", ServiceLang.translate( "End response format data set on [%s] ms", Long.toString( lngEnd - lngStart ) ) );
 		        		else
-		        			ServiceLogger.logInfo( "0x2502", "End response format data set" );
+		        			ServiceLogger.logInfo( "0x2502", String.format( "End response format data set on [%s] ms", Long.toString( lngEnd - lngStart ) ) );
 		        			
 		            }
-
+		            
 		            //Response.getWriter().print( strResponseBuffer );
 
 					DBEngine.closeResultSetResultStatement( ResultSetsResults, ServiceLogger, ServiceLang );
+					
+					LinkedHashMap<String,String> Params = this.getRequestParams( DBEngine, strCommand, Request );
+					
+		            MasterDBReplicator.addComplexQueryCommandToQueue( strTransactionID, strCommand, ConfigDBConnection.strName, Params, ServiceLogger, ServiceLang );
 					
 					bResult = true;
 					
@@ -455,7 +513,7 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 					
 					if ( ServiceLogger != null ) {
 
-						ServiceLogger.logError( "-1011", ServiceLang.translate( "The SQL statement [%s] not has results for transaction id: [%s]", strSQL, strTransactionID ) );        
+						ServiceLogger.logError( "-1011", ServiceLang.translate( "The SQL statement [%s] not has results for transaction id: [%s]", strCommand, strTransactionID ) );        
 
 					}
 
@@ -472,7 +530,7 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 				
 				if ( ServiceLogger != null ) {
 
-					ServiceLogger.logError( "-1009", ServiceLang.translate( "The SQL statement [%s] type is unkown for transaction id: [%s]", strSQL, strTransactionID ) );        
+					ServiceLogger.logError( "-1009", ServiceLang.translate( "The SQL statement [%s] type is unkown for transaction id: [%s]", strCommand, strTransactionID ) );        
 
 				}
 				
@@ -541,7 +599,7 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 										if ( SystemExecuteSQLConfig.bLogSQLStatement )
 											ServiceLogger.logInfo( "2", strSQL );        
 
-										if ( this.CheckExpressionsFilters( LocalConfigDBConnection.strSessionKey, strSQL ) == true ) {
+										if ( this.checkExpressionsFilters( LocalConfigDBConnection.strSessionKey, strSQL ) == true ) {
 
 											boolean bPlainSQLStatment = DBEngine.checkPlainSQLStatement( strSQL, ServiceLogger, ServiceLang );
 
@@ -561,7 +619,7 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 													
 												}
 
-												if ( this.ExecutePlainSQL( LocalConfigDBConnection, DBConnection, DBEngine, strSQL, intInternalFetchSize, Response, ResponseFormat, strResponseFormatVersion, strTransactionID ) == true ) {
+												if ( this.executePlainCommand( LocalConfigDBConnection, DBConnection, DBEngine, strSQL, intInternalFetchSize, Response, ResponseFormat, strResponseFormatVersion, strTransactionID ) == true ) {
 
 													intResultCode = 1;
 
@@ -573,10 +631,14 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 
 														ServiceLogger.logInfo( "0x1502", ServiceLang.translate( "Success commit transaction with SessionKey: [%s], SecurityTokenID: [%s], TransactionID: [%s], Database: [%s]", LocalConfigDBConnection.strSessionKey, strSecurityTokenID, strTransactionID, LocalConfigDBConnection.strName ) );        
 														
+											            MasterDBReplicator.addPlainQueryCommandToQueue( strTransactionID, "commit-auto", LocalConfigDBConnection.strName, ServiceLogger, ServiceLang );
+														
 													}
 													else if ( LocalConfigDBConnection.bAutoCommit == true ) {
 														
 														ServiceLogger.logInfo( "0x1502", ServiceLang.translate( "Success commit transaction with SessionKey: [%s], SecurityTokenID: [%s], TransactionID: [%s], Database: [%s]", LocalConfigDBConnection.strSessionKey, strSecurityTokenID, strTransactionID, LocalConfigDBConnection.strName ) );        
+
+											            MasterDBReplicator.addPlainQueryCommandToQueue( strTransactionID, "commit-auto", LocalConfigDBConnection.strName, ServiceLogger, ServiceLang );
 														
 													}
 													
@@ -596,7 +658,7 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 													
 												}
 												
-												if ( this.ExecuteComplexSQL( LocalConfigDBConnection, DBConnection, DBEngine, strSQL, intInternalFetchSize, Request, Response, ResponseFormat, strResponseFormatVersion, strTransactionID ) == true ) {
+												if ( this.executeComplexCommand( LocalConfigDBConnection, DBConnection, DBEngine, strSQL, intInternalFetchSize, Request, Response, ResponseFormat, strResponseFormatVersion, strTransactionID ) == true ) {
 
 													intResultCode = 1;
 
@@ -605,6 +667,17 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 													if ( LocalConfigDBConnection.bAutoCommit == false && strCommit != null && strCommit.equals( "1" ) ) {
 														
 														DBEngine.commit( DBConnection, ServiceLogger, ServiceLang );
+														
+														ServiceLogger.logInfo( "0x1502", ServiceLang.translate( "Success commit transaction with SessionKey: [%s], SecurityTokenID: [%s], TransactionID: [%s], Database: [%s]", LocalConfigDBConnection.strSessionKey, strSecurityTokenID, strTransactionID, LocalConfigDBConnection.strName ) );        
+														
+											            MasterDBReplicator.addPlainQueryCommandToQueue( strTransactionID, "commit-auto", LocalConfigDBConnection.strName, ServiceLogger, ServiceLang );
+														
+													}
+													else if ( LocalConfigDBConnection.bAutoCommit == true ) {
+														
+														ServiceLogger.logInfo( "0x1502", ServiceLang.translate( "Success commit transaction with SessionKey: [%s], SecurityTokenID: [%s], TransactionID: [%s], Database: [%s]", LocalConfigDBConnection.strSessionKey, strSecurityTokenID, strTransactionID, LocalConfigDBConnection.strName ) );        
+
+											            MasterDBReplicator.addPlainQueryCommandToQueue( strTransactionID, "commit-auto", LocalConfigDBConnection.strName, ServiceLogger, ServiceLang );
 														
 													}
 													

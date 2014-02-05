@@ -54,7 +54,7 @@ public abstract class CAbstractConfigLoader implements IMessageObject {
 		
 	}
 	
-	public boolean loadConfigSection( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
+	public boolean loadConfigSection( Node ConfigSectionNode, CExtendedLogger Logger, CLanguage Lang ) {
 
 		boolean bResult = true;
 
@@ -91,7 +91,7 @@ public abstract class CAbstractConfigLoader implements IMessageObject {
 		
 	}
 	
-	public boolean loadConfig( String strConfigFilePath, CLanguage Lang, CExtendedLogger Logger ) {
+	public boolean loadConfig( String strConfigFilePath, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		boolean bResult = true;
 
@@ -132,7 +132,7 @@ public abstract class CAbstractConfigLoader implements IMessageObject {
 
 		            	if ( ConfigSectionNode != null ) {
 		            		
-		            		if ( loadConfigSection( ConfigSectionNode, Lang, Logger ) == false ) {
+		            		if ( loadConfigSection( ConfigSectionNode, Logger, Lang ) == false ) {
 
 		            			bResult = false;
 

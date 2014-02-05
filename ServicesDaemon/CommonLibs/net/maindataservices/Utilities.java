@@ -271,6 +271,32 @@ public class Utilities {
     	return intResult;
     	
     }
+
+    public static long strToLong( String strStringToConvert ) {
+        
+    	return strToLong( strStringToConvert, null );
+    
+    }
+    
+    public static long strToLong( String strStringToConvert, CExtendedLogger Logger ) {
+    	
+    	long lngResult = 0;
+    	
+    	try {
+    		
+           lngResult = Long.parseLong( strStringToConvert );
+    	
+    	}
+    	catch ( Exception Ex ) {
+    		
+    		if ( Logger != null )   
+    	       Logger.logException( "-1015", Ex.getMessage(), Ex );        
+    		
+    	}
+    	
+    	return lngResult;
+    	
+    }
     
     public static boolean checkStringIsInteger( String strStringToTest, CExtendedLogger Logger ) {
     	

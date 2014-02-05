@@ -639,7 +639,7 @@ public class CProgramRunner implements IMessageObject {
 		
 	 	//this.testCache( MasterCacheEngine );
 	 	
-		if ( GlobalConfig.loadConfig( this.strRunningPath + ConstantsCommonClasses._Conf_File, ServicesDaemonLang, ServicesDaemonLogger ) == true ) {
+		if ( GlobalConfig.loadConfig( this.strRunningPath + ConstantsCommonClasses._Conf_File, ServicesDaemonLogger, ServicesDaemonLang ) == true ) {
         	
 		 	GlobalConfig.InitArgs = InitArgs; //Save the init arguments
 			
@@ -693,7 +693,7 @@ public class CProgramRunner implements IMessageObject {
 		}
 		else if ( strMessageName.equals( ConstantsMessagesCodes._Server_Running ) ) {
 			
-			if ( MainServer != null && MainServer.isRunning() ) {
+			if ( MainServer != null ) {
 				
 				return true;
 				
