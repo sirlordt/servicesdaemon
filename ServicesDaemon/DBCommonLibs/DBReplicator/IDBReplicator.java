@@ -30,7 +30,7 @@ public interface IDBReplicator { //extend Thread
     public LinkedList<IDBChannelReplicator> getChannelsReplicator();
     public int getChannelsReplicatorCount();
     
-	public void rotateReplicationStoreFile( CExtendedLogger Logger, CLanguage Lang );
+	public void rotateReplicationStoreFile( boolean bForceRotation, boolean bLockWriter, CExtendedLogger Logger, CLanguage Lang );
     
 	public boolean addComplexQueryCommandToQueue( String strTransactionID, String strCommand, String strSourceDBConnectionName, LinkedHashMap<String,String> Params, CExtendedLogger Logger, CLanguage Lang );
 	public boolean addPlainQueryCommandToQueue( String strTransactionID, String strCommand, String strSourceDBConnectionName, CExtendedLogger Logger, CLanguage Lang  );

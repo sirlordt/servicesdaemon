@@ -8,6 +8,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
@@ -33,6 +35,7 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
 	protected static final String _End_Command = "[/CommandEnd]";
 	protected static final String _Param = "Param=\"";
 	protected static final String _End_Command_Block = "]]></Command>";
+	protected static final String _Header = "<Header ";
 
 	public static final String _ReplicationStorageName = "ReplicationStorageFiles.txt";
 	public static final String _ReplicationStorageCommandID = "ReplicationStorageCommandID.txt";
@@ -69,6 +72,14 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
 	
 	protected CLanguage Lang;
 	
+	File ReplicationStoreFilePath;
+	
+	SimpleDateFormat DF; 
+	SimpleDateFormat TF; 
+	
+	String strHeaderData;
+	int intHeaderLength;
+	
     public boolean initialize( String strRunningPath, String strName, String strSourceDBConnectionName, long lngMaxStoreFileSize, long lngOnFailGoSleepFor, CExtendedLogger Logger, CLanguage Lang ) {
 
     	boolean bResult = false;
@@ -78,6 +89,8 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
 		try {
 
 			bStopNow = false;
+			
+			intHeaderLength = 0;
 			
 			this.strRunningPath = strRunningPath;
 
@@ -99,32 +112,48 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
 		
 			ReplicationStoreFiles = this.loadReplicationStorageFiles( strReplicationStorePath + _ReplicationStorageName, Logger, Lang );
 
+			DF = new SimpleDateFormat( "dd/MM/yyy" ); 
+			TF = new SimpleDateFormat( "HH/mm/ss" ); 
+			
+			String strStoreID = "";
+			
 			if ( ReplicationStoreFiles.size() > 0 ) {
 
 				strCurrentReplicationStoreFile = ReplicationStoreFiles.get( ReplicationStoreFiles.size() - 1 );
 
-				this.rotateReplicationStoreFile( Logger, Lang );
+				this.rotateReplicationStoreFile( false, true, Logger, Lang );
+
+				if ( ReplicationStoreFilePath == null )
+					ReplicationStoreFilePath = new File( strReplicationStorePath + strCurrentReplicationStoreFile );
 				
 			}
 			else {
 
-				strCurrentReplicationStoreFile = strName + "." + UUID.randomUUID().toString();
+				strStoreID = UUID.randomUUID().toString();
+				
+				strCurrentReplicationStoreFile = strName + "." + strStoreID;
 
 				ReplicationStoreFiles.add( strCurrentReplicationStoreFile ); 
 
 				this.saveReplicationStorageFiles( ReplicationStoreFiles, strReplicationStorePath + _ReplicationStorageName, Logger, Lang );
 
+				ReplicationStoreFilePath = new File( strReplicationStorePath + strCurrentReplicationStoreFile );
+				
 			}
 			
 
 			if ( CurrentReplicationStoreFileWriter == null ) {
 				
-				File ReplicationStoreFilePath = new File( strReplicationStorePath + strCurrentReplicationStoreFile );
-
 				if ( ReplicationStoreFilePath.exists() )
 					CurrentReplicationStoreFileWriter = new PrintWriter( new FileOutputStream( ReplicationStoreFilePath, true ) );
 				else
 					CurrentReplicationStoreFileWriter = new PrintWriter( new FileOutputStream( ReplicationStoreFilePath ) );
+				
+				strHeaderData = _Header + "CreatedDate=\"" + DF.format( new Date() ) + "\" CreatedTime=\"" + TF.format( new Date() )  + "\" StoreID=\"" + strStoreID + "\" />"; 
+						
+				intHeaderLength = strHeaderData.length();	
+				
+				CurrentReplicationStoreFileWriter.println( strHeaderData );
 				
 			}
 			
@@ -338,36 +367,52 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
 		
 	} 
 	
-	public void rotateReplicationStoreFile( CExtendedLogger Logger, CLanguage Lang ) {
+	public void rotateReplicationStoreFile( boolean bForceRotation, boolean bLockWriter, CExtendedLogger Logger, CLanguage Lang ) {
 
-		boolean bLockWriter = false;
+		boolean bForceReleaseWriter = false;
 		
 		try {
 			
-			File ReplicationStoreFilePath = new File( strReplicationStorePath + strCurrentReplicationStoreFile );
+			if ( bLockWriter ) {
+			
+				LockWriter.acquire();
+			
+				bForceReleaseWriter = true;
+			
+			}	
+			
+			if ( ReplicationStoreFilePath.length() >= lngMaxStoreFileSize || bForceRotation ) {
 
-			if ( ReplicationStoreFilePath.length() >= lngMaxStoreFileSize ) {
-
-				strCurrentReplicationStoreFile = strName + "." + UUID.randomUUID().toString();
+				String strStoreID = UUID.randomUUID().toString();
+				
+				strCurrentReplicationStoreFile = strName + "." + strStoreID;
 
 				ReplicationStoreFiles.add( strCurrentReplicationStoreFile ); 
 
 				this.saveReplicationStorageFiles( ReplicationStoreFiles, strReplicationStorePath + "ReplicationStorageFiles.txt", Logger, Lang );
 
-				LockWriter.acquire();
-				
-				bLockWriter = true;
-				
 				if ( CurrentReplicationStoreFileWriter != null )
 					CurrentReplicationStoreFileWriter.close();
 				
-				CurrentReplicationStoreFileWriter = new PrintWriter( strReplicationStorePath + strCurrentReplicationStoreFile );
+				ReplicationStoreFilePath = new File( strReplicationStorePath + strCurrentReplicationStoreFile );
 
-				LockWriter.release();
+				CurrentReplicationStoreFileWriter = new PrintWriter( ReplicationStoreFilePath );
+
+				strHeaderData = _Header + "CreatedDate=\"" + DF.format( new Date() ) + "\" CreatedTime=\"" + TF.format( new Date() )  + "\" StoreID=\"" + strStoreID + "\" />";
 				
-				bLockWriter = false;
+				intHeaderLength = strHeaderData.length();	
+				
+				CurrentReplicationStoreFileWriter.println( strHeaderData );
 				
 			}
+			
+			if ( bLockWriter ) {
+			
+				LockWriter.release();
+				
+				bForceReleaseWriter = false;
+				
+			}	
 			
 		}
     	catch ( Error Err ) {
@@ -383,7 +428,7 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
 
     	}
 		
-		if ( bLockWriter ) {
+		if ( bForceReleaseWriter ) {
 			
 			LockWriter.release();
 			
@@ -401,29 +446,49 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
 
 				if ( ExpFilters == null || ExpFilters.checkExpressionInFilters( strCommand , Logger ) ) {	
 
-					LockWriter.acquire();
-
-					CurrentReplicationStoreFileWriter.println( _Start_Command_Block );
+					StringBuilder CommandBlock = new StringBuilder();
+					
+					CommandBlock.append( _Start_Command_Block + "\n" );
+					CommandBlock.append( _Transaction_ID + strTransactionID + "\n" );
+					CommandBlock.append( _Command_ID + UUID.randomUUID().toString() + "\n" );
+					CommandBlock.append( _Init_Command + "\n" );
+					CommandBlock.append( strCommand + "\n" );
+					CommandBlock.append( _End_Command + "\n" );
+					
+					/*CurrentReplicationStoreFileWriter.println( _Start_Command_Block );
 					CurrentReplicationStoreFileWriter.println( _Transaction_ID + strTransactionID );
 					CurrentReplicationStoreFileWriter.println( _Command_ID + UUID.randomUUID().toString() );
 					CurrentReplicationStoreFileWriter.println( _Init_Command );
 					CurrentReplicationStoreFileWriter.println( strCommand );
-					CurrentReplicationStoreFileWriter.println( _End_Command );
+					CurrentReplicationStoreFileWriter.println( _End_Command );*/
 
 					for ( Entry<String,String> Param : Params.entrySet() ) {
 
-						CurrentReplicationStoreFileWriter.println( _Param + Param.getKey() + "\"=" + Param.getValue() );
+						//CurrentReplicationStoreFileWriter.println( _Param + Param.getKey() + "\"=" + Param.getValue() );
+						CommandBlock.append( _Param + Param.getKey() + "\"=" + Param.getValue() + "\n" );
 
 					}
 
-					CurrentReplicationStoreFileWriter.println( _End_Command_Block );
+					//CurrentReplicationStoreFileWriter.println( _End_Command_Block );
+					CommandBlock.append( _End_Command_Block + "\n" );
+
+					LockWriter.acquire();
+
+					if ( ReplicationStoreFilePath.length() >= intHeaderLength && ReplicationStoreFilePath.length() + CommandBlock.length() > lngMaxStoreFileSize ) {
+						
+						this.rotateReplicationStoreFile( true, false, Logger, Lang );  //Force rotate store file for don't exceed the max size of replication store file
+						
+					}
+					
+					CurrentReplicationStoreFileWriter.print( CommandBlock.toString() );
 					CurrentReplicationStoreFileWriter.flush();
 
 					bResult = true;
 
+					this.rotateReplicationStoreFile( false, false, Logger, Lang ); //Rotate only if need
+
 					LockWriter.release();
 
-					this.rotateReplicationStoreFile( Logger, Lang );
 
 				}
 
@@ -457,22 +522,39 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
 
 				if ( ExpFilters == null || ExpFilters.checkExpressionInFilters( strCommand , Logger ) ) {	
 
-					LockWriter.acquire();
-
-					CurrentReplicationStoreFileWriter.println( _Start_Command_Block );
+					StringBuilder CommandBlock = new StringBuilder();
+					
+					CommandBlock.append( _Start_Command_Block + "\n" );
+					CommandBlock.append( _Transaction_ID + strTransactionID + "\n" );
+					CommandBlock.append( _Command_ID + UUID.randomUUID().toString() + "\n" );
+					CommandBlock.append( _Init_Command + "\n" );
+					CommandBlock.append( strCommand + "\n" );
+					CommandBlock.append( _End_Command + "\n" );
+					CommandBlock.append( _End_Command_Block + "\n" );
+					/*CurrentReplicationStoreFileWriter.println( _Start_Command_Block );
 					CurrentReplicationStoreFileWriter.println( _Transaction_ID + strTransactionID );
 					CurrentReplicationStoreFileWriter.println( _Command_ID + UUID.randomUUID().toString() );
 					CurrentReplicationStoreFileWriter.println( _Init_Command );
 					CurrentReplicationStoreFileWriter.println( strCommand );
 					CurrentReplicationStoreFileWriter.println( _End_Command );
-					CurrentReplicationStoreFileWriter.println( _End_Command_Block );
+					CurrentReplicationStoreFileWriter.println( _End_Command_Block );*/
+
+					LockWriter.acquire();
+					
+					if ( ReplicationStoreFilePath.length() >= intHeaderLength && ReplicationStoreFilePath.length() + CommandBlock.length() > lngMaxStoreFileSize ) {
+						
+						this.rotateReplicationStoreFile( true, false, Logger, Lang ); //Force rotate store file for don't exceed the max size of replication store file
+						
+					}
+					
+					CurrentReplicationStoreFileWriter.print( CommandBlock.toString() );
 					CurrentReplicationStoreFileWriter.flush();
 
 					bResult = true;
 
-					LockWriter.release();
+					this.rotateReplicationStoreFile( false, false, Logger, Lang ); //Rotate only if need
 
-					this.rotateReplicationStoreFile( Logger, Lang );
+					LockWriter.release();
 
 				}
 

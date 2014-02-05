@@ -79,7 +79,7 @@ public class CHTTPDBChannelReplicator implements IDBChannelReplicator {
 
 				this.strReplicatorStorePath = strReplicatorStorePath;
 				
-				this.strReplicatorStorePathTemp = strReplicatorStorePath + "Temp" + File.pathSeparator;
+				this.strReplicatorStorePathTemp = strReplicatorStorePath + "Temp" + File.separatorChar;
 
 				new File( this.strReplicatorStorePathTemp ).mkdirs();
 				

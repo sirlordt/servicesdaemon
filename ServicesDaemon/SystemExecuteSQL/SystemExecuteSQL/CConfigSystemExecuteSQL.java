@@ -790,10 +790,10 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
 											}
 											else {
 												
-												lngMaxStoreFileSize = ConstantsConfigXMLTags._Store_File_Size;
+												lngMaxStoreFileSize = ConstantsConfigXMLTags._Min_Store_File_Size;
 												
 												Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is out of range. Must be integer value in the next inclusive range, minimum [%s] and maximum [%s]", ConstantsConfigXMLTags._Max_Store_File_Size, NodeAttribute.getNodeValue(), Long.toString( ConstantsConfigXMLTags._Min_Store_File_Size ), Long.toString( Long.MAX_VALUE ) ) );
-										    	Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is invalid, using the default value [%s]", ConstantsConfigXMLTags._Max_Store_File_Size, NodeAttribute.getNodeValue(), Long.toString( ConstantsConfigXMLTags._Store_File_Size ) ) );
+										    	Logger.logWarning( "-1", Lang.translate( "The [%s] attribute value [%s] is invalid, using the default value [%s]", ConstantsConfigXMLTags._Max_Store_File_Size, NodeAttribute.getNodeValue(), Long.toString( ConstantsConfigXMLTags._Min_Store_File_Size ) ) );
 												
 											}
 											
