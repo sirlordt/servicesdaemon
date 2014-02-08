@@ -41,7 +41,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 	public int intSocketTimeout;
 	
 	public String strTempDir;
-	public String strDBServicesDir;
+	public String strServicesDir;
 	public String strDBDriversDir;
 	public String strDBEnginesDir;
 	public String strResponsesFormatsDir;
@@ -109,7 +109,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 		bFirstLevelConfigSectionsMustExists.add( true );
 		
 		strTempDir = strRunningPath + ConstantsCommonClasses._Temp_Dir; //"Temp/";
-		strDBServicesDir = strRunningPath + ConstantsServicesManager._DB_Services_Dir; //"DBServices/"; 
+		strServicesDir = strRunningPath + ConstantsServicesManager._Services_Dir; //"DBServices/"; 
 		strDBDriversDir = strRunningPath + ConstantsServicesManager._DB_Drivers_Dir; //"DBDrivers/";
 		strDBEnginesDir = strRunningPath + ConstantsServicesManager._DB_Engines_Dir; //"DBEnginess/";
 		strResponsesFormatsDir = strRunningPath + ConstantsCommonClasses._Responses_Formats_Dir; //"ResponsesFormats/";
@@ -291,17 +291,17 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 						}
 						else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._DBServices_Dir ) ) {
 
-							this.strDBServicesDir = NodeAttribute.getNodeValue();
+							this.strServicesDir = NodeAttribute.getNodeValue();
 		
-					        if ( this.strDBServicesDir != null && this.strDBServicesDir.isEmpty() == false && new File( this.strDBServicesDir ).isAbsolute() == false ) {
+					        if ( this.strServicesDir != null && this.strServicesDir.isEmpty() == false && new File( this.strServicesDir ).isAbsolute() == false ) {
 
-					        	this.strDBServicesDir = this.strRunningPath + this.strDBServicesDir;
+					        	this.strServicesDir = this.strRunningPath + this.strServicesDir;
 						        	
 						    }
 
-					        Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]", "strDBServicesDir", this.strDBServicesDir ) );
+					        Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]", "strDBServicesDir", this.strServicesDir ) );
 				        
-					        if ( Utilities.checkDir( this.strDBServicesDir, Logger, Lang ) == false ) {
+					        if ( Utilities.checkDir( this.strServicesDir, Logger, Lang ) == false ) {
 						    	
 					        	bResult = false;
 					        	
@@ -555,9 +555,9 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 		            	}
 				        else if ( strAttributesOrder[ intAttributesIndex ].equals( ConstantsConfigXMLTags._DBServices_Dir ) ) {
 		            		
-					        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute not found, using the default value [%s]", ConstantsConfigXMLTags._DBServices_Dir, this.strDBServicesDir ) );
+					        Logger.logWarning( "-1", Lang.translate( "The [%s] attribute not found, using the default value [%s]", ConstantsConfigXMLTags._DBServices_Dir, this.strServicesDir ) );
 
-					        if ( Utilities.checkDir( this.strDBServicesDir, Logger, Lang ) == false ) {
+					        if ( Utilities.checkDir( this.strServicesDir, Logger, Lang ) == false ) {
 						    	
 					        	bResult = false;
 					        	

@@ -128,7 +128,7 @@ public class CHTTPDBChannelReplicator implements IDBChannelReplicator {
 	}
 
 	@Override
-	public boolean sendData( String strTransactionID, String strCommandID, String strCommand, LinkedHashMap<String, String> Params, CExtendedLogger Logger, CLanguage Lang ) {
+	public boolean sendData( String strStoreID, String strTransactionID, String strCommandID, String strCommand, LinkedHashMap<String, String> Params, CExtendedLogger Logger, CLanguage Lang ) {
 
 		boolean bResult = false;
 		
@@ -139,6 +139,7 @@ public class CHTTPDBChannelReplicator implements IDBChannelReplicator {
     		ArrayList<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
     		urlParameters.add( new BasicNameValuePair( "ServiceName", "System.Replicate.Command" ) );
     		urlParameters.add( new BasicNameValuePair( "InstanceID", strInstanceID ) );
+    		urlParameters.add( new BasicNameValuePair( "StoreID", strStoreID ) );
     		urlParameters.add( new BasicNameValuePair( "TransactionID", strTransactionID ) );
     		urlParameters.add( new BasicNameValuePair( "CommandID", strCommandID ) );
     		urlParameters.add( new BasicNameValuePair( "Command", strCommand ) );
@@ -147,7 +148,7 @@ public class CHTTPDBChannelReplicator implements IDBChannelReplicator {
     		urlParameters.add( new BasicNameValuePair( "Database", ConfigHTTPDBChannelReplicator.strDatabase ) );
     		urlParameters.add( new BasicNameValuePair( "ResponseFormat", CBackendServicesManager._ResponseFormat ) );
     		urlParameters.add( new BasicNameValuePair( "ResponseFormatVersion", CBackendServicesManager._ResponseFormatVersion ) );
-        	
+    		
         	if ( Params.size() > 0 ) {
 
         		for ( Entry<String,String> Param : Params.entrySet() ) {
@@ -173,7 +174,7 @@ public class CHTTPDBChannelReplicator implements IDBChannelReplicator {
 					
 					String strCode = Result.get( 0 ).get( "Code" );
 					
-					if ( strCode != null && strCode.equals( "1000" ) ) {
+					if ( strCode != null && Integer.parseInt( strCode ) >= 1000 ) { //1000 = OK, 1001 = Block ok but CommandID field contains ID repeated
 					
 						bResult = true;
 					

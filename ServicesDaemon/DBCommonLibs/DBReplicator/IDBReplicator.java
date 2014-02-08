@@ -35,6 +35,6 @@ public interface IDBReplicator { //extend Thread
 	public boolean addComplexQueryCommandToQueue( String strTransactionID, String strCommand, String strSourceDBConnectionName, LinkedHashMap<String,String> Params, CExtendedLogger Logger, CLanguage Lang );
 	public boolean addPlainQueryCommandToQueue( String strTransactionID, String strCommand, String strSourceDBConnectionName, CExtendedLogger Logger, CLanguage Lang  );
 	
-	public boolean sendData( String strTransactionID, String strCommandID, String strCommand, LinkedHashMap<String,String> Params, CExtendedLogger Logger, CLanguage Lang );
+	public boolean sendData( String strStoreID, String strTransactionID, String strCommandID, String strCommand, LinkedHashMap<String,String> Params, CExtendedLogger Logger, CLanguage Lang );
 	
 }

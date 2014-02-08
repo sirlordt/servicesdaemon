@@ -19,7 +19,7 @@ public interface ConstantsServicesManager {
 	public static final String _Main_File_Log = _Main_File + ".log";
 	public static final String _Security_Manager_Name = _Main_File + ".SecurityManager";
 
-	public static final String _DB_Services_Dir = "DBServices/"; 
+	public static final String _Services_Dir = "DBServices/"; 
 	public static final String _DB_Drivers_Dir = "DBDrivers/";
 	public static final String _DB_Engines_Dir = "DBEngines/";
 	public static final String _Logger_Name = "DBServicesManagerLogger"; 

@@ -49,7 +49,7 @@ public class CServicesManager extends CAbstractServicesManager {
 	
 	public static CConfigServicesManager ConfigServicesManager = null;;
 	
-	public static HashMap<String, CAbstractService> RegisteredDBServices = null;
+	public static HashMap<String, CAbstractService> RegisteredServices = null;
 	
     protected CNativeDBConnectionsManager DBConnectionsManager;
 	
@@ -61,7 +61,7 @@ public class CServicesManager extends CAbstractServicesManager {
     
     static {
     	
-    	RegisteredDBServices = new HashMap<String,CAbstractService>();
+    	RegisteredServices = new HashMap<String,CAbstractService>();
     	
     }
 	
@@ -282,7 +282,7 @@ public class CServicesManager extends CAbstractServicesManager {
 			ServiceLoader<CDBAbstractService> sl = ServiceLoader.load( CDBAbstractService.class );
 			sl.reload();
 
-			RegisteredDBServices.clear();
+			RegisteredServices.clear();
 
 			Iterator<CDBAbstractService> it = sl.iterator();
 
@@ -294,7 +294,7 @@ public class CServicesManager extends CAbstractServicesManager {
 
 					if ( ServiceInstance.initializeService( ServicesDaemonConfig, ConfigServicesManager ) == true ) {
 
-						RegisteredDBServices.put( ServiceInstance.getServiceName().toLowerCase(), ServiceInstance );
+						RegisteredServices.put( ServiceInstance.getServiceName().toLowerCase(), ServiceInstance );
 
 						ConfigServicesManager.Logger.logMessage( "1", ConfigServicesManager.Lang.translate( "Registered service: [%s] description: [%s] version: [%s]", ServiceInstance.getServiceName().toLowerCase(), ServiceInstance.getServiceDescription(), ServiceInstance.getServiceVersion() ) );        
 
@@ -321,9 +321,9 @@ public class CServicesManager extends CAbstractServicesManager {
 
 			}
     		
-			ConfigServicesManager.Logger.logMessage( "1", ConfigServicesManager.Lang.translate( "Count of services registered: [%s]", Integer.toString( RegisteredDBServices.size() ) ) );        
+			ConfigServicesManager.Logger.logMessage( "1", ConfigServicesManager.Lang.translate( "Count of services registered: [%s]", Integer.toString( RegisteredServices.size() ) ) );        
 
-			bResult = RegisteredDBServices.size() > 0;
+			bResult = RegisteredServices.size() > 0;
 
     	} 
 		catch ( Exception Ex ) {
@@ -383,7 +383,7 @@ public class CServicesManager extends CAbstractServicesManager {
     					if ( this.loadAndRegisterResponsesFormats( ServicesDaemonConfig ) == true ) {
 
     						//Load DB services class
-    						ClassPathLoader.LoadClassFiles( ConfigServicesManager.strDBServicesDir, ConstantsCommonClasses._Lib_Ext, 2, DBServicesManagerLogger, DBServicesManagerLang ); //Permit owner dir
+    						ClassPathLoader.LoadClassFiles( ConfigServicesManager.strServicesDir, ConstantsCommonClasses._Lib_Ext, 2, DBServicesManagerLogger, DBServicesManagerLang ); //Permit owner dir
 
     						if ( this.loadAndRegisterDBServices( ServicesDaemonConfig ) == true ) {
 
@@ -394,7 +394,7 @@ public class CServicesManager extends CAbstractServicesManager {
     						}
     						else {
 
-    							DBServicesManagerLogger.logError( "-1004", DBServicesManagerLang.translate( "No databases services found in path [%s]", ConfigServicesManager.strDBServicesDir ) );
+    							DBServicesManagerLogger.logError( "-1004", DBServicesManagerLang.translate( "No databases services found in path [%s]", ConfigServicesManager.strServicesDir ) );
 
     						}
 
@@ -435,10 +435,10 @@ public class CServicesManager extends CAbstractServicesManager {
     @Override
     public boolean postInitManager( CConfigServicesDaemon ServicesDaemonConfig, LinkedHashMap<String,Object> InfoData ) {
     	
-		InfoData.put( "RegisteredDBServices", RegisteredDBServices );
+		InfoData.put( "RegisteredDBServices", RegisteredServices );
 		
     	//Do call PostInitializeService of registered services
-    	for ( Entry<String, CAbstractService> Entry : RegisteredDBServices.entrySet() ) {
+    	for ( Entry<String, CAbstractService> Entry : RegisteredServices.entrySet() ) {
     		
     		try {
 
@@ -483,9 +483,9 @@ public class CServicesManager extends CAbstractServicesManager {
     @Override
     public boolean endManager( CConfigServicesDaemon ServicesDaemonConfig ) {
     	
-    	if ( RegisteredDBServices != null ) {
+    	if ( RegisteredServices != null ) {
     	
-    		for ( Entry<String,CAbstractService> Entry : RegisteredDBServices.entrySet() ) {
+    		for ( Entry<String,CAbstractService> Entry : RegisteredServices.entrySet() ) {
 
     			try {
 
@@ -512,7 +512,7 @@ public class CServicesManager extends CAbstractServicesManager {
 
     		}
 
-    		RegisteredDBServices.clear();
+    		RegisteredServices.clear();
     	
     	}
     	
@@ -637,7 +637,7 @@ public class CServicesManager extends CAbstractServicesManager {
         			   
         		   }*/
         		   
-        		   CAbstractService Service = RegisteredDBServices.get( strServiceName.toLowerCase() );
+        		   CAbstractService Service = RegisteredServices.get( strServiceName.toLowerCase() );
 
         		   if ( Service != null ) {
 
@@ -646,7 +646,7 @@ public class CServicesManager extends CAbstractServicesManager {
         				   if ( strRequestSecurityTokenID == null )
         					   strRequestSecurityTokenID = "";
         				   
-        				   Service.executeService( 1, Request, Response,  strRequestSecurityTokenID, RegisteredDBServices, ResponseFormat, strRequestResponseFormatVersion );
+        				   Service.executeService( 1, Request, Response,  strRequestSecurityTokenID, RegisteredServices, ResponseFormat, strRequestResponseFormatVersion );
 
         			   }
         			  else if ( strRequestSecurityTokenID != null && strRequestSecurityTokenID.equals( "" ) == false ) {
@@ -656,7 +656,7 @@ public class CServicesManager extends CAbstractServicesManager {
 
         				   if ( SecurityTokensManager.checkSecurityTokenID( strRequestSecurityTokenID, ConfigServicesManager.Logger, ConfigServicesManager.Lang ) == true ) {
 
-        					   int intResultCode = Service.executeService( 1, Request, Response,  strRequestSecurityTokenID, RegisteredDBServices, ResponseFormat, strRequestResponseFormatVersion );
+        					   int intResultCode = Service.executeService( 1, Request, Response,  strRequestSecurityTokenID, RegisteredServices, ResponseFormat, strRequestResponseFormatVersion );
         					   
         					   if ( intResultCode < 0 ) {
         						   
