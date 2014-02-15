@@ -18,9 +18,10 @@ import java.util.concurrent.Semaphore;
 
 import CommonClasses.CExpresionsFilters;
 import CommonClasses.CLanguage;
+import CommonClasses.ConstantsCommonClasses;
 import ExtendedLogger.CExtendedLogger;
 
-public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  //extends Thread
+public class CPlainTextDBReplicatorStore extends Thread implements IDBReplicator {  //extends Thread
 
 	protected static final String _Go_Sleep = "go_sleep";
 
@@ -36,10 +37,11 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
 	protected static final String _Param = "Param=\"";
 	protected static final String _Command_Block_Length = "CommandBlockLength=";
 	protected static final String _End_Command_Block = "]]></CommandBlock>";
+	protected static final String _XML_Header = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n";
 	protected static final String _Header = "<Header ";
 
-	public static final String _ReplicationStorageName = "ReplicationStorageFiles.txt";
-	public static final String _ReplicationStorageCommandID = "ReplicationStorageCommandID.txt";
+	public static final String _ReplicatorStorageFilesIndex = "ReplicatorStorageFilesIndex.txt";
+	public static final String _ReplicatorCurrentStorageCommandID = "ReplicatorCurrentStorageCommandID.txt";
 	
 	protected String strRunningPath;
 	
@@ -57,13 +59,13 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
 	
 	protected CExpresionsFilters ExpFilters;
 	
-	protected String strReplicationStorePath;
+	protected String strReplicatorStorePath;
 
-	protected LinkedList<String> ReplicationStoreFiles; 
+	protected LinkedList<String> ReplicatorStoreFilesIndex; 
 	
-	protected String strCurrentReplicationStoreFile;
+	protected String strCurrentReplicatorStoreFile;
 	
-	protected PrintWriter CurrentReplicationStoreFileWriter;
+	protected PrintWriter CurrentReplicatorStoreFileWriter;
 	
 	protected String strCurrentCommandID;
 	
@@ -73,7 +75,7 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
 	
 	protected CLanguage Lang;
 	
-	File ReplicationStoreFilePath;
+	File ReplicatorStoreFilePath;
 	
 	SimpleDateFormat DF; 
 	SimpleDateFormat TF; 
@@ -81,7 +83,7 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
 	String strHeaderData;
 	int intHeaderLength;
 	
-	String strStoreID;
+	String strDataBlockID;
 	
     public boolean initialize( String strRunningPath, String strName, String strSourceDBConnectionName, long lngMaxStoreFileSize, long lngOnFailGoSleepFor, CExtendedLogger Logger, CLanguage Lang ) {
 
@@ -109,54 +111,54 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
 			
 			DBChannelsReplicatorRegistered = new LinkedList<IDBChannelReplicator>();
 			
-			strReplicationStorePath = strRunningPath + "Replication" + File.separatorChar + strName + File.separatorChar;
+			strReplicatorStorePath = strRunningPath + "Replicator" + File.separatorChar + strName + File.separatorChar;
 
-			new File( strReplicationStorePath ).mkdirs();
+			new File( strReplicatorStorePath ).mkdirs();
 		
-			ReplicationStoreFiles = this.loadReplicationStorageFiles( strReplicationStorePath + _ReplicationStorageName, Logger, Lang );
+			ReplicatorStoreFilesIndex = this.loadReplicationStorageFilesIndex( strReplicatorStorePath + _ReplicatorStorageFilesIndex, Logger, Lang );
 
 			DF = new SimpleDateFormat( "dd/MM/yyy" ); 
-			TF = new SimpleDateFormat( "HH/mm/ss" ); 
+			TF = new SimpleDateFormat( "HH:mm:ss:SSS" ); 
 			
-			strStoreID = "";
+			strDataBlockID = "";
 			
-			if ( ReplicationStoreFiles.size() > 0 ) {
+			if ( ReplicatorStoreFilesIndex.size() > 0 ) {
 
-				strCurrentReplicationStoreFile = ReplicationStoreFiles.get( ReplicationStoreFiles.size() - 1 );
+				strCurrentReplicatorStoreFile = ReplicatorStoreFilesIndex.get( ReplicatorStoreFilesIndex.size() - 1 );
 
 				this.rotateReplicationStoreFile( false, true, Logger, Lang );
 
-				if ( ReplicationStoreFilePath == null )
-					ReplicationStoreFilePath = new File( strReplicationStorePath + strCurrentReplicationStoreFile );
+				if ( ReplicatorStoreFilePath == null )
+					ReplicatorStoreFilePath = new File( strReplicatorStorePath + strCurrentReplicatorStoreFile );
 				
 			}
 			else {
 
-				strStoreID = UUID.randomUUID().toString();
+				strDataBlockID = UUID.randomUUID().toString();
 				
-				strCurrentReplicationStoreFile = strName + "." + strStoreID;
+				strCurrentReplicatorStoreFile = strName + "." + strDataBlockID;
 
-				ReplicationStoreFiles.add( strCurrentReplicationStoreFile ); 
+				ReplicatorStoreFilesIndex.add( strCurrentReplicatorStoreFile ); 
 
-				this.saveReplicationStorageFiles( ReplicationStoreFiles, strReplicationStorePath + _ReplicationStorageName, Logger, Lang );
+				this.saveReplicationStorageFilesIndex( ReplicatorStoreFilesIndex, strReplicatorStorePath + _ReplicatorStorageFilesIndex, Logger, Lang );
 
-				ReplicationStoreFilePath = new File( strReplicationStorePath + strCurrentReplicationStoreFile );
+				ReplicatorStoreFilePath = new File( strReplicatorStorePath + strCurrentReplicatorStoreFile );
 				
 			}
 			
-
-			if ( CurrentReplicationStoreFileWriter == null ) {
+			if ( CurrentReplicatorStoreFileWriter == null ) {
 				
-				if ( ReplicationStoreFilePath.exists() )
-					CurrentReplicationStoreFileWriter = new PrintWriter( new FileOutputStream( ReplicationStoreFilePath, true ) );
+				if ( ReplicatorStoreFilePath.exists() )
+					CurrentReplicatorStoreFileWriter = new PrintWriter( new FileOutputStream( ReplicatorStoreFilePath, true ) );
 				else
-					CurrentReplicationStoreFileWriter = new PrintWriter( new FileOutputStream( ReplicationStoreFilePath ) );
+					CurrentReplicatorStoreFileWriter = new PrintWriter( new FileOutputStream( ReplicatorStoreFilePath ) );
 				
-				strHeaderData = _Header + "CreatedDate=\"" + DF.format( new Date() ) + "\" CreatedTime=\"" + TF.format( new Date() )  + "\" StoreID=\"" + strStoreID + "\" />"; 
+				strHeaderData = _XML_Header;
+				strHeaderData += _Header + "CreatedDate=\"" + DF.format( new Date() ) + "\" CreatedTime=\"" + TF.format( new Date() )  + "\" DataBlockID=\"" + strDataBlockID + "\" />\n"; 
 						
 				intHeaderLength = strHeaderData.length();	
 				
-				CurrentReplicationStoreFileWriter.println( strHeaderData );
+				CurrentReplicatorStoreFileWriter.println( strHeaderData );
 				
 			}
 			
@@ -199,7 +201,7 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
 
     public String getReplicationStorePath() {
     	
-    	return strReplicationStorePath;
+    	return strReplicatorStorePath;
     	
     }
     
@@ -221,7 +223,7 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
     	
     }
     
-	protected LinkedList<String> loadReplicationStorageFiles( String strFilePath, CExtendedLogger Logger, CLanguage Lang ) {
+	protected LinkedList<String> loadReplicationStorageFilesIndex( String strFilePath, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		LinkedList<String> Result = new LinkedList<String>();
 		
@@ -262,19 +264,19 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
 		
 	}
 	
-	protected synchronized void saveReplicationStorageFiles( LinkedList<String> ReplicationStoreFiles, String strFilePath, CExtendedLogger Logger, CLanguage Lang ) {
+	protected synchronized void saveReplicationStorageFilesIndex( LinkedList<String> ReplicationStoreFilesIndex, String strFilePath, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		try {
 			
-			File ReplicationStorageFiles = new File( strFilePath );
+			File ReplicationStorageFilesIndex = new File( strFilePath );
 
-			ReplicationStorageFiles.delete();
+			ReplicationStorageFilesIndex.delete();
 			
-			if ( ReplicationStorageFiles.exists() == false ) {
+			if ( ReplicationStorageFilesIndex.exists() == false ) {
 
 				BufferedWriter writer = new BufferedWriter( new FileWriter( strFilePath ) );
 
-				for ( String strLine: ReplicationStoreFiles ) {
+				for ( String strLine: ReplicationStoreFilesIndex ) {
 
 					writer.write( strLine + "\n" );
 
@@ -342,7 +344,6 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
 		
 	} 
 	
-	
 	protected void saveCurrentCommandID( String strCurrentRecordID, String strFilePath, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		try {
@@ -372,50 +373,39 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
 	
 	public void rotateReplicationStoreFile( boolean bForceRotation, boolean bLockWriter, CExtendedLogger Logger, CLanguage Lang ) {
 
-		boolean bForceReleaseWriter = false;
-		
 		try {
 			
 			if ( bLockWriter ) {
 			
 				LockWriter.acquire();
 			
-				bForceReleaseWriter = true;
-			
 			}	
 			
-			if ( ReplicationStoreFilePath.length() >= lngMaxStoreFileSize || bForceRotation ) {
+			if ( ReplicatorStoreFilePath.length() >= lngMaxStoreFileSize || bForceRotation ) {
 
-				strStoreID = UUID.randomUUID().toString();
+				strDataBlockID = UUID.randomUUID().toString();
 				
-				strCurrentReplicationStoreFile = strName + "." + strStoreID;
+				strCurrentReplicatorStoreFile = strName + "." + strDataBlockID;
 
-				ReplicationStoreFiles.add( strCurrentReplicationStoreFile ); 
+				ReplicatorStoreFilesIndex.add( strCurrentReplicatorStoreFile ); 
 
-				this.saveReplicationStorageFiles( ReplicationStoreFiles, strReplicationStorePath + "ReplicationStorageFiles.txt", Logger, Lang );
+				this.saveReplicationStorageFilesIndex( ReplicatorStoreFilesIndex, strReplicatorStorePath + "ReplicationStorageFiles.txt", Logger, Lang );
 
-				if ( CurrentReplicationStoreFileWriter != null )
-					CurrentReplicationStoreFileWriter.close();
+				if ( CurrentReplicatorStoreFileWriter != null )
+					CurrentReplicatorStoreFileWriter.close();
 				
-				ReplicationStoreFilePath = new File( strReplicationStorePath + strCurrentReplicationStoreFile );
+				ReplicatorStoreFilePath = new File( strReplicatorStorePath + strCurrentReplicatorStoreFile );
 
-				CurrentReplicationStoreFileWriter = new PrintWriter( ReplicationStoreFilePath );
+				CurrentReplicatorStoreFileWriter = new PrintWriter( ReplicatorStoreFilePath );
 
-				strHeaderData = _Header + "CreatedDate=\"" + DF.format( new Date() ) + "\" CreatedTime=\"" + TF.format( new Date() )  + "\" StoreID=\"" + strStoreID + "\" />";
+				strHeaderData = _XML_Header;
+				strHeaderData += _Header + "CreatedDate=\"" + DF.format( new Date() ) + "\" CreatedTime=\"" + TF.format( new Date() )  + "\" DataBlockID=\"" + strDataBlockID + "\" />\n";
 				
 				intHeaderLength = strHeaderData.length();	
 				
-				CurrentReplicationStoreFileWriter.println( strHeaderData );
+				CurrentReplicatorStoreFileWriter.println( strHeaderData );
 				
 			}
-			
-			if ( bLockWriter ) {
-			
-				LockWriter.release();
-				
-				bForceReleaseWriter = false;
-				
-			}	
 			
 		}
     	catch ( Error Err ) {
@@ -430,14 +420,43 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
     			Logger.logException( "-1021", Ex.getMessage(), Ex );
 
     	}
-		
-		if ( bForceReleaseWriter ) {
+		finally {
 			
-			LockWriter.release();
+			if ( bLockWriter ) {
+				
+				LockWriter.release();
+				
+			}	
 			
 		}
 		
 	}
+	
+	protected boolean checkExpressionsFilters( String strCommand, CExtendedLogger Logger ) {
+		
+		boolean bResult = false;
+		
+		if ( ExpFilters == null ) {
+			
+			bResult = true;
+			
+		}
+		else if ( ExpFilters.checkExpressionInFilters( strCommand, Logger ) ) {
+			
+			if ( ExpFilters.strType.equalsIgnoreCase( ConstantsCommonClasses._Type_Allow ) )
+				bResult = true;
+			
+		}
+		else {
+			
+			if ( ExpFilters.strType.equalsIgnoreCase( ConstantsCommonClasses._Type_Block ) )
+				bResult = true;
+			
+		}
+		
+		return bResult;
+		
+	} 
 	
 	public boolean addComplexQueryCommandToQueue( String strTransactionID, String strCommand, String strSourceDBConnectionName, LinkedHashMap<String,String> Params, CExtendedLogger Logger, CLanguage Lang ) {
 
@@ -447,7 +466,7 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
 		
 			try {
 
-				if ( ExpFilters == null || ExpFilters.checkExpressionInFilters( strCommand , Logger ) ) {	
+				if ( checkExpressionsFilters( strCommand, Logger ) ) {	
 
 					StringBuilder CommandBlock = new StringBuilder();
 					
@@ -475,29 +494,36 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
 					//CurrentReplicationStoreFileWriter.println( _End_Command_Block );
 					CommandBlock.append( _End_Command_Block + "\n" );
 
+					int intOrigNumberLength = Long.toString( CommandBlock.length() ).length();
+					
 					String strCommandBlockLength = _Command_Block_Length + Integer.toString( CommandBlock.length() ) + "\n";
 					
 					long lngTotal = CommandBlock.length() + strCommandBlockLength.length();
+					
+					int intLastNumberLength = Long.toString( lngTotal ).length();
+					
+					if ( intLastNumberLength > intOrigNumberLength ) {
+					
+						lngTotal += intLastNumberLength - intOrigNumberLength;
+						
+					}
 					
 					CommandBlock.insert( CommandBlock.length(), _Command_Block_Length + Long.toString( lngTotal ) + "\n" );
 					
 					LockWriter.acquire();
 
-					if ( ReplicationStoreFilePath.length() >= intHeaderLength && ReplicationStoreFilePath.length() + CommandBlock.length() > lngMaxStoreFileSize ) {
+					if ( ReplicatorStoreFilePath.length() >= intHeaderLength && ReplicatorStoreFilePath.length() + CommandBlock.length() > lngMaxStoreFileSize ) {
 						
 						this.rotateReplicationStoreFile( true, false, Logger, Lang );  //Force rotate store file for don't exceed the max size of replication store file
 						
 					}
 					
-					CurrentReplicationStoreFileWriter.print( CommandBlock.toString() );
-					CurrentReplicationStoreFileWriter.flush();
+					CurrentReplicatorStoreFileWriter.print( CommandBlock.toString() );
+					CurrentReplicatorStoreFileWriter.flush();
 
 					bResult = true;
 
 					this.rotateReplicationStoreFile( false, false, Logger, Lang ); //Rotate only if need
-
-					LockWriter.release();
-
 
 				}
 
@@ -514,7 +540,12 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
 					Logger.logException( "-1021", Ex.getMessage(), Ex );
 
 			}
-		
+			finally {
+
+				LockWriter.release();
+
+			}
+
 		}
 		
 		return bResult;
@@ -529,7 +560,7 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
 		
 			try {
 
-				if ( ExpFilters == null || ExpFilters.checkExpressionInFilters( strCommand , Logger ) ) {	
+				if ( checkExpressionsFilters( strCommand, Logger ) ) {	
 
 					StringBuilder CommandBlock = new StringBuilder();
 					
@@ -539,7 +570,7 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
 					CommandBlock.append( _Init_Command + "\n" );
 					CommandBlock.append( strCommand + "\n" );
 					CommandBlock.append( _End_Command + "\n" );
-					CommandBlock.append( _Command_Block_Length + Integer.toString( CommandBlock.length() ) + "\n" );
+					//CommandBlock.append( _Command_Block_Length + Integer.toString( CommandBlock.length() ) + "\n" );
 					CommandBlock.append( _End_Command_Block + "\n" );
 					/*CurrentReplicationStoreFileWriter.println( _Start_Command_Block );
 					CurrentReplicationStoreFileWriter.println( _Transaction_ID + strTransactionID );
@@ -549,28 +580,36 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
 					CurrentReplicationStoreFileWriter.println( _End_Command );
 					CurrentReplicationStoreFileWriter.println( _End_Command_Block );*/
 
+					int intOrigNumberLength = Long.toString( CommandBlock.length() ).length();
+					
 					String strCommandBlockLength = _Command_Block_Length + Integer.toString( CommandBlock.length() ) + "\n";
 					
 					long lngTotal = CommandBlock.length() + strCommandBlockLength.length();
+					
+					int intLastNumberLength = Long.toString( lngTotal ).length();
+					
+					if ( intLastNumberLength > intOrigNumberLength ) {
+					
+						lngTotal += intLastNumberLength - intOrigNumberLength;
+						
+					}
 					
 					CommandBlock.insert( CommandBlock.length(), _Command_Block_Length + Long.toString( lngTotal ) + "\n" );
 					
 					LockWriter.acquire();
 					
-					if ( ReplicationStoreFilePath.length() >= intHeaderLength && ReplicationStoreFilePath.length() + CommandBlock.length() > lngMaxStoreFileSize ) {
+					if ( ReplicatorStoreFilePath.length() >= intHeaderLength && ReplicatorStoreFilePath.length() + CommandBlock.length() > lngMaxStoreFileSize ) {
 						
 						this.rotateReplicationStoreFile( true, false, Logger, Lang ); //Force rotate store file for don't exceed the max size of replication store file
 						
 					}
 					
-					CurrentReplicationStoreFileWriter.print( CommandBlock.toString() );
-					CurrentReplicationStoreFileWriter.flush();
+					CurrentReplicatorStoreFileWriter.print( CommandBlock.toString() );
+					CurrentReplicatorStoreFileWriter.flush();
 
 					bResult = true;
 
 					this.rotateReplicationStoreFile( false, false, Logger, Lang ); //Rotate only if need
-
-					LockWriter.release();
 
 				}
 
@@ -587,6 +626,11 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
 					Logger.logException( "-1021", Ex.getMessage(), Ex );
 
 			}
+			finally {
+				
+				LockWriter.release();
+				
+			} 
 
 		}
 		
@@ -692,11 +736,10 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
 		return bTaskRunningLock;
 		
 	} 
-	
 
-	public boolean sendData( String strStoreID, String strTransactionID, String strCommandID, String strCommand, LinkedHashMap<String,String> Params, CExtendedLogger Logger, CLanguage Lang ) {
+	public boolean sendData( String strDataBlockID, String strTransactionID, String strCommandID, String strCommand, LinkedHashMap<String,String> Params, CExtendedLogger Logger, CLanguage Lang ) {
 		
-		boolean bResult = true;
+		boolean bResult = DBChannelsReplicatorRegistered.size() > 0;
 
 		try {
 
@@ -704,7 +747,7 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
 				
 				IDBChannelReplicator DBChannelReplicator = DBChannelsReplicatorRegistered.get( intChannelIndex );
 
-				if ( DBChannelReplicator.sendData( strStoreID, strTransactionID, strCommandID, strCommand, Params, Logger, Lang ) == false ) {
+				if ( DBChannelReplicator.sendData( strDataBlockID, strTransactionID, strCommandID, strCommand, Params, Logger, Lang ) == false ) {
 
 					Logger.logError( "-1001", Lang.translate( "Failed to send data to channel [%s] stoped the replication", DBChannelReplicator.getName() ) );        
 					bResult = false;
@@ -716,7 +759,7 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
 				
 			}
 			
-			if ( bResult )
+			if ( bResult || DBChannelsReplicatorRegistered.size() == 0 )
 				intCurrentDBReplicatorChannelIndex = 0;
 			
 		} 
@@ -737,18 +780,18 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
 		
 	}
 	
-	//Override
+	@Override
 	public void run() {
 		
 		try {
 	
-			strCurrentCommandID = this.loadCurrentCommandID( strReplicationStorePath + _ReplicationStorageCommandID, Logger, Lang );
+			strCurrentCommandID = this.loadCurrentCommandID( strReplicatorStorePath + _ReplicatorCurrentStorageCommandID, Logger, Lang );
 
 			LinkedHashMap<String,String> Params = new LinkedHashMap<String,String>(); 
 
 			while ( bStopNow == false ) {
 				
-				RandomAccessFile reader = this.getCursorLastPosition( strCurrentCommandID, new File( strReplicationStorePath + ReplicationStoreFiles.get( 0 ) ), Logger, Lang );
+				RandomAccessFile reader = this.getCursorLastPosition( strCurrentCommandID, new File( strReplicatorStorePath + ReplicatorStoreFilesIndex.get( 0 ) ), Logger, Lang );
 				
 				if ( reader != null ) {
 					
@@ -794,7 +837,7 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
 						}
 						else if ( strLine.startsWith( _Param ) ) {
 
-							strLine = strLine.substring( 6 );
+							strLine = strLine.substring( _Param.length() );
 							
 							int intIndexToken = strLine.indexOf( "\"=" );
 							
@@ -807,12 +850,12 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
 						}
 						else if ( strLine.startsWith( _End_Command_Block ) ) {
 
-							if ( this.sendData( strStoreID, strTransactionID, strCommandID, strCommand, Params, Logger, Lang ) ) {
+							if ( this.sendData( strDataBlockID, strTransactionID, strCommandID, strCommand, Params, Logger, Lang ) ) {
 							
 								//Save the new RecordID position
 								strCurrentCommandID = strCommandID;
 
-								this.saveCurrentCommandID( strCurrentCommandID, strReplicationStorePath + _ReplicationStorageCommandID, Logger, Lang ); 							
+								this.saveCurrentCommandID( strCurrentCommandID, strReplicatorStorePath + _ReplicatorCurrentStorageCommandID, Logger, Lang ); 							
 							
 							}
 							else {
@@ -828,17 +871,17 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
 					
 					if ( strLine == null ) { //The end of file reached
 
-						if ( ReplicationStoreFiles.size() > 1 ) { //Not remove the store file maybe the file is not full yet. Wait at another file on queue before do remove 
+						if ( ReplicatorStoreFilesIndex.size() > 1 ) { //Not remove the store file maybe the file is not full yet. Wait at another file on queue before do remove 
 						
-							new File( strReplicationStorePath + ReplicationStoreFiles.get( 0 ) ).delete(); //Delete from disk the file
+							new File( strReplicatorStorePath + ReplicatorStoreFilesIndex.get( 0 ) ).delete(); //Delete from disk the file
 
-							synchronized ( ReplicationStoreFiles ) {
+							synchronized ( ReplicatorStoreFilesIndex ) {
 
-								ReplicationStoreFiles.remove( 0 ); //Remove from the index 
+								ReplicatorStoreFilesIndex.remove( 0 ); //Remove from the index 
 
 							}
 
-							this.saveReplicationStorageFiles( ReplicationStoreFiles, strReplicationStorePath + _ReplicationStorageName, Logger, Lang ); //Save the disk the new index
+							this.saveReplicationStorageFilesIndex( ReplicatorStoreFilesIndex, strReplicatorStorePath + _ReplicatorStorageFilesIndex, Logger, Lang ); //Save the disk the new index
 
 						}
 						
@@ -875,6 +918,5 @@ public class CPlainTextDBReplicator extends Thread implements IDBReplicator {  /
     	}
 		
 	}
-
 	
 }

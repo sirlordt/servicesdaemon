@@ -18,9 +18,16 @@ import java.net.URLDecoder;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -732,8 +739,7 @@ public class Utilities {
 		return strResult;
 		
 	}
- 
-	
+ 	
     public static String replaceToHTMLEntity( String strToFindAndReplace ) {
 		
         strToFindAndReplace = strToFindAndReplace.replaceAll( "&", "&amp;" );
@@ -745,7 +751,6 @@ public class Utilities {
 		return strToFindAndReplace;
 		
 	}
-	
 	
 	public static ArrayList<String> extractTokens( String strStartToken, String strEndToken, String strExpression ) {
 		
@@ -780,7 +785,6 @@ public class Utilities {
 		return Result;
 		
 	}
-
     
 	public final static String getJarFolder( Class<?> ClassDef ) {
 
@@ -829,7 +833,6 @@ public class Utilities {
     	return s;
     	
     }
-
     
 	public final static String getJarFolder( Class<?> ClassDef, CExtendedLogger Logger ) {
 
@@ -879,7 +882,6 @@ public class Utilities {
     	return s;
     	
     }
-    
 
 	public static int getSystemLoad( boolean bIncludeSystemMemoryUsage ) {
     	
@@ -916,7 +918,6 @@ public class Utilities {
     	return intSystemLoad;
     	
     }
-    
     
 	public static ArrayList<String> getNetAddressList( CExtendedLogger Logger, boolean bIncludeLocalHost ) {
     	
@@ -969,7 +970,6 @@ public class Utilities {
     	return Result;
     	
     }
-    
 
     public static ArrayList<String> getNetAddressList( CExtendedLogger Logger, boolean bIncludeLocalHost, boolean bOnlyIPV4, boolean bOnlyIPV6 ) {
     	
@@ -1027,7 +1027,6 @@ public class Utilities {
     	
     }
 
-
     public static boolean checkFileExt( File FileToTest, String strFileExtensions[] ) {
     	
     	if ( strFileExtensions != null ) {
@@ -1044,7 +1043,6 @@ public class Utilities {
     	return false;
     	
     }
-    
 
     public static void cleanupDirectory( File FileOrDirectory, String arrExcludesExt[], int intCurrentLevelDeep ) {
     	
@@ -1092,7 +1090,6 @@ public class Utilities {
     	}
     	
     }
-
 
     public static boolean cleanupDirectory( File FileOrDirectory, String arrExcludesExt[], int intCurrentLevelDeep, CExtendedLogger Logger ) {
     	
@@ -1146,7 +1143,6 @@ public class Utilities {
     	return false;
     	
     }
-    
 
     public static void recursiveDelete( File FileOrDirectory ) {
         
@@ -1177,7 +1173,6 @@ public class Utilities {
     	}
     	
     }   
-
 
     public static void recursiveDelete( File FileOrDirectory, CExtendedLogger Logger ) {
         
@@ -1212,5 +1207,78 @@ public class Utilities {
     	}
     	
     }   
+
+    public static File[] recursiveFindFilesToLoad( String strPath, String strFileExtension, int intMaxDepth, int intActuakDepth ) {
+    	
+        Vector<File> vUrls = new Vector<File>();
+
+        File Directory = new File( strPath );
+ 
+        if ( Directory.exists() && Directory.isDirectory() ) {
+            
+            File[] ListFoundFile = Directory.listFiles(); 
+         
+			Arrays.sort( ListFoundFile );
+            
+            for ( File FileFound : ListFoundFile ) {
+                
+            	if ( FileFound.isDirectory() == true && FileFound.canRead() == true ) { 
+            	
+            		if ( intActuakDepth + 1 <= intMaxDepth ) {  
+            			
+            			File[] DeepListFoundFile = recursiveFindFilesToLoad( FileFound.getAbsolutePath(), strFileExtension, intMaxDepth, intActuakDepth + 1 );
+            		
+                        for ( File DeepFileFound : DeepListFoundFile ) {
+  
+                    		vUrls.add(  DeepFileFound );
+                        }
+            		
+            		}	
+            	
+            	}	
+            	else if ( FileFound.isFile() == true && FileFound.getAbsolutePath().endsWith( strFileExtension ) == true ) {
+            	
+            		vUrls.add(  FileFound );
+
+            	}	
+            
+            }
+        
+        }
+
+        return vUrls.toArray( new File[0] );
+        
+    }
+    
+    //Taked from http://javawithswaranga.blogspot.com/2011/06/generic-method-to-sort-hashmap.html
+    //Original author: Swaranga Sarma g+ profile on https://plus.google.com/116998045991621590873  
+    public static  < K, V extends Comparable< ? super V >  >  Map< K, V > sortMapByValues( final Map < K, V > mapToSort ) {  
+        
+    	List< Map.Entry < K, V >  >  entries = new ArrayList< Map.Entry < K, V >  >( mapToSort.size() );    
+      
+        entries.addAll( mapToSort.entrySet() );  
+      
+        Collections.sort( entries, new Comparator< Map.Entry < K, V >  >() {  
+            
+        	@Override  
+            public int compare( final Map.Entry< K, V >  entry1, final Map.Entry< K, V >  entry2 ) {  
+                
+        		return entry1.getValue().compareTo( entry2.getValue() );  
+            
+        	}  
+        	
+        });        
+      
+        Map< K, V > sortedMap = new LinkedHashMap< K, V >();        
+      
+        for ( Map.Entry< K, V > entry : entries ) {
+        	
+            sortedMap.put( entry.getKey(), entry.getValue() );  
+        
+        }        
+      
+        return sortedMap;
+        
+    }  	
     
 }

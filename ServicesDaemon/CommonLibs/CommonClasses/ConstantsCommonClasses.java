@@ -158,4 +158,10 @@ public interface ConstantsCommonClasses {
 	public final static int _Register_Manager_Frecuency               = 5000;
 	public final static int _Minimal_Register_Manager_Frecuency       = 5000;
 	
+	public static final String _Type_Allow = "allow";
+	public static final String _Type_Block = "block";
+	public static final String _Type_Exact = "exact";
+	public static final String _Type_Partial = "partial";
+	public static final String _Type_RExp = "rexp";
+	
 }

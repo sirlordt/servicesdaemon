@@ -8,7 +8,7 @@
  * Contributors:
  *     SirLordT <sirlordt@gmail.com> - initial API and implementation
  ******************************************************************************/
-package SystemExecuteSQL;
+package SystemExecuteDBCommand;
 
 import java.sql.Types;
 import java.util.ArrayList;
@@ -41,13 +41,13 @@ import CommonClasses.ConstantsMessagesCodes;
 import DBCommonClasses.CDBAbstractService;
 import DBReplicator.CMasterDBReplicator;
 
-public class CSystemExecuteSQL extends CDBAbstractService {
+public class CSystemExecuteDBCommand extends CDBAbstractService {
 
-	protected CConfigSystemExecuteSQL SystemExecuteSQLConfig = null;
+	protected CConfigSystemExecuteDBCommand SystemExecuteSQLConfig = null;
 	
 	protected CMasterDBReplicator MasterDBReplicator = null;
 	
-	public CSystemExecuteSQL() {
+	public CSystemExecuteDBCommand() {
 		
 		super();
     	
@@ -65,7 +65,7 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 			this.bCheckParametersLeftovers = false;
 			this.bAuthRequired = true;
 			this.strRunningPath = net.maindataservices.Utilities.getJarFolder( this.getClass() );
-			this.strServiceName = "System.Execute.SQL";
+			this.strServiceName = "System.Execute.DBCommand";
 			this.strServiceVersion = "0.0.0.1";
 
 			this.setupService( ConstantsService._Main_File_Log, this.strRunningPath + ConstantsCommonClasses._Langs_Dir + ConstantsService._Main_File + "." + ConstantsCommonClasses._Lang_Ext ); //Init the Logger and Lang
@@ -75,15 +75,15 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 
 			CClassPathLoader ClassPathLoader = new CClassPathLoader();
 
-			ClassPathLoader.LoadClassFiles( this.strRunningPath + ConstantsCommonClasses._Pre_Execute_Dir, ConstantsCommonClasses._Lib_Ext, 2, ServiceLogger, ServiceLang  );
+			ClassPathLoader.loadClassFiles( this.strRunningPath + ConstantsCommonClasses._Pre_Execute_Dir, ConstantsCommonClasses._Lib_Ext, 2, ServiceLogger, ServiceLang  );
 
 			this.loadAndRegisterServicePreExecute();
 
-			ClassPathLoader.LoadClassFiles( this.strRunningPath + ConstantsCommonClasses._Post_Execute_Dir, ConstantsCommonClasses._Lib_Ext, 2, ServiceLogger, ServiceLang  );
+			ClassPathLoader.loadClassFiles( this.strRunningPath + ConstantsCommonClasses._Post_Execute_Dir, ConstantsCommonClasses._Lib_Ext, 2, ServiceLogger, ServiceLang  );
 
 			this.loadAndRegisterServicePostExecute();
 
-			SystemExecuteSQLConfig = CConfigSystemExecuteSQL.getConfigSystemExecuteSQL( ServicesDaemonConfig, OwnerConfig, this.strRunningPath );
+			SystemExecuteSQLConfig = CConfigSystemExecuteDBCommand.getConfigSystemExecuteSQL( ServicesDaemonConfig, OwnerConfig, this.strRunningPath );
 
 			if ( SystemExecuteSQLConfig.loadConfig( this.strRunningPath + ConstantsService._Conf_File, ServiceLogger, ServiceLang ) == true ) {
 
@@ -141,7 +141,7 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 		
 	}
 	
-	public boolean checkExpressionsFilters( String strSessionKey, String strSQL ) {
+	public boolean checkExpressionsFilters( String strSessionKey, String strCommand ) {
 
 		boolean bResult = false;
 		
@@ -154,15 +154,15 @@ public class CSystemExecuteSQL extends CDBAbstractService {
 		}
 		else {
 			
-			if ( ExpresionFilters.checkExpressionInFilters( strSQL, ServiceLogger ) ) {
+			if ( ExpresionFilters.checkExpressionInFilters( strCommand, ServiceLogger ) ) {
 		    
-				if ( ExpresionFilters.strType == ConstantsConfigXMLTags._Type_Allow )
+				if ( ExpresionFilters.strType.equalsIgnoreCase( ConstantsCommonClasses._Type_Allow ) )
 					bResult = true;
 				
 			}
 			else {
 				
-				if ( ExpresionFilters.strType == ConstantsConfigXMLTags._Type_Block )
+				if ( ExpresionFilters.strType.equalsIgnoreCase( ConstantsCommonClasses._Type_Block ) )
 					bResult = true;
 				
 			}

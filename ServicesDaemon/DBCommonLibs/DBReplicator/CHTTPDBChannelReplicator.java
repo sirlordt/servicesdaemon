@@ -1,21 +1,8 @@
 package DBReplicator;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.Map.Entry;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicNameValuePair;
-
-import CommonClasses.CBackendServicesManager;
 import CommonClasses.CBasicBackendServices;
 import CommonClasses.CLanguage;
 import ExtendedLogger.CExtendedLogger;
@@ -30,25 +17,15 @@ public class CHTTPDBChannelReplicator implements IDBChannelReplicator {
 
 	protected String strReplicatorStorePathTemp;
 	
-	protected CloseableHttpClient HTTPClient = null;
-	
-	protected HttpPost PostData = null;
-	
-	HttpClientContext Context = null;
-	
 	CBasicBackendServices BasicBackendServices = null; 
 
-	CExtendedLogger Logger;
-	
-	CLanguage Lang;
-	
 	public CHTTPDBChannelReplicator() {
 		
 	}
 
 	public void finalize() {
 		
-		BasicBackendServices.deleteTempResponsesFiles( Logger, Lang );
+		BasicBackendServices.deleteTempResponsesFiles( null, null );
 		
 	}
 	
@@ -87,21 +64,19 @@ public class CHTTPDBChannelReplicator implements IDBChannelReplicator {
 				
 				this.strInstanceID = strInstanceID;
 				
-				RequestConfig clientConfig = RequestConfig.custom().setConnectTimeout( ConfigHTTPDBChannelReplicator.intRequestTimeout ).setConnectionRequestTimeout( ConfigHTTPDBChannelReplicator.intRequestTimeout ).setSocketTimeout( ConfigHTTPDBChannelReplicator.intSocketTimeout ).build();
-
-				this.HTTPClient = HttpClientBuilder.create().setDefaultRequestConfig( clientConfig ).build();
-
-				PostData = new HttpPost( ConfigHTTPDBChannelReplicator.strURL );
-
-				//Set the proxy
-				Context = CBackendServicesManager.setConfigProxy( PostData, ConfigHTTPDBChannelReplicator.ConfigProxy, Logger, Lang );
-
-				// add header
-				PostData.setHeader( "User-Agent", "HTTPDBReplicatorChannelClient" );
-
-				this.Logger = Logger;
+				if ( ConfigHTTPDBChannelReplicator.MainConfiguredTarget != null ) {
 				
-				this.Lang = Lang;
+					ConfigHTTPDBChannelReplicator.MainConfiguredTarget.HTTPDBChannelReplicatorTarget = this;
+					ConfigHTTPDBChannelReplicator.MainConfiguredTarget.initHTTPChannel( Logger, Lang );
+				
+					for ( CHTTPDBChannelReplicatorTarget ConfigHTTPDBChannel: ConfigHTTPDBChannelReplicator.BackupConfiguredTargets ) {
+						
+						ConfigHTTPDBChannel.HTTPDBChannelReplicatorTarget = this;
+						ConfigHTTPDBChannel.initHTTPChannel( Logger, Lang );
+						
+					}
+					
+				}
 				
 				bResult = true;
 
@@ -128,74 +103,28 @@ public class CHTTPDBChannelReplicator implements IDBChannelReplicator {
 	}
 
 	@Override
-	public boolean sendData( String strStoreID, String strTransactionID, String strCommandID, String strCommand, LinkedHashMap<String, String> Params, CExtendedLogger Logger, CLanguage Lang ) {
+	public boolean sendData( String strDataBlockID, String strTransactionID, String strCommandID, String strCommand, LinkedHashMap<String, String> Params, CExtendedLogger Logger, CLanguage Lang ) {
 
 		boolean bResult = false;
 		
-		try {
+		if ( ConfigHTTPDBChannelReplicator.MainConfiguredTarget != null ) {
 			
-        	CloseableHttpResponse Response = null;
-
-    		ArrayList<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-    		urlParameters.add( new BasicNameValuePair( "ServiceName", "System.Replicate.Command" ) );
-    		urlParameters.add( new BasicNameValuePair( "InstanceID", strInstanceID ) );
-    		urlParameters.add( new BasicNameValuePair( "StoreID", strStoreID ) );
-    		urlParameters.add( new BasicNameValuePair( "TransactionID", strTransactionID ) );
-    		urlParameters.add( new BasicNameValuePair( "CommandID", strCommandID ) );
-    		urlParameters.add( new BasicNameValuePair( "Command", strCommand ) );
-    		urlParameters.add( new BasicNameValuePair( "User", ConfigHTTPDBChannelReplicator.strUser ) );
-    		urlParameters.add( new BasicNameValuePair( "Password", ConfigHTTPDBChannelReplicator.strPassword ) );
-    		urlParameters.add( new BasicNameValuePair( "Database", ConfigHTTPDBChannelReplicator.strDatabase ) );
-    		urlParameters.add( new BasicNameValuePair( "ResponseFormat", CBackendServicesManager._ResponseFormat ) );
-    		urlParameters.add( new BasicNameValuePair( "ResponseFormatVersion", CBackendServicesManager._ResponseFormatVersion ) );
-    		
-        	if ( Params.size() > 0 ) {
-
-        		for ( Entry<String,String> Param : Params.entrySet() ) {
-        			
-            		urlParameters.add( new BasicNameValuePair( Param.getKey(), Param.getValue() ) );
-        			
-        		}
-
-        	};
+			bResult = ConfigHTTPDBChannelReplicator.MainConfiguredTarget.sendData( strDataBlockID, strTransactionID, strCommandID, strCommand, Params, Logger, Lang );
 			
-    		PostData.setEntity( new UrlEncodedFormEntity( urlParameters ) );
-			
-			if ( Context == null )
-				Response = HTTPClient.execute( PostData );
-			else
-				Response = HTTPClient.execute( PostData, Context );
-			
-			if ( Response != null && BasicBackendServices.saveResponseToFile( Response.getEntity().getContent(), this.strReplicatorStorePathTemp, "System.Replicate.Command.Response", Logger, Lang ) ) { 
-
-				ArrayList<LinkedHashMap<String,String>> Result = BasicBackendServices.parseResponseMessage( this.strReplicatorStorePathTemp, "System.Replicate.Command.Response", Logger, Lang );
+			if ( bResult == false ) {
 				
-				if ( Result != null && Result.size() > 0 ) {
+				for ( CHTTPDBChannelReplicatorTarget ConfigHTTPDBChannel: ConfigHTTPDBChannelReplicator.BackupConfiguredTargets ) {
 					
-					String strCode = Result.get( 0 ).get( "Code" );
-					
-					if ( strCode != null && Integer.parseInt( strCode ) >= 1000 ) { //1000 = OK, 1001 = Block ok but CommandID field contains ID repeated
-					
+					if ( ConfigHTTPDBChannel.sendData( strDataBlockID, strTransactionID, strCommandID, strCommand, Params, Logger, Lang ) ) {
+						
 						bResult = true;
-					
+						break;
+						
 					}
 					
 				}
 				
-				Response.close();
-				
 			}
-			
-			
-		}
-		catch ( Exception Ex ) {
-			
-			Logger.logException( "-1020", Ex.getMessage(), Ex );
-			
-		}
-		catch ( Error Err ) {
-			
-			Logger.logError( "-1021", Err.getMessage(), Err );
 			
 		}
 

@@ -114,7 +114,7 @@ public class CClassPathLoader {
     
     }
     
-    protected File[] FindFilesToLoad( String strPath, String strFileExtension ) {
+    protected File[] findFilesToLoad( String strPath, String strFileExtension ) {
        
     	final String strFileExt = strFileExtension;
     	
@@ -151,7 +151,7 @@ public class CClassPathLoader {
 
     }
     
-    protected File[] RecursiveFindFilesToLoad( String strPath, String strFileExtension, int intMaxDepth, int intActualDepth ) {
+    protected File[] recursiveFindFilesToLoad( String strPath, String strFileExtension, int intMaxDepth, int intActualDepth ) {
     	
         Vector<File> vUrls = new Vector<File>();
 
@@ -169,7 +169,7 @@ public class CClassPathLoader {
             	
             		if ( intActualDepth + 1 <= intMaxDepth && FileFound.getAbsolutePath().endsWith( _BackupExtension ) == false ) {  
             			
-            			File[] DeepListFoundFile = RecursiveFindFilesToLoad( FileFound.getAbsolutePath(), strFileExtension, intMaxDepth, intActualDepth + 1 );
+            			File[] DeepListFoundFile = recursiveFindFilesToLoad( FileFound.getAbsolutePath(), strFileExtension, intMaxDepth, intActualDepth + 1 );
             		
                         for ( File DeepFileFound : DeepListFoundFile ) {
   
@@ -193,7 +193,7 @@ public class CClassPathLoader {
         
     }
     
-    public boolean LoadClassFiles( String strPath, String strFileExtension, int intMaxDepth, CExtendedLogger Logger, CLanguage Lang  ) {
+    public boolean loadClassFiles( String strPath, String strFileExtension, int intMaxDepth, CExtendedLogger Logger, CLanguage Lang  ) {
 
     	boolean bResult = false;
         
@@ -208,7 +208,7 @@ public class CClassPathLoader {
 					
 			}    
 
-			File[] jars = RecursiveFindFilesToLoad( strPath, strFileExtension, intMaxDepth,  1 );
+			File[] jars = recursiveFindFilesToLoad( strPath, strFileExtension, intMaxDepth,  1 );
 			
 			Arrays.sort( jars );
 			

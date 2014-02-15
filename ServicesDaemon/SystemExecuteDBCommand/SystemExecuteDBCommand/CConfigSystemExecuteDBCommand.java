@@ -8,7 +8,7 @@
  * Contributors:
  *     SirLordT <sirlordt@gmail.com> - initial API and implementation
  ******************************************************************************/
-package SystemExecuteSQL;
+package SystemExecuteDBCommand;
 
 import java.util.ArrayList;
 
@@ -27,15 +27,15 @@ import DBReplicator.IDBChannelReplicator;
 import DBReplicator.IDBReplicator;
 import ExtendedLogger.CExtendedLogger;
 
-public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
+public class CConfigSystemExecuteDBCommand extends CAbstractConfigLoader {
 
-	protected static CConfigSystemExecuteSQL SystemExecuteSQLConfig = null;
+	protected static CConfigSystemExecuteDBCommand SystemExecuteSQLConfig = null;
 
-	public static CConfigSystemExecuteSQL getConfigSystemExecuteSQL( CConfigServicesDaemon ServicesDaemonConfig, CAbstractConfigLoader OwnerConfig, String strRunningPath ) {
+	public static CConfigSystemExecuteDBCommand getConfigSystemExecuteSQL( CConfigServicesDaemon ServicesDaemonConfig, CAbstractConfigLoader OwnerConfig, String strRunningPath ) {
 
 		if ( SystemExecuteSQLConfig == null ) {
 		
-			SystemExecuteSQLConfig = new CConfigSystemExecuteSQL( strRunningPath );
+			SystemExecuteSQLConfig = new CConfigSystemExecuteDBCommand( strRunningPath );
 		
 		}
 		
@@ -60,14 +60,14 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
 	
 	public ArrayList<CExpresionsFilters> ExpressionsFilters = null;
 	
-	public CConfigSystemExecuteSQL( String strRunningPath ) {
+	public CConfigSystemExecuteDBCommand( String strRunningPath ) {
 		
 		super( strRunningPath );
 		
 		//Set the order for read xml config file sections
 		strFirstLevelConfigSectionsOrder.add( ConstantsCommonConfigXMLTags._Logger );  //1
 		bFirstLevelConfigSectionsMustExists.add( true );
-		strFirstLevelConfigSectionsOrder.add( ConstantsConfigXMLTags._Filters );  //2
+		strFirstLevelConfigSectionsOrder.add( ConstantsCommonConfigXMLTags._Filters );  //2
 		bFirstLevelConfigSectionsMustExists.add( true );
 		strFirstLevelConfigSectionsOrder.add( ConstantsConfigXMLTags._Replicators );  //3
 		bFirstLevelConfigSectionsMustExists.add( true );
@@ -233,11 +233,11 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
 
     				Logger.logMessage( "1", Lang.translate( "Reading XML node filter: [%s]", ConfigFilterNode.getNodeName() ) );        
 
-    				if ( ConfigFilterNode.getNodeName().equals( ConstantsConfigXMLTags._Filter ) == true ) {
+    				if ( ConfigFilterNode.getNodeName().equals( ConstantsCommonConfigXMLTags._Filter ) == true ) {
 
     					if ( ConfigFilterNode.hasAttributes() == true ) {
 
-    						String strAttributesOrder[] = { ConstantsConfigXMLTags._Type };
+    						String strAttributesOrder[] = { ConstantsCommonConfigXMLTags._Type };
 
     						String strType = "";
     						String strExpression = "";
@@ -257,11 +257,11 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
     									Logger.logMessage( "1", Lang.translate( "Node attribute name: [%s]", NodeAttribute.getNodeName() ) );
     									Logger.logMessage( "1", Lang.translate( "Node attribute value: [%s]", NodeAttribute.getNodeValue() ) );
 
-    									if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Type ) ) {
+    									if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Type ) ) {
 
     										if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
 
-    											if ( NodeAttribute.getNodeValue().toLowerCase().equals( ConstantsConfigXMLTags._Type_Exact ) || NodeAttribute.getNodeValue().toLowerCase().equals( ConstantsConfigXMLTags._Type_Partial ) || NodeAttribute.getNodeValue().toLowerCase().equals( ConstantsConfigXMLTags._Type_RExp ) ) {
+    											if ( NodeAttribute.getNodeValue().toLowerCase().equals( ConstantsCommonConfigXMLTags._Type_Exact ) || NodeAttribute.getNodeValue().toLowerCase().equals( ConstantsCommonConfigXMLTags._Type_Partial ) || NodeAttribute.getNodeValue().toLowerCase().equals( ConstantsCommonConfigXMLTags._Type_RExp ) ) {
 
     												strType = NodeAttribute.getNodeValue().toLowerCase();
 
@@ -270,7 +270,7 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
     											}
     											else {
 
-    												Logger.logError( "1004", Lang.translate( "The [%s] attribute value [%s] must be only one of the next values: [%s,%s,%s]", strAttributesOrder[ intAttributesIndex ], NodeAttribute.getNodeValue(), ConstantsConfigXMLTags._Type_Exact, ConstantsConfigXMLTags._Type_Partial, ConstantsConfigXMLTags._Type_RExp ) );
+    												Logger.logError( "1004", Lang.translate( "The [%s] attribute value [%s] must be only one of the next values: [%s,%s,%s]", strAttributesOrder[ intAttributesIndex ], NodeAttribute.getNodeValue(), ConstantsCommonConfigXMLTags._Type_Exact, ConstantsCommonConfigXMLTags._Type_Partial, ConstantsCommonConfigXMLTags._Type_RExp ) );
 
     											}
 
@@ -341,7 +341,7 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
 	
 			if ( ConfigSectionNode.hasAttributes() == true ) {
 				
-				String strAttributesOrder[] = { ConstantsCommonConfigXMLTags._Name, ConstantsConfigXMLTags._Type };
+				String strAttributesOrder[] = { ConstantsCommonConfigXMLTags._Name, ConstantsCommonConfigXMLTags._Type };
 
 				NamedNodeMap NodeAttributes = ConfigSectionNode.getAttributes();
 
@@ -363,32 +363,32 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
 		
 					        if ( strName.isEmpty() == false ) {
 					        
-								Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]", "CExpressionsFilters." + strAttributesOrder[ intAttributesIndex ], strName ) );
+								Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]", "Filters." + strAttributesOrder[ intAttributesIndex ], strName ) );
 					        	
 					        }
 					        else {
 					        	
-								Logger.logError( "1002", Lang.translate( "The [%s] attribute cannot empty string, for the section [%s], ignoring the section", "CExpressionsFilters." + strAttributesOrder[ intAttributesIndex ], ConfigSectionNode.getNodeName() ) );
+								Logger.logError( "1001", Lang.translate( "The [%s] attribute cannot empty string, for the section [%s], ignoring the section", "Filters." + strAttributesOrder[ intAttributesIndex ], ConfigSectionNode.getNodeName() ) );
 					        	
 								break;
 								
 					        }
 							
 						}
-		            	else if ( NodeAttribute.getNodeName().equals( ConstantsConfigXMLTags._Type ) ) {
+		            	else if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Type ) ) {
 
 					        if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
 					        
-								if ( NodeAttribute.getNodeValue().toLowerCase().equals( ConstantsConfigXMLTags._Type_Allow ) || NodeAttribute.getNodeValue().toLowerCase().equals( ConstantsConfigXMLTags._Type_Block ) ) {
+								if ( NodeAttribute.getNodeValue().toLowerCase().equals( ConstantsCommonConfigXMLTags._Type_Allow ) || NodeAttribute.getNodeValue().toLowerCase().equals( ConstantsCommonConfigXMLTags._Type_Block ) ) {
 					        	
 									strType = NodeAttribute.getNodeValue().toLowerCase();
 
-									Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]", "CExpressionsFilters." + strAttributesOrder[ intAttributesIndex ], strType ) );
+									Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]", "Filters." + strAttributesOrder[ intAttributesIndex ], strType ) );
 								
 								}
 								else {
 									
-									Logger.logError( "1004", Lang.translate( "The [%s] attribute value [%s] must be only one of the next values: [%s,%s]", "CExpressionsFilters." + strAttributesOrder[ intAttributesIndex ], NodeAttribute.getNodeValue(), ConstantsConfigXMLTags._Type_Allow, ConstantsConfigXMLTags._Type_Block ) );
+									Logger.logError( "1002", Lang.translate( "The [%s] attribute value [%s] must be only one of the next values: [%s,%s]", "Filters." + strAttributesOrder[ intAttributesIndex ], NodeAttribute.getNodeValue(), ConstantsCommonConfigXMLTags._Type_Allow, ConstantsCommonConfigXMLTags._Type_Block ) );
 									
 								}
 								
@@ -396,7 +396,7 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
 					        }
 					        else {
 					        	
-								Logger.logError( "1003", Lang.translate( "The [%s] attribute cannot empty string, for the section [%s], ignoring the section", "CExpressionsFilters." + strAttributesOrder[ intAttributesIndex ], ConfigSectionNode.getNodeName() ) );
+								Logger.logError( "1003", Lang.translate( "The [%s] attribute cannot empty string, for the section [%s], ignoring the section", "Filters." + strAttributesOrder[ intAttributesIndex ], ConfigSectionNode.getNodeName() ) );
 
 								break;
 					        	
@@ -407,7 +407,7 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
 		            }
 		            else {
 
-		            	Logger.logError( "1001", Lang.translate( "The [%s] attribute not found, for the section [%s], ignoring the section", "CExpressionsFilters." + strAttributesOrder[ intAttributesIndex ], ConfigSectionNode.getNodeName() ) );
+		            	Logger.logError( "1004", Lang.translate( "The [%s] attribute not found, for the section [%s], ignoring the section", "Filters." + strAttributesOrder[ intAttributesIndex ], ConfigSectionNode.getNodeName() ) );
 		            	
 						break;
 						
@@ -432,14 +432,14 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
 		        		}
 		        		else {
 		        			
-							Logger.logError( "1006", Lang.translate( "Cannot add filters name [%s], the filters list is empty, for the section [%s]", strName, ConfigSectionNode.getNodeName() ) );
+							Logger.logError( "1005", Lang.translate( "Cannot add filters name [%s], the filters list is empty, for the section [%s]", strName, ConfigSectionNode.getNodeName() ) );
 		        			
 		        		}
 		        	
 		        	}
 		        	else {
 		        	
-						Logger.logError( "1005", Lang.translate( "Duplicate filters name [%s], for the section [%s]", strName, ConfigSectionNode.getNodeName() ) );
+						Logger.logError( "1006", Lang.translate( "Duplicate filters name [%s], for the section [%s]", strName, ConfigSectionNode.getNodeName() ) );
 		        		
 		        	}
 		        	
@@ -608,6 +608,96 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
         
 	}
 	
+	public boolean loadConfigSectionReplicatorFilters( int intConfigSectionIndex, Node ConfigSectionNode, IDBReplicator DBReplicator, CExtendedLogger Logger, CLanguage Lang ) {
+		
+		boolean bResult = true;
+
+		try {
+
+			if ( ConfigSectionNode.hasAttributes() == true ) {
+				
+				String strAttributesOrder[] = { ConstantsCommonConfigXMLTags._Type };
+
+				NamedNodeMap NodeAttributes = ConfigSectionNode.getAttributes();
+
+				String strType = "";
+				
+				for ( int intAttributesIndex = 0; intAttributesIndex < strAttributesOrder.length; intAttributesIndex++ ) {
+
+					Node NodeAttribute = NodeAttributes.getNamedItem( strAttributesOrder[ intAttributesIndex ] );
+
+					if ( NodeAttribute != null ) {
+
+						Logger.logMessage( "1", Lang.translate( "Node attribute name: [%s]", NodeAttribute.getNodeName() ) );
+						Logger.logMessage( "1", Lang.translate( "Node attribute value: [%s]", NodeAttribute.getNodeValue() ) );
+
+						if ( NodeAttribute.getNodeName().equals( ConstantsCommonConfigXMLTags._Type ) ) {
+
+					        if ( NodeAttribute.getNodeValue().isEmpty() == false ) {
+						        
+								if ( NodeAttribute.getNodeValue().toLowerCase().equals( ConstantsCommonConfigXMLTags._Type_Allow ) || NodeAttribute.getNodeValue().toLowerCase().equals( ConstantsCommonConfigXMLTags._Type_Block ) ) {
+					        	
+									strType = NodeAttribute.getNodeValue().toLowerCase();
+
+									Logger.logMessage( "1", Lang.translate( "Runtime config value [%s] changed to: [%s]", "strType", strType ) );
+								
+								}
+								else {
+									
+									Logger.logError( "1001", Lang.translate( "The [%s] attribute value [%s] must be only one of the next values: [%s,%s]", ConstantsCommonConfigXMLTags._Type, NodeAttribute.getNodeValue(), ConstantsCommonConfigXMLTags._Type_Allow, ConstantsCommonConfigXMLTags._Type_Block ) );
+									
+								}
+								
+								
+					        }
+					        else {
+					        	
+								Logger.logError( "1002", Lang.translate( "The [%s] attribute cannot empty string, for the section [%s], ignoring the section", ConstantsCommonConfigXMLTags._Type, ConfigSectionNode.getNodeName() ) );
+
+								break;
+					        	
+					        }
+							
+						}
+
+					}
+		            else {
+
+		            	Logger.logError( "1003", Lang.translate( "The [%s] attribute not found, for the section [%s], ignoring the section", ConstantsCommonConfigXMLTags._Type, ConfigSectionNode.getNodeName() ) );
+		            	
+						break;
+						
+		            }
+
+				}
+				
+				if ( strType.isEmpty() == false ) {
+					
+					CExpresionsFilters ExpFilters = this.loadConfigFilter( ConfigSectionNode, "filters", strType, Logger, Lang );
+
+					if ( ExpFilters.Filters.size() > 0 ) {
+
+						DBReplicator.setFilters( ExpFilters );
+
+					}
+					
+				}
+				
+			}
+		
+		}
+		catch ( Exception Ex ) {
+			
+			bResult = false;
+			
+			Logger.logException( "-1010", Ex.getMessage(), Ex );
+			
+		}
+		
+		return bResult;
+		
+	}
+	
 	public boolean loadConfigSectionReplicator( int intConfigSectionIndex, Node ConfigSectionNode, String strClassName, String strName, String strSourceDBConnectionName, long lngMaxStoreFileSize, long lngOnFailGoSleepFor, CExtendedLogger Logger, CLanguage Lang ) {
 
 		boolean bResult = false;
@@ -622,40 +712,38 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
 
 				IDBReplicator DBReplicator = (IDBReplicator) DBReplicatorObject;
 
-				//CPlainTextDBReplicator DBReplicator = new CPlainTextDBReplicator(); 
-				DBReplicator.initialize( this.strRunningPath, strName, strSourceDBConnectionName, lngMaxStoreFileSize, lngOnFailGoSleepFor, ServiceLogger, ServiceLang );
+				if ( DBReplicator.initialize( this.strRunningPath, strName, strSourceDBConnectionName, lngMaxStoreFileSize, lngOnFailGoSleepFor, ServiceLogger, ServiceLang ) ) {
 
-				for ( int intLocalConfigSectionIndex = 0; intLocalConfigSectionIndex < ConfigSectionList.getLength(); intLocalConfigSectionIndex++ ) {
+					for ( int intLocalConfigSectionIndex = 0; intLocalConfigSectionIndex < ConfigSectionList.getLength(); intLocalConfigSectionIndex++ ) {
 
-					Node ConfigSection = ConfigSectionList.item( intLocalConfigSectionIndex );
+						Node ConfigSection = ConfigSectionList.item( intLocalConfigSectionIndex );
 
-					Logger.logMessage( "1", Lang.translate( "Reading XML node section: [%s]", ConfigSection.getNodeName() ) );        
+						Logger.logMessage( "1", Lang.translate( "Reading XML node section: [%s]", ConfigSection.getNodeName() ) );        
 
-					if ( ConfigSection.getNodeName().equals( ConstantsConfigXMLTags._Channels ) == true ) {
+						if ( ConfigSection.getNodeName().equals( ConstantsConfigXMLTags._Channels ) == true ) {
 
-						if ( loadConfigSectionChannels( intLocalConfigSectionIndex, ConfigSection, DBReplicator, Logger, Lang ) == false ) {
+							if ( loadConfigSectionChannels( intLocalConfigSectionIndex, ConfigSection, DBReplicator, Logger, Lang ) == false ) {
 
-							Logger.logWarning( "-1", Lang.translate( "Failed to load config from XML node section: [%s]", ConfigSection.getNodeName() ) );        
-							break;
+								Logger.logWarning( "-1", Lang.translate( "Failed to load config from XML node section: [%s]", ConfigSection.getNodeName() ) );        
+								break;
+
+							}
+
+						}
+						else if ( ConfigSection.getNodeName().equals( ConstantsCommonConfigXMLTags._Filters ) == true ) {
+
+							if ( loadConfigSectionReplicatorFilters( intLocalConfigSectionIndex, ConfigSection, DBReplicator, Logger, Lang ) == false ) {
+
+								Logger.logWarning( "-1", Lang.translate( "Failed to load config from XML node section: [%s]", ConfigSection.getNodeName() ) );        
+								break;
+
+							}
 
 						}
 
 					}
-					else if ( ConfigSection.getNodeName().equals( ConstantsConfigXMLTags._Filters ) == true ) {
 
-						CExpresionsFilters ExpFilters = this.loadConfigFilter( ConfigSection, "filters", ConstantsConfigXMLTags._Type_Allow, Logger, Lang );
-
-						if ( ExpFilters.Filters.size() > 0 ) {
-
-							DBReplicator.setFilters( ExpFilters );
-
-						}
-
-					}
-
-				}
-
-				if ( DBReplicator.getChannelsReplicatorCount() > 0 ) {
+					//if ( DBReplicator.getChannelsReplicatorCount() > 0 ) {
 
 					CMasterDBReplicator MasterDBReplicator = CMasterDBReplicator.getMasterDBReplicator();
 
@@ -663,17 +751,24 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
 
 					bResult = true;
 
+					/*}
+					else {
+
+						Logger.logWarning( "-1", Lang.translate( "No valid channels found for replicator: [%s]. Ignoring the replicator config entry", DBReplicator.getName() ) );        
+
+					}*/
+
 				}
 				else {
-
-					Logger.logWarning( "-1", Lang.translate( "No valid channels found for replicator: [%s]. Ignoring the replicator config entry", DBReplicator.getName() ) );        
-
+					
+					Logger.logError( "-1002", Lang.translate( "Failed to initialize the DB replicator" ) );        
+					
 				}
 
 			}	
 			else {
 				
-				Logger.logError( "-1004", Lang.translate( "The class [%s] not implements the [%s] interface", DBReplicatorObject.getClass().getCanonicalName(), IDBReplicator.class.getCanonicalName() ) );
+				Logger.logError( "-1001", Lang.translate( "The class [%s] not implements the [%s] interface", DBReplicatorObject.getClass().getCanonicalName(), IDBReplicator.class.getCanonicalName() ) );
 				
 			}
         
@@ -924,7 +1019,7 @@ public class CConfigSystemExecuteSQL extends CAbstractConfigLoader {
 			} 
         	 
         }*/
-		else if ( ConfigSectionNode.getNodeName().equals(  ConstantsConfigXMLTags._Filters ) == true ) {
+		else if ( ConfigSectionNode.getNodeName().equals(  ConstantsCommonConfigXMLTags._Filters ) == true ) {
 	           
 			if ( this.loadConfigSectionExecutionFilters( ConfigSectionNode, Logger, Lang ) == false ) {
 				

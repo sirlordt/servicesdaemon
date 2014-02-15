@@ -80,7 +80,7 @@ public class CBootstrap {
 
 		CClassPathLoaderLight ClassPathLoaderLight = new CClassPathLoaderLight();
 		
-		ClassPathLoaderLight.LoadClassFiles( strDefaultRunningPath + _LibsDir, _LibrariesExt, 2, null );
+		ClassPathLoaderLight.loadClassFiles( strDefaultRunningPath + _LibsDir, _LibrariesExt, 2, null );
     	
 		try {
 			

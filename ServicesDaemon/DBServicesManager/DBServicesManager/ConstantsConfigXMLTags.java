@@ -12,7 +12,7 @@ package DBServicesManager;
 
 public interface ConstantsConfigXMLTags {
 
-	public static final String _DBServices_Dir = "DBServices_Dir";
+	public static final String _Services_Dir = "Services_Dir";
 	public static final String _DBDrivers_Dir = "DBDrivers_Dir";
 	public static final String _DBEngines_Dir = "DBEngines_Dir";
 

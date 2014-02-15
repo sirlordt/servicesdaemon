@@ -8,7 +8,7 @@
  * Contributors:
  *     SirLordT <sirlordt@gmail.com> - initial API and implementation
  ******************************************************************************/
-package SystemExecuteSQL;
+package SystemExecuteDBCommand;
 
 public interface ConstantsConfigXMLTags {
 
@@ -18,15 +18,6 @@ public interface ConstantsConfigXMLTags {
 	public static final String _Logger = "Logger";
 	public static final String _LogSQL_Statement = "LogSQL_Statement";
 	
-	public static final String _Filters = "Filters";
-	public static final String _Type = "Type";
-	public static final String _Type_Allow = "allow";
-	public static final String _Type_Block = "block";
-	public static final String _Type_Exact = "exact";
-	public static final String _Type_Partial = "partial";
-	public static final String _Type_RExp = "rexp";
-	public static final String _Filter = "Filter";
-
 	public static final String _Replicators = "Replicators";
 	public static final String _Replicator = "Replicator";
 	public static final String _Source_DBConnection_Name = "Source_DBConnection_Name";

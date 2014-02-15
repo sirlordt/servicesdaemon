@@ -113,7 +113,7 @@ public class CClassPathLoaderLight {
     
     }
     
-    protected File[] FindFilesToLoad( String strPath, String strFileExtension ) {
+    protected File[] findFilesToLoad( String strPath, String strFileExtension ) {
        
     	final String strFileExt = strFileExtension;
     	
@@ -152,7 +152,7 @@ public class CClassPathLoaderLight {
 
     }
     
-    protected File[] RecursiveFindFilesToLoad( String strPath, String strFileExtension, int intMaxDepth, int intActuakDepth ) {
+    protected File[] recursiveFindFilesToLoad( String strPath, String strFileExtension, int intMaxDepth, int intActuakDepth ) {
     	
         Vector<File> vUrls = new Vector<File>();
 
@@ -170,7 +170,7 @@ public class CClassPathLoaderLight {
             	
             		if ( intActuakDepth + 1 <= intMaxDepth && FileFound.getAbsolutePath().endsWith( _BackupExtension ) == false ) {  
             			
-            			File[] DeepListFoundFile = RecursiveFindFilesToLoad( FileFound.getAbsolutePath(), strFileExtension, intMaxDepth, intActuakDepth + 1 );
+            			File[] DeepListFoundFile = recursiveFindFilesToLoad( FileFound.getAbsolutePath(), strFileExtension, intMaxDepth, intActuakDepth + 1 );
             		
                         for ( File DeepFileFound : DeepListFoundFile ) {
   
@@ -194,7 +194,7 @@ public class CClassPathLoaderLight {
         
     }
     
-    public boolean LoadClassFiles( String strPath, String strFileExtension, int intMaxDepth, Logger logger  ) {
+    public boolean loadClassFiles( String strPath, String strFileExtension, int intMaxDepth, Logger logger  ) {
 
     	boolean bResult = false;
         
@@ -203,7 +203,7 @@ public class CClassPathLoaderLight {
 			if ( logger != null )   
         	    logger.log( Level.INFO, String.format( "Loading classes from path: [%s]", strPath ) ); 
 
-			File[] jars = RecursiveFindFilesToLoad( strPath, strFileExtension, intMaxDepth,  1 );
+			File[] jars = recursiveFindFilesToLoad( strPath, strFileExtension, intMaxDepth,  1 );
 			
 			Arrays.sort( jars );
 			

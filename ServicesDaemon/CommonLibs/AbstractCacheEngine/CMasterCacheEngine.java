@@ -193,7 +193,7 @@ public class CMasterCacheEngine implements IAbstractCacheEngine {
 
 				ClassPathLoader = new CClassPathLoader();
 
-    			ClassPathLoader.LoadClassFiles( strPathToDir, ConstantsCommonClasses._Lib_Ext, 2, Logger, Lang );
+    			ClassPathLoader.loadClassFiles( strPathToDir, ConstantsCommonClasses._Lib_Ext, 2, Logger, Lang );
 				
 			}
 			

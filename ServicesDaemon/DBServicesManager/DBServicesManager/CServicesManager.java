@@ -365,25 +365,25 @@ public class CServicesManager extends CAbstractServicesManager {
     			CClassPathLoader ClassPathLoader = new CClassPathLoader();
 
         		//Load important library class from /Libs folder
-    			ClassPathLoader.LoadClassFiles( this.strRunningPath + CommonClasses.ConstantsCommonClasses._Libs_Dir, ConstantsCommonClasses._Lib_Ext, 2, DBServicesManagerLogger, DBServicesManagerLang );
+    			ClassPathLoader.loadClassFiles( this.strRunningPath + CommonClasses.ConstantsCommonClasses._Libs_Dir, ConstantsCommonClasses._Lib_Ext, 2, DBServicesManagerLogger, DBServicesManagerLang );
     			
     			//Load the databases drivers
-    			ClassPathLoader.LoadClassFiles( ConfigServicesManager.strDBDriversDir, ConstantsCommonClasses._Lib_Ext, 2, DBServicesManagerLogger, DBServicesManagerLang );
+    			ClassPathLoader.loadClassFiles( ConfigServicesManager.strDBDriversDir, ConstantsCommonClasses._Lib_Ext, 2, DBServicesManagerLogger, DBServicesManagerLang );
 
     			if ( ClassPathLoader.getCountClassLoaded() > 0 ) {
 
     				//Load database engines class
-    				ClassPathLoader.LoadClassFiles( ConfigServicesManager.strDBEnginesDir, ConstantsCommonClasses._Lib_Ext, 2, DBServicesManagerLogger, DBServicesManagerLang );
+    				ClassPathLoader.loadClassFiles( ConfigServicesManager.strDBEnginesDir, ConstantsCommonClasses._Lib_Ext, 2, DBServicesManagerLogger, DBServicesManagerLang );
 
     				if ( this.loadAndRegisterDBEngines( ServicesDaemonConfig ) ) {
 
     					//Load responses formats class
-    					ClassPathLoader.LoadClassFiles( ConfigServicesManager.strResponsesFormatsDir, ConstantsCommonClasses._Lib_Ext, 2, DBServicesManagerLogger, DBServicesManagerLang );
+    					ClassPathLoader.loadClassFiles( ConfigServicesManager.strResponsesFormatsDir, ConstantsCommonClasses._Lib_Ext, 2, DBServicesManagerLogger, DBServicesManagerLang );
 
     					if ( this.loadAndRegisterResponsesFormats( ServicesDaemonConfig ) == true ) {
 
     						//Load DB services class
-    						ClassPathLoader.LoadClassFiles( ConfigServicesManager.strServicesDir, ConstantsCommonClasses._Lib_Ext, 2, DBServicesManagerLogger, DBServicesManagerLang ); //Permit owner dir
+    						ClassPathLoader.loadClassFiles( ConfigServicesManager.strServicesDir, ConstantsCommonClasses._Lib_Ext, 2, DBServicesManagerLogger, DBServicesManagerLang ); //Permit owner dir
 
     						if ( this.loadAndRegisterDBServices( ServicesDaemonConfig ) == true ) {
 
@@ -626,14 +626,14 @@ public class CServicesManager extends CAbstractServicesManager {
 
         	   if ( strServiceName != null && strServiceName.isEmpty() == false ) {
         	   
-        		   /*if ( RegisteredDBServices.get( "system.execute.sql" ) != null ) {
+        		   /*if ( RegisteredDBServices.get( "system.execute.dbcommand" ) != null ) {
         			   
-        			   System.out.println( "Call to " + strServiceName.toLowerCase() + " system.execute.sql found" );
+        			   System.out.println( "Call to " + strServiceName.toLowerCase() + " system.execute.dbcommand found" );
         			   
         		   }
         		   else {
 
-        			   System.out.println( "Call to " + strServiceName.toLowerCase() + " system.execute.sql NOT FOUND" );
+        			   System.out.println( "Call to " + strServiceName.toLowerCase() + " system.execute.dbcommand NOT FOUND" );
         			   
         		   }*/
         		   

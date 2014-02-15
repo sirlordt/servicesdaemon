@@ -84,7 +84,7 @@ Nota 1: Observa que unos de los parámetros es el número que obtienes en el ser
 
 Prueba 4 Caso 1 (Ejecutar una consulta parametrizado sobre DB6), para ver la salida del servicio vea el archivo test04_service_output_case1.xml
 
-ServiceName=System.Execute.SQL
+ServiceName=System.Execute.DBCommand
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 SQL=Select * From tblUsersDB Where IdUser=[paramvalue]IdUser[/paramvalue]
@@ -92,7 +92,7 @@ IdUser=[array datatype="integer"] [value]1[/value] [value]2[/value] [/array]
 
 Prueba 4 Caso 2 (Ejecutar una consulta parametrizado sobre DB6), para ver la salida del servicio vea el archivo test04_service_output_case2.xml
 
-ServiceName=System.Execute.SQL
+ServiceName=System.Execute.DBCommand
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 SQL=Select * From tblUsersDB Where IdUser=[paramvalue]IdUser[/paramvalue]
@@ -102,21 +102,21 @@ Observe que el paramétro IdUser tiene un segundo valor inválido "A", que deber
 
 Prueba 5 Caso 1 (Ejecutar una consulta plana, sin parámetros, sobre DB6), para ver la salida del servicio vea el archivo test05_service_output_case1.xml
 
-ServiceName=System.Execute.SQL
+ServiceName=System.Execute.DBCommand
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 SQL=Select * From tblUsersDB Where IdUser=1
 
 Prueba 5 Caso 2 (Ejecutar una consulta plana, sin parámetros, sobre DB6), para ver la salida del servicio vea el archivo test05_service_output_case2.xml
 
-ServiceName=System.Execute.SQL
+ServiceName=System.Execute.DBCommand
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 SQL=Select * From tblUsersDB Where IdUser=1 Or IdUser=2
 
 Prueba 6 Caso 1 (Ejecutar una consulta plana, sin parámetros, sobre DB1), para ver la salida del servicio vea el archivo test06_service_output_case1.xml
 
-ServiceName=System.Execute.SQL
+ServiceName=System.Execute.DBCommand
 SecurityTokenID=8082223615663676309
 TransactionID=9190353927525735764
 SQL=Select nextval('GEN_TBLGROUPS_ID') New_ID
@@ -125,7 +125,7 @@ Pruebas de Inserción (Insert)
 
 Prueba 7 Caso 1 (Ejecutar una inserción plana, sin parámetros, sobre DB1), para ver la salida del servicio vea el archivo test07_service_output_case1.xml, vamos a usar el NEW_ID generado en la prueba 6 anterior
 
-ServiceName=System.Execute.SQL
+ServiceName=System.Execute.DBCommand
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 SQL=Insert Into tblGroups(Description) Values(2,'test group2')
@@ -138,7 +138,7 @@ TransactionID=1568342447065610717
 
 Prueba 7 Caso 2 (Ejecutar una inserción plana, sin parámetros, sobre DB6), para ver la salida del servicio vea el archivo test07_service_output_case2.xml, vamos a dejar que el trigger asignado a la tabla tblGroups realize su trabajo enviando un null.
 
-ServiceName=System.Execute.SQL
+ServiceName=System.Execute.DBCommand
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 SQL=Insert Into tblGroups(IdGroup,Description) Values(null,'test group3')
@@ -151,7 +151,7 @@ TransactionID=1568342447065610717
 
 Prueba 7 Caso 3 (Ejecutar una inserción parametrizada, sobre DB6), para ver la salida del servicio vea el archivo test07_service_output_case3.xml
 
-ServiceName=System.Execute.SQL
+ServiceName=System.Execute.DBCommand
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 SQL=Insert Into tblGroups(IdGroup,Description) Values([paramvalue]IdUser[/paramvalue],[paramvalue]Description[/paramvalue])
@@ -166,14 +166,14 @@ TransactionID=1568342447065610717
 
 Nota 2: Para evitar errores de duplicación de llave primaria el IdGroup, (prueba 10 caso 3), debemos corregir el generador a 5. 
 
-ServiceName=System.Execute.SQL
+ServiceName=System.Execute.DBCommand
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 SQL=ALTER SEQUENCE GEN_TBLGROUPS_ID RESTART WITH 6
 
 Prueba 7 Caso 4 (Ejecutar una inserción parametrizada, sobre DB6), para ver la salida del servicio vea el archivo test07_service_output_case4.xml
 
-ServiceName=System.Execute.SQL
+ServiceName=System.Execute.DBCommand
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 SQL=Insert Into tblBlobData(Id,blobdata) Values([paramvalue]Id[/paramvalue],[paramvalue]BlobData[/paramvalue])
@@ -188,7 +188,7 @@ TransactionID=1568342447065610717
 
 Nota 2: El psql desde la línea de comandos le mostratará la info del campo blob, usando el comando Select * From tblBlobData Where Id=1; como una cantidad grande de espacios en blanco y un : al final al cual debe dar entrar varias veces para hace scroll hacia abajo, para salir persiones la tecla q, tendrá que consultar usando el ServicesDaemon para verificar la data insertada de la siguiente manera o usando in manager como EMS for postgresql y verificar si la imágen es correcta en el visor de blob (bytea para el caso de postgresql)
 
-ServiceName=System.Execute.SQL
+ServiceName=System.Execute.DBCommand
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 SQL=Select * From tblBlobData Where Id=1
@@ -199,7 +199,7 @@ Nota 4: La característica de enviar blob se debe usar con cuidado solo la he pr
 
 Prueba 7 Caso 5 (Ejecutar una inserción parametrizada, recodando que el campos ID de la tabla es AutoIncrement, sobre DB6), para ver la salida del servicio vea el archivo test07_service_output_case5.xml
 
-ServiceName=System.Execute.SQL
+ServiceName=System.Execute.DBCommand
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 SQL=Insert Into tblGenericData(Data1,Data2) Values([paramvalue]Data1[/paramvalue],[paramvalue]Data2[/paramvalue])
@@ -216,7 +216,7 @@ Pruebas de Actualización (Update)
 
 Prueba 8 Caso 1 (Ejecutar una modificación plana, sin parámetros, sobre DB6), para ver la salida del servicio vea el archivo test08_service_output_case1.xml
 
-ServiceName=System.Execute.SQL
+ServiceName=System.Execute.DBCommand
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 SQL=Update tblGroups Set Description='test group2 modified' Where IdGroup=2
@@ -227,16 +227,16 @@ ServiceName=System.Commit.Transaction
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 
-Nota 2: Para verificar que se modificó correctamente puedes usar la siguiente llamada al servicio System.Execute.SQL
+Nota 2: Para verificar que se modificó correctamente puedes usar la siguiente llamada al servicio System.Execute.DBCommand
 
-ServiceName=System.Execute.SQL
+ServiceName=System.Execute.DBCommand
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 SQL=Select * From tblGroups Where IdGroup=2
 
 Prueba 8 Caso 2 (Ejecutar una modificación parametrizada, sobre DB6), para ver la salida del servicio vea el archivo test08_service_output_case2.xml
 
-ServiceName=System.Execute.SQL
+ServiceName=System.Execute.DBCommand
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 SQL=Update tblGroups Set Description=[paramvalue]Description[/paramvalue] Where IdGroup=[paramvalue]IdGroup[/paramvalue]
@@ -249,9 +249,9 @@ ServiceName=System.Commit.Transaction
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 
-Nota 2: Para verificar que se modificó correctamente puedes usar la siguiente llamada al servicio System.Execute.SQL
+Nota 2: Para verificar que se modificó correctamente puedes usar la siguiente llamada al servicio System.Execute.DBCommand
 
-ServiceName=System.Execute.SQL
+ServiceName=System.Execute.DBCommand
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 SQL=Select * From tblGroups Where IdGroup=[paramvalue]IdGroup[/paramvalue]
@@ -261,7 +261,7 @@ Pruebas de Eliminación (Delete)
 
 Prueba 9 Caso 1 (Ejecutar una eliminación plana, sin parámetros, sobre DB6), para ver la salida del servicio vea el archivo test09_service_output_case1.xml
 
-ServiceName=System.Execute.SQL
+ServiceName=System.Execute.DBCommand
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 SQL=Delete From tblGenericData Where Id=1
@@ -272,16 +272,16 @@ ServiceName=System.Commit.Transaction
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 
-Nota 2: Para verificar que se eliminó correctamente puedes usar la siguiente llamada al servicio System.Execute.SQL
+Nota 2: Para verificar que se eliminó correctamente puedes usar la siguiente llamada al servicio System.Execute.DBCommand
 
-ServiceName=System.Execute.SQL
+ServiceName=System.Execute.DBCommand
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 SQL=Select * From tblGenericData
 
 Prueba 9 Caso 2 (Ejecutar una modificación parametrizada, sobre DB6), para ver la salida del servicio vea el archivo test09_service_output_case2.xml
 
-ServiceName=System.Execute.SQL
+ServiceName=System.Execute.DBCommand
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 SQL=Delete From tblGenericData Where Id=[paramvalue]Id[/paramvalue]
@@ -293,9 +293,9 @@ ServiceName=System.Commit.Transaction
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 
-Nota 2: Para verificar que se eliminó correctamente puedes usar la siguiente llamada al servicio System.Execute.SQL
+Nota 2: Para verificar que se eliminó correctamente puedes usar la siguiente llamada al servicio System.Execute.DBCommand
 
-ServiceName=System.Execute.SQL
+ServiceName=System.Execute.DBCommand
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 SQL=Select * From tblGenericData
@@ -306,7 +306,7 @@ Nota 1: Para usar el call es obligatorio colocar unas llaves {} al inicio y al f
 
 Prueba 10 Case 1 (Ejecutar un procedimiento almacenado con retorno de información y parametrizado, sobre DB6), para ver la salida del servicio vea el archivo test10_service_output_case1.xml
 
-ServiceName=System.Execute.SQL
+ServiceName=System.Execute.DBCommand
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 SQL={call spGetGroups([paramvalue]IdGroup[/paramvalue])}
@@ -314,14 +314,14 @@ IdGroup=[array datatype="integer"] [value]1[/value] [value]2[/value] [/array]
 
 Prueba 10 Case 2 (Ejecutar un procedimiento almacenado plano con retorno de información, sobre DB6), para ver la salida del servicio vea el archivo test10_service_output_case2.xml
 
-ServiceName=System.Execute.SQL
+ServiceName=System.Execute.DBCommand
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 SQL={call spGetGroups(1)}
 
 Prueba 10 Case 3 (Ejecutar un procedimiento almacenado plano sin retorno de información, sobre DB6), para ver la salida del servicio vea el archivo test10_service_output_case3.xml
 
-ServiceName=System.Execute.SQL
+ServiceName=System.Execute.DBCommand
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 SQL={call spSetGroups(NULL,'Test Callable statement')}
@@ -334,7 +334,7 @@ TransactionID=1568342447065610717
 
 Prueba 10 Case 4 (Ejecutar un procedimiento almacenado plano con retorno de información, sobre DB6), para ver la salida del servicio vea el archivo test10_service_output_case4.xml
 
-ServiceName=System.Execute.SQL
+ServiceName=System.Execute.DBCommand
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 SQL={call spCheckDBUser([paramvalue]User[/paramvalue],[paramvalue]Password[/paramvalue])}
@@ -353,7 +353,7 @@ Postgresql que tiene el concepto de llamada a funciones
 
 Prueba 10 Caso 5 (Ejecutar un procedimiento almacenado parametrizado con retorno de un solo valor, estilo funcion, sobre DB6), para ver la salida del servicio vea el archivo test10_service_output_case5.xml
 
-ServiceName=System.Execute.SQL
+ServiceName=System.Execute.DBCommand
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 SQL={call_function [paramvalue]Result[/paramvalue] = call spGetValue([paramvalue]ID[/paramvalue])}
@@ -362,7 +362,7 @@ Result=[array scope="out" datatype="integer"] [/array]
 
 Prueba 10 Caso 6 (Ejecutar un procedimiento almacenado parametrizado con retorno de un solo valor, sobre DB6), para ver la salida del servicio vea el archivo test10_service_output_case6.xml
 
-ServiceName=System.Execute.SQL
+ServiceName=System.Execute.DBCommand
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 SQL={call spGetValues([paramvalue]ID[/paramvalue])}
@@ -372,7 +372,7 @@ Prueba de llamadas a DDL
 
 Prueba 11 Caso 1 (Ejecutar un Create plano, no parametrizado, sobre DB6), para ver la salida del servicio vea el archivo test11_service_output_case1.xml
 
-ServiceName=System.Execute.SQL
+ServiceName=System.Execute.DBCommand
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 SQL=CREATE TABLE TBLTESTTABLE1( ID INTEGER NOT NULL,  DATA1  VARCHAR(100), DATA2  VARCHAR(100), PRIMARY KEY (id) );
@@ -385,7 +385,7 @@ TransactionID=1568342447065610717
 
 Prueba 11 Caso 2 (Ejecutar un Alter plano, no paramétrizado, sobre DB6), para ver la salida del servicio vea el archivo test11_service_output_case2.xml
 
-ServiceName=System.Execute.SQL
+ServiceName=System.Execute.DBCommand
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 SQL=ALTER TABLE TBLTESTTABLE1 ADD DATA3 VarChar(100)
@@ -398,7 +398,7 @@ TransactionID=1568342447065610717
 
 Prueba 11 Caso 3 (Ejecutar un DROP plano, no paramétrizado, sobre DB6), para ver la salida del servicio vea el archivo test11_service_output_case3.xml
 
-ServiceName=System.Execute.SQL
+ServiceName=System.Execute.DBCommand
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 SQL=ALTER TABLE TBLTESTTABLE1 DROP DATA3
@@ -411,7 +411,7 @@ TransactionID=1568342447065610717
 
 Prueba 12 Caso 1 (Ejecutar un Create plano, no parametrizado, sobre DB6), para ver la salida del servicio vea el archivo test12_service_output_case1.xml
 
-ServiceName=System.Execute.SQL
+ServiceName=System.Execute.DBCommand
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 SQL=create Function SPGETGROUPS1 ( FORIDGROUP int ) RETURNS SETOF tblGroups AS $$ DECLARE BEGIN         RETURN QUERY Select A.IdGroup, A.Description from tblGroups A Where ForIdGroup Is Null Or A.IdGroup = ForIdGroup;    END;  $$ LANGUAGE plpgsql; 
@@ -424,7 +424,7 @@ TransactionID=1568342447065610717
 
 Prueba 12 Caso 2 (Ejecutar un DROP plano, no parametrizado, sobre DB6), para ver la salida del servicio vea el archivo test12_service_output_case2.xml
 
-ServiceName=System.Execute.SQL
+ServiceName=System.Execute.DBCommand
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 SQL=DROP FUNCTION SPGETGROUP1(integer);
@@ -437,7 +437,7 @@ TransactionID=1568342447065610717
 
 Prueba 13 Caso 1 (Ejecutar un ALTER plano, no parametrizado, sobre DB6), para ver la salida del servicio vea el archivo test13_service_output_case1.xml
 
-ServiceName=System.Execute.SQL
+ServiceName=System.Execute.DBCommand
 SecurityTokenID=1885853838911741669
 TransactionID=1568342447065610717
 SQL=ALTER TABLE tblBlobData auto_increment=10

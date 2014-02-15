@@ -165,11 +165,11 @@
         <property name="SystemEndSessionName" value="SystemEndSession" />
         <property name="SystemEndSessionVersion" value="0.0.0.1" />
 
-        <property name="bin-SystemExecuteSQL" value="${bin}/SystemExecuteSQL/" />
-        <property name="src-SystemExecuteSQL" value="SystemExecuteSQL/SystemExecuteSQL" />
+        <property name="bin-SystemExecuteDBCommand" value="${bin}/SystemExecuteDBCommand/" />
+        <property name="src-SystemExecuteDBCommand" value="SystemExecuteDBCommand/SystemExecuteDBCommand" />
 
-        <property name="SystemExecuteSQLName" value="SystemExecuteSQL" />
-        <property name="SystemExecuteSQLVersion" value="0.0.0.1" />
+        <property name="SystemExecuteDBCommandName" value="SystemExecuteDBCommand" />
+        <property name="SystemExecuteDBCommandVersion" value="0.0.0.1" />
 
         <property name="bin-SystemObjectExists" value="${bin}/SystemObjectExists/" />
         <property name="src-SystemObjectExists" value="SystemObjectExists/SystemObjectExists" />
@@ -599,7 +599,7 @@
 		
 	</target>	
 	
-    <target name="18_Compile-DBServices-Source" depends="01_Init"  description="Only compile DBServices System.Enum.Services, SystemPing, SystemStartSession, SystemStartTransaction, SystemCommitTransaction, SystemRollbackTransaction, SystemEndTransaction, SystemEndSession, SystemExecuteSQL, SystemObjectExists, SystemListObjects, SystemDescribeObject, SystemDatabaseInfo source folder">
+    <target name="18_Compile-DBServices-Source" depends="01_Init"  description="Only compile DBServices System.Enum.Services, SystemPing, SystemStartSession, SystemStartTransaction, SystemCommitTransaction, SystemRollbackTransaction, SystemEndTransaction, SystemEndSession, SystemExecuteDBCommand, SystemObjectExists, SystemListObjects, SystemDescribeObject, SystemDatabaseInfo source folder">
     	
     	<mkdir dir="${bin}"/>
         <!-- mkdir dir="${bin-SystemEnumServices}" -->
@@ -621,7 +621,7 @@
             <src path="${src-SystemRollbackTransaction}" />
             <src path="${src-SystemEndTransaction}" />
             <src path="${src-SystemEndSession}" />
-            <src path="${src-SystemExecuteSQL}" />
+            <src path="${src-SystemExecuteDBCommand}" />
             <src path="${src-SystemObjectExists}" />
             <src path="${src-SystemListObjects}" />
             <src path="${src-SystemDescribeObject}" />
@@ -649,7 +649,7 @@
             </fileset>
         </copy> 
 
-        <copy todir="$${bin-SystemStartSession}/" overwrite="true">
+        <copy todir="${bin-SystemStartSession}/" overwrite="true">
             <fileset dir="${src-SystemStartSession}/">
                 <include name="*.conf" />
             </fileset>
@@ -685,14 +685,14 @@
             </fileset>
         </copy> 
 
-        <copy todir="${bin-SystemExecuteSQL}/Langs" overwrite="true">
-            <fileset dir="${src-SystemExecuteSQL}/Langs/">
+        <copy todir="${bin-SystemExecuteDBCommand}/Langs" overwrite="true">
+            <fileset dir="${src-SystemExecuteDBCommand}/Langs/">
                 <include name="**/*.lang.xml" />
             </fileset>
         </copy> 
     	
-        <copy todir="${bin-SystemExecuteSQL}/" overwrite="true">
-            <fileset dir="${src-SystemExecuteSQL}/">
+        <copy todir="${bin-SystemExecuteDBCommand}/" overwrite="true">
+            <fileset dir="${src-SystemExecuteDBCommand}/">
                 <include name="*.conf" />
             </fileset>
         </copy>	
@@ -723,7 +723,7 @@
     	
     </target>
 	
-    <target name="19_Generate-DBServices-Jar-Files" depends="01_Init"  description="Generate System.Enum.Services.jar, SystemPing.jar, SystemStartSession.jar, SystemStartTransaction.jar, SystemCommitTransaction.jar, SystemRollbackTransaction.jar, SystemEndTransaction.jar, SystemEndSession.jar, SystemExecuteSQL.jar, SystemObjectExists.jar, SystemListObjects.jar, SystemDescribeObject.jar, SystemDatabaseInfo.jar from source folder">
+    <target name="19_Generate-DBServices-Jar-Files" depends="01_Init"  description="Generate System.Enum.Services.jar, SystemPing.jar, SystemStartSession.jar, SystemStartTransaction.jar, SystemCommitTransaction.jar, SystemRollbackTransaction.jar, SystemEndTransaction.jar, SystemEndSession.jar, SystemExecuteDBCommand.jar, SystemObjectExists.jar, SystemListObjects.jar, SystemDescribeObject.jar, SystemDatabaseInfo.jar from source folder">
 	
         <delete file="${distro-bin-DBServicesManager}/DBServices/System.Enum.Services/${SystemEnumServicesName}.jar"/>
     	
@@ -902,25 +902,25 @@
             </fileset>
         </copy> 
     	
-        <delete file="${distro-bin-DBServicesManager}/DBServices/System.Execute.SQL/${SystemExecuteSQLName}.jar"/>
+        <delete file="${distro-bin-DBServicesManager}/DBServices/System.Execute.DBCommand/${SystemExecuteDBCommandName}.jar"/>
     	
-        <jar jarfile="${distro-bin-DBServicesManager}/DBServices/System.Execute.SQL/${SystemExecuteSQLName}.jar" index="no" compress="yes" update="true">
-            <fileset dir="${bin}" includes="${SystemExecuteSQLName}/**/*.class"/>
+        <jar jarfile="${distro-bin-DBServicesManager}/DBServices/System.Execute.DBCommand/${SystemExecuteDBCommandName}.jar" index="no" compress="yes" update="true">
+            <fileset dir="${bin}" includes="${SystemExecuteDBCommandName}/**/*.class"/>
             <manifest>
                 <attribute name="Built-By" value="${user.name}" />
-                <attribute name="Specification-Title" value="${SystemExecuteSQLName}" />
-                <attribute name="Specification-Version" value="${SystemExecuteSQLVersion}" />
+                <attribute name="Specification-Title" value="${SystemExecuteDBCommandName}" />
+                <attribute name="Specification-Version" value="${SystemExecuteDBCommandVersion}" />
             </manifest>
             <service type="DBCommonClasses.CDBAbstractService">
-                <provider classname="SystemExecuteSQL.CSystemExecuteSQL"/>
+                <provider classname="SystemExecuteDBCommand.CSystemExecuteDBCommand"/>
             </service>  
         </jar>
     
-        <copy file="${distro-bin-DBServicesManager}/DBServices/System.Execute.SQL/${SystemExecuteSQLName}.jar" todir="${bin-DBServicesManager}/DBServices/System.Execute.SQL" overwrite="true"/>
-        <copy file="${src-SystemExecuteSQL}/${SystemExecuteSQLName}.conf" todir="${distro-bin-DBServicesManager}/DBServices/System.Execute.SQL/" overwrite="true"/>
+        <copy file="${distro-bin-DBServicesManager}/DBServices/System.Execute.DBCommand/${SystemExecuteDBCommandName}.jar" todir="${bin-DBServicesManager}/DBServices/System.Execute.DBCommand" overwrite="true"/>
+        <copy file="${src-SystemExecuteDBCommand}/${SystemExecuteDBCommandName}.conf" todir="${distro-bin-DBServicesManager}/DBServices/System.Execute.DBCommand/" overwrite="true"/>
     	
-        <copy todir="${distro-bin-DBServicesManager}/DBServices/System.Execute.SQL/Langs/" overwrite="true">
-            <fileset dir="${src-SystemExecuteSQL}/Langs">
+        <copy todir="${distro-bin-DBServicesManager}/DBServices/System.Execute.DBCommand/Langs/" overwrite="true">
+            <fileset dir="${src-SystemExecuteDBCommand}/Langs">
                 <include name="**/*.lang.xml" />
             </fileset>
         </copy> 

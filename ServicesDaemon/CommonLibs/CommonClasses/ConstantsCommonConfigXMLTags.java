@@ -56,6 +56,8 @@ public interface ConstantsCommonConfigXMLTags {
 	
 	public static final String _Config = "Config";
 	public static final String _System = "System";
+	public static final String _Main = "Main";
+	public static final String _Backup = "Backup";
 	public static final String _Managers_Dir = "Managers_Dir";
 	public static final String _Key_Store_File = "Key_Store_File";
 	public static final String _Key_Store_Password = "Key_Store_Password";
@@ -116,5 +118,14 @@ public interface ConstantsCommonConfigXMLTags {
 	
 	public static final String _Class_Name = "Class_Name";
 	public static final String _Config_File = "Config_File";
+	
+	public static final String _Filters = "Filters";
+	public static final String _Type = "Type";
+	public static final String _Type_Allow = "allow";
+	public static final String _Type_Block = "block";
+	public static final String _Type_Exact = "exact";
+	public static final String _Type_Partial = "partial";
+	public static final String _Type_RExp = "rexp";
+	public static final String _Filter = "Filter";
 	
 }

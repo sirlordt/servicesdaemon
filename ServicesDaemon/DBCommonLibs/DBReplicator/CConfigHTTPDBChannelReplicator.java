@@ -1,6 +1,7 @@
 package DBReplicator;
 
 import java.io.File;
+import java.util.LinkedList;
 
 import net.maindataservices.Utilities;
 
@@ -18,6 +19,10 @@ public class CConfigHTTPDBChannelReplicator extends CAbstractConfigLoader {
 
 	protected static CConfigHTTPDBChannelReplicator ConfigHTTPDBChannelReplicator = null;
 
+	public CHTTPDBChannelReplicatorTarget MainConfiguredTarget = null;
+	
+	public LinkedList<CHTTPDBChannelReplicatorTarget> BackupConfiguredTargets = null; 
+	
 	public static CConfigHTTPDBChannelReplicator getConfigHTTPDBChannelReplicator( String strRunningPath ) {
 
 		if ( ConfigHTTPDBChannelReplicator == null ) {
@@ -30,36 +35,20 @@ public class CConfigHTTPDBChannelReplicator extends CAbstractConfigLoader {
 		
 	}
 	
-	public int intRequestTimeout;
-	public int intSocketTimeout;
-	public String strURL;
-	public CConfigProxy ConfigProxy;
-	/*public String strProxyIP;
-	public int intProxyPort;
-	public String strProxyUser;
-	public String strProxyPassword;*/
-	public String strDatabase;
-	public String strUser;
-	public String strPassword;
-	
 	public CConfigHTTPDBChannelReplicator( String strRunningPath ) {
 
 		super( strRunningPath );
 
-		strFirstLevelConfigSectionsOrder.add( ConstantsCommonConfigXMLTags._System );  //1
+		strFirstLevelConfigSectionsOrder.add( ConstantsCommonConfigXMLTags._Main );  //1
+		bFirstLevelConfigSectionsMustExists.add( true );
+		strFirstLevelConfigSectionsOrder.add( ConstantsCommonConfigXMLTags._Backup );  //2
 		bFirstLevelConfigSectionsMustExists.add( true );
 		
-		intRequestTimeout = ConstantsCommonClasses._Request_Timeout;
-		intSocketTimeout = ConstantsCommonClasses._Socket_Timeout;
-		strURL = "";
-		ConfigProxy = new CConfigProxy();
-		strDatabase = "";
-		strUser = "";
-		strPassword = "";
+		BackupConfiguredTargets = new LinkedList<CHTTPDBChannelReplicatorTarget>();
 		
 	}
 	
-	public boolean loadConfigSectionSystem( Node ConfigSectionNode, CExtendedLogger Logger, CLanguage Lang ) {
+	public boolean loadConfigSectionTarget( Node ConfigSectionNode, boolean bMainTarget, CExtendedLogger Logger, CLanguage Lang ) {
 
         boolean bResult = true;
 		
@@ -71,6 +60,14 @@ public class CConfigHTTPDBChannelReplicator extends CAbstractConfigLoader {
 
 				NamedNodeMap NodeAttributes = ConfigSectionNode.getAttributes();
 
+				int intRequestTimeout = ConstantsCommonClasses._Request_Timeout;
+				int intSocketTimeout =  ConstantsCommonClasses._Socket_Timeout;
+				String strURL = "";
+				CConfigProxy ConfigProxy = new CConfigProxy();
+				String strDatabase = "";
+				String strUser = "";
+				String strPassword = "";
+				
 		        for ( int intAttributesIndex = 0; intAttributesIndex < strAttributesOrder.length; intAttributesIndex++ ) {
 		        	
 		            Node NodeAttribute = NodeAttributes.getNamedItem( strAttributesOrder[ intAttributesIndex ] );
@@ -307,8 +304,80 @@ public class CConfigHTTPDBChannelReplicator extends CAbstractConfigLoader {
 		            
 		        }
 			
+		        if ( strURL.isEmpty() == false && strDatabase.isEmpty() == false && strUser.isEmpty() == false && strPassword.isEmpty() == false ) {
+
+		        	if ( MainConfiguredTarget == null || MainConfiguredTarget.strURL.equalsIgnoreCase( strURL ) == false ) {
+		        	
+		        		if ( CHTTPDBChannelReplicatorTarget.findURL( BackupConfiguredTargets, strURL ) == false ) {
+
+		        			CHTTPDBChannelReplicatorTarget ConfigHTTPDBChannel = new CHTTPDBChannelReplicatorTarget();
+
+		        			ConfigHTTPDBChannel.intRequestTimeout = intRequestTimeout;
+		        			ConfigHTTPDBChannel.intSocketTimeout = intSocketTimeout;
+		        			ConfigHTTPDBChannel.ConfigProxy = ConfigProxy;
+		        			ConfigHTTPDBChannel.strURL = strURL;
+		        			ConfigHTTPDBChannel.strDatabase = strDatabase;
+		        			ConfigHTTPDBChannel.strUser = strUser;
+		        			ConfigHTTPDBChannel.strPassword = strPassword;
+
+		        			if ( bMainTarget ) {
+
+		        				if ( MainConfiguredTarget != null )
+									Logger.logWarning( "-1", Lang.translate( "The main target for channel already defined this overwritten, only one main target allowed. Please change to backup target" ) );
+
+		        				MainConfiguredTarget = ConfigHTTPDBChannel;
+
+								Logger.logMessage( "1", Lang.translate( "The main target for channel with the next URL: [%s], Database: [%s], User: [%s]. added", strURL, strDatabase, strUser ) );
+
+		        			}
+		        			else {
+
+		        				BackupConfiguredTargets.add( ConfigHTTPDBChannel );
+
+								Logger.logMessage( "1", Lang.translate( "The backup target for channel with the next URL: [%s], Database: [%s], User: [%s]. added", strURL, strDatabase, strUser ) );
+
+		        			}
+
+		        		}
+		        		else {
+
+							Logger.logWarning( "-1", Lang.translate( "The backup target for channel with the next URL: [%s] already exits on another backup target, ignoring the node", strURL ) );
+
+		        		}
+		        	
+		        	}
+		        	else {
+		        		
+						Logger.logWarning( "-1", Lang.translate( "The backup target for channel with the next URL: [%s] already exits on main target, ignoring the node", strURL ) );
+		        		
+		        	}
+		        	
+		        }
+		        else {
+		        	
+		        	if ( bMainTarget ) {
+		        		
+						Logger.logError( "-1011", Lang.translate( "The main target for channel contain invalid attributes" ) );
+        				bResult = false;
+		        		
+		        	}
+		        	else {
+		        		
+						Logger.logWarning( "-1", Lang.translate( "The backup target for channel contain invalid attributes, ignoring the node" ) );
+		        		
+		        	}
+		        	
+		        }
+		        
 			}
-        
+
+	        if ( MainConfiguredTarget == null ) {
+	        	
+				Logger.logError( "-1012", Lang.translate( "No main target defined for channel, you must define one" ) );
+				bResult = false;
+	        	
+	        }
+	        
         }
 		catch ( Exception Ex ) {
 			
@@ -329,9 +398,9 @@ public class CConfigHTTPDBChannelReplicator extends CAbstractConfigLoader {
 
 		Logger.logMessage( "1", Lang.translate( "Reading XML node section: [%s]", ConfigSectionNode.getNodeName() ) );        
         
-		if ( ConfigSectionNode.getNodeName().equals(  ConstantsCommonConfigXMLTags._System ) == true ) {
+		if ( ConfigSectionNode.getNodeName().equals(  ConstantsCommonConfigXMLTags._Main ) == true || ConfigSectionNode.getNodeName().equals(  ConstantsCommonConfigXMLTags._Backup ) == true ) {
 	           
-			if ( this.loadConfigSectionSystem( ConfigSectionNode, Logger, Lang ) == false ) {
+			if ( this.loadConfigSectionTarget( ConfigSectionNode, ConfigSectionNode.getNodeName().equals(  ConstantsCommonConfigXMLTags._Main ), Logger, Lang ) == false ) {
 				
     			Logger.logError( "-1001", Lang.translate( "Failed to load config from XML node section: [%s] ", ConfigSectionNode.getNodeName() ) );        
 				

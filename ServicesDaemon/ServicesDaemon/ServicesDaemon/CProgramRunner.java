@@ -425,7 +425,7 @@ public class CProgramRunner implements IMessageObject {
     	
 			CClassPathLoader ClassPathLoader = new CClassPathLoader();
 			
-		    ClassPathLoader.LoadClassFiles( this.strRunningPath + ConstantsCommonClasses._Managers_Dir, ConstantsCommonClasses._Managers_Ext, 2, ServicesDaemonLogger, ServicesDaemonLang );
+		    ClassPathLoader.loadClassFiles( this.strRunningPath + ConstantsCommonClasses._Managers_Dir, ConstantsCommonClasses._Managers_Ext, 2, ServicesDaemonLogger, ServicesDaemonLang );
 			
 			loadServicesManagersInstances( ServicesDaemonConfig, ServicesDaemonLogger, ServicesDaemonLang );
 				

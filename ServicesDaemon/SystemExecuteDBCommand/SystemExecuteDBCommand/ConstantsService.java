@@ -8,7 +8,7 @@
  * Contributors:
  *     SirLordT <sirlordt@gmail.com> - initial API and implementation
  ******************************************************************************/
-package SystemExecuteSQL;
+package SystemExecuteDBCommand;
 
 import java.sql.Types;
 
@@ -30,7 +30,7 @@ public interface ConstantsService {
 	public static final int _Response_AffectedRows_TypeID  = Types.BIGINT;
 	public static final String _Response_AffectedRows_Type = "BigInt";
 	
-	public static final String _Main_File = "SystemExecuteSQL";
+	public static final String _Main_File = "SystemExecuteDBCommand";
 	public static final String _Conf_File = _Main_File + ".conf";
 	public static final String _Main_File_Log = _Main_File + ".log";
 	
