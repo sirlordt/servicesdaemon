@@ -28,6 +28,9 @@
 <entry key="The default response format [%s] version [%s] not found">El formato de respuesta por defecto [%s] versión [%s] no fue encontrado</entry>
 <entry key="The default response format [%s] found, but the version [%s] not found, using the min version [%s] available">El formato de respuesta por defecto [%s] fue encontrado, pero la versión [%s] no fue encontrada, usando la vesión mínima disponible [%s]</entry>
 
+<entry key="Default response format not found. Check the [%s] and [%s] values in config file">Formato de respuesta por defecto no encontrado. Verifica los valores de [%s] y [%s] en el archivo de configuración</entry>
+<entry key="Default response format not found. Check the log file for more details">Formato de respuesta por defecto no encontrado. Verifica los archivos de registro para más información</entry>
+
 <entry key="Using default response format: [%s] min version: [%s]">Usando el como formato de respuesa por defecto: [%s] versión mínima: [%s]</entry>
 <entry key="Count of responses formats registered: [%s]">Cantidad de formatos de respuestas registrados: [%s]></entry>
 

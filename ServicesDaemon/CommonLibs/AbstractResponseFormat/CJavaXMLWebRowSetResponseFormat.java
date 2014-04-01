@@ -15,10 +15,12 @@ import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetMetaDataImpl;
 //import javax.sql.rowset.WebRowSet;
 
+
+
+
+
 import net.maindataservices.Utilities;
-
 import WebRowSet.CWebRowSetImpl;
-
 import rowset.CachedRowSetImpl;
 //import com.sun.rowset.WebRowSetImpl;
 
@@ -27,7 +29,7 @@ import AbstractService.CAbstractService;
 import AbstractService.CInputServiceParameter;
 import CommonClasses.CLanguage;
 import CommonClasses.CMemoryRowSet;
-import CommonClasses.CResultSetResult;
+import CommonClasses.CResultDataSet;
 import CommonClasses.ConstantsMessagesCodes;
 import CommonClasses.NamesSQLTypes;
 import ExtendedLogger.CExtendedLogger;
@@ -42,6 +44,7 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 		
 	}
 	
+	/*
 	@Override
 	public CAbstractResponseFormat getNewInstance() {
 
@@ -52,6 +55,7 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
     	return NewInstance;
 	
 	}
+    */
 
 	@Override
 	public String getContentType() {
@@ -451,7 +455,7 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 	}*/
 
     @Override
-    public boolean formatResultSet( HttpServletResponse Response, CResultSetResult SQLDataSetResult, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang ) {
+    public boolean formatResultSet( HttpServletResponse Response, CResultDataSet ResultDataSet, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang ) {
     	
 		long lngStart = System.currentTimeMillis();
     	
@@ -472,7 +476,28 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 
 				//ResultSet SQLDataSet = null;
 				
-				if ( SQLDataSetResult.Result != null && SQLDataSetResult.intCode >= 0 ) {
+    	        if ( ResultDataSet.Result != null && ResultDataSet.Result instanceof ResultSet == false ) {
+    	        	
+    				if ( Logger != null ) {
+    					
+    					if ( Lang != null )
+    						Logger.logWarning( "-1", Lang.translate( "Result object type [%s] not supported", ResultDataSet.getClass().getName() ) );
+    					else
+    						Logger.logWarning( "-1", String.format( "Result object type [%s] not supported", ResultDataSet.getClass().getName() ) );
+    				    
+    				}    
+    				else if ( OwnerConfig != null && OwnerConfig.Logger != null ) {
+
+    					if ( OwnerConfig.Lang != null )
+    						OwnerConfig.Logger.logWarning( "-1", OwnerConfig.Lang.translate( "Result object type [%s] not supported", ResultDataSet.getClass().getName() ) );
+    					else
+    						OwnerConfig.Logger.logWarning( "-1", String.format( "Result object type [%s] not supported", ResultDataSet.getClass().getName() ) );
+
+    				}    
+    	        	
+    	        }
+		        
+				if ( ResultDataSet.Result != null && ResultDataSet.Result instanceof ResultSet && ResultDataSet.intCode >= 0 ) {
 
 					/*MemoryRowSet.cloneOnlyMetaData( SQLDataSetResult.Result, DBEngine, null, Logger, Lang );
 					MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructAffectedRows, Types.BIGINT, NamesSQLTypes._BIGINT, 0, JavaXMLWebRowSetTags._XML_StructAffectedRows );
@@ -507,7 +532,7 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 					
 					wrs.setPageSize( intInternalFetchSize );
 
-					wrs.populate( SQLDataSetResult.Result, 1 );
+					wrs.populate( (ResultSet) ResultDataSet.Result, 1 );
 					
 					wrs.initWriteXML( OutStream ); //Only write the headers
 					
@@ -543,9 +568,9 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 					MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructCode, Types.INTEGER, NamesSQLTypes._INTEGER, 0, JavaXMLWebRowSetTags._XML_StructCode );
 					MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructDescription, Types.VARCHAR, NamesSQLTypes._VARCHAR, JavaXMLWebRowSetTags._XML_StructDescriptionLength, JavaXMLWebRowSetTags._XML_StructDescription );
 
-					MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructAffectedRows, SQLDataSetResult.lngAffectedRows );
-					MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructCode, SQLDataSetResult.intCode );
-					MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructDescription, SQLDataSetResult.strDescription );
+					MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructAffectedRows, ResultDataSet.lngAffectedRows );
+					MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructCode, ResultDataSet.intCode );
+					MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructDescription, ResultDataSet.strDescription );
 					
 					ResultSet SQLDataSet = MemoryRowSet.createCachedRowSet();
 					
@@ -630,7 +655,7 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
     }
     
 	@Override
-	public boolean formatResultsSets( HttpServletResponse Response, ArrayList<CResultSetResult> SQLDataSetResultList, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
+	public boolean formatResultsSets( HttpServletResponse Response, ArrayList<CResultDataSet> ResultDataSetList, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
     	
 		long lngStart = System.currentTimeMillis();
 		
@@ -640,7 +665,7 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 
 			if ( Utilities.versionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.versionLessEquals( strVersion, this.strMaxVersion ) ) {
         	
-				if ( SQLDataSetResultList.size() > 0 ) {
+				if ( ResultDataSetList.size() > 0 ) {
 
 	        		//String strTempDir = (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Temp_Dir );
 
@@ -648,11 +673,30 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 
 	        		ServletOutputStream OutStream = Response.getOutputStream(); //new FileOutputStream( strTempResponseFormatedFilePath ); 
 					
-					ResultSet SQLDataSet = CResultSetResult.getFirstResultSetNotNull( SQLDataSetResultList );
+					Object ResultObject = (ResultSet) CResultDataSet.getFirstResultSetNotNull( ResultDataSetList );
 
-					//CMemoryRowSet MemoryRowSet = new CMemoryRowSet( false );
+	    	        if ( ResultObject != null && ResultObject instanceof ResultSet == false ) {
+	    	        	
+	    				if ( Logger != null ) {
+	    					
+	    					if ( Lang != null )
+	    						Logger.logWarning( "-1", Lang.translate( "Result object type [%s] not supported", ResultObject.getClass().getName() ) );
+	    					else
+	    						Logger.logWarning( "-1", String.format( "Result object type [%s] not supported", ResultObject.getClass().getName() ) );
+	    				    
+	    				}    
+	    				else if ( OwnerConfig != null && OwnerConfig.Logger != null ) {
 
-					if ( SQLDataSet != null ) {
+	    					if ( OwnerConfig.Lang != null )
+	    						OwnerConfig.Logger.logWarning( "-1", OwnerConfig.Lang.translate( "Result object type [%s] not supported", ResultObject.getClass().getName() ) );
+	    					else
+	    						OwnerConfig.Logger.logWarning( "-1", String.format( "Result object type [%s] not supported", ResultObject.getClass().getName() ) );
+
+	    				}    
+	    	        	
+	    	        }
+	    	        
+					if ( ResultObject != null && ResultObject instanceof ResultSet ) {
 
 						//MemoryRowSet.cloneOnlyMetaData( SQLDataSet, DBEngine, null, Logger, Lang );
 
@@ -662,11 +706,11 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 						
 						boolean bFirst = true;
 						
-						for ( CResultSetResult SQLDataSetResultToAdd: SQLDataSetResultList ) {    
+						for ( CResultDataSet ResultDataSetToAdd: ResultDataSetList ) {    
 
-							if ( SQLDataSetResultToAdd.Result != null ) {   
+							if ( ResultDataSetToAdd.Result != null ) {   
 
-								wrs.populate( SQLDataSetResultToAdd.Result, 1 );
+								wrs.populate( (ResultSet) ResultDataSetToAdd.Result, 1 );
 								
 								if ( bFirst )
 									wrs.initWriteXML( OutStream ); //Only write the headers
@@ -714,7 +758,7 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
 						MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructCode, Types.INTEGER, NamesSQLTypes._INTEGER, 0, JavaXMLWebRowSetTags._XML_StructCode );
 						MemoryRowSet.addField( JavaXMLWebRowSetTags._XML_StructDescription, Types.VARCHAR, NamesSQLTypes._VARCHAR, JavaXMLWebRowSetTags._XML_StructDescriptionLength, JavaXMLWebRowSetTags._XML_StructDescription );
 
-						for ( CResultSetResult SQLDataSetResultToAdd: SQLDataSetResultList ) {    
+						for ( CResultDataSet SQLDataSetResultToAdd: ResultDataSetList ) {    
 
 							MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructAffectedRows,- SQLDataSetResultToAdd.lngAffectedRows );
 							MemoryRowSet.addData( JavaXMLWebRowSetTags._XML_StructCode, SQLDataSetResultToAdd.intCode );
@@ -797,7 +841,7 @@ public class CJavaXMLWebRowSetResponseFormat extends CAbstractResponseFormat {
     	return bResult;
 
 	}
-	
+		
 	@Override
 	public String formatMemoryRowSet( CMemoryRowSet MemoryRowSet, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 		

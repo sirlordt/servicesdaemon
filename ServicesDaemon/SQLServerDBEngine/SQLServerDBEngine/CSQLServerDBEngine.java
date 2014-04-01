@@ -15,8 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.sql.rowset.CachedRowSet;
 
 import net.maindataservices.Utilities;
-
-import AbstractDBEngine.CAbstractDBConnection;
+import AbstractDBEngine.IAbstractDBConnection;
 import AbstractDBEngine.CAbstractDBEngine;
 import AbstractDBEngine.CDBEngineConfigNativeDBConnection;
 import AbstractDBEngine.CJDBConnection;
@@ -24,7 +23,7 @@ import CommonClasses.CLanguage;
 import CommonClasses.CMemoryFieldData;
 import CommonClasses.CMemoryRowSet;
 import CommonClasses.CNamedPreparedStatement;
-import CommonClasses.CResultSetResult;
+import CommonClasses.CResultDataSet;
 import CommonClasses.ConstantsCommonConfigXMLTags;
 import ExtendedLogger.CExtendedLogger;
 
@@ -38,9 +37,9 @@ public class CSQLServerDBEngine extends CAbstractDBEngine {
 	}
 
 	@Override
-	public CAbstractDBConnection getDBConnection( CDBEngineConfigNativeDBConnection ConfigDBConnection, CExtendedLogger Logger, CLanguage Lang) {
+	public IAbstractDBConnection getDBConnection( CDBEngineConfigNativeDBConnection ConfigDBConnection, CExtendedLogger Logger, CLanguage Lang) {
 		
-		CAbstractDBConnection DBConnection = null;
+		IAbstractDBConnection DBConnection = null;
 		
 		try {
 			
@@ -57,7 +56,9 @@ public class CSQLServerDBEngine extends CAbstractDBEngine {
             Connection JDBConnection = DriverManager.getConnection( strDatabaseURL, ConfigDBConnection.strUser, ConfigDBConnection.strPassword ); 
 			
             DBConnection = new CJDBConnection();
+            DBConnection.setEngineNameAndVersion( this.strName, this.strVersion );
             DBConnection.setDBConnection( JDBConnection );
+            DBConnection.setConfigDBConnection( ConfigDBConnection );
             
             if ( Logger != null ) {
             	
@@ -78,7 +79,7 @@ public class CSQLServerDBEngine extends CAbstractDBEngine {
 	}
 
 	@Override
-	public ResultSet executeDummyCommand( CAbstractDBConnection DBConnection, String strOptionalDummySQL, CExtendedLogger Logger, CLanguage Lang) {
+	public ResultSet executeDummyCommand( IAbstractDBConnection DBConnection, String strOptionalDummySQL, CExtendedLogger Logger, CLanguage Lang) {
 
 		ResultSet Result = null;
 		
@@ -107,7 +108,7 @@ public class CSQLServerDBEngine extends CAbstractDBEngine {
 	}
 
 	//This method is for bug in SQL server driver, always get Resultset != null in method getGeneratedKey() must be a null for tables has not identity column type
-	public boolean IsDummyGeneratedKeyResult( ResultSet Resultset, CExtendedLogger Logger, CLanguage Lang ) {
+	public boolean isDummyGeneratedKeyResult( ResultSet Resultset, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		boolean bResult = false;
 
@@ -157,11 +158,11 @@ public class CSQLServerDBEngine extends CAbstractDBEngine {
 	} 
 	
 	@Override
-    public CResultSetResult executePlainInsertCommand( CAbstractDBConnection DBConnection, String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    public CResultDataSet executePlainInsertCommand( IAbstractDBConnection DBConnection, String strSQL, CExtendedLogger Logger, CLanguage Lang ) {
 
 		//Re implement by issue of getGeneratedKey for identity column
     	
-    	CResultSetResult Result = new CResultSetResult( -1, -1, "" ); 
+    	CResultDataSet Result = new CResultDataSet( -1, -1, "", "" ); 
     	
     	try {
     	
@@ -176,14 +177,18 @@ public class CSQLServerDBEngine extends CAbstractDBEngine {
         			
             }
 
+            long lngStart = System.currentTimeMillis();
+            
             Result.lngAffectedRows = SQLStatement.executeUpdate( strSQL , Statement.RETURN_GENERATED_KEYS );
     		
+            long lngEnd = System.currentTimeMillis();
+            
             if ( Logger != null ) { //Trace how much time in execute sql, useful for trace expensive query
             	
         		if ( Lang != null )   
-				   Logger.logInfo( "0x2004", Lang.translate( "End plain SQL statement" ) );
+				   Logger.logInfo( "0x2004", Lang.translate( "End plain SQL statement on [%s] ms", Long.toString( lngEnd - lngStart ) ) );
         		else
- 				   Logger.logInfo( "0x2004", "End plain SQL statement" );
+ 				   Logger.logInfo( "0x2004", String.format( "End plain SQL statement on [%s] ms", Long.toString( lngEnd - lngStart ) ) );
         			
             }
             
@@ -193,7 +198,7 @@ public class CSQLServerDBEngine extends CAbstractDBEngine {
 
     			Result.Result = SQLStatement.getGeneratedKeys(); //Save the generated keys
     			
-				if ( Result.Result != null && ( this.isValidResult( Result.Result, Logger, Lang ) == false || this.IsDummyGeneratedKeyResult( Result.Result, Logger, Lang ) ) ) 
+				if ( Result.Result != null && ( this.isValidResult( Result.Result, Logger, Lang ) == false || this.isDummyGeneratedKeyResult( (ResultSet) Result.Result, Logger, Lang ) ) ) 
 					Result.Result = null;
 
 				if ( Result.Result != null )
@@ -224,11 +229,11 @@ public class CSQLServerDBEngine extends CAbstractDBEngine {
     }
 	
 	@Override
-    public ArrayList<CResultSetResult> executeComplexInsertCommand( CAbstractDBConnection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    public ArrayList<CResultDataSet> executeComplexInsertCommand( IAbstractDBConnection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strSQL, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
     	
 		//Re implement by issue of getGeneratedKey for identity column
 		
-    	ArrayList<CResultSetResult> Result = new ArrayList<CResultSetResult>();
+    	ArrayList<CResultDataSet> Result = new ArrayList<CResultDataSet>();
 
     	try {
     	
@@ -350,14 +355,18 @@ public class CSQLServerDBEngine extends CAbstractDBEngine {
 		        			
 		            }
 					
+		            long lngStart = System.currentTimeMillis();
+		            
 					int intAffectedRows = NamedPreparedStatement.executeUpdate();
-				
+
+		            long lngEnd = System.currentTimeMillis();
+					
 		            if ( Logger != null ) { //Trace how much time in execute sql, useful for trace expensive query
 		            	
 		        		if ( Lang != null )   
-						   Logger.logInfo( "0x2006", Lang.translate( "End complex SQL statement" ) );
+						   Logger.logInfo( "0x2006", Lang.translate( "End complex SQL statement on [%s] ms", Long.toString( lngEnd - lngStart ) ) );
 		        		else
-		 				   Logger.logInfo( "0x2006", "End complex SQL statement" );
+		 				   Logger.logInfo( "0x2006", String.format( "End complex SQL statement on [%s] ms", Long.toString( lngEnd - lngStart ) ) );
 		        			
 		            }
 					
@@ -378,7 +387,7 @@ public class CSQLServerDBEngine extends CAbstractDBEngine {
 
 							CachedRowSet TmpGeneratedKeys = TmpMemoryRowSet.createCachedRowSet();
 
-							if ( this.IsDummyGeneratedKeyResult( TmpGeneratedKeys, Logger, Lang ) ) {
+							if ( this.isDummyGeneratedKeyResult( TmpGeneratedKeys, Logger, Lang ) ) {
 
 								bIsValidResultSet = false; 
 								
@@ -405,12 +414,12 @@ public class CSQLServerDBEngine extends CAbstractDBEngine {
 
 					if ( GeneratedKeys != null ) {
 
-						Result.add( new CResultSetResult( intAffectedRows, 1, Lang.translate( "Sucess to execute the SQL statement" ), NamedPreparedStatement, GeneratedKeys ) ); //Return back the generated keys
+						Result.add( new CResultDataSet( intAffectedRows, 1, Lang.translate( "Sucess to execute the SQL statement" ), NamedPreparedStatement, GeneratedKeys ) ); //Return back the generated keys
 
 					}    
 					else { 
 
-						Result.add( new CResultSetResult( intAffectedRows, 1, Lang.translate( "Sucess to execute the SQL statement" ) ) ); //No key generated
+						Result.add( new CResultDataSet( intAffectedRows, 1, Lang.translate( "Sucess to execute the SQL statement" ), "" ) ); //No key generated
 
 						NamedPreparedStatement.close(); //Close immediately to prevent resource leak in database driver
 
@@ -421,7 +430,7 @@ public class CSQLServerDBEngine extends CAbstractDBEngine {
 					
 					if ( Logger != null ) {
 					
-						Result.add( new CResultSetResult( -1, -1, Lang.translate( "Error to execute the SQL statement, see the log file for more details" ) ) );
+						Result.add( new CResultDataSet( -1, -1, Lang.translate( "Error to execute the SQL statement, see the log file for more details" ), Ex.getMessage() ) );
 
 						Logger.logError( "-1001", Lang.translate( "Error to execute the next SQL statement [%s] index call [%s]", strParsedStatement, Integer.toString( intIndexCall ) )  );
 						

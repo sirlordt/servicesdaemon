@@ -10,6 +10,8 @@
  ******************************************************************************/
 package DBServicesManager;
 
+import java.io.File;
+
 import CommonClasses.ConstantsCommonConfigXMLTags;
 
 public interface ConstantsServicesManager {
@@ -19,9 +21,9 @@ public interface ConstantsServicesManager {
 	public static final String _Main_File_Log = _Main_File + ".log";
 	public static final String _Security_Manager_Name = _Main_File + ".SecurityManager";
 
-	public static final String _Services_Dir = "DBServices/"; 
-	public static final String _DB_Drivers_Dir = "DBDrivers/";
-	public static final String _DB_Engines_Dir = "DBEngines/";
+	public static final String _Services_Dir = "DBServices" + File.separatorChar; 
+	public static final String _DB_Drivers_Dir = "DBDrivers" + File.separatorChar;
+	public static final String _DB_Engines_Dir = "DBEngines" + File.separatorChar;
 	public static final String _Logger_Name = "DBServicesManagerLogger"; 
 
 	public static final String _Response_Format = ConstantsCommonConfigXMLTags._ResponseFormat_XML_DATAPACKET;

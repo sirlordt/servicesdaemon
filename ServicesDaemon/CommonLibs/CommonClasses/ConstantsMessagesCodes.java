@@ -31,4 +31,8 @@ public interface ConstantsMessagesCodes {
 	public static final String _Shutdown = "shutdown";
 	public static final String _Restart = "restart";
 	
+	public static final String _Default_Response_Format = "Default_Response_Format";
+	public static final String _Default_Response_Format_Version = "Default_Response_Format_Version";
+	
+	
 }

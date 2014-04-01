@@ -25,7 +25,7 @@ import javax.servlet.http.HttpSession;
 import net.maindataservices.Utilities;
 
 
-import AbstractDBEngine.CAbstractDBConnection;
+import AbstractDBEngine.IAbstractDBConnection;
 import AbstractDBEngine.CAbstractDBEngine;
 import AbstractDBEngine.CAbstractDBEngine.SQLStatementType;
 import AbstractResponseFormat.CAbstractResponseFormat;
@@ -176,18 +176,18 @@ public class CSystemStartSession extends CDBAbstractService {
 		
 		String strResult = strMacroContained;
 		
-		String[] strMacrosTags = this.getMacrosNames(); 
+		String[] strMacrosNames = this.getMacrosNames(); 
 		
-		if ( strMacrosValues != null && strMacrosValues.length >= strMacrosTags.length ) {
+		if ( strMacrosValues != null && strMacrosValues.length >= strMacrosNames.length ) {
 			
-			for ( int intIndex = 0; intIndex < strMacrosTags.length; intIndex++ ) {
+			for ( int intIndex = 0; intIndex < strMacrosNames.length; intIndex++ ) {
 			
 				String strMacroValue = strMacrosValues[ intIndex ];
 				
 				if ( strMacroValue == null )
 					strMacroValue = ""; 
 				
-				strResult = strResult.replace( strMacrosTags[ intIndex ], strMacroValue );
+				strResult = strResult.replace( strMacrosNames[ intIndex ], strMacroValue );
 				
 			}
 			
@@ -507,7 +507,7 @@ public class CSystemStartSession extends CDBAbstractService {
 		
 	}
 	
-	void afterCheckSQL( int intAfterCheckSQL, CAbstractDBEngine DBEngine, CSystemStartSessionDBConnection SystemStartSessionDBConnection, CAbstractDBConnection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
+	void afterCheckSQL( int intAfterCheckSQL, CAbstractDBEngine DBEngine, CSystemStartSessionDBConnection SystemStartSessionDBConnection, IAbstractDBConnection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		try {
 
@@ -657,7 +657,7 @@ public class CSystemStartSession extends CDBAbstractService {
 										LocalConfigDBConnection.strTransactionPassword = Utilities.uncryptString( ConstantsConfigXMLTags._Password_Crypted, ConstantsConfigXMLTags._Password_Crypted_Sep, ConstantsCommonClasses._Crypt_Algorithm, LocalConfigDBConnection.strTransactionPassword, ServiceLogger, ServiceLang );
 										LocalConfigDBConnection.strSessionKey = this.replaceInputParametersNamesForValues( LocalConfigDBConnection.strSessionKey, Request );
 
-										CAbstractDBConnection DBConnection = DBEngine.getDBConnection( LocalConfigDBConnection.getDBEngineConfigConnection( true ), ServiceLogger, ServiceLang );
+										IAbstractDBConnection DBConnection = DBEngine.getDBConnection( LocalConfigDBConnection.getDBEngineConfigConnection( true ), ServiceLogger, ServiceLang );
 
 										if ( DBConnection != null ) {
 

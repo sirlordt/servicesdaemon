@@ -548,7 +548,7 @@ public abstract class CAbstractService implements IMessageObject {
 
 		if ( strParameterType.toLowerCase().equals( NamesSQLTypes._VARCHAR ) == true ) {
 
-			if ( strInputParamActualValue.length() <= Integer.parseInt( strParameterTypeWidth ) ) {
+			if ( strParameterTypeWidth == "0" || strInputParamActualValue.length() <= Integer.parseInt( strParameterTypeWidth ) ) {
 
 				return true;
 

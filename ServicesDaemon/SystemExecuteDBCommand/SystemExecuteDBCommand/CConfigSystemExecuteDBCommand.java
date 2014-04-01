@@ -1010,7 +1010,7 @@ public class CConfigSystemExecuteDBCommand extends CAbstractConfigLoader {
         }
 		/*else if ( ConfigSectionNode.getNodeName().equals(  CommonClasses.ConstantsCommonConfigXMLTags._System ) == true ) {
            
-			if ( this.loadConfigSectionSystem( ConfigSectionNode, Lang, Logger ) == false ) {
+			if ( this.loadConfigSectionSystem( ConfigSectionNode, Logger, Lang ) == false ) {
 				
     			Logger.logError( "-1002", Lang.translate( "Failed to load config from XML node section: [%s]", ConfigSectionNode.getNodeName() ) );        
 				

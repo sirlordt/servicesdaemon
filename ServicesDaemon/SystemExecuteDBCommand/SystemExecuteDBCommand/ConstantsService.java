@@ -24,7 +24,7 @@ public interface ConstantsService {
 
 	public static final String _Request_SQL            = "SQL";
 	public static final String _Request_SQL_Type       = "VarChar";
-	public static final String _Request_SQL_Length     = "10240";
+	public static final String _Request_SQL_Length     = "0";
 
 	public static final String _Response_AffectedRows     = "AffectedRows";
 	public static final int _Response_AffectedRows_TypeID  = Types.BIGINT;

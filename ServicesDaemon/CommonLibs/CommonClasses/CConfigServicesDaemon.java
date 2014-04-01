@@ -119,7 +119,7 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 	
 	}
 	
-	public boolean LoadConfigSectionLogger( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
+	public boolean LoadConfigSectionLogger( Node ConfigSectionNode, CExtendedLogger Logger, CLanguage Lang ) {
 		
         boolean bResult = true;
         
@@ -381,7 +381,7 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 		
 	}
     
-    public boolean LoadConfigSectionSystem( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
+    public boolean LoadConfigSectionSystem( Node ConfigSectionNode, CExtendedLogger Logger, CLanguage Lang ) {
 
         boolean bResult = true;
 		
@@ -587,7 +587,7 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 
 	}
 	
-	public boolean LoadConfigSectionNetworkInterfaces( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
+	public boolean LoadConfigSectionNetworkInterfaces( Node ConfigSectionNode, CExtendedLogger Logger, CLanguage Lang ) {
         
 		boolean bResult = false;
          
@@ -800,7 +800,7 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
 
 	}
 
-	public boolean LoadConfigSectionAccessControl( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
+	public boolean LoadConfigSectionAccessControl( Node ConfigSectionNode, CExtendedLogger Logger, CLanguage Lang ) {
 
 		boolean bResult = false;
 		
@@ -975,7 +975,7 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
         
 		if ( ConfigSectionNode.getNodeName().equals(  ConstantsCommonConfigXMLTags._Logger ) == true ) {
            
-			if ( this.LoadConfigSectionLogger( ConfigSectionNode, Lang, Logger ) == false ) {
+			if ( this.LoadConfigSectionLogger( ConfigSectionNode, Logger, Lang ) == false ) {
 				
     			Logger.logError( "-1001", Lang.translate( "Failed to load config from XML node section: [%s] ", ConfigSectionNode.getNodeName() ) );        
 				
@@ -986,7 +986,7 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
         }
         else if ( ConfigSectionNode.getNodeName().equals( ConstantsCommonConfigXMLTags._System ) == true ) {
          
-			if ( this.LoadConfigSectionSystem( ConfigSectionNode, Lang, Logger ) == false ) {
+			if ( this.LoadConfigSectionSystem( ConfigSectionNode, Logger, Lang ) == false ) {
 				
     			Logger.logError( "-1002", Lang.translate( "Failed to load config from XML node section: [%s]", ConfigSectionNode.getNodeName() ) );        
 				
@@ -997,7 +997,7 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
         }
         else if ( ConfigSectionNode.getNodeName().equals( ConstantsCommonConfigXMLTags._NetworkInterfaces ) == true ) {
              
-			if ( this.LoadConfigSectionNetworkInterfaces( ConfigSectionNode, Lang, Logger ) == false ) {
+			if ( this.LoadConfigSectionNetworkInterfaces( ConfigSectionNode, Logger, Lang ) == false ) {
 				
     			Logger.logError( "-1003", Lang.translate( "Failed to load config from XML node section: [%s]", ConfigSectionNode.getNodeName() ) );        
 				
@@ -1008,7 +1008,7 @@ public class CConfigServicesDaemon extends CAbstractConfigLoader {
         }
         else if ( ConfigSectionNode.getNodeName().equals( ConstantsCommonConfigXMLTags._AccessControl ) == true ) {
 
-        	if ( this.LoadConfigSectionAccessControl( ConfigSectionNode, Lang, Logger ) == false ) {
+        	if ( this.LoadConfigSectionAccessControl( ConfigSectionNode, Logger, Lang ) == false ) {
         		
     			Logger.logError( "-1004", Lang.translate( "Failed to load config from XML node section: [%s]", ConfigSectionNode.getNodeName() ) );        
 				

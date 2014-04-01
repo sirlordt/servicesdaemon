@@ -9,14 +9,17 @@ import CommonClasses.CConfigNativeDBConnection;
 import CommonClasses.CLanguage;
 import ExtendedLogger.CExtendedLogger;
 
-public class CJDBConnection extends CAbstractDBConnection {
+public class CJDBConnection implements IAbstractDBConnection {
 
 	private static final long serialVersionUID = 8690527474914592870L;
 
+	protected String strEngineName;
+	protected String strEngineVersion;
 	protected transient Connection DBConnection;
 	protected transient Semaphore DBSemaphore;
 	protected String strSecurityTokenID;
 	protected String strTransactionID;
+	protected CDBEngineConfigNativeDBConnection DBEngineConfigNativeDBConnection;
 	
 	protected LinkedHashMap<String,Serializable> ExtraObjectsInfoList;
 	
@@ -26,6 +29,7 @@ public class CJDBConnection extends CAbstractDBConnection {
 		DBSemaphore = null;
 		strSecurityTokenID = "";
 		strTransactionID = "";
+		DBEngineConfigNativeDBConnection = null;
 		ExtraObjectsInfoList = new LinkedHashMap<String,Serializable>();
 		
 	}
@@ -36,7 +40,30 @@ public class CJDBConnection extends CAbstractDBConnection {
 		this.DBSemaphore = DBSemaphore;
 		this.strSecurityTokenID = strSecurityTokenID;
 		this.strTransactionID = strTransactionID;
+		this.DBEngineConfigNativeDBConnection = null;
 		ExtraObjectsInfoList = new LinkedHashMap<String,Serializable>();
+		
+	}
+	
+	@Override
+	public void setEngineNameAndVersion( String strEngineName, String strEngineVersion ) {
+
+		this.strEngineName = strEngineName;
+		this.strEngineVersion = strEngineVersion;
+		
+	}
+
+	@Override
+	public String getEngineName() {
+		
+		return strEngineName;
+		
+	}
+
+	@Override
+	public String getEngineVersion() {
+
+		return strEngineVersion;
 		
 	}
 	
@@ -54,6 +81,19 @@ public class CJDBConnection extends CAbstractDBConnection {
 		
 	}
 
+	public Object getConfigDBConnection() {
+		
+		return DBEngineConfigNativeDBConnection;
+		
+	}
+	
+	public void setConfigDBConnection( Object ConfigDBConnection ) {
+		
+		if ( ConfigDBConnection instanceof CDBEngineConfigNativeDBConnection )
+		    DBEngineConfigNativeDBConnection = (CDBEngineConfigNativeDBConnection) ConfigDBConnection;
+		
+	}
+	
 	@Override
 	public Object getDBConnectionSemaphore() {
 
@@ -187,7 +227,7 @@ public class CJDBConnection extends CAbstractDBConnection {
 
 					if ( DBEngine != null ) {
 
-						CAbstractDBConnection InternalDBConnection = DBEngine.getDBConnection( LocalConfigDBConnection.getDBEngineConfigConnection( false ), Logger, Lang );
+						IAbstractDBConnection InternalDBConnection = DBEngine.getDBConnection( LocalConfigDBConnection.getDBEngineConfigConnection( false ), Logger, Lang );
 
 						this.DBConnection = (Connection) InternalDBConnection.getDBConnection();
 						
@@ -212,5 +252,6 @@ public class CJDBConnection extends CAbstractDBConnection {
 		return bResult;
 		
 	}
+
 	
 }

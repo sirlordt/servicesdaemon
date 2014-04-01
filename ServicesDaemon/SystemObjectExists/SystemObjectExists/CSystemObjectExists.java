@@ -6,7 +6,7 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import AbstractDBEngine.CAbstractDBConnection;
+import AbstractDBEngine.IAbstractDBConnection;
 import AbstractDBEngine.CAbstractDBEngine;
 import AbstractResponseFormat.CAbstractResponseFormat;
 import AbstractService.CAbstractService;
@@ -130,7 +130,7 @@ public class CSystemObjectExists extends CDBAbstractService {
 
 							if ( DBEngine != null ) {
 
-								CAbstractDBConnection DBConnection = DBEngine.getDBConnection( LocalConfigDBConnection.getDBEngineConfigConnection( false ), ServiceLogger, ServiceLang );
+								IAbstractDBConnection DBConnection = DBEngine.getDBConnection( LocalConfigDBConnection.getDBEngineConfigConnection( false ), ServiceLogger, ServiceLang );
 
 								if ( DBConnection != null ) {
 									

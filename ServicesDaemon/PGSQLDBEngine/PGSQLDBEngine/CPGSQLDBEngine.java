@@ -24,7 +24,7 @@ import javax.sql.rowset.serial.SerialBlob;
 
 import net.maindataservices.Base64;
 
-import AbstractDBEngine.CAbstractDBConnection;
+import AbstractDBEngine.IAbstractDBConnection;
 import AbstractDBEngine.CAbstractDBEngine;
 import AbstractDBEngine.CDBEngineConfigNativeDBConnection;
 import AbstractDBEngine.CJDBConnection;
@@ -48,9 +48,9 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 	}
 	
 	@Override
-	public CAbstractDBConnection getDBConnection( CDBEngineConfigNativeDBConnection ConfigDBConnection, CExtendedLogger Logger, CLanguage Lang ) {
+	public IAbstractDBConnection getDBConnection( CDBEngineConfigNativeDBConnection ConfigDBConnection, CExtendedLogger Logger, CLanguage Lang ) {
 
-		CAbstractDBConnection DBConnection = null;
+		IAbstractDBConnection DBConnection = null;
 		
 		try {
 			
@@ -67,7 +67,9 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
             Connection JDBConnection = DriverManager.getConnection( strDatabaseURL, ConfigDBConnection.strUser, ConfigDBConnection.strPassword ); 
 			
             DBConnection = new CJDBConnection();
+            DBConnection.setEngineNameAndVersion( this.strName, this.strVersion );
             DBConnection.setDBConnection( JDBConnection );
+            DBConnection.setConfigDBConnection( ConfigDBConnection );
             
             if ( Logger != null ) {
             	
@@ -531,7 +533,7 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 	}
 	
 	@Override
-	public ResultSet executeDummyCommand( CAbstractDBConnection DBConnection, String strOptionalDummySQL, CExtendedLogger Logger, CLanguage Lang ) {
+	public ResultSet executeDummyCommand( IAbstractDBConnection DBConnection, String strOptionalDummySQL, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		ResultSet Result = null;
 		
@@ -1190,6 +1192,13 @@ public class CPGSQLDBEngine extends CAbstractDBEngine {
 	    }
     	
     	return Result;
+    	
+    }
+    
+    @Override
+    public boolean needReconnectOnFailedCommand() {
+    	
+    	return true;
     	
     }
     

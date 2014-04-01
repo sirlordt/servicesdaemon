@@ -117,7 +117,7 @@ public class CHTTPDBChannelReplicatorTarget {
     		urlParameters.add( new BasicNameValuePair( "InstanceID", HTTPDBChannelReplicatorTarget.strInstanceID ) );
     		urlParameters.add( new BasicNameValuePair( "DataBlockID", strDataBlockID ) );
     		urlParameters.add( new BasicNameValuePair( "TransactionID", strTransactionID ) );
-    		urlParameters.add( new BasicNameValuePair( "CommandID", strCommandID ) );
+    		urlParameters.add( new BasicNameValuePair( "CommandBlockID", strCommandID ) );
     		urlParameters.add( new BasicNameValuePair( "Command", strCommand ) );
     		urlParameters.add( new BasicNameValuePair( "User", strUser ) );
     		urlParameters.add( new BasicNameValuePair( "Password", strPassword ) );

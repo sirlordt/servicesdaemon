@@ -660,13 +660,13 @@ public class CPlainTextDBReplicatorStore extends Thread implements IDBReplicator
 				
 				Result = new RandomAccessFile( ReplicationStoreFilePath, "r" ); 
 
-				long lngCursor = 0;
+				long lngCursorPos = 0;
 
 				while ( ( strLine = Result.readLine() ) != null ) {
 
 					if ( strLine.startsWith( _Start_Command_Block ) ) {
 
-						lngCursor = Result.getChannel().position();
+						lngCursorPos = Result.getChannel().position();
 
 					}
 					else if ( strLine.startsWith( _Command_ID ) ) {
@@ -675,7 +675,7 @@ public class CPlainTextDBReplicatorStore extends Thread implements IDBReplicator
 
 						if ( strCommandId.equalsIgnoreCase( strCurrentCommandID ) || strCurrentCommandID.isEmpty() ) {
 
-							Result.seek( lngCursor );
+							Result.seek( lngCursorPos );
 
 							//in = new DataInputStream( fstream );
 
@@ -791,9 +791,9 @@ public class CPlainTextDBReplicatorStore extends Thread implements IDBReplicator
 
 			while ( bStopNow == false ) {
 				
-				RandomAccessFile reader = this.getCursorLastPosition( strCurrentCommandID, new File( strReplicatorStorePath + ReplicatorStoreFilesIndex.get( 0 ) ), Logger, Lang );
+				RandomAccessFile ReaderFile = this.getCursorLastPosition( strCurrentCommandID, new File( strReplicatorStorePath + ReplicatorStoreFilesIndex.get( 0 ) ), Logger, Lang );
 				
-				if ( reader != null ) {
+				if ( ReaderFile != null ) {
 					
 					String strLine = null;
 					String strCommand = "";
@@ -802,7 +802,7 @@ public class CPlainTextDBReplicatorStore extends Thread implements IDBReplicator
 					
 					Params.clear();
 					
-					while ( ( strLine = reader.readLine() ) != null ) {
+					while ( ( strLine = ReaderFile.readLine() ) != null ) {
 
 						if ( strLine.startsWith( _Transaction_ID ) ) {
 
@@ -816,7 +816,7 @@ public class CPlainTextDBReplicatorStore extends Thread implements IDBReplicator
 						}
 						else if ( strLine.startsWith( _Init_Command ) ) {
 
-							while ( ( strLine = reader.readLine() ) != null ) {
+							while ( ( strLine = ReaderFile.readLine() ) != null ) {
 
 								if ( strLine.startsWith( _End_Command ) ) {
 								
@@ -888,7 +888,7 @@ public class CPlainTextDBReplicatorStore extends Thread implements IDBReplicator
 					}
 					else if ( strLine.equals( _Go_Sleep ) ) { //Fail go sleep before retry send the data again
 						
-						reader.close();
+						ReaderFile.close();
 						
 						Thread.sleep( lngOnFailGoSleepFor );
 						

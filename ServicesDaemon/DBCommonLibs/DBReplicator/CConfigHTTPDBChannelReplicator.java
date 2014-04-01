@@ -280,7 +280,7 @@ public class CConfigHTTPDBChannelReplicator extends CAbstractConfigLoader {
 
 		            		if ( NodeAttribute.getNodeValue().trim().isEmpty() == false ) {
 
-		            			strPassword = net.maindataservices.Utilities.uncryptString( ConstantsCommonConfigXMLTags._Password_Crypted, ConstantsCommonConfigXMLTags._Password_Crypted_Sep, ConstantsCommonClasses._Crypt_Algorithm, NodeAttribute.getNodeValue(), Logger, Lang );
+		            			strPassword = NodeAttribute.getNodeValue().trim(); //net.maindataservices.Utilities.uncryptString( ConstantsCommonConfigXMLTags._Password_Crypted, ConstantsCommonConfigXMLTags._Password_Crypted_Sep, ConstantsCommonClasses._Crypt_Algorithm, NodeAttribute.getNodeValue(), Logger, Lang );
 
 		            		}
 		            		else {

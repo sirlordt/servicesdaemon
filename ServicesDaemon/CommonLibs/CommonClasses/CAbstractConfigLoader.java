@@ -33,6 +33,10 @@ public abstract class CAbstractConfigLoader implements IMessageObject {
 
 	public String strRunningPath = "";
 	
+	public File XMLConfigFile = null;
+	
+	public long lngLastConfigModified = 0;
+	
 	public CAbstractConfigLoader( String strRunningPath ) {
 
 		this.strRunningPath = strRunningPath;
@@ -103,7 +107,9 @@ public abstract class CAbstractConfigLoader implements IMessageObject {
 			
 		Logger.logMessage( "1", Lang.translate( "Loading config from file: [%s]", strConfigFilePath  ) );        
 
-		File XMLConfigFile = new File( strConfigFilePath );
+		XMLConfigFile = new File( strConfigFilePath );
+		
+		lngLastConfigModified = XMLConfigFile.lastModified();
 		
 		boolean bFileExists = XMLConfigFile.exists();
 		boolean bFileCanRead = XMLConfigFile.canRead();

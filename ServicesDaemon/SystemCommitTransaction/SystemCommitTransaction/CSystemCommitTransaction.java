@@ -16,7 +16,7 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import AbstractDBEngine.CAbstractDBConnection;
+import AbstractDBEngine.IAbstractDBConnection;
 import AbstractDBEngine.CAbstractDBEngine;
 import AbstractResponseFormat.CAbstractResponseFormat;
 import AbstractService.CAbstractService;
@@ -150,7 +150,7 @@ public class CSystemCommitTransaction extends CDBAbstractService {
 
 					CNativeDBConnectionsManager DBConnectionsManager = CNativeDBConnectionsManager.getNativeDBConnectionManager();
 
-					CAbstractDBConnection DBConnection = DBConnectionsManager.getDBConnection( strTransactionID, ServiceLogger, ServiceLang );
+					IAbstractDBConnection DBConnection = DBConnectionsManager.getDBConnection( strTransactionID, ServiceLogger, ServiceLang );
 
 					if ( DBConnection != null ) {
 

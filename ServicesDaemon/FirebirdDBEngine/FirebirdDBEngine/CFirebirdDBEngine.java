@@ -15,7 +15,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-import AbstractDBEngine.CAbstractDBConnection;
+import AbstractDBEngine.IAbstractDBConnection;
 import AbstractDBEngine.CAbstractDBEngine;
 import AbstractDBEngine.CDBEngineConfigNativeDBConnection;
 import AbstractDBEngine.CJDBConnection;
@@ -32,9 +32,9 @@ public class CFirebirdDBEngine extends CAbstractDBEngine {
 	}
 	
 	@Override
-	public synchronized CAbstractDBConnection getDBConnection( CDBEngineConfigNativeDBConnection ConfigDBConnection, CExtendedLogger Logger, CLanguage Lang ) {
+	public synchronized IAbstractDBConnection getDBConnection( CDBEngineConfigNativeDBConnection ConfigDBConnection, CExtendedLogger Logger, CLanguage Lang ) {
 
-		CAbstractDBConnection DBConnection = null;
+		IAbstractDBConnection DBConnection = null;
 		
 		try {
 			
@@ -51,7 +51,9 @@ public class CFirebirdDBEngine extends CAbstractDBEngine {
             Connection JDBConnection = DriverManager.getConnection( strDatabaseURL, ConfigDBConnection.strUser, ConfigDBConnection.strPassword ); 
 			
             DBConnection = new CJDBConnection();
+            DBConnection.setEngineNameAndVersion( this.strName, this.strVersion );
             DBConnection.setDBConnection( JDBConnection );
+            DBConnection.setConfigDBConnection( ConfigDBConnection );
             
             if ( Logger != null ) {
             	
@@ -72,7 +74,7 @@ public class CFirebirdDBEngine extends CAbstractDBEngine {
 	}
 	
 	@Override
-	public ResultSet executeDummyCommand( CAbstractDBConnection DBConnection, String strOptionalDummySQL, CExtendedLogger Logger, CLanguage Lang ) {
+	public ResultSet executeDummyCommand( IAbstractDBConnection DBConnection, String strOptionalDummySQL, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		ResultSet Result = null;
 		
@@ -99,6 +101,5 @@ public class CFirebirdDBEngine extends CAbstractDBEngine {
 		return Result;
 		
 	}
-
     
 }

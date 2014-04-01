@@ -42,6 +42,10 @@ import javax.xml.transform.stream.StreamResult;
 
 //import net.maindataservices.Base64;
 
+
+
+
+
 import net.maindataservices.Base64;
 import net.maindataservices.Utilities;
 
@@ -52,13 +56,17 @@ import org.w3c.dom.NodeList;
 //import sun.misc.BASE64Encoder;
 //import org.apache.commons.codec.binary.Base64;
 
+
+
+
+
 import AbstractDBEngine.CAbstractDBEngine;
 import AbstractService.CAbstractService;
 import AbstractService.CInputServiceParameter;
 import CommonClasses.CLanguage;
 import CommonClasses.CMemoryFieldData;
 import CommonClasses.CMemoryRowSet;
-import CommonClasses.CResultSetResult;
+import CommonClasses.CResultDataSet;
 import CommonClasses.ConstantsCommonClasses;
 import CommonClasses.ConstantsMessagesCodes;
 import ExtendedLogger.CExtendedLogger;
@@ -1372,6 +1380,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	
     }
 
+    /*
     @Override
 	public CAbstractResponseFormat getNewInstance() {
     	
@@ -1382,6 +1391,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     	return NewInstance;
     	
     }
+    */
     
     @Override
     public String getContentType() {
@@ -1725,7 +1735,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     }*/
 
     @Override
-    public boolean formatResultSet( HttpServletResponse Response, CResultSetResult SQLDataSetResult, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang ) {
+    public boolean formatResultSet( HttpServletResponse Response, CResultDataSet ResultDataSet, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	boolean bResult = false;
     	
@@ -1741,7 +1751,28 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
         		PrintWriter TempResponseFormatedFileWriter = new PrintWriter( OutStream ); // strTempResponseFormatedFilePath, this.getCharacterEncoding() );
 
-        		if ( SQLDataSetResult.Result != null && SQLDataSetResult.intCode >= 0 ) {
+    	        if ( ResultDataSet.Result != null && ResultDataSet.Result instanceof ResultSet == false ) {
+    	        	
+    				if ( Logger != null ) {
+    					
+    					if ( Lang != null )
+    						Logger.logWarning( "-1", Lang.translate( "Result object type [%s] not supported", ResultDataSet.getClass().getName() ) );
+    					else
+    						Logger.logWarning( "-1", String.format( "Result object type [%s] not supported", ResultDataSet.getClass().getName() ) );
+    				    
+    				}    
+    				else if ( OwnerConfig != null && OwnerConfig.Logger != null ) {
+
+    					if ( OwnerConfig.Lang != null )
+    						OwnerConfig.Logger.logWarning( "-1", OwnerConfig.Lang.translate( "Result object type [%s] not supported", ResultDataSet.getClass().getName() ) );
+    					else
+    						OwnerConfig.Logger.logWarning( "-1", String.format( "Result object type [%s] not supported", ResultDataSet.getClass().getName() ) );
+
+    				}    
+    	        	
+    	        }
+		        
+				if ( ResultDataSet.Result != null && ResultDataSet.Result instanceof ResultSet && ResultDataSet.intCode >= 0 ) {
 
         			this.printXMLHeader( TempResponseFormatedFileWriter, this.getCharacterEncoding() );
 
@@ -1749,11 +1780,11 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
         			//long lngRowCount = -1;
 
-        			if ( this.printXMLMetaDataSection( TempResponseFormatedFileWriter, SQLDataSetResult.Result.getMetaData(), DBEngine, Logger, Lang ) ) {
+        			if ( this.printXMLMetaDataSection( TempResponseFormatedFileWriter, ((ResultSet) ResultDataSet.Result).getMetaData(), DBEngine, Logger, Lang ) ) {
 
         				this.printXMLRowDataSection( TempResponseFormatedFileWriter, true );
         				//lngRowCount = 
-        				this.printAddXMLToRowDataSection( strTempDir, strTempResponseFormatedFilePath, TempResponseFormatedFileWriter, OutStream, SQLDataSetResult.Result, DBEngine, Logger, Lang );    	        	
+        				this.printAddXMLToRowDataSection( strTempDir, strTempResponseFormatedFilePath, TempResponseFormatedFileWriter, OutStream, ((ResultSet) ResultDataSet.Result), DBEngine, Logger, Lang );    	        	
         				this.printXMLRowDataSection( TempResponseFormatedFileWriter, false );
 
         				ArrayList<String> strErrorCodeDescription = new ArrayList<String>();
@@ -1798,11 +1829,11 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
         			LinkedHashMap<String,String> FieldValues = new LinkedHashMap<String,String>();
 
-        			FieldValues.put( XMLDataPacketTags._XML_StructAffectedRows, Long.toString( SQLDataSetResult.lngAffectedRows ) );
-        			FieldValues.put( XMLDataPacketTags._XML_StructCode, Integer.toString( SQLDataSetResult.intCode ) );
-        			FieldValues.put( XMLDataPacketTags._XML_StructDescription, SQLDataSetResult.strDescription );
+        			FieldValues.put( XMLDataPacketTags._XML_StructAffectedRows, Long.toString( ResultDataSet.lngAffectedRows ) );
+        			FieldValues.put( XMLDataPacketTags._XML_StructCode, Integer.toString( ResultDataSet.intCode ) );
+        			FieldValues.put( XMLDataPacketTags._XML_StructDescription, ResultDataSet.strDescription );
 
-        			if ( SQLDataSetResult.intCode >= 0 )
+        			if ( ResultDataSet.intCode >= 0 )
         				XMLDocument = addXMLSimpleMessage( XMLDocument, FieldValues, strVersion, false, Logger, Lang );
         			else
         				XMLDocument = addXMLSimpleMessage( XMLDocument, FieldValues, strVersion, true, Logger, Lang );
@@ -1863,7 +1894,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
     }
 
     @Override
-    public boolean formatResultsSets( HttpServletResponse Response, ArrayList<CResultSetResult> SQLDataSetResultList, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
+    public boolean formatResultsSets( HttpServletResponse Response, ArrayList<CResultDataSet> ResultDataSetList, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
     	
     	boolean bResult = false;
     	
@@ -1871,7 +1902,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
 			if ( Utilities.versionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.versionLessEquals( strVersion, this.strMaxVersion ) ) {
 
-				if ( SQLDataSetResultList.size() > 0 ) {
+				if ( ResultDataSetList.size() > 0 ) {
 
 					String strTempDir = (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Temp_Dir, null );
 
@@ -1881,39 +1912,62 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
 					PrintWriter TempResponseFormatedFileWriter = new PrintWriter( OutStream ); // strTempResponseFormatedFilePath, this.getCharacterEncoding() );
 
-					ResultSet SQLDataSet = CResultSetResult.getFirstResultSetNotNull( SQLDataSetResultList );
-
 					Document XMLDocument = null; 
 
 					boolean bNodeErrorAdded = false;
 
-					if ( SQLDataSet != null ) {
+					Object ResultObject = (ResultSet) CResultDataSet.getFirstResultSetNotNull( ResultDataSetList );
 
+	    	        if ( ResultObject != null && ResultObject instanceof ResultSet == false ) {
+	    	        	
+	    				if ( Logger != null ) {
+	    					
+	    					if ( Lang != null )
+	    						Logger.logWarning( "-1", Lang.translate( "Result object type [%s] not supported", ResultObject.getClass().getName() ) );
+	    					else
+	    						Logger.logWarning( "-1", String.format( "Result object type [%s] not supported", ResultObject.getClass().getName() ) );
+	    				    
+	    				}    
+	    				else if ( OwnerConfig != null && OwnerConfig.Logger != null ) {
+
+	    					if ( OwnerConfig.Lang != null )
+	    						OwnerConfig.Logger.logWarning( "-1", OwnerConfig.Lang.translate( "Result object type [%s] not supported", ResultObject.getClass().getName() ) );
+	    					else
+	    						OwnerConfig.Logger.logWarning( "-1", String.format( "Result object type [%s] not supported", ResultObject.getClass().getName() ) );
+
+	    				}    
+	    	        	
+	    	        }
+	    	        
+					if ( ResultObject != null && ResultObject instanceof ResultSet ) {
+
+						ResultSet DataSet = (ResultSet) ResultObject;
+						
 						this.printXMLHeader( TempResponseFormatedFileWriter, this.getCharacterEncoding() );
 
 						this.printXMLDataPacketSection( TempResponseFormatedFileWriter, strVersion, true );
 
 						long lngRowCount = -1;
 
-						if ( this.printXMLMetaDataSection( TempResponseFormatedFileWriter, SQLDataSet.getMetaData(), DBEngine, Logger, Lang ) ) {
+						if ( this.printXMLMetaDataSection( TempResponseFormatedFileWriter, DataSet.getMetaData(), DBEngine, Logger, Lang ) ) {
 
 							ArrayList<String> strErrorCodeDescription = new ArrayList<String>();
 
 							this.printXMLRowDataSection( TempResponseFormatedFileWriter, true );
 
-							for ( CResultSetResult SQLDataSetResultToAdd: SQLDataSetResultList ) { 
+							for ( CResultDataSet ResultDataSetToAdd: ResultDataSetList ) { 
 
-								if ( SQLDataSetResultToAdd.Result != null ) {   
+								if ( ResultDataSetToAdd.Result != null ) {   
 
 									if ( lngRowCount < 0 )
 										lngRowCount = 0;
 
-									lngRowCount += this.printAddXMLToRowDataSection( strTempDir, strTempResponseFormatedFilePath, TempResponseFormatedFileWriter, OutStream, SQLDataSetResultToAdd.Result, DBEngine, Logger, Lang );    	        	
+									lngRowCount += this.printAddXMLToRowDataSection( strTempDir, strTempResponseFormatedFilePath, TempResponseFormatedFileWriter, OutStream, (ResultSet) ResultDataSetToAdd.Result, DBEngine, Logger, Lang );    	        	
 
 								}
 								else {
 
-									strErrorCodeDescription.add( XMLDataPacketTags._XML_StructAffectedRows + "=\"" + Long.toString( SQLDataSetResultToAdd.lngAffectedRows ) + "\" " + XMLDataPacketTags._XML_StructCode + "=\"" + Integer.toString( SQLDataSetResultToAdd.intCode ) + "\" " + XMLDataPacketTags._XML_StructDescription + "=\"" + SQLDataSetResultToAdd.strDescription + "\"" );
+									strErrorCodeDescription.add( XMLDataPacketTags._XML_StructAffectedRows + "=\"" + Long.toString( ResultDataSetToAdd.lngAffectedRows ) + "\" " + XMLDataPacketTags._XML_StructCode + "=\"" + Integer.toString( ResultDataSetToAdd.intCode ) + "\" " + XMLDataPacketTags._XML_StructDescription + "=\"" + ResultDataSetToAdd.strDescription + "\"" );
 
 								}
 
@@ -1950,7 +2004,7 @@ public class CXMLDataPacketResponseFormat extends CAbstractResponseFormat {
 
 						LinkedHashMap<String,String> FieldValues = new LinkedHashMap<String,String>();
 
-						for ( CResultSetResult ResultSetResultToAdd: SQLDataSetResultList ) {    
+						for ( CResultDataSet ResultSetResultToAdd: ResultDataSetList ) {    
 
 							FieldValues.put( XMLDataPacketTags._XML_StructAffectedRows, Long.toString( ResultSetResultToAdd.lngAffectedRows ) );
 							FieldValues.put( XMLDataPacketTags._XML_StructCode, Integer.toString( ResultSetResultToAdd.intCode ) );

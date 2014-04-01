@@ -6,7 +6,7 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import AbstractDBEngine.CAbstractDBConnection;
+import AbstractDBEngine.IAbstractDBConnection;
 import AbstractDBEngine.CAbstractDBEngine;
 import AbstractResponseFormat.CAbstractResponseFormat;
 import AbstractService.CAbstractService;
@@ -16,7 +16,7 @@ import AbstractService.CInputServiceParameter.TParameterScope;
 import CommonClasses.CAbstractConfigLoader;
 import CommonClasses.CClassPathLoader;
 import CommonClasses.CConfigNativeDBConnection;
-import CommonClasses.CResultSetResult;
+import CommonClasses.CResultDataSet;
 import CommonClasses.CServicePostExecuteResult;
 import CommonClasses.CConfigServicesDaemon;
 import CommonClasses.CNativeSessionInfoManager;
@@ -127,7 +127,7 @@ public class CSystemListObjects extends CDBAbstractService {
 
 							if ( DBEngine != null ) {
 
-								CAbstractDBConnection DBConnection = DBEngine.getDBConnection( LocalConfigDBConnection.getDBEngineConfigConnection( false ), ServiceLogger, ServiceLang );
+								IAbstractDBConnection DBConnection = DBEngine.getDBConnection( LocalConfigDBConnection.getDBEngineConfigConnection( false ), ServiceLogger, ServiceLang );
 
 								if ( DBConnection != null ) {
 									
@@ -135,7 +135,7 @@ public class CSystemListObjects extends CDBAbstractService {
 									
 									if ( strObjectType.equals( ConstantsService._AllObjects ) || strObjectType.equals( ConstantsService._Table ) || strObjectType.equals( ConstantsService._View ) || strObjectType.equals( ConstantsService._Function ) || strObjectType.equals( ConstantsService._Procedure ) ) {
 									
-										CResultSetResult Result = DBEngine.listDatabaseObjects(DBConnection, Integer.parseInt( strObjectType ), ServiceLogger, ServiceLang );
+										CResultDataSet Result = DBEngine.listDatabaseObjects(DBConnection, Integer.parseInt( strObjectType ), ServiceLogger, ServiceLang );
 										
 										Response.setContentType( ResponseFormat.getContentType() );
 										Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );

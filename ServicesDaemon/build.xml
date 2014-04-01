@@ -251,7 +251,7 @@
             <src path="${src-RowSet}" />
             <src path="${src-WebRowSet}" />
             <classpath refid="class_path_jars"/>
-            <!-- compilerarg value = "-XDignore.symbol.file " --> 
+            <compilerarg value = "-Xlint:deprecation"/> 
         </javac>    
     </target>
 
@@ -384,7 +384,7 @@
         <mkdir dir="${bin-DBServicesManager}/"/>
         <mkdir dir="${bin-DBServicesManager}/DBDrivers"/>
         <mkdir dir="${bin-DBServicesManager}/DBEngines"/>
-        <mkdir dir="${bin-DBServicesManager}/DBServices"/>
+        <mkdir dir="${bin-DBServicesManager}/Services"/>
         <mkdir dir="${bin-DBServicesManager}/Langs"/>
         <mkdir dir="${bin-DBServicesManager}/Libs"/>
         <mkdir dir="${bin-DBServicesManager}/Logs"/>
@@ -401,11 +401,17 @@
         <delete file="${bin-DBServicesManager}/Libs/readme.txt"/>
         <delete file="${bin-DBServicesManager}/ResponsesFormats/readme.txt"/>
         <delete file="${bin-DBServicesManager}/Temp/readme.txt"/>
+        <delete file="${bin-DBServicesManager}/DBEngines/readme.txt"/>
+        <delete file="${bin-DBServicesManager}/DBDrivers/readme.txt"/>
     	
+        <touch file="${bin-DBServicesManager}/DBEngines/readme.txt"/>
+        <touch file="${bin-DBServicesManager}/DBDrivers/readme.txt"/>
         <touch file="${bin-DBServicesManager}/Libs/readme.txt"/>
         <touch file="${bin-DBServicesManager}/ResponsesFormats/readme.txt"/>
         <touch file="${bin-DBServicesManager}/Temp/readme.txt"/>
     	
+        <echo file="${bin-DBServicesManager}/DBDrivers/readme.txt" append="true" message="Folder for support library (*.jar) files need for JDBC Drivers${line.separator}"/>
+        <echo file="${bin-DBServicesManager}/DBEngines/readme.txt" append="true" message="Here you can put all the (*.jar) files that implement the CAbstractDBEngine class to extend the backend database support${line.separator}"/>
         <echo file="${bin-DBServicesManager}/Libs/readme.txt" append="true" message="Folder for support library (*.jar) files need for run the manager${line.separator}"/>
         <echo file="${bin-DBServicesManager}/ResponsesFormats/readme.txt" append="true" message="Here you can put all the (*.jar) files that implement the CAbstractResponseFormat class to extend formats reponses embedded in system.${line.separator}${line.separator}The directory must exist.${line.separator}"/>
         <echo file="${bin-DBServicesManager}/Temp/readme.txt" append="true" message="Temporal storage for multiple purposes${line.separator}"/>
@@ -417,7 +423,7 @@
         <mkdir dir="${distro-bin-DBServicesManager}"/>
         <mkdir dir="${distro-bin-DBServicesManager}/DBDrivers"/>
         <mkdir dir="${distro-bin-DBServicesManager}/DBEngines"/>
-        <mkdir dir="${distro-bin-DBServicesManager}/DBServices"/>
+        <mkdir dir="${distro-bin-DBServicesManager}/Services"/>
         <mkdir dir="${distro-bin-DBServicesManager}/Langs"/>
         <mkdir dir="${distro-bin-DBServicesManager}/Libs"/>
         <mkdir dir="${distro-bin-DBServicesManager}/Logs"/>
@@ -434,11 +440,17 @@
         <delete file="${distro-bin-DBServicesManager}/Libs/readme.txt"/>
         <delete file="${distro-bin-DBServicesManager}/ResponsesFormats/readme.txt"/>
         <delete file="${distro-bin-DBServicesManager}/Temp/readme.txt"/>
+        <delete file="${distro-bin-DBServicesManager}/DBEngines/readme.txt"/>
+        <delete file="${distro-bin-DBServicesManager}/DBDrivers/readme.txt"/>
         
+        <touch file="${distro-bin-DBServicesManager}/DBEngines/readme.txt"/>
+        <touch file="${distro-bin-DBServicesManager}/DBDrivers/readme.txt"/>
         <touch file="${distro-bin-DBServicesManager}/Libs/readme.txt"/>
         <touch file="${distro-bin-DBServicesManager}/ResponsesFormats/readme.txt"/>
         <touch file="${distro-bin-DBServicesManager}/Temp/readme.txt"/>
         
+        <echo file="${distro-bin-DBServicesManager}/DBDrivers/readme.txt" append="true" message="Folder for support library (*.jar) files need for JDBC Drivers${line.separator}"/>
+        <echo file="${distro-bin-DBServicesManager}/DBEngines/readme.txt" append="true" message="Here you can put all the (*.jar) files that implement the CAbstractDBEngine class to extend the backend database support${line.separator}"/>
         <echo file="${distro-bin-DBServicesManager}/Libs/readme.txt" append="true" message="Folder for support library (*.jar) files need for run the manager${line.separator}"/>
         <echo file="${distro-bin-DBServicesManager}/ResponsesFormats/readme.txt" append="true" message="Here you can put all the (*.jar) files that implement the CAbstractResponseFormat class to extend formats reponses embedded in system.${line.separator}${line.separator}The directory must exist.${line.separator}"/>
         <echo file="${distro-bin-DBServicesManager}/Temp/readme.txt" append="true" message="Temporal storage for very large blob files${line.separator}"/>
@@ -725,9 +737,9 @@
 	
     <target name="19_Generate-DBServices-Jar-Files" depends="01_Init"  description="Generate System.Enum.Services.jar, SystemPing.jar, SystemStartSession.jar, SystemStartTransaction.jar, SystemCommitTransaction.jar, SystemRollbackTransaction.jar, SystemEndTransaction.jar, SystemEndSession.jar, SystemExecuteDBCommand.jar, SystemObjectExists.jar, SystemListObjects.jar, SystemDescribeObject.jar, SystemDatabaseInfo.jar from source folder">
 	
-        <delete file="${distro-bin-DBServicesManager}/DBServices/System.Enum.Services/${SystemEnumServicesName}.jar"/>
+        <delete file="${distro-bin-DBServicesManager}/Services/System.Enum.Services/${SystemEnumServicesName}.jar"/>
     	
-        <jar jarfile="${distro-bin-DBServicesManager}/DBServices/System.Enum.Services/${SystemEnumServicesName}.jar" index="no" compress="yes" update="true">
+        <jar jarfile="${distro-bin-DBServicesManager}/Services/System.Enum.Services/${SystemEnumServicesName}.jar" index="no" compress="yes" update="true">
             <fileset dir="${bin}" includes="${SystemEnumServicesName}/**/*.class"/>
             <manifest>
                 <attribute name="Built-By" value="${user.name}" />
@@ -739,17 +751,17 @@
             </service>  
         </jar>
     
-        <copy file="${distro-bin-DBServicesManager}/DBServices/System.Enum.Services/${SystemEnumServicesName}.jar" todir="${bin-DBServicesManager}/DBServices/System.Enum.Services" overwrite="true"/>
+        <copy file="${distro-bin-DBServicesManager}/Services/System.Enum.Services/${SystemEnumServicesName}.jar" todir="${bin-DBServicesManager}/Services/System.Enum.Services" overwrite="true"/>
 
-        <copy todir="${distro-bin-DBServicesManager}/DBServices/System.Enum.Services/Langs/" overwrite="true">
+        <copy todir="${distro-bin-DBServicesManager}/Services/System.Enum.Services/Langs/" overwrite="true">
             <fileset dir="${src-SystemEnumServices}/Langs">
                 <include name="**/*.lang.xml" />
             </fileset>
         </copy> 
     	
-        <delete file="${distro-bin-DBServicesManager}/DBServices/System.Ping/${SystemPingName}.jar"/>
+        <delete file="${distro-bin-DBServicesManager}/Services/System.Ping/${SystemPingName}.jar"/>
     	
-        <jar jarfile="${distro-bin-DBServicesManager}/DBServices/System.Ping/${SystemPingName}.jar" index="no" compress="yes" update="true">
+        <jar jarfile="${distro-bin-DBServicesManager}/Services/System.Ping/${SystemPingName}.jar" index="no" compress="yes" update="true">
             <fileset dir="${bin}" includes="${SystemPingName}/**/*.class"/>
             <manifest>
                 <attribute name="Built-By" value="${user.name}" />
@@ -761,17 +773,17 @@
             </service>  
         </jar>
     
-        <copy file="${distro-bin-DBServicesManager}/DBServices/System.Ping/${SystemPingName}.jar" todir="${bin-DBServicesManager}/DBServices/System.Ping" overwrite="true"/>
+        <copy file="${distro-bin-DBServicesManager}/Services/System.Ping/${SystemPingName}.jar" todir="${bin-DBServicesManager}/Services/System.Ping" overwrite="true"/>
     	
-        <copy todir="${distro-bin-DBServicesManager}/DBServices/System.Ping/Langs/" overwrite="true">
+        <copy todir="${distro-bin-DBServicesManager}/Services/System.Ping/Langs/" overwrite="true">
             <fileset dir="${src-SystemPing}/Langs">
                 <include name="**/*.lang.xml" />
             </fileset>
         </copy> 
     	
-        <delete file="${distro-bin-DBServicesManager}/DBServices/System.Start.Session/${SystemStartSessionName}.jar"/>
+        <delete file="${distro-bin-DBServicesManager}/Services/System.Start.Session/${SystemStartSessionName}.jar"/>
     	
-        <jar jarfile="${distro-bin-DBServicesManager}/DBServices/System.Start.Session/${SystemStartSessionName}.jar" index="no" compress="yes" update="true">
+        <jar jarfile="${distro-bin-DBServicesManager}/Services/System.Start.Session/${SystemStartSessionName}.jar" index="no" compress="yes" update="true">
             <fileset dir="${bin}" includes="${SystemStartSessionName}/**/*.class"/>
             <manifest>
                 <attribute name="Built-By" value="${user.name}" />
@@ -783,18 +795,18 @@
             </service>  
         </jar>
     	
-        <copy file="${distro-bin-DBServicesManager}/DBServices/System.Start.Session/${SystemStartSessionName}.jar" todir="${bin-DBServicesManager}/DBServices/System.Start.Session" overwrite="true"/>
-        <copy file="${src-SystemStartSession}/${SystemStartSessionName}.conf" todir="${distro-bin-DBServicesManager}/DBServices/System.Start.Session/" overwrite="true"/>
+        <copy file="${distro-bin-DBServicesManager}/Services/System.Start.Session/${SystemStartSessionName}.jar" todir="${bin-DBServicesManager}/Services/System.Start.Session" overwrite="true"/>
+        <copy file="${src-SystemStartSession}/${SystemStartSessionName}.conf" todir="${distro-bin-DBServicesManager}/Services/System.Start.Session/" overwrite="true"/>
 
-        <copy todir="${distro-bin-DBServicesManager}/DBServices/System.Start.Session/Langs/" overwrite="true">
+        <copy todir="${distro-bin-DBServicesManager}/Services/System.Start.Session/Langs/" overwrite="true">
             <fileset dir="${src-SystemStartSession}/Langs">
                 <include name="**/*.lang.xml" />
             </fileset>
         </copy> 
     	
-        <delete file="${distro-bin-DBServicesManager}/DBServices/System.Start.Transaction/${SystemStartTransactionName}.jar"/>
+        <delete file="${distro-bin-DBServicesManager}/Services/System.Start.Transaction/${SystemStartTransactionName}.jar"/>
     	
-        <jar jarfile="${distro-bin-DBServicesManager}/DBServices/System.Start.Transaction/${SystemStartTransactionName}.jar" index="no" compress="yes" update="true">
+        <jar jarfile="${distro-bin-DBServicesManager}/Services/System.Start.Transaction/${SystemStartTransactionName}.jar" index="no" compress="yes" update="true">
             <fileset dir="${bin}" includes="${SystemStartTransactionName}/**/*.class"/>
             <manifest>
                 <attribute name="Built-By" value="${user.name}" />
@@ -806,17 +818,17 @@
             </service>  
         </jar>
     
-        <copy file="${distro-bin-DBServicesManager}/DBServices/System.Start.Transaction/${SystemStartTransactionName}.jar" todir="${bin-DBServicesManager}/DBServices/System.Start.Transaction" overwrite="true"/>
+        <copy file="${distro-bin-DBServicesManager}/Services/System.Start.Transaction/${SystemStartTransactionName}.jar" todir="${bin-DBServicesManager}/Services/System.Start.Transaction" overwrite="true"/>
 
-        <copy todir="${distro-bin-DBServicesManager}/DBServices/System.Start.Transaction/Langs/" overwrite="true">
+        <copy todir="${distro-bin-DBServicesManager}/Services/System.Start.Transaction/Langs/" overwrite="true">
             <fileset dir="${src-SystemStartTransaction}/Langs">
                 <include name="**/*.lang.xml" />
             </fileset>
         </copy> 
     	
-        <delete file="${distro-bin-DBServicesManager}/DBServices/System.Commit.Transaction/${SystemCommitTransactionName}.jar"/>
+        <delete file="${distro-bin-DBServicesManager}/Services/System.Commit.Transaction/${SystemCommitTransactionName}.jar"/>
     	
-        <jar jarfile="${distro-bin-DBServicesManager}/DBServices/System.Commit.Transaction/${SystemCommitTransactionName}.jar" index="no" compress="yes" update="true">
+        <jar jarfile="${distro-bin-DBServicesManager}/Services/System.Commit.Transaction/${SystemCommitTransactionName}.jar" index="no" compress="yes" update="true">
             <fileset dir="${bin}" includes="${SystemCommitTransactionName}/**/*.class"/>
             <manifest>
                 <attribute name="Built-By" value="${user.name}" />
@@ -828,17 +840,17 @@
             </service>  
         </jar>
     
-        <copy file="${distro-bin-DBServicesManager}/DBServices/System.Commit.Transaction/${SystemCommitTransactionName}.jar" todir="${bin-DBServicesManager}/DBServices/System.Commit.Transaction" overwrite="true"/>
+        <copy file="${distro-bin-DBServicesManager}/Services/System.Commit.Transaction/${SystemCommitTransactionName}.jar" todir="${bin-DBServicesManager}/Services/System.Commit.Transaction" overwrite="true"/>
     	
-        <copy todir="${distro-bin-DBServicesManager}/DBServices/System.Commit.Transaction/Langs/" overwrite="true">
+        <copy todir="${distro-bin-DBServicesManager}/Services/System.Commit.Transaction/Langs/" overwrite="true">
             <fileset dir="${src-SystemCommitTransaction}/Langs">
                 <include name="**/*.lang.xml" />
             </fileset>
         </copy> 
     	
-        <delete file="${distro-bin-DBServicesManager}/DBServices/System.Rollback.Transaction/${SystemRollbackTransactionName}.jar"/>
+        <delete file="${distro-bin-DBServicesManager}/Services/System.Rollback.Transaction/${SystemRollbackTransactionName}.jar"/>
     	
-        <jar jarfile="${distro-bin-DBServicesManager}/DBServices/System.Rollback.Transaction/${SystemRollbackTransactionName}.jar" index="no" compress="yes" update="true">
+        <jar jarfile="${distro-bin-DBServicesManager}/Services/System.Rollback.Transaction/${SystemRollbackTransactionName}.jar" index="no" compress="yes" update="true">
             <fileset dir="${bin}" includes="${SystemRollbackTransactionName}/**/*.class"/>
             <manifest>
                 <attribute name="Built-By" value="${user.name}" />
@@ -850,17 +862,17 @@
             </service>  
         </jar>
     
-        <copy file="${distro-bin-DBServicesManager}/DBServices/System.Rollback.Transaction/${SystemRollbackTransactionName}.jar" todir="${bin-DBServicesManager}/DBServices/System.Rollback.Transaction" overwrite="true"/>
+        <copy file="${distro-bin-DBServicesManager}/Services/System.Rollback.Transaction/${SystemRollbackTransactionName}.jar" todir="${bin-DBServicesManager}/Services/System.Rollback.Transaction" overwrite="true"/>
 
-        <copy todir="${distro-bin-DBServicesManager}/DBServices/System.Rollback.Transaction/Langs/" overwrite="true">
+        <copy todir="${distro-bin-DBServicesManager}/Services/System.Rollback.Transaction/Langs/" overwrite="true">
             <fileset dir="${src-SystemRollbackTransaction}/Langs">
                 <include name="**/*.lang.xml" />
             </fileset>
         </copy> 
     	
-        <delete file="${distro-bin-DBServicesManager}/DBServices/System.End.Transaction/${SystemEndTransactionName}.jar"/>
+        <delete file="${distro-bin-DBServicesManager}/Services/System.End.Transaction/${SystemEndTransactionName}.jar"/>
     	
-        <jar jarfile="${distro-bin-DBServicesManager}/DBServices/System.End.Transaction/${SystemEndTransactionName}.jar" index="no" compress="yes" update="true">
+        <jar jarfile="${distro-bin-DBServicesManager}/Services/System.End.Transaction/${SystemEndTransactionName}.jar" index="no" compress="yes" update="true">
             <fileset dir="${bin}" includes="${SystemEndTransactionName}/**/*.class"/>
             <manifest>
                 <attribute name="Built-By" value="${user.name}" />
@@ -872,17 +884,17 @@
             </service>  
         </jar>
     
-        <copy file="${distro-bin-DBServicesManager}/DBServices/System.End.Transaction/${SystemEndTransactionName}.jar" todir="${bin-DBServicesManager}/DBServices/System.End.Transaction" overwrite="true"/>
+        <copy file="${distro-bin-DBServicesManager}/Services/System.End.Transaction/${SystemEndTransactionName}.jar" todir="${bin-DBServicesManager}/Services/System.End.Transaction" overwrite="true"/>
 
-        <copy todir="${distro-bin-DBServicesManager}/DBServices/System.End.Transaction/Langs/" overwrite="true">
+        <copy todir="${distro-bin-DBServicesManager}/Services/System.End.Transaction/Langs/" overwrite="true">
             <fileset dir="${src-SystemEndTransaction}/Langs">
                 <include name="**/*.lang.xml" />
             </fileset>
         </copy> 
     	
-        <delete file="${distro-bin-DBServicesManager}/DBServices/System.End.Session/${SystemEndSessionName}.jar"/>
+        <delete file="${distro-bin-DBServicesManager}/Services/System.End.Session/${SystemEndSessionName}.jar"/>
     	
-        <jar jarfile="${distro-bin-DBServicesManager}/DBServices/System.End.Session/${SystemEndSessionName}.jar" index="no" compress="yes" update="true">
+        <jar jarfile="${distro-bin-DBServicesManager}/Services/System.End.Session/${SystemEndSessionName}.jar" index="no" compress="yes" update="true">
             <fileset dir="${bin}" includes="${SystemEndSessionName}/**/*.class"/>
             <manifest>
                 <attribute name="Built-By" value="${user.name}" />
@@ -894,17 +906,17 @@
             </service>  
         </jar>
     
-        <copy file="${distro-bin-DBServicesManager}/DBServices/System.End.Session/${SystemEndSessionName}.jar" todir="${bin-DBServicesManager}/DBServices/System.End.Session" overwrite="true"/>
+        <copy file="${distro-bin-DBServicesManager}/Services/System.End.Session/${SystemEndSessionName}.jar" todir="${bin-DBServicesManager}/Services/System.End.Session" overwrite="true"/>
     	
-        <copy todir="${distro-bin-DBServicesManager}/DBServices/System.End.Session/Langs/" overwrite="true">
+        <copy todir="${distro-bin-DBServicesManager}/Services/System.End.Session/Langs/" overwrite="true">
             <fileset dir="${src-SystemEndSession}/Langs">
                 <include name="**/*.lang.xml" />
             </fileset>
         </copy> 
     	
-        <delete file="${distro-bin-DBServicesManager}/DBServices/System.Execute.DBCommand/${SystemExecuteDBCommandName}.jar"/>
+        <delete file="${distro-bin-DBServicesManager}/Services/System.Execute.DBCommand/${SystemExecuteDBCommandName}.jar"/>
     	
-        <jar jarfile="${distro-bin-DBServicesManager}/DBServices/System.Execute.DBCommand/${SystemExecuteDBCommandName}.jar" index="no" compress="yes" update="true">
+        <jar jarfile="${distro-bin-DBServicesManager}/Services/System.Execute.DBCommand/${SystemExecuteDBCommandName}.jar" index="no" compress="yes" update="true">
             <fileset dir="${bin}" includes="${SystemExecuteDBCommandName}/**/*.class"/>
             <manifest>
                 <attribute name="Built-By" value="${user.name}" />
@@ -916,18 +928,18 @@
             </service>  
         </jar>
     
-        <copy file="${distro-bin-DBServicesManager}/DBServices/System.Execute.DBCommand/${SystemExecuteDBCommandName}.jar" todir="${bin-DBServicesManager}/DBServices/System.Execute.DBCommand" overwrite="true"/>
-        <copy file="${src-SystemExecuteDBCommand}/${SystemExecuteDBCommandName}.conf" todir="${distro-bin-DBServicesManager}/DBServices/System.Execute.DBCommand/" overwrite="true"/>
+        <copy file="${distro-bin-DBServicesManager}/Services/System.Execute.DBCommand/${SystemExecuteDBCommandName}.jar" todir="${bin-DBServicesManager}/Services/System.Execute.DBCommand" overwrite="true"/>
+        <copy file="${src-SystemExecuteDBCommand}/${SystemExecuteDBCommandName}.conf" todir="${distro-bin-DBServicesManager}/Services/System.Execute.DBCommand/" overwrite="true"/>
     	
-        <copy todir="${distro-bin-DBServicesManager}/DBServices/System.Execute.DBCommand/Langs/" overwrite="true">
+        <copy todir="${distro-bin-DBServicesManager}/Services/System.Execute.DBCommand/Langs/" overwrite="true">
             <fileset dir="${src-SystemExecuteDBCommand}/Langs">
                 <include name="**/*.lang.xml" />
             </fileset>
         </copy> 
     	
-        <delete file="${distro-bin-DBServicesManager}/DBServices/System.Object.Exists/${SystemObjectExistsName}.jar"/>
+        <delete file="${distro-bin-DBServicesManager}/Services/System.Object.Exists/${SystemObjectExistsName}.jar"/>
     	
-        <jar jarfile="${distro-bin-DBServicesManager}/DBServices/System.Object.Exists/${SystemObjectExistsName}.jar" index="no" compress="yes" update="true">
+        <jar jarfile="${distro-bin-DBServicesManager}/Services/System.Object.Exists/${SystemObjectExistsName}.jar" index="no" compress="yes" update="true">
             <fileset dir="${bin}" includes="${SystemObjectExistsName}/**/*.class"/>
             <manifest>
                 <attribute name="Built-By" value="${user.name}" />
@@ -939,17 +951,17 @@
             </service>  
         </jar>
     
-        <copy file="${distro-bin-DBServicesManager}/DBServices/System.Object.Exists/${SystemObjectExistsName}.jar" todir="${bin-DBServicesManager}/DBServices/System.Object.Exists" overwrite="true"/>
+        <copy file="${distro-bin-DBServicesManager}/Services/System.Object.Exists/${SystemObjectExistsName}.jar" todir="${bin-DBServicesManager}/Services/System.Object.Exists" overwrite="true"/>
 
-        <copy todir="${distro-bin-DBServicesManager}/DBServices/System.Object.Exists/Langs/" overwrite="true">
+        <copy todir="${distro-bin-DBServicesManager}/Services/System.Object.Exists/Langs/" overwrite="true">
             <fileset dir="${src-SystemObjectExists}/Langs">
                 <include name="**/*.lang.xml" />
             </fileset>
         </copy> 
     	
-        <delete file="${distro-bin-DBServicesManager}/DBServices/System.List.Objects/${SystemListObjectsName}.jar"/>
+        <delete file="${distro-bin-DBServicesManager}/Services/System.List.Objects/${SystemListObjectsName}.jar"/>
     	
-        <jar jarfile="${distro-bin-DBServicesManager}/DBServices/System.List.Objects/${SystemListObjectsName}.jar" index="no" compress="yes" update="true">
+        <jar jarfile="${distro-bin-DBServicesManager}/Services/System.List.Objects/${SystemListObjectsName}.jar" index="no" compress="yes" update="true">
             <fileset dir="${bin}" includes="${SystemListObjectsName}/**/*.class"/>
             <manifest>
                 <attribute name="Built-By" value="${user.name}" />
@@ -961,17 +973,17 @@
             </service>  
         </jar>
     
-        <copy file="${distro-bin-DBServicesManager}/DBServices/System.List.Objects/${SystemListObjectsName}.jar" todir="${bin-DBServicesManager}/DBServices/System.List.Objects" overwrite="true"/>
+        <copy file="${distro-bin-DBServicesManager}/Services/System.List.Objects/${SystemListObjectsName}.jar" todir="${bin-DBServicesManager}/Services/System.List.Objects" overwrite="true"/>
 
-        <copy todir="${distro-bin-DBServicesManager}/DBServices/System.List.Objects/Langs/" overwrite="true">
+        <copy todir="${distro-bin-DBServicesManager}/Services/System.List.Objects/Langs/" overwrite="true">
             <fileset dir="${src-SystemListObjects}/Langs">
                 <include name="**/*.lang.xml" />
             </fileset>
         </copy> 
     	
-        <delete file="${distro-bin-DBServicesManager}/DBServices/System.Describe.Object/${SystemDescribeObjectName}.jar"/>
+        <delete file="${distro-bin-DBServicesManager}/Services/System.Describe.Object/${SystemDescribeObjectName}.jar"/>
     	
-        <jar jarfile="${distro-bin-DBServicesManager}/DBServices/System.Describe.Object/${SystemDescribeObjectName}.jar" index="no" compress="yes" update="true">
+        <jar jarfile="${distro-bin-DBServicesManager}/Services/System.Describe.Object/${SystemDescribeObjectName}.jar" index="no" compress="yes" update="true">
             <fileset dir="${bin}" includes="${SystemDescribeObjectName}/**/*.class"/>
             <manifest>
                 <attribute name="Built-By" value="${user.name}" />
@@ -983,17 +995,17 @@
             </service>  
         </jar>
     
-        <copy file="${distro-bin-DBServicesManager}/DBServices/System.Describe.Object/${SystemDescribeObjectName}.jar" todir="${bin-DBServicesManager}/DBServices/System.Describe.Object" overwrite="true"/>
+        <copy file="${distro-bin-DBServicesManager}/Services/System.Describe.Object/${SystemDescribeObjectName}.jar" todir="${bin-DBServicesManager}/Services/System.Describe.Object" overwrite="true"/>
 
-        <copy todir="${distro-bin-DBServicesManager}/DBServices/System.Describe.Object/Langs/" overwrite="true">
+        <copy todir="${distro-bin-DBServicesManager}/Services/System.Describe.Object/Langs/" overwrite="true">
             <fileset dir="${src-SystemDescribeObject}/Langs">
                 <include name="**/*.lang.xml" />
             </fileset>
         </copy> 
     	
-        <delete file="${distro-bin-DBServicesManager}/DBServices/System.Database.Info/${SystemDatabaseInfoName}.jar"/>
+        <delete file="${distro-bin-DBServicesManager}/Services/System.Database.Info/${SystemDatabaseInfoName}.jar"/>
     	
-        <jar jarfile="${distro-bin-DBServicesManager}/DBServices/System.Database.Info/${SystemDatabaseInfoName}.jar" index="no" compress="yes" update="true">
+        <jar jarfile="${distro-bin-DBServicesManager}/Services/System.Database.Info/${SystemDatabaseInfoName}.jar" index="no" compress="yes" update="true">
             <fileset dir="${bin}" includes="${SystemDatabaseInfoName}/**/*.class"/>
             <manifest>
                 <attribute name="Built-By" value="${user.name}" />
@@ -1005,9 +1017,9 @@
             </service>  
         </jar>
     
-        <copy file="${distro-bin-DBServicesManager}/DBServices/System.Database.Info/${SystemDatabaseInfoName}.jar" todir="${bin-DBServicesManager}/DBServices/System.Database.Info" overwrite="true"/>
+        <copy file="${distro-bin-DBServicesManager}/Services/System.Database.Info/${SystemDatabaseInfoName}.jar" todir="${bin-DBServicesManager}/Services/System.Database.Info" overwrite="true"/>
     	
-        <copy todir="${distro-bin-DBServicesManager}/DBServices/System.Database.Info/Langs/" overwrite="true">
+        <copy todir="${distro-bin-DBServicesManager}/Services/System.Database.Info/Langs/" overwrite="true">
             <fileset dir="${src-SystemDatabaseInfo}/Langs">
                 <include name="**/*.lang.xml" />
             </fileset>

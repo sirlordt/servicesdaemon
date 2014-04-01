@@ -29,7 +29,7 @@ public class CConfigMemcachedCEngine extends CAbstractConfigLoader {
 		
 	}
 
-    public boolean loadConfigSectionSystem( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
+    public boolean loadConfigSectionSystem( Node ConfigSectionNode, CExtendedLogger Logger, CLanguage Lang ) {
 
         boolean bResult = true;
 		
@@ -176,7 +176,7 @@ public class CConfigMemcachedCEngine extends CAbstractConfigLoader {
         
 		if ( ConfigSectionNode.getNodeName().equals( ConstantsCommonConfigXMLTags._System ) == true ) {
            
-			if ( this.loadConfigSectionSystem( ConfigSectionNode, Lang, Logger ) == false ) {
+			if ( this.loadConfigSectionSystem( ConfigSectionNode, Logger, Lang ) == false ) {
 				
     			Logger.logError( "-1001", Lang.translate( "Failed to load config from XML node section: [%s]", ConfigSectionNode.getNodeName() ) );        
 				

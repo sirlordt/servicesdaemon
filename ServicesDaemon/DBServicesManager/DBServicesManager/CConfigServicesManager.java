@@ -70,11 +70,6 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 	public ArrayList<CConfigNativeDBConnection> ConfiguredDBConnections;
 
 	public ArrayList<CConfigRegisterService> ConfiguredRegisterServices;
-	
-	static {
-		
-		
-	} 
 
 	/*public static CConfigDBServicesManager getConfigDBServicesManager() {
 		
@@ -169,7 +164,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 		
 	}
 
-    public boolean loadConfigSectionSystem( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
+    public boolean loadConfigSectionSystem( Node ConfigSectionNode, CExtendedLogger Logger, CLanguage Lang ) {
 
         boolean bResult = true;
 		
@@ -668,7 +663,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 
 	}
 	
-	public boolean loadConfigSectionRegisterServices( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
+	public boolean loadConfigSectionRegisterServices( Node ConfigSectionNode, CExtendedLogger Logger, CLanguage Lang ) {
 		
         boolean bResult = true;
         
@@ -932,7 +927,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 
 	}
     
-	public boolean loadConfigSectionBuiltinResponsesFormats( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
+	public boolean loadConfigSectionBuiltinResponsesFormats( Node ConfigSectionNode, CExtendedLogger Logger, CLanguage Lang ) {
 		
         boolean bResult = true;
         
@@ -1225,7 +1220,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
 
 	}
 
-    public boolean loadConfigSectionDBConnections( Node ConfigSectionNode, CLanguage Lang, CExtendedLogger Logger ) {
+    public boolean loadConfigSectionDBConnections( Node ConfigSectionNode, CExtendedLogger Logger, CLanguage Lang ) {
 		
         boolean bResult = false;
         
@@ -1691,7 +1686,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
         
 		if ( ConfigSectionNode.getNodeName().equals(  CommonClasses.ConstantsCommonConfigXMLTags._System ) == true ) {
            
-			if ( this.loadConfigSectionSystem( ConfigSectionNode, Lang, Logger ) == false ) {
+			if ( this.loadConfigSectionSystem( ConfigSectionNode, Logger, Lang ) == false ) {
 				
     			Logger.logError( "-1001", Lang.translate( "Failed to load config from XML node section: [%s] ", ConfigSectionNode.getNodeName() ) );        
 				
@@ -1702,7 +1697,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
         }
         else if ( ConfigSectionNode.getNodeName().equals( ConstantsCommonConfigXMLTags._RegisterServices ) == true ) {
 
-			if ( this.loadConfigSectionRegisterServices( ConfigSectionNode, Lang, Logger ) == false ) {
+			if ( this.loadConfigSectionRegisterServices( ConfigSectionNode, Logger, Lang ) == false ) {
 				
     			Logger.logError( "-1002", Lang.translate( "Failed to load config from XML node section: [%s] ", ConfigSectionNode.getNodeName() ) );        
 				
@@ -1713,7 +1708,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
         }	
         else if ( ConfigSectionNode.getNodeName().equals( ConstantsCommonConfigXMLTags._BuiltinResponsesFormats ) == true ) {
 
-        	if ( this.loadConfigSectionBuiltinResponsesFormats( ConfigSectionNode, Lang, Logger ) == false ) {
+        	if ( this.loadConfigSectionBuiltinResponsesFormats( ConfigSectionNode, Logger, Lang ) == false ) {
         		
     			Logger.logError( "-1003", Lang.translate( "Failed to load config from XML node section: [%s]", ConfigSectionNode.getNodeName() ) );        
 				
@@ -1724,7 +1719,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
         }
         else if ( ConfigSectionNode.getNodeName().equals( ConstantsCommonConfigXMLTags._DBConnections ) == true ) {
 
-        	if ( this.loadConfigSectionDBConnections( ConfigSectionNode, Lang, Logger ) == false ) {
+        	if ( this.loadConfigSectionDBConnections( ConfigSectionNode, Logger, Lang ) == false ) {
         		
     			Logger.logError( "-1004", Lang.translate( "Failed to load config from XML node section: [%s]", ConfigSectionNode.getNodeName() ) );        
 				
@@ -1779,6 +1774,10 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
     			return ConstantsServicesManager._Security_Manager_Name;
     		else if ( strMessageName.equals( ConstantsMessagesCodes._getConfiguredNativeDBConnection ) )
     			return this.getConfiguredNativeDBConnection( (String) MessageData );
+    		else if ( strMessageName.equals( ConstantsMessagesCodes._Default_Response_Format ) )
+    			return this.strDefaultResponseFormat; 
+    		else if ( strMessageName.equals( ConstantsMessagesCodes._Default_Response_Format_Version ) )
+    			return this.strDefaultResponseFormatVersion;
     		else	
     			return "";
     	
@@ -1799,7 +1798,7 @@ public class CConfigServicesManager extends CAbstractConfigLoader {
         if ( DBServicesManagerLang == null )
         	DBServicesManagerLang = Lang;
 
-	    return super.LoadConfig( strConfigFilePath, Lang, Logger );
+	    return super.LoadConfig( strConfigFilePath, Logger, Lang );
 	
 	}*/
 	

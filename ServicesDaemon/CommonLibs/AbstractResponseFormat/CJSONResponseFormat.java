@@ -26,7 +26,7 @@ import AbstractService.CInputServiceParameter;
 import CommonClasses.CLanguage;
 import CommonClasses.CMemoryFieldData;
 import CommonClasses.CMemoryRowSet;
-import CommonClasses.CResultSetResult;
+import CommonClasses.CResultDataSet;
 import CommonClasses.ConstantsMessagesCodes;
 import ExtendedLogger.CExtendedLogger;
 
@@ -40,6 +40,7 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
 		
 	}
 	
+	/*
 	@Override
 	public CAbstractResponseFormat getNewInstance() {
 
@@ -50,7 +51,8 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
     	return NewInstance;
 	
 	}
-
+    */
+	
 	@Override
 	public String getContentType() {
 
@@ -505,7 +507,7 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
 	}*/
 
 	@Override
-	public boolean formatResultSet( HttpServletResponse Response, CResultSetResult SQLDataSetResult, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang ) {
+	public boolean formatResultSet( HttpServletResponse Response, CResultDataSet ResultDataSet, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang ) {
 
     	boolean bResult = false;
     	
@@ -521,13 +523,34 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
 		        
 		        PrintWriter TempResponseFormatedFileWriter = new PrintWriter( OutStream ); // strTempResponseFormatedFilePath, this.getCharacterEncoding() );
 				
-				if ( SQLDataSetResult.Result != null && SQLDataSetResult.intCode >= 0 ) {
+    	        if ( ResultDataSet.Result != null &&ResultDataSet.Result instanceof ResultSet == false ) {
+    	        	
+    				if ( Logger != null ) {
+    					
+    					if ( Lang != null )
+    						Logger.logWarning( "-1", Lang.translate( "Result object type [%s] not supported", ResultDataSet.getClass().getName() ) );
+    					else
+    						Logger.logWarning( "-1", String.format( "Result object type [%s] not supported", ResultDataSet.getClass().getName() ) );
+    				    
+    				}    
+    				else if ( OwnerConfig != null && OwnerConfig.Logger != null ) {
+
+    					if ( OwnerConfig.Lang != null )
+    						OwnerConfig.Logger.logWarning( "-1", OwnerConfig.Lang.translate( "Result object type [%s] not supported", ResultDataSet.getClass().getName() ) );
+    					else
+    						OwnerConfig.Logger.logWarning( "-1", String.format( "Result object type [%s] not supported", ResultDataSet.getClass().getName() ) );
+
+    				}    
+    	        	
+    	        }
+		        
+				if ( ResultDataSet.Result != null && ResultDataSet.Result instanceof ResultSet && ResultDataSet.intCode >= 0 ) {
 
         			this.printJSONHeader( TempResponseFormatedFileWriter, true );
         			
         			this.printJSONDataSection( TempResponseFormatedFileWriter, true, false );
 					
-					this.formatResultSetToJSONArray( strTempDir, strTempResponseFormatedFilePath, TempResponseFormatedFileWriter, OutStream, SQLDataSetResult.Result, DBEngine, strDateTimeFormat, strDateFormat,  strTimeFormat, Logger, Lang ); 
+					this.formatResultSetToJSONArray( strTempDir, strTempResponseFormatedFilePath, TempResponseFormatedFileWriter, OutStream, ((ResultSet) ResultDataSet.Result), DBEngine, strDateTimeFormat, strDateFormat,  strTimeFormat, Logger, Lang ); 
 					
 					TempResponseFormatedFileWriter.println( "" );
 					
@@ -552,16 +575,16 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
 
 					JSONObject JSONDocumentData = new JSONObject();
 					
-					JSONDocumentData.put( JSONTags._JSON_StructAffectedRows, SQLDataSetResult.lngAffectedRows );
-					JSONDocumentData.put( JSONTags._JSON_StructCode, SQLDataSetResult.intCode );
-					JSONDocumentData.put( JSONTags._JSON_StructDescription, SQLDataSetResult.strDescription );
+					JSONDocumentData.put( JSONTags._JSON_StructAffectedRows, ResultDataSet.lngAffectedRows );
+					JSONDocumentData.put( JSONTags._JSON_StructCode, ResultDataSet.intCode );
+					JSONDocumentData.put( JSONTags._JSON_StructDescription, ResultDataSet.strDescription );
 
 					JSONDocumentRoot.put( JSONDocumentData );
 					
 					JSONArray JSONDocumentErrors = new JSONArray();
 					JSONDocumentRoot.put( JSONDocumentErrors );
 					
-					if ( SQLDataSetResult.intCode < 0 ) {
+					if ( ResultDataSet.intCode < 0 ) {
 						
 						JSONDocumentErrors.put( JSONDocumentData );
 						
@@ -621,7 +644,7 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
 	}
 
 	@Override
-	public boolean formatResultsSets( HttpServletResponse Response, ArrayList<CResultSetResult> SQLDataSetResultList, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
+	public boolean formatResultsSets( HttpServletResponse Response, ArrayList<CResultDataSet> ResultDataSetList, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
 
     	boolean bResult = false;
     	
@@ -629,7 +652,7 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
 
 			if ( Utilities.versionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.versionLessEquals( strVersion, this.strMaxVersion ) ) {
         	
-				if ( SQLDataSetResultList.size() > 0 ) {
+				if ( ResultDataSetList.size() > 0 ) {
 
 	    	        String strTempDir = (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Temp_Dir, null );
 	    	        
@@ -639,9 +662,32 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
 	    	        
 	    	        PrintWriter TempResponseFormatedFileWriter = new PrintWriter( OutStream ); // strTempResponseFormatedFilePath, this.getCharacterEncoding() );
 					
-					ResultSet SQLDataSet = CResultSetResult.getFirstResultSetNotNull( SQLDataSetResultList );
+					//ResultSet DataSet = (ResultSet) CResultDataSet.getFirstResultSetNotNull( ResultsDataSet );
 				
-					if ( SQLDataSet != null ) {
+	    	        Object ResultObject = CResultDataSet.getFirstResultSetNotNull( ResultDataSetList );;
+	    	        
+	    	        if ( ResultObject != null && ResultObject instanceof ResultSet == false ) {
+	    	        	
+	    				if ( Logger != null ) {
+	    					
+	    					if ( Lang != null )
+	    						Logger.logWarning( "-1", Lang.translate( "Result object type [%s] not supported", ResultObject.getClass().getName() ) );
+	    					else
+	    						Logger.logWarning( "-1", String.format( "Result object type [%s] not supported", ResultObject.getClass().getName() ) );
+	    				    
+	    				}    
+	    				else if ( OwnerConfig != null && OwnerConfig.Logger != null ) {
+
+	    					if ( OwnerConfig.Lang != null )
+	    						OwnerConfig.Logger.logWarning( "-1", OwnerConfig.Lang.translate( "Result object type [%s] not supported", ResultObject.getClass().getName() ) );
+	    					else
+	    						OwnerConfig.Logger.logWarning( "-1", String.format( "Result object type [%s] not supported", ResultObject.getClass().getName() ) );
+
+	    				}    
+	    	        	
+	    	        }
+	    	        
+					if ( ResultObject != null && ResultObject instanceof ResultSet ) {
 
 	        			this.printJSONHeader( TempResponseFormatedFileWriter, true );
 	        			
@@ -651,7 +697,7 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
 						
 						boolean bFirst = true;
 						
-						for ( CResultSetResult SQLDataSetResultToAdd: SQLDataSetResultList ) {    
+						for ( CResultDataSet ResultDataSetToAdd: ResultDataSetList ) {    
 
 							if ( bFirst == false ) {
 								
@@ -661,18 +707,18 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
 							
 							bFirst = false;
 							
-							if ( SQLDataSetResultToAdd.Result != null && SQLDataSetResultToAdd.intCode >= 0 ) {   
+							if ( ResultDataSetToAdd.Result != null && ResultDataSetToAdd.intCode >= 0 ) {   
 
-								this.formatResultSetToJSONArray( strTempDir, strTempResponseFormatedFilePath, TempResponseFormatedFileWriter, OutStream, SQLDataSetResultToAdd.Result, DBEngine, strDateTimeFormat, strDateFormat,  strTimeFormat, Logger, Lang ); 
+								this.formatResultSetToJSONArray( strTempDir, strTempResponseFormatedFilePath, TempResponseFormatedFileWriter, OutStream, ((ResultSet) ResultDataSetToAdd.Result), DBEngine, strDateTimeFormat, strDateFormat,  strTimeFormat, Logger, Lang ); 
 								
 							}
 							else {
 
 								JSONObject JSONError = new JSONObject(); 
 								
-								JSONError.put( JSONTags._JSON_StructAffectedRows, SQLDataSetResultToAdd.lngAffectedRows );
-								JSONError.put( JSONTags._JSON_StructCode, SQLDataSetResultToAdd.intCode );
-								JSONError.put( JSONTags._JSON_StructDescription, SQLDataSetResultToAdd.strDescription );
+								JSONError.put( JSONTags._JSON_StructAffectedRows, ResultDataSetToAdd.lngAffectedRows );
+								JSONError.put( JSONTags._JSON_StructCode, ResultDataSetToAdd.intCode );
+								JSONError.put( JSONTags._JSON_StructDescription, ResultDataSetToAdd.strDescription );
 								
 								JSONDocumentErrors.put( JSONError );
 
@@ -706,7 +752,7 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
 						JSONDocumentRoot.put( JSONDocumentData );
 						JSONDocumentRoot.put( JSONDocumentErrors );
 
-						for ( CResultSetResult SQLDataSetResultToAdd: SQLDataSetResultList ) {    
+						for ( CResultDataSet SQLDataSetResultToAdd: ResultDataSetList ) {    
 
 							JSONObject JSONData = new JSONObject(); 
 							
@@ -829,61 +875,6 @@ public class CJSONResponseFormat extends CAbstractResponseFormat {
 	
 	}
 
-	/*Override
-	public String FormatMemoryRowSets( ArrayList<CMemoryRowSet> MemoryRowSetList, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
-
-		String strResult = "";
-
-		try {
-
-			if ( Utilities.VersionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.VersionLessEquals( strVersion, this.strMaxVersion ) ) {
-
-				JSONArray JSONDocument = new JSONArray();
-
-				for ( int intIndexResultSet = 1; intIndexResultSet < MemoryRowSetList.size(); intIndexResultSet++ ) {
-
-					this.FormatMemoryRowSetToJSONArray( MemoryRowSetList.get( intIndexResultSet ), JSONDocument, Logger, Lang ); 
-
-				}
-
-				strResult = JSONDocument.toString();
-
-			}
-			else {
-				
-				if ( Logger != null ) {
-					
-					if ( Lang != null )
-						Logger.LogError( "-1015", Lang.Translate( "Format version [%s] not supported", strVersion ) );
-					else
-						Logger.LogError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
-				    
-				}    
-				else if ( OwnerConfig != null && OwnerConfig.Logger != null ) {
-
-					if ( OwnerConfig.Lang != null )
-						OwnerConfig.Logger.LogError( "-1015", OwnerConfig.Lang.Translate( "Format version [%s] not supported", strVersion ) );
-					else
-						OwnerConfig.Logger.LogError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
-
-				}    
-				
-			}
-		
-		}
-		catch ( Exception Ex ) {
-
-			if ( Logger != null )
-				Logger.LogException( "-1016", Ex.getMessage(), Ex );
-			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
-				OwnerConfig.Logger.LogException( "-1016", Ex.getMessage(), Ex );
-
-		}
-
-		return strResult;
-	
-	}*/
-	
 	@Override
 	public String formatSimpleMessage( String strSecurityTokenID, String strTransactionID, int intCode, String strDescription, boolean bAttachToError, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
 

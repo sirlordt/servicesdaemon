@@ -16,7 +16,7 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import AbstractDBEngine.CAbstractDBConnection;
+import AbstractDBEngine.IAbstractDBConnection;
 import AbstractDBEngine.CAbstractDBEngine;
 import AbstractResponseFormat.CAbstractResponseFormat;
 import AbstractService.CAbstractService;
@@ -172,7 +172,7 @@ public class CSystemEndSession extends CDBAbstractService {
 							for ( String strCurrentTransactionID : TransactionsID ) {
 
 								//Semaphore DBConnectionSemaphore = DBConnectionsManager.getNativeDBConnectionSemaphore( strCurrentTransactionID, ServiceLogger, ServiceLang );
-								CAbstractDBConnection DBConnection = DBConnectionsManager.getDBConnection( strCurrentTransactionID, ServiceLogger, ServiceLang );
+								IAbstractDBConnection DBConnection = DBConnectionsManager.getDBConnection( strCurrentTransactionID, ServiceLogger, ServiceLang );
 
 								//if ( DBConnectionSemaphore != null ) {
 

@@ -34,17 +34,16 @@ import javax.sql.rowset.serial.SerialBlob;
 import net.maindataservices.Base64;
 import net.maindataservices.Utilities;
 
-
 import AbstractService.CInputServiceParameter;
 import AbstractService.CInputServiceParameter.TParameterScope;
 import CommonClasses.CLanguage;
 import CommonClasses.CMemoryFieldData;
 import CommonClasses.CMemoryFieldData.TFieldScope;
+import CommonClasses.CFakeHttpServletRequest;
 import CommonClasses.CMemoryRowSet;
 import CommonClasses.CNamedCallableStatement;
 import CommonClasses.CNamedPreparedStatement;
-import CommonClasses.CResultSetResult;
-import CommonClasses.CConfigServicesDaemon;
+import CommonClasses.CResultDataSet;
 import CommonClasses.ConstantsCommonConfigXMLTags;
 import CommonClasses.NamesSQLTypes;
 import ExtendedLogger.CExtendedLogger;
@@ -129,7 +128,6 @@ public abstract class CAbstractDBEngine {
     
     protected String strName;
     protected String strVersion;
-    protected CConfigServicesDaemon ServicesDaemonConfig = null;
 	
     public CAbstractDBEngine() {
 	}
@@ -146,9 +144,7 @@ public abstract class CAbstractDBEngine {
     	
     }
     
-    public boolean initializeDBEngine( CConfigServicesDaemon ServicesDaemonConfig ) {
-    	
-    	this.ServicesDaemonConfig = ServicesDaemonConfig;
+    public boolean initializeDBEngine() {
     	
     	return true;
     	
@@ -701,17 +697,42 @@ public abstract class CAbstractDBEngine {
 	
 	}
 	
-    public abstract CAbstractDBConnection getDBConnection( CDBEngineConfigNativeDBConnection ConfigDBConnection, CExtendedLogger Logger, CLanguage Lang );
+    public abstract IAbstractDBConnection getDBConnection( CDBEngineConfigNativeDBConnection ConfigDBConnection, CExtendedLogger Logger, CLanguage Lang );
 	
-	public boolean isValid( CAbstractDBConnection DBConnection, CExtendedLogger Logger, CLanguage Lang ) {
-		
-    	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
+	public boolean isValid( IAbstractDBConnection DBConnection, CExtendedLogger Logger, CLanguage Lang ) {
 		
 		boolean bValid = false;
 		
 		try {   
 		    
-			bValid = JDBConnection.isValid( 5 );
+	    	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
+			
+			bValid = JDBConnection.isValid( 10 );
+			
+			if ( bValid == false && Logger != null && Lang != null ) 
+				Logger.logMessage( "1", Lang.translate( "Database connection is invalid" ) );        
+			
+		}
+		catch ( Exception Ex ) {
+		
+			if ( Logger != null )
+				Logger.logException( "-1015", Ex.getMessage(), Ex ); 
+
+		}
+		
+		return bValid;
+		
+	}
+
+	public boolean isValid( IAbstractDBConnection DBConnection, int intSecondsToWait, CExtendedLogger Logger, CLanguage Lang ) {
+		
+		boolean bValid = false;
+		
+		try {   
+		    
+	    	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
+			
+			bValid = JDBConnection.isValid( intSecondsToWait );
 			
 			if ( bValid == false && Logger != null && Lang != null ) 
 				Logger.logMessage( "1", Lang.translate( "Database connection is invalid" ) );        
@@ -728,7 +749,7 @@ public abstract class CAbstractDBEngine {
 		
 	}
 	
-	public boolean setAutoCommit( CAbstractDBConnection DBConnection, boolean bAutoCommit, CExtendedLogger Logger, CLanguage Lang ) {
+	public boolean setAutoCommit( IAbstractDBConnection DBConnection, boolean bAutoCommit, CExtendedLogger Logger, CLanguage Lang ) {
 		
     	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
 		
@@ -769,7 +790,7 @@ public abstract class CAbstractDBEngine {
 		
 	}
 	
-	public boolean commit( CAbstractDBConnection DBConnection, CExtendedLogger Logger, CLanguage Lang ) { 
+	public boolean commit( IAbstractDBConnection DBConnection, CExtendedLogger Logger, CLanguage Lang ) { 
 
     	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
 		
@@ -810,7 +831,7 @@ public abstract class CAbstractDBEngine {
 		
 	}
 	
-	public boolean rollback( CAbstractDBConnection DBConnection, CExtendedLogger Logger, CLanguage Lang ) {
+	public boolean rollback( IAbstractDBConnection DBConnection, CExtendedLogger Logger, CLanguage Lang ) {
 		
     	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
 		
@@ -851,7 +872,7 @@ public abstract class CAbstractDBEngine {
 		
 	}
 	
-	public boolean close( CAbstractDBConnection DBConnection, CExtendedLogger Logger, CLanguage Lang ) {
+	public boolean close( IAbstractDBConnection DBConnection, CExtendedLogger Logger, CLanguage Lang ) {
 		
     	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
 		
@@ -892,7 +913,7 @@ public abstract class CAbstractDBEngine {
 		
 	}
 
-    public CMemoryRowSet executeQuerySQLByInputServiceParameters( CAbstractDBConnection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strCommand, CExtendedLogger Logger, CLanguage Lang ) {
+    public CMemoryRowSet executeQuerySQLByInputServiceParameters( IAbstractDBConnection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strCommand, CExtendedLogger Logger, CLanguage Lang ) {
 
     	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
     	
@@ -999,7 +1020,7 @@ public abstract class CAbstractDBEngine {
 		
 	}
 
-    public boolean executeModifySQLByInputServiceParameters( CAbstractDBConnection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strCommand, CExtendedLogger Logger, CLanguage Lang ) {
+    public boolean executeModifySQLByInputServiceParameters( IAbstractDBConnection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strCommand, CExtendedLogger Logger, CLanguage Lang ) {
 		
     	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
     	
@@ -1107,7 +1128,7 @@ public abstract class CAbstractDBEngine {
 		
 	}
 	
-	public CMemoryRowSet executeCallableStatementByInputServiceParameters( CAbstractDBConnection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strCommand, CExtendedLogger Logger, CLanguage Lang  ) {
+	public CMemoryRowSet executeCallableStatementByInputServiceParameters( IAbstractDBConnection DBConnection, HttpServletRequest Request, ArrayList<CInputServiceParameter> InputServiceParameters, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strCommand, CExtendedLogger Logger, CLanguage Lang  ) {
 
     	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
 		
@@ -1248,7 +1269,7 @@ public abstract class CAbstractDBEngine {
 		
 	}
 	
-	public abstract ResultSet executeDummyCommand( CAbstractDBConnection DBConnection, String strOptionalDummySQL, CExtendedLogger Logger, CLanguage Lang );
+	public abstract ResultSet executeDummyCommand( IAbstractDBConnection DBConnection, String strOptionalDummySQL, CExtendedLogger Logger, CLanguage Lang );
 
 	public boolean checkPlainSQLStatement( String strCommand, CExtendedLogger Logger, CLanguage Lang ) {
 		
@@ -1269,11 +1290,11 @@ public abstract class CAbstractDBEngine {
 		
 	}
     
-    public CResultSetResult executePlainQueryCommand( CAbstractDBConnection DBConnection, String strCommand, int intInternaFetchSize, CExtendedLogger Logger, CLanguage Lang ) {
+    public CResultDataSet executePlainQueryCommand( IAbstractDBConnection DBConnection, String strCommand, int intInternalFetchSize, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
     	
-    	CResultSetResult Result = new CResultSetResult( -1, -1, "" ); 
+    	CResultDataSet Result = new CResultDataSet( -1, -1, "", "" ); 
     	
     	try {
     	
@@ -1288,22 +1309,26 @@ public abstract class CAbstractDBEngine {
         			
             }	
     		
+            long lngStart = System.currentTimeMillis();
+            
     		ResultSet QueryResult = SQLStatement.executeQuery( strCommand );
     		
-    		QueryResult.setFetchSize( intInternaFetchSize );
+            long lngEnd = System.currentTimeMillis();
+
+            QueryResult.setFetchSize( intInternalFetchSize );
     		
-    		if ( QueryResult.getFetchSize() != intInternaFetchSize ) {
+    		if ( QueryResult.getFetchSize() != intInternalFetchSize ) {
     			
-				Logger.logWarning( "-1", Lang.translate(  "The JDBC Driver [%s] ignoring fetch size value [%s], using JDBC driver default value [%s]", JDBConnection.getMetaData().getDriverName(), Integer.toString( intInternaFetchSize ), Integer.toString( QueryResult.getFetchSize() ) ) );
+				Logger.logWarning( "-1", Lang.translate(  "The JDBC Driver [%s] ignoring fetch size value [%s], using JDBC driver default value [%s]", JDBConnection.getMetaData().getDriverName(), Integer.toString( intInternalFetchSize ), Integer.toString( QueryResult.getFetchSize() ) ) );
     			
     		}
     		
             if ( Logger != null ) { //Trace how much time in execute sql, useful for trace expensive query
             	
         		if ( Lang != null )   
-				   Logger.logInfo( "0x2002", Lang.translate( "End plain SQL statement" ) );
+				   Logger.logInfo( "0x2002", Lang.translate( "End plain SQL statement on [%s] ms", Long.toString( lngEnd - lngStart ) ) );
         		else
- 				   Logger.logInfo( "0x2002", "End plain SQL statement" );
+ 				   Logger.logInfo( "0x2002", String.format( "End plain SQL statement on [%s] ms", Long.toString( lngEnd - lngStart ) ) );
         			
             }	
 
@@ -1324,6 +1349,8 @@ public abstract class CAbstractDBEngine {
     		else
     		    Result.strDescription = String.format( "Error to execute the plain query SQL statement [%s]", strCommand ) ;
 
+    		Result.strExceptionMessage = Ex.getMessage();
+    		
     		if ( Logger != null )
 				Logger.logException( "-1015", Ex.getMessage(), Ex );
     		
@@ -1333,11 +1360,11 @@ public abstract class CAbstractDBEngine {
     	
     }
     
-    public CResultSetResult executePlainCommonCommand( CAbstractDBConnection DBConnection, String strCommand, CExtendedLogger Logger, CLanguage Lang ) {
+    public CResultDataSet executePlainCommonCommand( IAbstractDBConnection DBConnection, String strCommand, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
     	
-    	CResultSetResult Result = new CResultSetResult( -1, -1, "" ); 
+    	CResultDataSet Result = new CResultDataSet( -1, -1, "", "" ); 
     	
     	try {
     	
@@ -1352,14 +1379,18 @@ public abstract class CAbstractDBEngine {
         			
             }
             
+            long lngStart = System.currentTimeMillis();
+            
     		Result.lngAffectedRows = SQLStatement.executeUpdate( strCommand );
 
+			long lngEnd = System.currentTimeMillis();
+            
             if ( Logger != null ) {
             	
         		if ( Lang != null )   
-				   Logger.logInfo( "0x2004", Lang.translate( "End plain SQL statement" ) );
+				   Logger.logInfo( "0x2004", Lang.translate( "End plain SQL statement on [%s] ms", Long.toString( lngEnd - lngStart ) ) );
         		else
- 				   Logger.logInfo( "0x2004", "End plain SQL statement" );
+ 				   Logger.logInfo( "0x2004", String.format( "End plain SQL statement on [%s] ms", Long.toString( lngEnd - lngStart ) ) );
         			
             }
             
@@ -1380,6 +1411,8 @@ public abstract class CAbstractDBEngine {
     		else
     		    Result.strDescription = String.format( "Error to execute the plain SQL statement [%s]", strCommand ) ;
 
+    		Result.strExceptionMessage = Ex.getMessage();
+    		
     		if ( Logger != null )
 				Logger.logException( "-1015", Ex.getMessage(), Ex );
     		
@@ -1389,7 +1422,7 @@ public abstract class CAbstractDBEngine {
     	
     }
     
-    public CResultSetResult executePlainInsertCommand( CAbstractDBConnection DBConnection, String strCommand, CExtendedLogger Logger, CLanguage Lang ) {
+    public CResultDataSet executePlainInsertCommand( IAbstractDBConnection DBConnection, String strCommand, CExtendedLogger Logger, CLanguage Lang ) {
 
     	//Warning: Reimplement for MySQL and another RDBMS with "autoincrement" column table type, see jdbc getGeneratedKeys() for more details
 
@@ -1397,31 +1430,31 @@ public abstract class CAbstractDBEngine {
     	
     }
     
-    public CResultSetResult executePlainUpdateCommand( CAbstractDBConnection DBConnection, String strCommand, CExtendedLogger Logger, CLanguage Lang ) {
+    public CResultDataSet executePlainUpdateCommand( IAbstractDBConnection DBConnection, String strCommand, CExtendedLogger Logger, CLanguage Lang ) {
 
     	return executePlainCommonCommand( DBConnection, strCommand, Logger, Lang );    	
     	
     }
     
-    public CResultSetResult executePlainDeleteCommand( CAbstractDBConnection DBConnection, String strCommand, CExtendedLogger Logger, CLanguage Lang ) {
+    public CResultDataSet executePlainDeleteCommand( IAbstractDBConnection DBConnection, String strCommand, CExtendedLogger Logger, CLanguage Lang ) {
 
     	return executePlainCommonCommand( DBConnection, strCommand, Logger, Lang );    	
     	
     }
     
-    public CResultSetResult executePlainDDLCommand( CAbstractDBConnection DBConnection, String strCommand, CExtendedLogger Logger, CLanguage Lang ) {
+    public CResultDataSet executePlainDDLCommand( IAbstractDBConnection DBConnection, String strCommand, CExtendedLogger Logger, CLanguage Lang ) {
 
     	return executePlainCommonCommand( DBConnection, strCommand, Logger, Lang );    	
     	
     }
     
-    public boolean isValidResult( ResultSet Resultset, CExtendedLogger Logger, CLanguage Lang ) {
+    public boolean isValidResult( Object Resultset, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	try {
     	
-    		if ( Resultset != null ) {
+    		if ( Resultset != null && Resultset instanceof ResultSet ) {
     		
-    			ResultSetMetaData DataSetMetaData = Resultset.getMetaData();
+    			ResultSetMetaData DataSetMetaData = ((ResultSet) Resultset).getMetaData();
 
     			for ( int i = 1; i <= DataSetMetaData.getColumnCount(); i++ ) {
 
@@ -1461,11 +1494,57 @@ public abstract class CAbstractDBEngine {
     	
     }
     
-    public CResultSetResult executePlainCallableStatement( CAbstractDBConnection DBConnection, String strCommand, int intInternaFetchSize, CExtendedLogger Logger, CLanguage Lang ) {
+    public boolean checkFailedCommand( CResultDataSet ResultDataSet, CExtendedLogger Logger, CLanguage Lang ) {
+
+    	boolean bResult = false;
+    	
+    	try {
+
+    		bResult = ResultDataSet.intCode < 0;
+
+    	}
+    	catch ( Exception Ex ) {
+
+    		if ( Logger != null )
+    			Logger.logException( "-1015", Ex.getMessage(), Ex );
+
+    	}
+    	
+    	return bResult;
+    	
+    } 
+
+    public boolean checkFailedCommands( ArrayList<CResultDataSet> ResultDataSet, CExtendedLogger Logger, CLanguage Lang ) {
+
+    	boolean bResult = false;
+    	
+    	try {
+
+    		for ( CResultDataSet ResultSetResult: ResultDataSet ) {
+    			
+        		bResult = ResultSetResult.intCode < 0;
+
+        		if ( bResult ) break;
+    			
+    		}
+    		
+    	}
+    	catch ( Exception Ex ) {
+
+    		if ( Logger != null )
+    			Logger.logException( "-1015", Ex.getMessage(), Ex );
+
+    	}
+    	
+    	return bResult;
+    	
+    } 
+    
+    public CResultDataSet executePlainCallableStatement( IAbstractDBConnection DBConnection, String strCommand, int intInternaFetchSize, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
     	
-    	CResultSetResult Result = new CResultSetResult( -1, -1, "" ); 
+    	CResultDataSet Result = new CResultDataSet( -1, -1, "", "" ); 
     	
     	try {
     	
@@ -1491,11 +1570,11 @@ public abstract class CAbstractDBEngine {
     		}	
     		else { 
 			
-    			Result.Result.setFetchSize( intInternaFetchSize );
+    			((ResultSet) Result.Result).setFetchSize( intInternaFetchSize );
 
-    			if ( Result.Result.getFetchSize() != intInternaFetchSize ) {
+    			if ( ((ResultSet) Result.Result).getFetchSize() != intInternaFetchSize ) {
 
-    				Logger.logWarning( "-1", Lang.translate(  "The JDBC Driver [%s] ignoring fetch size value [%s], using JDBC driver default value [%s]", JDBConnection.getMetaData().getDriverName(), Integer.toString( intInternaFetchSize ), Integer.toString( Result.Result.getFetchSize() ) ) );
+    				Logger.logWarning( "-1", Lang.translate(  "The JDBC Driver [%s] ignoring fetch size value [%s], using JDBC driver default value [%s]", JDBConnection.getMetaData().getDriverName(), Integer.toString( intInternaFetchSize ), Integer.toString( ((ResultSet) Result.Result).getFetchSize() ) ) );
 
     			}
 
@@ -1516,6 +1595,8 @@ public abstract class CAbstractDBEngine {
     		else
     		    Result.strDescription = String.format( "Error to execute the plain SQL statement [%s]", strCommand ) ;
 
+    		Result.strExceptionMessage = Ex.getMessage();
+    		
     		if ( Logger != null )
 				Logger.logException( "-1015", Ex.getMessage(), Ex );
     		
@@ -1525,6 +1606,29 @@ public abstract class CAbstractDBEngine {
     	
     }
 
+    public CResultDataSet executePlainCommand( IAbstractDBConnection DBConnection, String strCommand, int intInternalFetchSize, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+    	CResultDataSet Result = null;
+    	
+		SQLStatementType SQLType = getSQLStatementType( strCommand, Logger, Lang );
+
+		if ( SQLType == SQLStatementType.Select ) //Select
+			Result = executePlainQueryCommand( DBConnection, strCommand, intInternalFetchSize, Logger, Lang );
+		else if ( SQLType == SQLStatementType.Insert )
+			Result = executePlainInsertCommand( DBConnection, strCommand, Logger, Lang );
+		else if ( SQLType == SQLStatementType.Update )
+			Result = executePlainUpdateCommand( DBConnection, strCommand, Logger, Lang );
+		else if ( SQLType == SQLStatementType.Delete )
+			Result = executePlainDeleteCommand( DBConnection, strCommand, Logger, Lang );
+		else if ( SQLType == SQLStatementType.Call )
+			Result = executePlainCallableStatement( DBConnection, strCommand, intInternalFetchSize, Logger, Lang );
+		else if ( SQLType == SQLStatementType.DDL )
+			Result = executePlainDDLCommand( DBConnection, strCommand, Logger, Lang );
+			
+    	return Result;
+    	
+    }
+    
 	public boolean setFieldDataToPreparedStatement( CMemoryRowSet MemoryRowSet, CNamedPreparedStatement NamedPreparedStatement, String strPreparedStatementFieldName, String strFieldName, int intIndexRow, boolean bUseLastRowIfRowNotExits, CExtendedLogger Logger, CLanguage Lang ) {
 
 		boolean bResult = false;
@@ -1882,11 +1986,11 @@ public abstract class CAbstractDBEngine {
 		
 	}
 	
-    public ArrayList<CResultSetResult> executeComplexQueyCommand( CAbstractDBConnection DBConnection, int intInternaFetchSize, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strCommand, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    public ArrayList<CResultDataSet> executeComplexQueyCommand( IAbstractDBConnection DBConnection, int intInternalFetchSize, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strCommand, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
     	
-    	ArrayList<CResultSetResult> Result = new ArrayList<CResultSetResult>();
+    	ArrayList<CResultDataSet> Result = new ArrayList<CResultDataSet>();
 
     	try {
     	
@@ -2006,28 +2110,32 @@ public abstract class CAbstractDBEngine {
 		        			
 		            }
 					
+		            long lngStart = System.currentTimeMillis();
+		            
 					ResultSet QueryResult = NamedPreparedStatement.executeQuery();
 				
-					QueryResult.setFetchSize( intInternaFetchSize );
+					long lngEnd = System.currentTimeMillis();
+					
+					QueryResult.setFetchSize( intInternalFetchSize );
 		    		
-		    		if ( QueryResult.getFetchSize() != intInternaFetchSize ) {
+		    		if ( QueryResult.getFetchSize() != intInternalFetchSize ) {
 		    			
-						Logger.logWarning( "-1", Lang.translate(  "The JDBC Driver [%s] ignoring fetch size value [%s], using JDBC driver default value [%s]", JDBConnection.getMetaData().getDriverName(), Integer.toString( intInternaFetchSize ), Integer.toString( QueryResult.getFetchSize() ) ) );
+						Logger.logWarning( "-1", Lang.translate(  "The JDBC Driver [%s] ignoring fetch size value [%s], using JDBC driver default value [%s]", JDBConnection.getMetaData().getDriverName(), Integer.toString( intInternalFetchSize ), Integer.toString( QueryResult.getFetchSize() ) ) );
 		    			
 		    		}
 					
 		            if ( Logger != null ) { //Trace how much time in execute sql, useful for trace expensive query
 		            	
 		        		if ( Lang != null )   
-						   Logger.logInfo( "0x2006", Lang.translate( "End complex SQL statement" ) );
+						   Logger.logInfo( "0x2006", Lang.translate( "End complex SQL statement on [%s] ms", Long.toString( lngEnd - lngStart ) ) );
 		        		else
-		 				   Logger.logInfo( "0x2006", "End complex SQL statement" );
+		 				   Logger.logInfo( "0x2006", String.format( "End complex SQL statement on [%s] ms", Long.toString( lngEnd - lngStart ) ) );
 		        			
 		            }
 		            
 					if ( QueryResult != null ) {
 						
-						Result.add( new CResultSetResult( -1, 1, Lang.translate( "Sucess to execute the SQL statement" ), NamedPreparedStatement, QueryResult ) );
+						Result.add( new CResultDataSet( -1, 1, Lang.translate( "Sucess to execute the SQL statement" ), NamedPreparedStatement, QueryResult ) );
 						
 					}
 					
@@ -2036,7 +2144,7 @@ public abstract class CAbstractDBEngine {
 					
 					if ( Logger != null ) {
 					
-						Result.add( new CResultSetResult( -1, -1, Lang.translate( "Error to execute the SQL statement, see the log file for more details" ) ) );
+						Result.add( new CResultDataSet( -1, -1, Lang.translate( "Error to execute the SQL statement, see the log file for more details" ), Ex.getMessage() ) );
 
 						Logger.logError( "-1001", Lang.translate( "Error to execute the next SQL statement [%s] index call [%s]", strParsedStatement, Integer.toString( intIndexCall ) )  );
 						
@@ -2053,7 +2161,7 @@ public abstract class CAbstractDBEngine {
     	}
     	catch ( Exception Ex ) {
     		
-			Result.add( new CResultSetResult( -1, -1, Lang.translate( "Error to execute the SQL statement, see the log file for more details" ) ) );
+			Result.add( new CResultDataSet( -1, -1, Lang.translate( "Error to execute the SQL statement, see the log file for more details" ), Ex.getMessage() ) );
 
     		if ( Logger != null )
 				Logger.logException( "-1015", Ex.getMessage(), Ex ); 
@@ -2064,11 +2172,11 @@ public abstract class CAbstractDBEngine {
     	
     }
     
-    public ArrayList<CResultSetResult> executeCommonComplexCommand( CAbstractDBConnection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strCommand, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    protected ArrayList<CResultDataSet> executeCommonComplexCommand( IAbstractDBConnection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strCommand, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
  
     	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
     	
-    	ArrayList<CResultSetResult> Result = new ArrayList<CResultSetResult>();
+    	ArrayList<CResultDataSet> Result = new ArrayList<CResultDataSet>();
 
     	try {
     	
@@ -2190,18 +2298,22 @@ public abstract class CAbstractDBEngine {
 			        			
 			            }
 						
+			            long lngStart = System.currentTimeMillis();
+			            
 						int intAffectedRows = NamedPreparedStatement.executeUpdate();
 
+						long lngEnd = System.currentTimeMillis();
+						
 			            if ( Logger != null ) {
 			            	
 			        		if ( Lang != null )   
-							   Logger.logInfo( "0x2008", Lang.translate( "End complex SQL statement" ) );
+							   Logger.logInfo( "0x2008", Lang.translate( "End complex SQL statement on [%s] ms", Long.toString( lngEnd - lngStart ) ) );
 			        		else
-			 				   Logger.logInfo( "0x2008", "End complex SQL statement" );
+			 				   Logger.logInfo( "0x2008", String.format( "End complex SQL statement on [%s] ms", Long.toString( lngEnd - lngStart ) ) );
 			        			
 			            }
 			            
-						Result.add( new CResultSetResult( intAffectedRows, 1, Lang.translate( "Sucess to execute the SQL statement" ) ) );
+						Result.add( new CResultDataSet( intAffectedRows, 1, Lang.translate( "Sucess to execute the SQL statement" ), "" ) );
 
 						NamedPreparedStatement.close(); //Close immediately to prevent resource leak in database driver
 
@@ -2210,7 +2322,7 @@ public abstract class CAbstractDBEngine {
 
 						if ( Logger != null ) {
 
-							Result.add( new CResultSetResult( -1, -1, Lang.translate( "Error to execute the SQL statement, see the log file for more details" ) ) );
+							Result.add( new CResultDataSet( -1, -1, Lang.translate( "Error to execute the SQL statement, see the log file for more details" ), Ex.getMessage() ) );
 
 							Logger.logError( "-1001", Lang.translate( "Error to execute the next SQL statement [%s] index call [%s]", strParsedStatement, Integer.toString( intIndexCall ) )  );
 
@@ -2225,7 +2337,7 @@ public abstract class CAbstractDBEngine {
 			}
 			else {
 				
-				Result.add( new CResultSetResult( -1, -1, Lang.translate( "Error to execute the SQL statement, see the log file for more details" ) ) );
+				Result.add( new CResultDataSet( -1, -1, Lang.translate( "Error to execute the SQL statement, see the log file for more details" ), "" ) );
 
 				Logger.logError( "-1001", Lang.translate( "Error to execute the next SQL statement, no valid params names found for service call" )  );
 				
@@ -2245,7 +2357,7 @@ public abstract class CAbstractDBEngine {
     	
     }
 
-    public ArrayList<CResultSetResult> executeComplexInsertCommand( CAbstractDBConnection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strCommand, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    public ArrayList<CResultDataSet> executeComplexInsertCommand( IAbstractDBConnection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strCommand, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	//Warning: Reimplement for MySQL and another RDBMS with "autoincrement" column table type, see jdbc getGeneratedKeys() for more details
 
@@ -2253,29 +2365,29 @@ public abstract class CAbstractDBEngine {
     	
     } 
 
-    public ArrayList<CResultSetResult> executeComplexUpdateCommand( CAbstractDBConnection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strCommand, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    public ArrayList<CResultDataSet> executeComplexUpdateCommand( IAbstractDBConnection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strCommand, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	return executeCommonComplexCommand( DBConnection, Request, intMacrosTypes, strMacrosNames, strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, strCommand, bLogParsedSQL, Logger, Lang );
     	
     }
     
-    public ArrayList<CResultSetResult> executeComplexDeleteCommand( CAbstractDBConnection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strCommand, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    public ArrayList<CResultDataSet> executeComplexDeleteCommand( IAbstractDBConnection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strCommand, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	return executeCommonComplexCommand( DBConnection, Request, intMacrosTypes, strMacrosNames, strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, strCommand, bLogParsedSQL, Logger, Lang );
     	
     }
     
-    public ArrayList<CResultSetResult> executeComplexDDLCommand( CAbstractDBConnection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strCommand, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    public ArrayList<CResultDataSet> executeComplexDDLCommand( IAbstractDBConnection DBConnection, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strCommand, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	return executeCommonComplexCommand( DBConnection, Request, intMacrosTypes, strMacrosNames, strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, strCommand, bLogParsedSQL, Logger, Lang );
     	
     }
    
-    public ArrayList<CResultSetResult> executeComplexCallableStatement( CAbstractDBConnection DBConnection, int intInternaFetchSize, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strCommand, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
+    public ArrayList<CResultDataSet> executeComplexCallableStatement( IAbstractDBConnection DBConnection, int intInternaFetchSize, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strCommand, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
     	
-    	ArrayList<CResultSetResult> Result = new ArrayList<CResultSetResult>();
+    	ArrayList<CResultDataSet> Result = new ArrayList<CResultDataSet>();
 
     	try {
     	
@@ -2420,14 +2532,14 @@ public abstract class CAbstractDBEngine {
 						
 					}
 					
-					Result.add( new CResultSetResult( 0, 1, Lang.translate( "Sucess to execute the SQL statement" ), NamedCallableStatement, CallableStatementResultSet ) );
+					Result.add( new CResultDataSet( 0, 1, Lang.translate( "Sucess to execute the SQL statement" ), NamedCallableStatement, CallableStatementResultSet ) );
 					
 				}
 				catch ( Exception Ex ) {
 					
 					if ( Logger != null ) {
 					
-						Result.add( new CResultSetResult( -1, -1, Lang.translate( "Error to execute the SQL statement, see the log file for more details" ) ) );
+						Result.add( new CResultDataSet( -1, -1, Lang.translate( "Error to execute the SQL statement, see the log file for more details" ), Ex.getMessage() ) );
 
 						Logger.logError( "-1001", Lang.translate( "Error to execute the next SQL statement [%s] index call [%s]", strParsedStatement, Integer.toString( intIndexCall ) )  );
 						
@@ -2453,11 +2565,73 @@ public abstract class CAbstractDBEngine {
     	
     }
 
-    public void closeResultSetResultStatement( ArrayList<CResultSetResult> ResultSetResults, CExtendedLogger Logger, CLanguage Lang ) {
+    public ArrayList<CResultDataSet> executeComplexCommand( IAbstractDBConnection DBConnection, int intInternalFetchSize, HttpServletRequest Request, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strCommand, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
+
+    	ArrayList<CResultDataSet> Result = null;
+
+    	try {
+    	
+			SQLStatementType SQLType = getSQLStatementType( strCommand, Logger, Lang );
+
+			if ( SQLType == SQLStatementType.Select ) { //Select
+
+				Result= executeComplexQueyCommand( DBConnection, intInternalFetchSize, Request, intMacrosTypes, strMacrosNames, strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, strCommand, bLogParsedSQL, Logger, Lang );
+				
+			}
+			else if ( SQLType != SQLStatementType.Unknown ) {
+				
+				if ( SQLType == SQLStatementType.Insert )
+					Result = executeComplexInsertCommand( DBConnection, Request, intMacrosTypes, strMacrosNames, strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, strCommand, bLogParsedSQL, Logger, Lang );
+				else if ( SQLType == SQLStatementType.Update )
+					Result = executeComplexUpdateCommand( DBConnection, Request, intMacrosTypes, strMacrosNames, strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, strCommand, bLogParsedSQL, Logger, Lang );
+				else if ( SQLType == SQLStatementType.Delete )
+					Result = executeComplexDeleteCommand( DBConnection, Request, intMacrosTypes, strMacrosNames, strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, strCommand, bLogParsedSQL, Logger, Lang );
+				else if ( SQLType == SQLStatementType.Call )
+					Result = executeComplexCallableStatement( DBConnection, intInternalFetchSize, Request, intMacrosTypes, strMacrosNames, strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, strCommand, bLogParsedSQL, Logger, Lang );
+				else if ( SQLType == SQLStatementType.DDL )
+					Result = executeComplexDDLCommand( DBConnection, Request, intMacrosTypes, strMacrosNames, strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, strCommand, bLogParsedSQL, Logger, Lang );
+				
+			}
+			else {
+				
+				if ( Logger != null ) {
+
+					Logger.logError( "-1001", Lang.translate( "The SQL statement [%s] type is unkown", strCommand ) );        
+
+				}
+				
+			}
+			
+    		
+    	}
+    	catch ( Exception Ex ) {
+    		
+			if ( Logger != null )
+				Logger.logException( "-1015", Ex.getMessage(), Ex ); 
+    		
+    	}
+		
+    	return Result;
+    	
+    }
+    
+    public ArrayList<CResultDataSet> executeComplexCommand( IAbstractDBConnection DBConnection, int intInternalFetchSize, LinkedHashMap<String,String> RequestParams, int[] intMacrosTypes, String[] strMacrosNames, String[] strMacrosValues, String strDateFormat, String strTimeFormat, String strDateTimeFormat, String strCommand, boolean bLogParsedSQL, CExtendedLogger Logger, CLanguage Lang ) {
+
+    	CFakeHttpServletRequest FakeHttpServletRequest = new CFakeHttpServletRequest();
+    	
+    	FakeHttpServletRequest.setParametersMap( RequestParams );
+    	
+    	ArrayList<CResultDataSet> Result = executeComplexCommand( DBConnection, intInternalFetchSize, FakeHttpServletRequest, intMacrosTypes, strMacrosNames, strMacrosValues, strDateFormat, strTimeFormat, strDateTimeFormat, strCommand, bLogParsedSQL, Logger, Lang );
+    	
+    	return Result;
+    	
+    }
+    
+    public void closeResultSetResultStatement( ArrayList<CResultDataSet> ResultSetResults, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	if ( ResultSetResults != null ) {
 
-    		for ( CResultSetResult ResultSetResult: ResultSetResults ) {
+    		for ( CResultDataSet ResultSetResult: ResultSetResults ) {
 
     			try {
 
@@ -2501,7 +2675,7 @@ public abstract class CAbstractDBEngine {
     	
     }
     
-    public void closeResultSetResultStatement( CResultSetResult ResultSetResult, CExtendedLogger Logger, CLanguage Lang ) {
+    public void closeResultSetResultStatement( CResultDataSet ResultSetResult, CExtendedLogger Logger, CLanguage Lang ) {
     	
 		try {
 
@@ -2897,7 +3071,7 @@ public abstract class CAbstractDBEngine {
     	
     }
     
-    public boolean databaseObjectExists( CAbstractDBConnection DBConnection, int intObjectType, String strObjectName, CExtendedLogger Logger, CLanguage Lang ) {
+    public boolean databaseObjectExists( IAbstractDBConnection DBConnection, int intObjectType, String strObjectName, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
     	
@@ -2992,11 +3166,11 @@ public abstract class CAbstractDBEngine {
     	
     }
     
-    public CResultSetResult describeDatabaseObject( CAbstractDBConnection DBConnection, int intObjectType, String strObjectName, CExtendedLogger Logger, CLanguage Lang ) {
+    public CResultDataSet describeDatabaseObject( IAbstractDBConnection DBConnection, int intObjectType, String strObjectName, CExtendedLogger Logger, CLanguage Lang ) {
     	
     	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
     	
-    	CResultSetResult Result =  new CResultSetResult();
+    	CResultDataSet Result =  new CResultDataSet();
     	
     	Result.intCode = -1;
     	Result.strDescription = "";
@@ -3066,11 +3240,11 @@ public abstract class CAbstractDBEngine {
     	
     }
     
-    public CResultSetResult getDatabaseInfo( CAbstractDBConnection DBConnection, HashMap<String,String> ConfiguredValues, CExtendedLogger Logger, CLanguage Lang ) {
+    public CResultDataSet getDatabaseInfo( IAbstractDBConnection DBConnection, HashMap<String,String> ConfiguredValues, CExtendedLogger Logger, CLanguage Lang ) {
 
     	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
     	
-    	CResultSetResult Result =  new CResultSetResult();
+    	CResultDataSet Result =  new CResultDataSet();
     	
     	Result.intCode = -1;
     	Result.strDescription = "";
@@ -3400,11 +3574,11 @@ public abstract class CAbstractDBEngine {
     	
     }
     
-    public CResultSetResult listDatabaseObjects( CAbstractDBConnection DBConnection, int intObjectType, CExtendedLogger Logger, CLanguage Lang ) {
+    public CResultDataSet listDatabaseObjects( IAbstractDBConnection DBConnection, int intObjectType, CExtendedLogger Logger, CLanguage Lang ) {
 
     	Connection JDBConnection = (Connection) DBConnection.getDBConnection();
     	
-    	CResultSetResult Result =  new CResultSetResult();
+    	CResultDataSet Result =  new CResultDataSet();
     	
     	Result.intCode = -1;
     	Result.strDescription = "";
@@ -3525,6 +3699,122 @@ public abstract class CAbstractDBEngine {
     	
     	return Result;
         	
+    }
+    
+    public boolean needReconnectOnFailedCommand() {
+    	
+    	return false;
+    	
+    }
+    
+    public boolean reconnect( IAbstractDBConnection DBConnection, boolean bForceReconnect, CExtendedLogger Logger, CLanguage Lang ) {
+    
+    	boolean bResult = false;
+    	
+    	try {
+    		
+    		if ( ( bForceReconnect || needReconnectOnFailedCommand() ) && DBConnection.getConfigDBConnection() instanceof CDBEngineConfigNativeDBConnection ) { //Only the DBMS need example: PostgreSQL
+    			
+    			IAbstractDBConnection NewDBConnection = getDBConnection( (CDBEngineConfigNativeDBConnection) DBConnection.getConfigDBConnection(), Logger, Lang );
+
+    			DBConnection.lockConnection( false, Logger, Lang );
+    			
+    			close( DBConnection, Logger, Lang );
+    			
+    			DBConnection.setDBConnection( NewDBConnection.getDBConnection() );
+    			
+    			if ( DBConnection.getDBConnectionSemaphore() == null ) {
+    				
+    				DBConnection.setDBSemaphore( NewDBConnection.getDBConnectionSemaphore() );
+    				
+    			}
+    			
+    			DBConnection.unlockConnection( Logger, Lang );
+    			
+    			bResult = true;
+    			
+    		}
+    		
+    	}
+		catch ( Exception Ex ) {
+			
+			if ( Logger != null )
+				Logger.logException( "-1020", Ex.getMessage(), Ex );
+			
+		}
+		catch ( Error Err ) {
+			
+			if ( Logger != null )
+				Logger.logError( "-1021", Err.getMessage(), Err );
+			
+		}
+    	
+    	return bResult;
+    	
+    }
+    
+    public IAbstractDBConnection cloneConnection( IAbstractDBConnection DBConnection, CExtendedLogger Logger, CLanguage Lang ) {
+    	
+    	IAbstractDBConnection Result = null;
+    	
+    	try {
+    		
+    		if ( DBConnection.getConfigDBConnection() instanceof CDBEngineConfigNativeDBConnection ) {
+    			
+    			Result = getDBConnection( (CDBEngineConfigNativeDBConnection) DBConnection.getConfigDBConnection(), Logger, Lang );
+    			
+    		}
+    		
+    	}
+		catch ( Exception Ex ) {
+			
+			if ( Logger != null )
+				Logger.logException( "-1020", Ex.getMessage(), Ex );
+			
+		}
+		catch ( Error Err ) {
+			
+			if ( Logger != null )
+				Logger.logError( "-1021", Err.getMessage(), Err );
+			
+		}
+    	
+    	return Result;
+    	
+    }
+    
+    public boolean getSupportedTransactions( IAbstractDBConnection DBConnection, CExtendedLogger Logger, CLanguage Lang ) {
+
+    	boolean bResult = false;
+    	
+    	try {
+    	
+    		if ( DBConnection.getDBConnection() instanceof Connection ) {
+        	
+    			Connection JDBConnection = (Connection) DBConnection.getDBConnection();
+
+    			DatabaseMetaData MetaData = JDBConnection.getMetaData();
+    		
+    			bResult = MetaData.supportsTransactions();
+    			
+    		}
+    		
+    	}
+		catch ( Exception Ex ) {
+			
+			if ( Logger != null )
+				Logger.logException( "-1020", Ex.getMessage(), Ex );
+			
+		}
+		catch ( Error Err ) {
+			
+			if ( Logger != null )
+				Logger.logError( "-1021", Err.getMessage(), Err );
+			
+		}
+    	
+    	return bResult;
+    	
     }
     
 }

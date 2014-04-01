@@ -25,6 +25,7 @@ import AbstractResponseFormat.CAbstractResponseFormat;
 import AbstractResponseFormat.CCSVResponseFormat;
 import AbstractResponseFormat.CJSONResponseFormat;
 import AbstractResponseFormat.CJavaXMLWebRowSetResponseFormat;
+import AbstractResponseFormat.CRawResponseFormat;
 import AbstractResponseFormat.CXMLDataPacketResponseFormat;
 import AbstractService.CAbstractService;
 import AbstractServicesManager.CAbstractServicesManager;
@@ -109,7 +110,7 @@ public class CServicesManager extends CAbstractServicesManager {
 					
 					CAbstractDBEngine DBEngineInstance = it.next();
 
-					if ( DBEngineInstance.initializeDBEngine( ServicesDaemonConfig ) == true ) {
+					if ( DBEngineInstance.initializeDBEngine() == true ) {
 					   
 						CAbstractDBEngine.registerDBEngine( DBEngineInstance );
 
@@ -233,6 +234,15 @@ public class CServicesManager extends CAbstractServicesManager {
 			
 			}
 			
+			CRawResponseFormat RawResponseFormat = new CRawResponseFormat(); //CSV
+			
+			if ( RawResponseFormat.initResponseFormat( ServicesDaemonConfig, ConfigServicesManager ) == true ) {
+				   
+				CAbstractResponseFormat.registerResponseFormat( CSVResponseFormat );
+				ConfigServicesManager.Logger.logMessage( "1", ConfigServicesManager.Lang.translate( "Added built in response format [%s] min version: [%s] max version: [%s]", RawResponseFormat.getName(), RawResponseFormat.getMinVersion(), RawResponseFormat.getMaxVersion() ) );        
+			
+			}
+
 			CAbstractResponseFormat DefaultResponseFormat = CAbstractResponseFormat.getResponseFomat( ConfigServicesManager.strDefaultResponseFormat, ConfigServicesManager.strDefaultResponseFormatVersion );
 
 			if ( DefaultResponseFormat == null ) {
@@ -344,19 +354,19 @@ public class CServicesManager extends CAbstractServicesManager {
     	
     	this.strRunningPath = net.maindataservices.Utilities.getJarFolder( this.getClass() );
     	
-        CExtendedLogger DBServicesManagerLogger = CExtendedLogger.getLogger( ConstantsServicesManager._Logger_Name );
-        DBServicesManagerLogger.setupLogger( ServicesDaemonConfig.strInstanceID, ServicesDaemonConfig.InitArgs.contains( InitArgsConstants._LogToScreen ), this.strRunningPath + ConstantsCommonClasses._Logs_Dir, ConstantsServicesManager._Main_File_Log, ServicesDaemonConfig.strClassNameMethodName, ServicesDaemonConfig.bExactMatch, ServicesDaemonConfig.LoggingLevel.toString(), ServicesDaemonConfig.strLogIP, ServicesDaemonConfig.intLogPort, ServicesDaemonConfig.strHTTPLogURL, ServicesDaemonConfig.strHTTPLogUser, ServicesDaemonConfig.strHTTPLogPassword, ServicesDaemonConfig.strProxyIP, ServicesDaemonConfig.intProxyPort, ServicesDaemonConfig.strProxyUser, ServicesDaemonConfig.strProxyPassword );
+        CExtendedLogger ServicesManagerLogger = CExtendedLogger.getLogger( ConstantsServicesManager._Logger_Name );
+        ServicesManagerLogger.setupLogger( ServicesDaemonConfig.strInstanceID, ServicesDaemonConfig.InitArgs.contains( InitArgsConstants._LogToScreen ), this.strRunningPath + ConstantsCommonClasses._Logs_Dir, ConstantsServicesManager._Main_File_Log, ServicesDaemonConfig.strClassNameMethodName, ServicesDaemonConfig.bExactMatch, ServicesDaemonConfig.LoggingLevel.toString(), ServicesDaemonConfig.strLogIP, ServicesDaemonConfig.intLogPort, ServicesDaemonConfig.strHTTPLogURL, ServicesDaemonConfig.strHTTPLogUser, ServicesDaemonConfig.strHTTPLogPassword, ServicesDaemonConfig.strProxyIP, ServicesDaemonConfig.intProxyPort, ServicesDaemonConfig.strProxyUser, ServicesDaemonConfig.strProxyPassword );
 		
-		CLanguage DBServicesManagerLang = CLanguage.getLanguage( DBServicesManagerLogger, this.strRunningPath + CommonClasses.ConstantsCommonClasses._Langs_Dir + ConstantsServicesManager._Main_File + "." + ConstantsCommonClasses._Lang_Ext );
+		CLanguage ServicesManagerLang = CLanguage.getLanguage( ServicesManagerLogger, this.strRunningPath + CommonClasses.ConstantsCommonClasses._Langs_Dir + ConstantsServicesManager._Main_File + "." + ConstantsCommonClasses._Lang_Ext );
 
-		DBServicesManagerLogger.logMessage( "1", DBServicesManagerLang.translate( "Running dir: [%s]", this.strRunningPath ) );        
-		DBServicesManagerLogger.logMessage( "1", DBServicesManagerLang.translate( "Version: [%s]", strVersion ) );        
+		ServicesManagerLogger.logMessage( "1", ServicesManagerLang.translate( "Running dir: [%s]", this.strRunningPath ) );        
+		ServicesManagerLogger.logMessage( "1", ServicesManagerLang.translate( "Version: [%s]", strVersion ) );        
 
     	ConfigServicesManager = CConfigServicesManager.getConfigDBServicesManager( this.strRunningPath );
 		
 		boolean bResult = false;
     	
-    	if ( ConfigServicesManager.loadConfig( this.strRunningPath + ConstantsServicesManager._Conf_File, DBServicesManagerLogger, DBServicesManagerLang ) == true ) {
+    	if ( ConfigServicesManager.loadConfig( this.strRunningPath + ConstantsServicesManager._Conf_File, ServicesManagerLogger, ServicesManagerLang ) == true ) {
     		
     		try {
 
@@ -365,64 +375,64 @@ public class CServicesManager extends CAbstractServicesManager {
     			CClassPathLoader ClassPathLoader = new CClassPathLoader();
 
         		//Load important library class from /Libs folder
-    			ClassPathLoader.loadClassFiles( this.strRunningPath + CommonClasses.ConstantsCommonClasses._Libs_Dir, ConstantsCommonClasses._Lib_Ext, 2, DBServicesManagerLogger, DBServicesManagerLang );
+    			ClassPathLoader.loadClassFiles( this.strRunningPath + CommonClasses.ConstantsCommonClasses._Libs_Dir, ConstantsCommonClasses._Lib_Ext, 2, ServicesManagerLogger, ServicesManagerLang );
     			
     			//Load the databases drivers
-    			ClassPathLoader.loadClassFiles( ConfigServicesManager.strDBDriversDir, ConstantsCommonClasses._Lib_Ext, 2, DBServicesManagerLogger, DBServicesManagerLang );
+    			ClassPathLoader.loadClassFiles( ConfigServicesManager.strDBDriversDir, ConstantsCommonClasses._Lib_Ext, 2, ServicesManagerLogger, ServicesManagerLang );
 
     			if ( ClassPathLoader.getCountClassLoaded() > 0 ) {
 
     				//Load database engines class
-    				ClassPathLoader.loadClassFiles( ConfigServicesManager.strDBEnginesDir, ConstantsCommonClasses._Lib_Ext, 2, DBServicesManagerLogger, DBServicesManagerLang );
+    				ClassPathLoader.loadClassFiles( ConfigServicesManager.strDBEnginesDir, ConstantsCommonClasses._Lib_Ext, 2, ServicesManagerLogger, ServicesManagerLang );
 
     				if ( this.loadAndRegisterDBEngines( ServicesDaemonConfig ) ) {
 
     					//Load responses formats class
-    					ClassPathLoader.loadClassFiles( ConfigServicesManager.strResponsesFormatsDir, ConstantsCommonClasses._Lib_Ext, 2, DBServicesManagerLogger, DBServicesManagerLang );
+    					ClassPathLoader.loadClassFiles( ConfigServicesManager.strResponsesFormatsDir, ConstantsCommonClasses._Lib_Ext, 2, ServicesManagerLogger, ServicesManagerLang );
 
     					if ( this.loadAndRegisterResponsesFormats( ServicesDaemonConfig ) == true ) {
 
     						//Load DB services class
-    						ClassPathLoader.loadClassFiles( ConfigServicesManager.strServicesDir, ConstantsCommonClasses._Lib_Ext, 2, DBServicesManagerLogger, DBServicesManagerLang ); //Permit owner dir
+    						ClassPathLoader.loadClassFiles( ConfigServicesManager.strServicesDir, ConstantsCommonClasses._Lib_Ext, 2, ServicesManagerLogger, ServicesManagerLang ); //Permit owner dir
 
     						if ( this.loadAndRegisterDBServices( ServicesDaemonConfig ) == true ) {
 
-    							net.maindataservices.Utilities.cleanupDirectory( new File( ConfigServicesManager.strTempDir ), new String[]{ ".txt" }, 0, DBServicesManagerLogger );
+    							net.maindataservices.Utilities.cleanupDirectory( new File( ConfigServicesManager.strTempDir ), new String[]{ ".txt" }, 0, ServicesManagerLogger );
     							
     							bResult = true;
 
     						}
     						else {
 
-    							DBServicesManagerLogger.logError( "-1004", DBServicesManagerLang.translate( "No databases services found in path [%s]", ConfigServicesManager.strServicesDir ) );
+    							ServicesManagerLogger.logError( "-1004", ServicesManagerLang.translate( "No databases services found in path [%s]", ConfigServicesManager.strServicesDir ) );
 
     						}
 
     					}
     					else {
 
-    						DBServicesManagerLogger.logError( "-1003", DBServicesManagerLang.translate( "No responses formats drivers found in path [%s]", ConfigServicesManager.strResponsesFormatsDir ) );
+    						ServicesManagerLogger.logError( "-1003", ServicesManagerLang.translate( "No responses formats drivers found in path [%s]", ConfigServicesManager.strResponsesFormatsDir ) );
 
     					}
 
     				}
     				else {
 
-    					DBServicesManagerLogger.logError( "-1002", DBServicesManagerLang.translate( "No databases engines found in path [%s]", ConfigServicesManager.strDBEnginesDir ) );
+    					ServicesManagerLogger.logError( "-1002", ServicesManagerLang.translate( "No databases engines found in path [%s]", ConfigServicesManager.strDBEnginesDir ) );
 
     				}
 
     			}
     			else {
 
-    				DBServicesManagerLogger.logError( "-1001", DBServicesManagerLang.translate( "No datatabase drivers found in path [%s]", ConfigServicesManager.strDBDriversDir ) );
+    				ServicesManagerLogger.logError( "-1001", ServicesManagerLang.translate( "No datatabase drivers found in path [%s]", ConfigServicesManager.strDBDriversDir ) );
 
     			}
     			
     		}
     		catch ( Exception Ex ) {
     		
-    			DBServicesManagerLogger.logException( "-1010", Ex.getMessage(), Ex );
+    			ServicesManagerLogger.logException( "-1010", Ex.getMessage(), Ex );
     			
     		}
     		

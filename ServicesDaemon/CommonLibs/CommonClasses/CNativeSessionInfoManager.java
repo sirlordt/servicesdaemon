@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
-import AbstractDBEngine.CAbstractDBConnection;
+import AbstractDBEngine.IAbstractDBConnection;
 import AbstractDBEngine.CAbstractDBEngine;
 import ExtendedLogger.CExtendedLogger;
 
@@ -79,7 +79,7 @@ public class CNativeSessionInfoManager implements Serializable {
 				for ( String strCurrentTransactionID : TransactionsID ) {
 
 					//Semaphore DBConnectionSemaphore = DBConnectionsManager.getNativeDBConnectionSemaphore( strCurrentTransactionID, Logger, Lang );
-					CAbstractDBConnection DBConnection = DBConnectionsManager.getDBConnection( strCurrentTransactionID, Logger, Lang );
+					IAbstractDBConnection DBConnection = DBConnectionsManager.getDBConnection( strCurrentTransactionID, Logger, Lang );
 
 					//if ( DBConnectionSemaphore != null ) {
 

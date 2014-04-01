@@ -10,7 +10,9 @@
  ******************************************************************************/
 package SystemExecuteDBCommand;
 
+import java.sql.Date;
 import java.sql.Types;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -19,7 +21,7 @@ import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import AbstractDBEngine.CAbstractDBConnection;
+import AbstractDBEngine.IAbstractDBConnection;
 import AbstractDBEngine.CAbstractDBEngine;
 import AbstractDBEngine.CAbstractDBEngine.SQLStatementType;
 import AbstractResponseFormat.CAbstractResponseFormat;
@@ -32,7 +34,7 @@ import CommonClasses.CClassPathLoader;
 import CommonClasses.CConfigNativeDBConnection;
 import CommonClasses.CNativeDBConnectionsManager;
 import CommonClasses.CExpresionsFilters;
-import CommonClasses.CResultSetResult;
+import CommonClasses.CResultDataSet;
 import CommonClasses.CServicePostExecuteResult;
 import CommonClasses.CConfigServicesDaemon;
 import CommonClasses.CNativeSessionInfoManager;
@@ -173,19 +175,34 @@ public class CSystemExecuteDBCommand extends CDBAbstractService {
 		
 	}
 	
-	public boolean executePlainCommand( CConfigNativeDBConnection ConfigDBConnection, CAbstractDBConnection DBConnection, CAbstractDBEngine DBEngine, String strCommand, int intInternalFetchSize, HttpServletResponse Response, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion, String strTransactionID ) {
+	public boolean executePlainCommand( CConfigNativeDBConnection ConfigDBConnection, IAbstractDBConnection DBConnection, CAbstractDBEngine DBEngine, String strCommand, int intInternalFetchSize, HttpServletRequest Request, HttpServletResponse Response, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion, String strTransactionID ) {
 		
 		boolean bResult = false;
 		
 		try {
 		
+			Date SystemDateTime = new Date( System.currentTimeMillis() );
+
+			SimpleDateFormat DateFormat = new SimpleDateFormat( ConfigDBConnection.strDateFormat );
+			SimpleDateFormat TimeFormat = new SimpleDateFormat( ConfigDBConnection.strTimeFormat );
+			SimpleDateFormat DateTimeFormat = new SimpleDateFormat( ConfigDBConnection.strDateTimeFormat );
+			
+			String[] strMacrosNames = getMacrosNames();
+			String[] strMacrosValues = getMacrosValues( Request.getRemoteAddr(), Request.getHeader( "X-Forwarded-For" ), ConfigDBConnection.strDatabase, ConfigDBConnection.strName, DateFormat.format( SystemDateTime ), TimeFormat.format( SystemDateTime ), DateTimeFormat.format( SystemDateTime ) );
+			
 			SQLStatementType SQLType = DBEngine.getSQLStatementType( strCommand, ServiceLogger, ServiceLang );
 
+			for ( int intIndex = 0; intIndex < strMacrosNames.length; intIndex++ ) {
+				
+				strCommand = strCommand.replaceAll( strMacrosNames[ intIndex ], strMacrosValues[ intIndex ] );
+				
+			}
+			
 			if ( SQLType == SQLStatementType.Select ) { //Select
 
 				//int intInternalFetchSize = Integer.parseInt( (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Internal_Fetch_Size, null ) );
 				
-				CResultSetResult ResultSetResult = DBEngine.executePlainQueryCommand( DBConnection, strCommand, intInternalFetchSize, ServiceLogger, ServiceLang ); //SQLStatement.executeQuery( strSQL );
+				CResultDataSet ResultSetResult = DBEngine.executePlainQueryCommand( DBConnection, strCommand, intInternalFetchSize, ServiceLogger, ServiceLang ); //SQLStatement.executeQuery( strSQL );
 
 				if ( ResultSetResult != null ) {
 
@@ -218,8 +235,11 @@ public class CSystemExecuteDBCommand extends CDBAbstractService {
 		            
 					//System.out.println( strCommand );
 		            
-		            MasterDBReplicator.addPlainQueryCommandToQueue( strTransactionID, strCommand, ConfigDBConnection.strName, ServiceLogger, ServiceLang );
-
+		            if ( DBEngine.checkFailedCommand( ResultSetResult, ServiceLogger, ServiceLang ) == false )
+		            	MasterDBReplicator.addPlainQueryCommandToQueue( strTransactionID, strCommand, ConfigDBConnection.strName, ServiceLogger, ServiceLang );
+		            else
+		            	DBEngine.reconnect( DBConnection, false, ServiceLogger, ServiceLang );
+		            
 					bResult = true;
 					
 				}
@@ -242,7 +262,7 @@ public class CSystemExecuteDBCommand extends CDBAbstractService {
 			}
 			else { 
 
-				CResultSetResult ResultSetResult = null;
+				CResultDataSet ResultSetResult = null;
 				
 				if ( SQLType == SQLStatementType.Insert )
 					ResultSetResult = DBEngine.executePlainInsertCommand( DBConnection, strCommand, ServiceLogger, ServiceLang );
@@ -305,7 +325,10 @@ public class CSystemExecuteDBCommand extends CDBAbstractService {
 					
 					//System.out.println( strCommand );
 					
-		            MasterDBReplicator.addPlainQueryCommandToQueue( strTransactionID, strCommand, ConfigDBConnection.strName, ServiceLogger, ServiceLang );
+		            if ( DBEngine.checkFailedCommand( ResultSetResult, ServiceLogger, ServiceLang ) == false )
+		            	MasterDBReplicator.addPlainQueryCommandToQueue( strTransactionID, strCommand, ConfigDBConnection.strName, ServiceLogger, ServiceLang );
+		            else
+		            	DBEngine.reconnect( DBConnection, false, ServiceLogger, ServiceLang );
 					
 					bResult = true;
 					
@@ -348,6 +371,12 @@ public class CSystemExecuteDBCommand extends CDBAbstractService {
 		return strResult;
 		
 	}
+
+	public String[] getMacrosValues( String ... strMacrosValues ) {
+		
+		return strMacrosValues;
+		
+	}
 	
 	public int[] getMacrosTypes() {
 		
@@ -357,7 +386,7 @@ public class CSystemExecuteDBCommand extends CDBAbstractService {
 		
 	}
 	
-	public LinkedHashMap<String,String> getRequestParams( CAbstractDBEngine DBEngine, String strCommand, HttpServletRequest Request ) {
+	public LinkedHashMap<String,String> getRequestParams( CAbstractDBEngine DBEngine, String strCommand, HttpServletRequest Request, String[] strMacrosNames, String[] strMacrosValues ) {
 		
 		LinkedHashMap<String,String> Result = new LinkedHashMap<String,String>();
 		
@@ -365,10 +394,19 @@ public class CSystemExecuteDBCommand extends CDBAbstractService {
 		
 		for ( Entry<String,Integer> QueryParam: QueryParams.entrySet() ) {
 			
-			String QueryParamName = QueryParam.getKey();
-			String QueryParamValue = Request.getParameter( QueryParamName );
+			String strQueryParamName = QueryParam.getKey();
+			String strQueryParamValue = Request.getParameter( strQueryParamName );
 			
-			Result.put( QueryParamName, QueryParamValue );
+			for ( int intIndex = 0; intIndex < strMacrosNames.length; intIndex++ ) {
+				
+				String strMacroName = strMacrosNames[ intIndex ];
+				String strMacroValue = strMacrosNames[ intIndex ];
+				
+				strQueryParamValue = strQueryParamValue.replaceAll( strMacroName, strMacroValue );
+				
+			}
+			
+			Result.put( strQueryParamName, strQueryParamValue );
 			
 		}
 		
@@ -376,23 +414,35 @@ public class CSystemExecuteDBCommand extends CDBAbstractService {
 		
 	}
 	
-	public boolean executeComplexCommand( CConfigNativeDBConnection ConfigDBConnection, CAbstractDBConnection DBConnection, CAbstractDBEngine DBEngine, String strCommand, int intInternalFetchSize, HttpServletRequest Request, HttpServletResponse Response, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion, String strTransactionID ) {
+	public boolean executeComplexCommand( CConfigNativeDBConnection ConfigDBConnection, IAbstractDBConnection DBConnection, CAbstractDBEngine DBEngine, String strCommand, int intInternalFetchSize, HttpServletRequest Request, HttpServletResponse Response, CAbstractResponseFormat ResponseFormat, String strResponseFormatVersion, String strTransactionID ) {
 		
 		boolean bResult = false;
 		
 		try {
+
+			Date SystemDateTime = new Date( System.currentTimeMillis() );
+
+			SimpleDateFormat DateFormat = new SimpleDateFormat( ConfigDBConnection.strDateFormat );
+			SimpleDateFormat TimeFormat = new SimpleDateFormat( ConfigDBConnection.strTimeFormat );
+			SimpleDateFormat DateTimeFormat = new SimpleDateFormat( ConfigDBConnection.strDateTimeFormat );
+			
+			int[] intMacrosTypes = getMacrosTypes();
+			String[] strMacrosNames = getMacrosNames();
+			String[] strMacrosValues = getMacrosValues( Request.getRemoteAddr(), Request.getHeader( "X-Forwarded-For" ), ConfigDBConnection.strDatabase, ConfigDBConnection.strName, DateFormat.format( SystemDateTime ), TimeFormat.format( SystemDateTime ), DateTimeFormat.format( SystemDateTime ) );
 			
 			SQLStatementType SQLType = DBEngine.getSQLStatementType( strCommand, ServiceLogger, ServiceLang );
 
+			for ( int intIndex = 0; intIndex < strMacrosNames.length; intIndex++ ) {
+				
+				strCommand = strCommand.replaceAll( strMacrosNames[ intIndex ], strMacrosValues[ intIndex ] );
+				
+			}
+			
 			if ( SQLType == SQLStatementType.Select ) { //Select
 
-				//int intInternalFetchSize = Integer.parseInt( (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Internal_Fetch_Size, null ) );
+				ArrayList<CResultDataSet> ResultsSetsResults = DBEngine.executeComplexQueyCommand( DBConnection, intInternalFetchSize, Request, intMacrosTypes, strMacrosNames, strMacrosValues, ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strCommand, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
 				
-				//ConfigDBConnection.
-				
-				ArrayList<CResultSetResult> ResultsSets = DBEngine.executeComplexQueyCommand( DBConnection, intInternalFetchSize, Request, getMacrosTypes(), getMacrosNames(), getMacrosNames(), ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strCommand, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
-				
-				if ( ResultsSets != null && ResultsSets.size() > 0 ) {
+				if ( ResultsSetsResults != null && ResultsSetsResults.size() > 0 ) {
 					
 					Response.setContentType( ResponseFormat.getContentType() );
 					Response.setCharacterEncoding( ResponseFormat.getCharacterEncoding() );
@@ -408,7 +458,7 @@ public class CSystemExecuteDBCommand extends CDBAbstractService {
 					
 					long lngStart = System.currentTimeMillis();
 					
-					ResponseFormat.formatResultsSets( Response, ResultsSets, DBEngine, intInternalFetchSize, strResponseFormatVersion, ConfigDBConnection!=null?ConfigDBConnection.strDateTimeFormat:(String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_DateTime_Format, null ), ConfigDBConnection!=null?ConfigDBConnection.strDateFormat:(String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_Date_Format, null ), ConfigDBConnection!=null?ConfigDBConnection.strTimeFormat:(String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_Time_Format, null ), true, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang, 1 );
+					ResponseFormat.formatResultsSets( Response, ResultsSetsResults, DBEngine, intInternalFetchSize, strResponseFormatVersion, ConfigDBConnection!=null?ConfigDBConnection.strDateTimeFormat:(String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_DateTime_Format, null ), ConfigDBConnection!=null?ConfigDBConnection.strDateFormat:(String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_Date_Format, null ), ConfigDBConnection!=null?ConfigDBConnection.strTimeFormat:(String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Global_Time_Format, null ), true, this.ServiceLogger!=null?this.ServiceLogger:this.OwnerLogger, this.ServiceLang!=null?this.ServiceLang:this.OwnerLang, 1 );
 
 					long lngEnd = System.currentTimeMillis();
 					
@@ -423,11 +473,14 @@ public class CSystemExecuteDBCommand extends CDBAbstractService {
 
 		            //Response.getWriter().print( strResponseBuffer );
 
-					LinkedHashMap<String,String> Params = this.getRequestParams( DBEngine, strCommand, Request );
+					LinkedHashMap<String,String> Params = this.getRequestParams( DBEngine, strCommand, Request, strMacrosNames, strMacrosValues );
 					
-		            MasterDBReplicator.addComplexQueryCommandToQueue( strTransactionID, strCommand, ConfigDBConnection.strName, Params, ServiceLogger, ServiceLang );
+					MasterDBReplicator.addComplexQueryCommandToQueue( strTransactionID, strCommand, ConfigDBConnection.strName, Params, ServiceLogger, ServiceLang );
 					
-					bResult = true;
+			        if ( DBEngine.checkFailedCommands( ResultsSetsResults, ServiceLogger, ServiceLang ) )
+			        	DBEngine.reconnect( DBConnection, false, ServiceLogger, ServiceLang );
+			        	
+			        bResult = true;
 					
 				}
 				else {
@@ -446,28 +499,23 @@ public class CSystemExecuteDBCommand extends CDBAbstractService {
 					
 				}
 				
-				DBEngine.closeResultSetResultStatement( ResultsSets, ServiceLogger, ServiceLang );
+				DBEngine.closeResultSetResultStatement( ResultsSetsResults, ServiceLogger, ServiceLang );
 				
 			}
 			else if ( SQLType != SQLStatementType.Unknown ) {
 
-				ArrayList<CResultSetResult> ResultSetsResults = null;
+				ArrayList<CResultDataSet> ResultSetsResults = null;
 				
 				if ( SQLType == SQLStatementType.Insert )
-					ResultSetsResults = DBEngine.executeComplexInsertCommand( DBConnection, Request, getMacrosTypes(), getMacrosNames(), getMacrosNames(), ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strCommand, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
+					ResultSetsResults = DBEngine.executeComplexInsertCommand( DBConnection, Request, intMacrosTypes, strMacrosNames, strMacrosValues, ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strCommand, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
 				else if ( SQLType == SQLStatementType.Update )
-					ResultSetsResults = DBEngine.executeComplexUpdateCommand( DBConnection, Request, getMacrosTypes(), getMacrosNames(), getMacrosNames(), ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strCommand, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
+					ResultSetsResults = DBEngine.executeComplexUpdateCommand( DBConnection, Request, intMacrosTypes, strMacrosNames, strMacrosValues, ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strCommand, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
 				else if ( SQLType == SQLStatementType.Delete )
-					ResultSetsResults = DBEngine.executeComplexDeleteCommand( DBConnection, Request, getMacrosTypes(), getMacrosNames(), getMacrosNames(), ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strCommand, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
-				else if ( SQLType == SQLStatementType.Call ) {
-				
-					//int intInternalFetchSize = Integer.parseInt( (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Internal_Fetch_Size, null ) );
-
-					ResultSetsResults = DBEngine.executeComplexCallableStatement( DBConnection, intInternalFetchSize, Request, getMacrosTypes(), getMacrosNames(), getMacrosNames(), ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strCommand, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
-
-				}	
+					ResultSetsResults = DBEngine.executeComplexDeleteCommand( DBConnection, Request, intMacrosTypes, strMacrosNames, strMacrosValues, ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strCommand, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
+				else if ( SQLType == SQLStatementType.Call )
+					ResultSetsResults = DBEngine.executeComplexCallableStatement( DBConnection, intInternalFetchSize, Request, intMacrosTypes, strMacrosNames, strMacrosValues, ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strCommand, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
 				else if ( SQLType == SQLStatementType.DDL )
-					ResultSetsResults = DBEngine.executeComplexDDLCommand( DBConnection, Request, getMacrosTypes(), getMacrosNames(), getMacrosNames(), ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strCommand, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
+					ResultSetsResults = DBEngine.executeComplexDDLCommand( DBConnection, Request, intMacrosTypes, strMacrosNames, strMacrosValues, ConfigDBConnection.strDateFormat, ConfigDBConnection.strTimeFormat, ConfigDBConnection.strDateTimeFormat, strCommand, SystemExecuteSQLConfig.bLogSQLStatement, ServiceLogger, ServiceLang );
 
 				if ( ResultSetsResults != null ) {
 					
@@ -502,10 +550,13 @@ public class CSystemExecuteDBCommand extends CDBAbstractService {
 
 					DBEngine.closeResultSetResultStatement( ResultSetsResults, ServiceLogger, ServiceLang );
 					
-					LinkedHashMap<String,String> Params = this.getRequestParams( DBEngine, strCommand, Request );
+					LinkedHashMap<String,String> Params = this.getRequestParams( DBEngine, strCommand, Request, strMacrosNames, strMacrosValues );
 					
 		            MasterDBReplicator.addComplexQueryCommandToQueue( strTransactionID, strCommand, ConfigDBConnection.strName, Params, ServiceLogger, ServiceLang );
 					
+			        if ( DBEngine.checkFailedCommands( ResultSetsResults, ServiceLogger, ServiceLang ) )
+			        	DBEngine.reconnect( DBConnection, false, ServiceLogger, ServiceLang );
+		            
 					bResult = true;
 					
 				}
@@ -574,7 +625,7 @@ public class CSystemExecuteDBCommand extends CDBAbstractService {
 
 					CNativeDBConnectionsManager DBConnectionsManager = CNativeDBConnectionsManager.getNativeDBConnectionManager();
 
-					CAbstractDBConnection DBConnection = DBConnectionsManager.getDBConnection( strTransactionID, ServiceLogger, ServiceLang );
+					IAbstractDBConnection DBConnection = DBConnectionsManager.getDBConnection( strTransactionID, ServiceLogger, ServiceLang );
 
 					if ( DBConnection != null ) {
 
@@ -619,7 +670,7 @@ public class CSystemExecuteDBCommand extends CDBAbstractService {
 													
 												}
 
-												if ( this.executePlainCommand( LocalConfigDBConnection, DBConnection, DBEngine, strSQL, intInternalFetchSize, Response, ResponseFormat, strResponseFormatVersion, strTransactionID ) == true ) {
+												if ( this.executePlainCommand( LocalConfigDBConnection, DBConnection, DBEngine, strSQL, intInternalFetchSize, Request, Response, ResponseFormat, strResponseFormatVersion, strTransactionID ) ) {
 
 													intResultCode = 1;
 
@@ -847,7 +898,6 @@ public class CSystemExecuteDBCommand extends CDBAbstractService {
 						Response.getWriter().print( strResponseBuffer );
 
 					}
-
 
 				}
 				catch ( Exception Ex ) {

@@ -11,7 +11,6 @@
 /DBServicesManager
 /ExtendedLogger
 /FirebirdDBEngine
-/META-INF
 /MemcachedCEngine
 /MySQLDBEngine
 /PGSQLDBEngine
@@ -24,7 +23,7 @@
 /SystemEndSession
 /SystemEndTransaction
 /SystemEnumServices
-/SystemExecuteSQL
+/SystemExecuteDBCommand
 /SystemListObjects
 /SystemObjectExists
 /SystemPing
@@ -35,4 +34,3 @@
 /net
 /org
 /rowset
-/SystemExecuteDBCommand

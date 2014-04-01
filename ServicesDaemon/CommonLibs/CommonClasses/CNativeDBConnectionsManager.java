@@ -16,7 +16,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.Semaphore;
 //import java.sql.*;
 
-import AbstractDBEngine.CAbstractDBConnection;
+import AbstractDBEngine.IAbstractDBConnection;
 import ExtendedLogger.CExtendedLogger;
 
 public class CNativeDBConnectionsManager {
@@ -35,7 +35,7 @@ public class CNativeDBConnectionsManager {
 		
 	}
 
-    protected HashMap<String,CAbstractDBConnection> NativeDBConnectionFromTransactionID;  //TransactionID => CAbstractDBConnection
+    protected HashMap<String,IAbstractDBConnection> NativeDBConnectionFromTransactionID;  //TransactionID => CAbstractDBConnection
     
 	/*protected HashMap<String,Connection> NativeDBConnectionFromTransactionID;  //TransactionID => DBConnection
 	protected HashMap<String,ArrayList<String>> TransactionsIDFromSecurityTokenID;  //SecurityToken => array( TransactionID, TransactionID, ... )
@@ -46,7 +46,7 @@ public class CNativeDBConnectionsManager {
 	
 	public CNativeDBConnectionsManager() {
 
-		NativeDBConnectionFromTransactionID = new HashMap<String,CAbstractDBConnection>();
+		NativeDBConnectionFromTransactionID = new HashMap<String,IAbstractDBConnection>();
 		/*NativeDBConnectionSemaphoreFromTransactionID = new HashMap<String,Semaphore>();
 		TransactionsIDFromSecurityTokenID = new HashMap<String,ArrayList<String>>();
 		SecurityTokenIDFromTransactionID = new HashMap<String,String>();
@@ -54,13 +54,13 @@ public class CNativeDBConnectionsManager {
 		
 	}
 	
-	public synchronized CAbstractDBConnection getDBConnection( String strTransactionID, CExtendedLogger Logger, CLanguage Lang ) {
+	public synchronized IAbstractDBConnection getDBConnection( String strTransactionID, CExtendedLogger Logger, CLanguage Lang ) {
 
 		//Connection DBConnection = NativeDBConnectionFromTransactionID.get( strTransactionID );
 
-		CAbstractDBConnection DBConnection = null;
+		IAbstractDBConnection DBConnection = null;
 		
-		for ( Entry<String,CAbstractDBConnection> ConnectionItem: NativeDBConnectionFromTransactionID.entrySet() ) {
+		for ( Entry<String,IAbstractDBConnection> ConnectionItem: NativeDBConnectionFromTransactionID.entrySet() ) {
 			
 			if ( ConnectionItem.getValue().getTransactionID().equals( strTransactionID ) ) {
 			
@@ -87,7 +87,7 @@ public class CNativeDBConnectionsManager {
 
 		Semaphore DBConnectionSemaphore = null;
 		
-		for ( Entry<String,CAbstractDBConnection> ConnectionItem: NativeDBConnectionFromTransactionID.entrySet() ) {
+		for ( Entry<String,IAbstractDBConnection> ConnectionItem: NativeDBConnectionFromTransactionID.entrySet() ) {
 			
 			if ( ConnectionItem.getValue().getTransactionID().equals( strTransactionID ) ) {
 
@@ -114,7 +114,7 @@ public class CNativeDBConnectionsManager {
 				
 		CConfigNativeDBConnection ConfigDBConnection = null;
 		
-		for ( Entry<String,CAbstractDBConnection> ConnectionItem: NativeDBConnectionFromTransactionID.entrySet() ) {
+		for ( Entry<String,IAbstractDBConnection> ConnectionItem: NativeDBConnectionFromTransactionID.entrySet() ) {
 			
 			if ( ConnectionItem.getValue().getSecurityTokenID().equals( strSecurityTokenID ) ) {
 			
@@ -141,7 +141,7 @@ public class CNativeDBConnectionsManager {
 
 		String strSecurityTokenID = null;
 		
-		for ( Entry<String,CAbstractDBConnection> ConnectionItem: NativeDBConnectionFromTransactionID.entrySet() ) {
+		for ( Entry<String,IAbstractDBConnection> ConnectionItem: NativeDBConnectionFromTransactionID.entrySet() ) {
 			
 			if ( ConnectionItem.getValue().getTransactionID().equals( strTransactionID ) ) {
 			
@@ -167,7 +167,7 @@ public class CNativeDBConnectionsManager {
 		//ArrayList<String> TransactionsID = TransactionsIDFromSecurityTokenID.get( strSecurityTokenID );
 		ArrayList<String> TransactionsID = null; //TransactionsIDFromSecurityTokenID.get( strSecurityTokenID );
 		
-		for ( Entry<String,CAbstractDBConnection> ConnectionItem: NativeDBConnectionFromTransactionID.entrySet() ) {
+		for ( Entry<String,IAbstractDBConnection> ConnectionItem: NativeDBConnectionFromTransactionID.entrySet() ) {
 			
 			if ( ConnectionItem.getValue().getSecurityTokenID().equals( strSecurityTokenID ) ) {
 			
@@ -194,7 +194,7 @@ public class CNativeDBConnectionsManager {
 
 	}
 
-	public synchronized boolean addNativeDBConnection( String strSecurityTokenID, String strTransactionID, CConfigNativeDBConnection ConfigDBConnectionToAdd, CAbstractDBConnection DBConnectionToAdd, CExtendedLogger Logger, CLanguage Lang ) {
+	public synchronized boolean addNativeDBConnection( String strSecurityTokenID, String strTransactionID, CConfigNativeDBConnection ConfigDBConnectionToAdd, IAbstractDBConnection DBConnectionToAdd, CExtendedLogger Logger, CLanguage Lang ) {
 
 		boolean bResult = false;
 
@@ -245,9 +245,9 @@ public class CNativeDBConnectionsManager {
 
 		boolean bResult = false;
 
-		CAbstractDBConnection DBConnection = null;
+		IAbstractDBConnection DBConnection = null;
 		
-		for ( Entry<String,CAbstractDBConnection> ConnectionItem: NativeDBConnectionFromTransactionID.entrySet() ) {
+		for ( Entry<String,IAbstractDBConnection> ConnectionItem: NativeDBConnectionFromTransactionID.entrySet() ) {
 			
 			if ( ConnectionItem.getValue().getTransactionID().equals( strTransactionID ) ) {
 
@@ -379,9 +379,9 @@ public class CNativeDBConnectionsManager {
 
 		boolean bResult = false;
 
-		CAbstractDBConnection DBConnection = null;
+		IAbstractDBConnection DBConnection = null;
 		
-		for ( Entry<String,CAbstractDBConnection> ConnectionItem: NativeDBConnectionFromTransactionID.entrySet() ) {
+		for ( Entry<String,IAbstractDBConnection> ConnectionItem: NativeDBConnectionFromTransactionID.entrySet() ) {
 			
 			DBConnection = ConnectionItem.getValue();
 			

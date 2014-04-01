@@ -17,14 +17,13 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import net.maindataservices.Utilities;
-
 import AbstractDBEngine.CAbstractDBEngine;
 import AbstractService.CAbstractService;
 import AbstractService.CInputServiceParameter;
 import CommonClasses.CLanguage;
 import CommonClasses.CMemoryFieldData;
 import CommonClasses.CMemoryRowSet;
-import CommonClasses.CResultSetResult;
+import CommonClasses.CResultDataSet;
 import CommonClasses.ConstantsMessagesCodes;
 import CommonClasses.NamesSQLTypes;
 import ExtendedLogger.CExtendedLogger;
@@ -39,6 +38,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 		
 	}
 	
+	/*
 	@Override
 	public CAbstractResponseFormat getNewInstance() {
 
@@ -49,6 +49,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
     	return NewInstance;
 	
 	}
+    */
 
 	@Override
 	public String getContentType() {
@@ -358,11 +359,11 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 	
 	}
 	
-	public void formatCSVHeaders( ResultSet SQLDataSet, CAbstractDBEngine DBEngine, StringBuilder strResponseBuffer, boolean bFieldsQuote, String strSeparatorSymbol, CExtendedLogger Logger, CLanguage Lang  ) {
+	public void formatCSVHeaders( ResultSet DataSet, CAbstractDBEngine DBEngine, StringBuilder strResponseBuffer, boolean bFieldsQuote, String strSeparatorSymbol, CExtendedLogger Logger, CLanguage Lang  ) {
 
 		try {
 		
-			ResultSetMetaData DataSetMetaData = SQLDataSet.getMetaData();
+			ResultSetMetaData DataSetMetaData = DataSet.getMetaData();
 
 		    StringBuffer strFieldsName = new StringBuffer();
 		    StringBuffer strFieldsType = new StringBuffer();
@@ -606,130 +607,6 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 		}
 		
 	}
-	
-	/*Override
-	public boolean FormatResultSet( HttpServletResponse Response, ResultSet SQLDataSet, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
-
-		boolean bResult = false;
-
-		/*try {
-
-			if ( Utilities.VersionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.VersionLessEquals( strVersion, this.strMaxVersion ) ) {
-
-				StringBuilder strResponseBuffer = new StringBuilder();
-				
-				String strShowHeaders = OwnerConfig.getConfigValue( ConstantsMessagesCodes._CSV_ShowHeaders );
-				String strSeparatorSymbol = OwnerConfig.getConfigValue( ConstantsMessagesCodes._CSV_SeparatorSymbol );
-				String strFieldsQuote = OwnerConfig.getConfigValue( ConstantsMessagesCodes._CSV_FieldsQuote );
-				
-				if ( strShowHeaders != null && strShowHeaders.equals( "true" ) )
-				   FormatCSVHeaders( SQLDataSet, DBEngine, strResponseBuffer, strFieldsQuote != null && strFieldsQuote.equals( "true" ), strSeparatorSymbol, Logger, Lang );
-				
-				FormatCSVRowData( SQLDataSet, DBEngine, strResponseBuffer, strFieldsQuote != null && strFieldsQuote.equals( "true" ), (strSeparatorSymbol != null && strSeparatorSymbol.isEmpty() == false)?strSeparatorSymbol:";", strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
-				
-				strResult = strResponseBuffer.toString();
-
-			}
-			else {
-				
-				if ( Logger != null ) {
-					
-					if ( Lang != null )
-						Logger.LogError( "-1015", Lang.Translate( "Format version [%s] not supported", strVersion ) );
-					else
-						Logger.LogError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
-				    
-				}    
-				else if ( OwnerConfig != null && OwnerConfig.Logger != null ) {
-
-					if ( OwnerConfig.Lang != null )
-						OwnerConfig.Logger.LogError( "-1015", OwnerConfig.Lang.Translate( "Format version [%s] not supported", strVersion ) );
-					else
-						OwnerConfig.Logger.LogError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
-
-				}    
-				
-			}
-		
-		}
-		catch ( Exception Ex ) {
-
-			if ( Logger != null )
-				Logger.LogException( "-1016", Ex.getMessage(), Ex );
-			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
-				OwnerConfig.Logger.LogException( "-1016", Ex.getMessage(), Ex );
-
-		}
-
-		return bResult;
-	
-	}
-	
-	Override
-	public boolean FormatResultsSets( HttpServletResponse Response, ArrayList<ResultSet> SQLDataSetList, CAbstractDBEngine DBEngine, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
-
-		boolean bResult = false;
-
-		/*try {
-
-			if ( Utilities.VersionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.VersionLessEquals( strVersion, this.strMaxVersion ) ) {
-
-				StringBuilder strResponseBuffer = new StringBuilder();
-				
-				String strShowHeaders = OwnerConfig.getConfigValue( ConstantsMessagesCodes._CSV_ShowHeaders );
-				String strSeparatorSymbol = OwnerConfig.getConfigValue( ConstantsMessagesCodes._CSV_SeparatorSymbol );
-				String strFieldsQuote = OwnerConfig.getConfigValue( ConstantsMessagesCodes._CSV_FieldsQuote );
-				
-				boolean bFieldsQuote = strFieldsQuote != null && strFieldsQuote.equals( "true" );
-				
-				strSeparatorSymbol = (strSeparatorSymbol != null && strSeparatorSymbol.isEmpty() == false)?strSeparatorSymbol:";";
-
-				if ( strShowHeaders != null && strShowHeaders.equals( "true" ) )
-					FormatCSVHeaders( SQLDataSetList.get( 0 ), DBEngine, strResponseBuffer, bFieldsQuote, strSeparatorSymbol, Logger, Lang );
-				
-				for ( int I = 0; I < SQLDataSetList.size(); I ++ ) {
-				    
-					FormatCSVRowData( SQLDataSetList.get( I ), DBEngine, strResponseBuffer, bFieldsQuote, strSeparatorSymbol, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
-				
-				};
-				
-				strResult = strResponseBuffer.toString();
-
-			}
-			else {
-				
-				if ( Logger != null ) {
-					
-					if ( Lang != null )
-						Logger.LogError( "-1015", Lang.Translate( "Format version [%s] not supported", strVersion ) );
-					else
-						Logger.LogError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
-				    
-				}    
-				else if ( OwnerConfig != null && OwnerConfig.Logger != null ) {
-
-					if ( OwnerConfig.Lang != null )
-						OwnerConfig.Logger.LogError( "-1015", OwnerConfig.Lang.Translate( "Format version [%s] not supported", strVersion ) );
-					else
-						OwnerConfig.Logger.LogError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
-
-				}    
-				
-			}
-		
-		}
-		catch ( Exception Ex ) {
-
-			if ( Logger != null )
-				Logger.LogException( "-1016", Ex.getMessage(), Ex );
-			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
-				OwnerConfig.Logger.LogException( "-1016", Ex.getMessage(), Ex );
-
-		}//
-
-		return bResult;
-		
-	}*/
 
 	public void formatDefaultHeaders( StringBuilder strResponseBuffer, boolean bFieldsQuote, String strSeparatorSymbol ) {
 		
@@ -775,7 +652,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 	}
 	
 	@Override
-	public boolean formatResultSet( HttpServletResponse Response, CResultSetResult SQLDataSetResult, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang ) { 
+	public boolean formatResultSet( HttpServletResponse Response, CResultDataSet ResultDataSet, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang ) { 
 		
     	boolean bResult = false;
     	
@@ -799,13 +676,34 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 				
 				strSeparatorSymbol = (strSeparatorSymbol != null && strSeparatorSymbol.isEmpty() == false)?strSeparatorSymbol:";";
 				
-				if ( SQLDataSetResult.Result != null && SQLDataSetResult.intCode >= 0 ) {   
+    	        if ( ResultDataSet.Result != null && ResultDataSet.Result instanceof ResultSet == false ) {
+    	        	
+    				if ( Logger != null ) {
+    					
+    					if ( Lang != null )
+    						Logger.logWarning( "-1", Lang.translate( "Result object type [%s] not supported", ResultDataSet.getClass().getName() ) );
+    					else
+    						Logger.logWarning( "-1", String.format( "Result object type [%s] not supported", ResultDataSet.getClass().getName() ) );
+    				    
+    				}    
+    				else if ( OwnerConfig != null && OwnerConfig.Logger != null ) {
+
+    					if ( OwnerConfig.Lang != null )
+    						OwnerConfig.Logger.logWarning( "-1", OwnerConfig.Lang.translate( "Result object type [%s] not supported", ResultDataSet.getClass().getName() ) );
+    					else
+    						OwnerConfig.Logger.logWarning( "-1", String.format( "Result object type [%s] not supported", ResultDataSet.getClass().getName() ) );
+
+    				}    
+    	        	
+    	        }
+		        
+				if ( ResultDataSet.Result != null && ResultDataSet.Result instanceof ResultSet && ResultDataSet.intCode >= 0 ) {
 
 					if ( strShowHeaders != null && strShowHeaders.equals( "true" ) ) {
 					
 						StringBuilder strResponseBuffer = new StringBuilder();
 
-						formatCSVHeaders( SQLDataSetResult.Result, DBEngine, strResponseBuffer, bFieldsQuote, strSeparatorSymbol, Logger, Lang );
+						formatCSVHeaders( (ResultSet) ResultDataSet.Result, DBEngine, strResponseBuffer, bFieldsQuote, strSeparatorSymbol, Logger, Lang );
 
 	        			TempResponseFormatedFileWriter.print( strResponseBuffer.toString() );
 	        			
@@ -813,7 +711,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 	        			
 					}
 					
-					formatCSVRowData( strTempDir, strTempResponseFormatedFilePath, TempResponseFormatedFileWriter, OutStream, SQLDataSetResult.Result, DBEngine, bFieldsQuote, strSeparatorSymbol, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
+					formatCSVRowData( strTempDir, strTempResponseFormatedFilePath, TempResponseFormatedFileWriter, OutStream, (ResultSet) ResultDataSet.Result, DBEngine, bFieldsQuote, strSeparatorSymbol, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
 
         			TempResponseFormatedFileWriter.close();
 
@@ -832,20 +730,20 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 
 					if ( bFieldsQuote ) {
 
-						strResponseBuffer.append( "\"" + Long.toString( SQLDataSetResult.lngAffectedRows ) + "\"" );
+						strResponseBuffer.append( "\"" + Long.toString( ResultDataSet.lngAffectedRows ) + "\"" );
 						strResponseBuffer.append( strSeparatorSymbol );
-						strResponseBuffer.append( "\"" + SQLDataSetResult.intCode + "\"" );
+						strResponseBuffer.append( "\"" + ResultDataSet.intCode + "\"" );
 						strResponseBuffer.append( strSeparatorSymbol );
-						strResponseBuffer.append( "\"" + SQLDataSetResult.strDescription + "\"" );
+						strResponseBuffer.append( "\"" + ResultDataSet.strDescription + "\"" );
 
 					}
 					else {
 
-						strResponseBuffer.append( Long.toString( SQLDataSetResult.lngAffectedRows ) );
+						strResponseBuffer.append( Long.toString( ResultDataSet.lngAffectedRows ) );
 						strResponseBuffer.append( strSeparatorSymbol );
-						strResponseBuffer.append( SQLDataSetResult.intCode );
+						strResponseBuffer.append( ResultDataSet.intCode );
 						strResponseBuffer.append( strSeparatorSymbol );
-						strResponseBuffer.append( SQLDataSetResult.strDescription );
+						strResponseBuffer.append( ResultDataSet.strDescription );
 
 					}
 
@@ -907,7 +805,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 	}
 	
 	@Override
-	public boolean formatResultsSets( HttpServletResponse Response, ArrayList<CResultSetResult> SQLDataSetResultList, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
+	public boolean formatResultsSets( HttpServletResponse Response, ArrayList<CResultDataSet> ResultDataSetList, CAbstractDBEngine DBEngine, int intInternalFetchSize, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, boolean bDeleteTempReponseFile, CExtendedLogger Logger, CLanguage Lang, int intDummyParam ) {
 		
     	boolean bResult = false;
     	
@@ -915,7 +813,7 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 
 			if ( Utilities.versionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.versionLessEquals( strVersion, this.strMaxVersion ) ) {
         	
-				if ( SQLDataSetResultList.size() > 0 ) {
+				if ( ResultDataSetList.size() > 0 ) {
 
 			        String strTempDir = (String) OwnerConfig.sendMessage( ConstantsMessagesCodes._Temp_Dir, null );
 			        
@@ -933,24 +831,47 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 					
 					strSeparatorSymbol = (strSeparatorSymbol != null && strSeparatorSymbol.isEmpty() == false)?strSeparatorSymbol:";";
 
-					ResultSet SQLDataSet = CResultSetResult.getFirstResultSetNotNull( SQLDataSetResultList );
+					Object ResultObject = (ResultSet) CResultDataSet.getFirstResultSetNotNull( ResultDataSetList );
 
-					if ( SQLDataSet != null ) {
+	    	        if ( ResultObject != null && ResultObject instanceof ResultSet == false ) {
+	    	        	
+	    				if ( Logger != null ) {
+	    					
+	    					if ( Lang != null )
+	    						Logger.logWarning( "-1", Lang.translate( "Result object type [%s] not supported", ResultObject.getClass().getName() ) );
+	    					else
+	    						Logger.logWarning( "-1", String.format( "Result object type [%s] not supported", ResultObject.getClass().getName() ) );
+	    				    
+	    				}    
+	    				else if ( OwnerConfig != null && OwnerConfig.Logger != null ) {
+
+	    					if ( OwnerConfig.Lang != null )
+	    						OwnerConfig.Logger.logWarning( "-1", OwnerConfig.Lang.translate( "Result object type [%s] not supported", ResultObject.getClass().getName() ) );
+	    					else
+	    						OwnerConfig.Logger.logWarning( "-1", String.format( "Result object type [%s] not supported", ResultObject.getClass().getName() ) );
+
+	    				}    
+	    	        	
+	    	        }
+	    	        
+					if ( ResultObject != null && ResultObject instanceof ResultSet ) {
 
 						StringBuilder strResponseBuffer = new StringBuilder();
 
-						if ( strShowHeaders != null && strShowHeaders.equals( "true" ) )
-							formatCSVHeaders( SQLDataSet, DBEngine, strResponseBuffer, bFieldsQuote, strSeparatorSymbol, Logger, Lang );
+						ResultSet ResultDataSet = ( ResultSet ) ResultObject;
+						
+						if ( strShowHeaders != null && strShowHeaders.equalsIgnoreCase( "true" ) )
+							formatCSVHeaders( ResultDataSet, DBEngine, strResponseBuffer, bFieldsQuote, strSeparatorSymbol, Logger, Lang );
 
 	        			TempResponseFormatedFileWriter.print( strResponseBuffer.toString() );
 	        			
 	        			strResponseBuffer = null;
 						
-						for ( CResultSetResult SQLDataSetResultToAdd: SQLDataSetResultList ) {    
+						for ( CResultDataSet ResultDataSetToAdd: ResultDataSetList ) {    
 
-							if ( SQLDataSetResultToAdd.Result != null ) {   
+							if ( ResultDataSetToAdd.Result != null && ResultDataSetToAdd.Result instanceof ResultSet ) {   
 
-								formatCSVRowData( strTempDir, strTempResponseFormatedFilePath, TempResponseFormatedFileWriter, TempFileOutStream, SQLDataSetResultToAdd.Result, DBEngine, bFieldsQuote, strSeparatorSymbol, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
+								formatCSVRowData( strTempDir, strTempResponseFormatedFilePath, TempResponseFormatedFileWriter, TempFileOutStream, ((ResultSet) ResultDataSetToAdd.Result), DBEngine, bFieldsQuote, strSeparatorSymbol, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
 								
 							}
 
@@ -971,26 +892,26 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 						
 						}
 						
-						for ( CResultSetResult SQLDataSetResultToAdd: SQLDataSetResultList ) {    
+						for ( CResultDataSet ResultDataSetToAdd: ResultDataSetList ) {    
 
 							StringBuilder strRowData = new StringBuilder();
 							
 							if ( bFieldsQuote ) {
 
-								strRowData.append( "\"" + Long.toString( SQLDataSetResultToAdd.lngAffectedRows ) + "\"" );
+								strRowData.append( "\"" + Long.toString( ResultDataSetToAdd.lngAffectedRows ) + "\"" );
 								strRowData.append( strSeparatorSymbol );
-								strRowData.append( "\"" + SQLDataSetResultToAdd.intCode + "\"" );
+								strRowData.append( "\"" + ResultDataSetToAdd.intCode + "\"" );
 								strRowData.append( strSeparatorSymbol );
-								strRowData.append( "\"" + SQLDataSetResultToAdd.strDescription + "\"" );
+								strRowData.append( "\"" + ResultDataSetToAdd.strDescription + "\"" );
 															
 							}
 							else {
 								
-								strRowData.append( Long.toString( SQLDataSetResultToAdd.lngAffectedRows ) );
+								strRowData.append( Long.toString( ResultDataSetToAdd.lngAffectedRows ) );
 								strRowData.append( strSeparatorSymbol );
-								strRowData.append( SQLDataSetResultToAdd.intCode );
+								strRowData.append( ResultDataSetToAdd.intCode );
 								strRowData.append( strSeparatorSymbol );
-								strRowData.append( SQLDataSetResultToAdd.strDescription );
+								strRowData.append( ResultDataSetToAdd.strDescription );
 								
 							}
 
@@ -1112,72 +1033,6 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 		return strResult;
 		
 	}
-	
-	/*Override
-	public String FormatMemoryRowSets( ArrayList<CMemoryRowSet> MemoryRowSetList, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
-
-		String strResult = "";
-
-		try {
-
-			if ( Utilities.VersionGreaterEquals( strVersion, this.strMinVersion ) && Utilities.VersionLessEquals( strVersion, this.strMaxVersion ) ) {
-
-				StringBuilder strResponseBuffer = new StringBuilder();
-				
-				String strShowHeaders = OwnerConfig.getConfigValue( ConstantsMessagesCodes._CSV_ShowHeaders );
-				String strSeparatorSymbol = OwnerConfig.getConfigValue( ConstantsMessagesCodes._CSV_SeparatorSymbol );
-				String strFieldsQuote = OwnerConfig.getConfigValue( ConstantsMessagesCodes._CSV_FieldsQuote );
-				
-				boolean bFieldsQuote = strFieldsQuote != null && strFieldsQuote.equals( "true" );
-				
-				strSeparatorSymbol = (strSeparatorSymbol != null && strSeparatorSymbol.isEmpty() == false)?strSeparatorSymbol:";";
-
-				if ( strShowHeaders != null && strShowHeaders.equals( "true" ) )
-					FormatCSVHeaders( MemoryRowSetList.get( 0 ), strResponseBuffer, bFieldsQuote, strSeparatorSymbol, Logger, Lang );
-				
-				for ( int I = 0; I < MemoryRowSetList.size(); I ++ ) {
-				    
-					FormatCSVRowData( MemoryRowSetList.get( I ), strResponseBuffer, bFieldsQuote, strSeparatorSymbol, strDateFormat, strTimeFormat, strDateTimeFormat, Logger, Lang );
-				
-				};
-				
-				strResult = strResponseBuffer.toString();
-
-			}
-			else {
-				
-				if ( Logger != null ) {
-					
-					if ( Lang != null )
-						Logger.LogError( "-1015", Lang.Translate( "Format version [%s] not supported", strVersion ) );
-					else
-						Logger.LogError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
-				    
-				}    
-				else if ( OwnerConfig != null && OwnerConfig.Logger != null ) {
-
-					if ( OwnerConfig.Lang != null )
-						OwnerConfig.Logger.LogError( "-1015", OwnerConfig.Lang.Translate( "Format version [%s] not supported", strVersion ) );
-					else
-						OwnerConfig.Logger.LogError( "-1015", String.format( "Format version [%s] not supported", strVersion ) );
-
-				}    
-				
-			}
-		
-		}
-		catch ( Exception Ex ) {
-
-			if ( Logger != null )
-				Logger.LogException( "-1016", Ex.getMessage(), Ex );
-			else if ( OwnerConfig != null && OwnerConfig.Logger != null )
-				OwnerConfig.Logger.LogException( "-1016", Ex.getMessage(), Ex );
-
-		}
-
-		return strResult;
-	
-	}*/
 	
 	@Override
 	public String formatSimpleMessage( String strSecurityTokenID, String strTransactionID, int intCode, String strDescription, boolean bAttachToError, String strVersion, String strDateTimeFormat, String strDateFormat, String strTimeFormat, CExtendedLogger Logger, CLanguage Lang ) {
@@ -1353,6 +1208,5 @@ public class CCSVResponseFormat extends CAbstractResponseFormat {
 		return strResult;
 	
 	}
-
 
 }
